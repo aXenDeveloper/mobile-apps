@@ -2,10 +2,27 @@
   "expo": {
     "sdkVersion": "26.0.0",
     "extra": {
-		"oauth_client_id": "e9a2ba72438fe656c678f41095a360ea",
-		"api_url": "http://192.168.1.33/ipsdev/graphql-api/",
-		"api_key": "NGVmNjdkZjA0OGExYTE1MzM5MjVmYmIxNWEyN2MwMjc=",
-		"refresh_token_advance": 300000
-	},
+      "oauth_client_id": "e9a2ba72438fe656c678f41095a360ea",
+      "api_url": "http://192.168.1.33/ipsdev/graphql-api/",
+      "api_key": "NGVmNjdkZjA0OGExYTE1MzM5MjVmYmIxNWEyN2MwMjc=",
+      "refresh_token_advance": 300000
+    },
+    "name": "invision-community",
+    "slug": "invision-community",
+    "version": "0.1.0",
+    "isDetached": true,
+    "detach": {
+      "scheme": "exp9e8d98da4706470bbb11a279862e185a",
+      "iosExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/ios-v2.4.4-sdk26.0.0-3bd935c7-cdd3-4002-8e44-4df857a675f2.tar.gz",
+      "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v2.4.0-sdk26.0.0-e63d9209-070c-4118-b06b-c60e82da0b66.tar.gz"
+    },
+    "ios": {
+      "bundleIdentifier": "com.invisionCommunity.app",
+      "publishBundlePath": "ios/invision-community/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/invision-community/Supporting/shell-app-manifest.json"
+    },
+    "android": {
+      "package": "com.invisionCommunity.app"
+    }
   }
 }
