@@ -75,6 +75,7 @@ class TopicListScreen extends Component {
 
 			return (
 				<View contentContainerStyle={{flex: 1}} style={{flex: 1}}>
+					<Button title='New Topic' onPress={() => this.props.navigation.navigate('CreateTopic')} />
 					<ScrollView style={{flex: 1}}>
 						<FlatList 
 						style={{flex: 1}}
