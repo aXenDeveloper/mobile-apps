@@ -72,6 +72,8 @@ const editorStyles = StyleSheet.create({
 const toolbarStyles = StyleSheet.create({
 	toolbar: {
 		height: 108,
-		backgroundColor: 'red'
+		backgroundColor: '#ffffff',
+		borderTopWidth: 1,
+		borderTopColor: '#bbc6ce'
 	}
 });
