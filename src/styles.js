@@ -51,7 +51,16 @@ const styles = StyleSheet.create({
 		backgroundColor: '#eeeff1'
 	},
 
-	/* General purpoe styles */
+	field: {
+		backgroundColor: '#fff',
+		fontSize: 16,
+		paddingVertical: 15,
+		paddingHorizontal: 15,
+		borderBottomWidth: 1,
+		borderBottomColor: '#e5e5e5'
+	},
+
+	/* General purpose styles */
 	unreadBackground: {
 		backgroundColor: '#ffffff',
 	},
@@ -69,6 +78,9 @@ const styles = StyleSheet.create({
 	},
 	titleRead: {
 		color: '#505050'
+	},
+	hidden: {
+		display: 'none'
 	}
 });
 
