@@ -36,7 +36,7 @@ export default class QuillEditor extends Component {
 		// created as camelCase keys in the state, e.g. listUnordered or listOrdered
 		const formattingState = {};
 		Object.entries(formattingOptions).forEach(pair => {
-			if (typeof pair[1] == "boolean") {
+			if (_.isBoolean(pair[1])) {
 				formattingState[pair[0]] = false;
 			} else {
 				for (let i = 0; i < pair[1].length; i++) {
@@ -95,22 +95,25 @@ export default class QuillEditor extends Component {
 		// Loop through each supported formatting option, and determine
 		// whether the button should be set to active or not
 		Object.entries(formattingOptions).forEach(pair => {
-			if (typeof pair[1] == "boolean") {
+			if (_.isBoolean(pair[1])) {
 				newState[pair[0]] = !_.isUndefined(buttonStates[pair[0]]);
 			} else {
 				for (let i = 0; i < pair[1].length; i++) {
 					const stateKey = pair[0] + (pair[1][i].charAt(0).toUpperCase() + pair[1][i].slice(1));
-					newState[stateKey] = ( pair[1][i] == buttonStates[pair[0]] );
+					newState[stateKey] = !_.isUndefined(buttonStates[pair[0]]) && pair[1][i] == buttonStates[pair[0]];
 				}
 			}
 		});
 
-		this.setState({
-			formatting: {
-				...this.state.formatting,
-				...newState
-			}
-		}, () => console.log( this.state ));
+		this.setState(
+			{
+				formatting: {
+					...this.state.formatting,
+					...newState
+				}
+			},
+			() => console.log(this.state)
+		);
 	}
 
 	toggleFormatting(type, option) {

@@ -48,15 +48,16 @@ class QuillComponent extends Component {
 		}
 
 		this.state.quill.on("selection-change", (range, oldRange, source) => {
+
+			// If range is null, that means the editor is not focused.
 			if (range === null) {
 				this.sendMessage("EDITOR_BLUR");
 				return;
 			}
-			
-			let formats = this.state.quill.getFormat(range);
 
+			// If editor is focused, get the formatting at range and send it over
 			this.sendMessage("FORMATTING", {
-				formatState: formats
+				formatState: this.state.quill.getFormat(range)
 			});
 		});
 	}
@@ -73,20 +74,12 @@ class QuillComponent extends Component {
 				switch (messageType) {
 					case "SET_FORMAT":
 						this.setFormat(messageData);
+
+						// After setting the format, send the current states back to ensure correct buttons are active
+						this.sendMessage("FORMATTING", {
+							formatState: this.state.quill.getFormat()
+						});
 						break;
-					/*case "BOLD":
-						this.state.quill.format('bold', messageData.active);
-					
-					\break;
-					case "ITALIC":
-						this.state.quill.format('italic', messageData.active);
-						break;
-					case "UNDERLINE":
-						this.state.quill.format('underline', messageData.active);
-						break;
-					case "LIST":
-						this.state.quill.format('list', !messageData.active ? false : messageData.type);
-						break;*/
 				}
 			}
 		} catch (err) {
