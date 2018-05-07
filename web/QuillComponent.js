@@ -2,20 +2,25 @@ import Quill from "quill/dist/quill.min.js";
 import "quill/dist/quill.core.css";
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
+import LinkBlot from "quill/formats/link";
 
 const BROWSER = false;
 const DEBUG = true;
 const MESSAGE_PREFIX = "__IPS__";
 
-const util = require('util');
-const FORMATS = ['bold', 'italic', 'underline', 'list'];
+const util = require("util");
+const FORMATS = ["bold", "italic", "underline", "list"];
 
 class QuillComponent extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			quill: null,
-			debug: []
+			debug: [],
+			range: {
+				index: 0,
+				length: 0
+			}
 		};
 	}
 
@@ -42,23 +47,49 @@ class QuillComponent extends Component {
 		// Add message event listener
 		if (document) {
 			document.addEventListener("message", this.onMessage.bind(this));
-		} 
+		}
 		if (window) {
 			window.addEventListener("message", this.onMessage.bind(this));
 		}
 
-		this.state.quill.on("selection-change", (range, oldRange, source) => {
+		this.state.quill.on("selection-change", this.selectionChange.bind(this));
+	}
 
-			// If range is null, that means the editor is not focused.
-			if (range === null) {
-				this.sendMessage("EDITOR_BLUR");
-				return;
+	selectionChange(range, oldRange, source) {
+		// If range is null, that means the editor is not focused.
+		if (range === null) {
+			this.sendMessage("EDITOR_BLUR");
+			return;
+		}
+
+		// Remember our range, so that we can insert content even if we lose focus
+		this.setState({
+			range: {
+				index: range.index,
+				length: range.length
 			}
+		});
 
-			// If editor is focused, get the formatting at range and send it over
-			this.sendMessage("FORMATTING", {
-				formatState: this.state.quill.getFormat(range)
-			});
+		const format = this.state.quill.getFormat(range);
+
+		// If we're inside a link, get the props
+		/*if( range.length === 0 && source === 'user' ){
+			if (format["link"]) {
+				//let [link, offset] = this.state.quill.scroll.descendant(LinkBlot, range.index);
+				let [link, offset] = this.state.quill.getLeaf(range.index);
+
+				//if( link != null ){
+					let preview = LinkBlot.formats(link.domNode);
+					this.addDebug("Link content: " + preview);
+				//}
+
+				this.addDebug("Within link");
+			}
+		}*/
+
+		// If editor is focused, get the formatting at range and send it over
+		this.sendMessage("FORMATTING", {
+			formatState: format
 		});
 	}
 
@@ -80,6 +111,12 @@ class QuillComponent extends Component {
 							formatState: this.state.quill.getFormat()
 						});
 						break;
+					case "INSERT_LINK":
+						this.insertLink(messageData);
+						break;
+					case "FOCUS":
+						this.state.quill.getSelection(true);
+						break;
 				}
 			}
 		} catch (err) {
@@ -87,8 +124,40 @@ class QuillComponent extends Component {
 		}
 	}
 
+	insertLink(data) {
+		// Todo: validate link/text
+		
+		const range = this.state.quill.getSelection(true);
+		this.addDebug(`Range index: ${range.index}, length: ${range.length}`);
+
+		const delta = {
+			ops: [
+				{
+					retain: range.index || 0
+				},
+				{
+					insert: data.text,
+					attributes: {
+						link: data.url
+					}
+				}
+			]
+		};
+		this.state.quill.updateContents(delta);
+		this.state.quill.setSelection(range.index + range.length + data.text.length, 0);
+
+		this.addDebug(`Range index: ${range.index + range.length + data.text.length}, length: 0`);
+
+		this.setState({
+			range: {
+				index: range.index + range.length + data.text.length,
+				length: 0
+			}
+		});
+	}
+
 	setFormat(data) {
-		this.state.quill.format(data.type, data.option || false, 'user');
+		this.state.quill.format(data.type, data.option || false, "user");
 	}
 
 	sendMessage(message, data = {}) {
@@ -110,7 +179,7 @@ class QuillComponent extends Component {
 
 	addDebug(message) {
 		if (DEBUG) {
-			if( typeof message == 'object' ){
+			if (typeof message == "object") {
 				message = util.inspect(message, { showHidden: false, depth: null });
 			}
 

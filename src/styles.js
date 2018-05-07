@@ -59,6 +59,33 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomColor: '#e5e5e5'
 	},
+	textInput: {
+		backgroundColor: '#fff',
+		borderWidth: 1,
+		borderColor: '#d0d0d0',
+		borderRadius: 3,
+		paddingHorizontal: 7,
+		paddingVertical: 7,
+		marginBottom: 5
+	},
+
+	/* Modal styles */
+	modal: {
+		backgroundColor: '#f3f3f3',
+		padding: 16,
+		borderRadius: 5
+	},
+	modalHeader: {
+		marginTop: 9,
+		marginBottom: 25
+	},
+	modalTitle: {
+		textAlign: 'center',
+		fontWeight: 'bold',
+		color: '#000',
+		fontSize: 17
+	},
+
 
 	/* General purpose styles */
 	unreadBackground: {

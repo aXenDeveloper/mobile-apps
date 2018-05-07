@@ -1,5 +1,6 @@
 import React, { Fragment, Component } from "react";
-import { View, KeyboardAvoidingView, Button, WebView, StyleSheet } from "react-native";
+import { View, TextInput, Text, KeyboardAvoidingView, Button, WebView, StyleSheet } from "react-native";
+import Modal from "react-native-modal";
 import _ from "lodash";
 import styles from "../../styles";
 import { QuillToolbarButton } from "./QuillToolbarButton";
@@ -24,7 +25,8 @@ const formattingOptions = {
 	bold: true,
 	italic: true,
 	underline: true,
-	list: ["bullet", "ordered"]
+	list: ["bullet", "ordered"],
+	link: true
 };
 
 export default class QuillEditor extends Component {
@@ -50,6 +52,11 @@ export default class QuillEditor extends Component {
 			debug: [],
 			loading: true,
 			focused: false,
+			linkModal: {
+				visible: false,
+				url: "",
+				text: ""
+			},
 			formatting: formattingState
 		};
 	}
@@ -147,9 +154,56 @@ export default class QuillEditor extends Component {
 		this.webview.postMessage(messageToSend, "*");
 	}
 
+	showLinkModal() {
+		this.setState({ 
+			linkModal: { 
+				visible: true,
+				url: '',
+				text: ''
+			},
+			focused: false // Set editor focus to hide the toolbar
+		});
+	}
+
+	insertLink() {
+		this.setState({
+			linkModal: {
+				visible: false
+			}
+		});
+
+		this.sendMessage("FOCUS");
+		this.sendMessage("INSERT_LINK", {
+			url: this.state.linkModal.url,
+			text: this.state.linkModal.text
+		});
+
+		console.log("Insert:", this.state.linkModal.url, this.state.linkModal.text);
+	}
+
 	render() {
 		return (
 			<View style={{ flex: 1 }}>
+				<Modal style={modalStyles.modal} avoidKeyboard={true} animationIn="bounceIn" isVisible={this.state.linkModal.visible}>
+					<View style={[styles.modal, modalStyles.modalInner]}>
+						<View style={styles.modalHeader}>
+							<Text style={styles.modalTitle}>Insert Link</Text>
+						</View>
+						<TextInput
+							onChangeText={url => this.setState({ linkModal: { ...this.state.linkModal, url } })}
+							value={this.state.linkModal.url}
+							style={styles.textInput}
+							placeholder="Link URL"
+						/>
+						<TextInput
+							onChangeText={text => this.setState({ linkModal: { ...this.state.linkModal, text } })}
+							value={this.state.linkModal.text}
+							style={styles.textInput}
+							placeholder="Link text"
+						/>
+						<Button title="Insert link" onPress={() => this.insertLink()} />
+					</View>
+				</Modal>
 				<WebView
 					source={EDITOR_VIEW}
 					onMessage={this.onMessage.bind(this)}
@@ -164,6 +218,11 @@ export default class QuillEditor extends Component {
 				{this.state.focused ? (
 					<View style={[toolbarStyles.toolbarOuter]}>
 						<View style={toolbarStyles.toolbarInner}>
+							<QuillToolbarButton
+								active={this.state.linkModal.visible}
+								icon={require("../../../resources/link.png")}
+								onPress={() => this.showLinkModal()}
+							/>
 							<QuillToolbarButton
 								active={this.state.formatting.bold}
 								icon={require("../../../resources/bold.png")}
@@ -196,6 +255,13 @@ export default class QuillEditor extends Component {
 		);
 	}
 }
+
+const modalStyles = StyleSheet.create({
+	modal: {
+		flex: 1
+	},
+	modalInner: {}
+});
 
 const editorStyles = StyleSheet.create({
 	editor: {
