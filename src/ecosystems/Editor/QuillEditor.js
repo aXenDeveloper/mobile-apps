@@ -1,9 +1,11 @@
 import React, { Fragment, Component } from "react";
 import { View, TextInput, Text, KeyboardAvoidingView, Button, WebView, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
+import { ImagePicker } from "expo";
 import _ from "lodash";
 import styles from "../../styles";
 import { QuillToolbarButton } from "./QuillToolbarButton";
+import { QuillToolbarSeparator } from "./QuillToolbarSeparator";
 //import AdvancedWebView from 'react-native-advanced-webview';
 
 const EDITOR_VIEW = require("../../../web/dist/index.html");
@@ -66,7 +68,7 @@ export default class QuillEditor extends Component {
 	/**
 	 * Handle messages sent from the WebView
 	 *
-	 * @param 	string 	token 	The refresh token to use
+	 * @param 	event 	e
 	 * @return 	void
 	 */
 	onMessage(e) {
@@ -96,6 +98,12 @@ export default class QuillEditor extends Component {
 		}
 	}
 
+	/**
+	 * Sets buttons to active/inactive, depending on the state object received from webview
+	 *
+	 * @param 	object 	buttonStates 	Button state object recieved from quill webview
+	 * @return 	void
+	 */
 	setButtonState(buttonStates) {
 		const newState = {};
 
@@ -123,6 +131,13 @@ export default class QuillEditor extends Component {
 		);
 	}
 
+	/**
+	 * Event handler for basic formatting buttons
+	 *
+	 * @param 	string 	type 		The button type
+	 * @param 	string 	option 		The option for this button, if applicable
+	 * @return 	void
+	 */
 	toggleFormatting(type, option) {
 		const stateKey = option ? type + (option.charAt(0).toUpperCase() + option.slice(1)) : type;
 		const currentState = this.state.formatting[stateKey];
@@ -139,6 +154,13 @@ export default class QuillEditor extends Component {
 		});
 	}
 
+	/**
+	 * Send a message to WebView
+	 *
+	 * @param 	string 	message 	The message type to send
+	 * @param 	object 	data 		Any additional data to send with message
+	 * @return 	void
+	 */
 	sendMessage(message, data) {
 		if (!this.webview) {
 			console.error("Webview not ready");
@@ -154,17 +176,43 @@ export default class QuillEditor extends Component {
 		this.webview.postMessage(messageToSend, "*");
 	}
 
+	/**
+	 * Show the Insert Link modal
+	 *
+	 * @return 	void
+	 */
 	showLinkModal() {
-		this.setState({ 
-			linkModal: { 
+		this.setState({
+			linkModal: {
 				visible: true,
-				url: '',
-				text: ''
+				url: "",
+				text: ""
 			},
 			focused: false // Set editor focus to hide the toolbar
 		});
 	}
 
+	/**
+	 * Hide the Insert Link modal
+	 *
+	 * @return 	void
+	 */
+	hideLinkModal() {
+		this.setState({
+			linkModal: {
+				visible: false,
+				url: "",
+				text: ""
+			},
+			focused: true
+		});
+	}
+
+	/**
+	 * Event handler for submitting the Insert Link modal, to send the link to quill WebView
+	 *
+	 * @return 	void
+	 */
 	insertLink() {
 		this.setState({
 			linkModal: {
@@ -181,11 +229,35 @@ export default class QuillEditor extends Component {
 		console.log("Insert:", this.state.linkModal.url, this.state.linkModal.text);
 	}
 
+	/**
+	 * Event handler for image button; show the OS image picker
+	 *
+	 * @return 	void
+	 */
+	async showImagePicker() {
+		let result = await ImagePicker.launchImageLibraryAsync({
+			allowsEditing: true,
+			aspect: [4, 3]
+		});
+
+		if (result.cancelled) {
+			return;
+		}
+
+		console.log(result);
+	}
+
 	render() {
 		return (
 			<View style={{ flex: 1 }}>
-				<Modal style={modalStyles.modal} avoidKeyboard={true} animationIn="bounceIn" isVisible={this.state.linkModal.visible}>
-					<View style={[styles.modal, modalStyles.modalInner]}>
+				<Modal
+					style={modalStyles.modal}
+					avoidKeyboard={true}
+					animationIn="bounceIn"
+					isVisible={this.state.linkModal.visible}
+					onBackdropPress={() => this.hideLinkModal()}
+				>
+					<View style={[styles.modal, styles.modalHorizontalPadding, modalStyles.modalInner]}>
 						<View style={styles.modalHeader}>
 							<Text style={styles.modalTitle}>Insert Link</Text>
 						</View>
@@ -218,11 +290,13 @@ export default class QuillEditor extends Component {
 				{this.state.focused ? (
 					<View style={[toolbarStyles.toolbarOuter]}>
 						<View style={toolbarStyles.toolbarInner}>
+							<QuillToolbarButton icon={require("../../../resources/image.png")} onPress={() => this.showImagePicker()} />
 							<QuillToolbarButton
 								active={this.state.linkModal.visible}
 								icon={require("../../../resources/link.png")}
 								onPress={() => this.showLinkModal()}
 							/>
+							<QuillToolbarSeparator />
 							<QuillToolbarButton
 								active={this.state.formatting.bold}
 								icon={require("../../../resources/bold.png")}

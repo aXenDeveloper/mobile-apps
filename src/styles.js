@@ -53,11 +53,16 @@ const styles = StyleSheet.create({
 
 	field: {
 		backgroundColor: '#fff',
-		fontSize: 16,
 		paddingVertical: 15,
 		paddingHorizontal: 15,
 		borderBottomWidth: 1,
 		borderBottomColor: '#e5e5e5'
+	},
+	fieldText: {
+		fontSize: 16,
+	},
+	fieldTextPlaceholder: {
+		color: '#C7C7CD'
 	},
 	textInput: {
 		backgroundColor: '#fff',
@@ -72,12 +77,14 @@ const styles = StyleSheet.create({
 	/* Modal styles */
 	modal: {
 		backgroundColor: '#f3f3f3',
-		padding: 16,
 		borderRadius: 5
 	},
+	modalHorizontalPadding: {
+		paddingHorizontal: 16
+	},
 	modalHeader: {
-		marginTop: 9,
-		marginBottom: 25
+		marginTop: 16,
+		marginBottom: 16
 	},
 	modalTitle: {
 		textAlign: 'center',
