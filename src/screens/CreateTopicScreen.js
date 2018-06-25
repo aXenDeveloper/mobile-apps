@@ -102,7 +102,7 @@ class CreateTopicScreen extends Component {
 			<KeyboardAvoidingView style={{ flex: 1 }} enabled behavior="padding">
 				<TextInput style={[styles.field, styles.fieldText]} placeholder="Topic Title" onChangeText={text => this.setState({ title: text })} />
 				<TagEdit definedTags={this.props.navigation.state.params.definedTags || null} />
-				<QuillEditor placeholder="Topic Content" update={this.updateContentState.bind(this)} />
+				<QuillEditor placeholder="Post" update={this.updateContentState.bind(this)} />
 			</KeyboardAvoidingView>
 		);
 	}

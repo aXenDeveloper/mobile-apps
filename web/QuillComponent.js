@@ -25,21 +25,45 @@ class QuillComponent extends Component {
 	}
 
 	componentDidMount() {
-		// Set up Quill
-		this.setState(
-			{
-				quill: new Quill("#quill", {
-					bounds: "#container",
-					placeholder: "Content"
-				})
-			},
-			() => {
-				this.setUpEvents();
+		this.waitForReady();
+	}
+
+	waitForReady() {
+		// We want to allow the Native app to set the placeholder by injecting
+		// JS into this page. So we need to wait until it has indicated it is ready
+		// for our page to be initialized. If it's too slow, we'll just go anyway with a default.
+		let count = 0;
+
+		this._timer = setTimeout( () => {
+			if( window._readyToGo || count == 50 ){
+				this._setUpEditor();
+			} else {
+				count++;
+				waitForReady();
 			}
-		);
+		}, 10);
+	}
+
+	_setUpEditor() {
+		let placeholder = "Content";
+
+		if( window._PLACEHOLDER !== undefined ){
+			placeholder = window._PLACEHOLDER;
+		}
+
+		// Set up Quill
+		this.setState({
+			quill: new Quill("#quill", {
+				bounds: "#container",
+				placeholder
+			})
+		}, () => {
+			this.setUpEvents();
+		});
 	}
 
 	componentWillUnmount() {
+		clearTimeout( this._timer );
 		window.removeEventListener("message", this.onMessage);
 	}
 

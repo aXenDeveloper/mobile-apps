@@ -264,6 +264,12 @@ export default class QuillEditor extends Component {
 	}
 
 	render() {
+		const placeholder = this.props.placeholder ? `"${this.props.placeholder}"` : `null`;
+		const injectedJavaScript = `
+			window._PLACEHOLDER = ${placeholder};
+			window._readyToGo = true;
+		`;
+
 		return (
 			<View style={{ flex: 1 }}>
 				<Modal
@@ -297,7 +303,7 @@ export default class QuillEditor extends Component {
 					onMessage={this.onMessage.bind(this)}
 					ref={webview => (this.webview = webview)}
 					javaScriptEnabled={true}
-					//injectedJavaScript={patchPostMessageJsCode}
+					injectedJavaScript={injectedJavaScript}
 					mixedContentMode="always"
 					scalesPageToFit={false}
 					style={editorStyles.editor}
