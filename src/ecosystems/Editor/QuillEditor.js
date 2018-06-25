@@ -1,7 +1,7 @@
 import React, { Fragment, Component } from "react";
 import { View, TextInput, Text, KeyboardAvoidingView, Button, WebView, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
-import { ImagePicker } from "expo";
+import { ImagePicker, Permissions } from "expo";
 import _ from "lodash";
 import styles from "../../styles";
 import { QuillToolbarButton } from "./QuillToolbarButton";
@@ -59,7 +59,8 @@ export default class QuillEditor extends Component {
 				url: "",
 				text: ""
 			},
-			formatting: formattingState
+			formatting: formattingState,
+			content: ''
 		};
 	}
 
@@ -90,6 +91,15 @@ export default class QuillEditor extends Component {
 						});
 
 						this.setButtonState(messageData.formatState);
+						break;
+					case "CONTENT":
+						this.setState({
+							content: messageData.content
+						});
+
+						//if( typeof this.props.update == 'function' ){
+							this.props.update.call(null, messageData.content);
+						//}
 						break;
 				}
 			}
@@ -235,16 +245,22 @@ export default class QuillEditor extends Component {
 	 * @return 	void
 	 */
 	async showImagePicker() {
-		let result = await ImagePicker.launchImageLibraryAsync({
-			allowsEditing: true,
-			aspect: [4, 3]
-		});
+		const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
-		if (result.cancelled) {
-			return;
+		if( status === 'granted' ){
+			let result = await ImagePicker.launchImageLibraryAsync({
+				allowsEditing: true,
+				aspect: [4, 3]
+			});
+
+			console.log(result);
+
+			if (result.cancelled) {
+				return;
+			}
+		} else {
+			throw new Error("Permission not granted");
 		}
-
-		console.log(result);
 	}
 
 	render() {
@@ -350,7 +366,7 @@ const toolbarStyles = StyleSheet.create({
 		bottom: 0,
 		left: 0,
 		right: 0,
-		height: 108,
+		height: 125,
 		backgroundColor: "#ffffff",
 		borderTopWidth: 1,
 		borderTopColor: "#c7c7c7",

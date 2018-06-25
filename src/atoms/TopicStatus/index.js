@@ -18,18 +18,18 @@ export default class TopicStatus extends Component {
 			}
 		};
 
-		return <Text style={[this.props.style, styles.status, styles[this.props.type]]}>{lang[this.props.type]['icon']} {lang[this.props.type]['text'].toUpperCase()}</Text>
+		return <Text style={[this.props.style, styles.status, styles[this.props.type]]}>{lang[this.props.type]['icon']} {lang[this.props.type]['text']}</Text>
 	}
 }
 
 const styles = StyleSheet.create({
 	status: {
 		fontWeight: "500",
-		fontSize: 11
+		fontSize: 13
 	},
 	statusIcon: {
-		width: 12,
-		height: 12,
+		width: 10,
+		height: 6,
 		marginTop: 2
 	},
 	pinned: {

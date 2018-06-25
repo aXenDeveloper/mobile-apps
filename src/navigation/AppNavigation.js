@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { TabNavigator, StackNavigator, TabView, TabBarTop, NavigationActions } from "react-navigation";
+import { createBottomTabNavigator, createMaterialTopTabNavigator, createStackNavigator, TabView, TabBarTop, NavigationActions } from "react-navigation";
 import { Text, Image } from "react-native";
 import { connect } from "react-redux";
 import CustomHeader from "../ecosystems/CustomHeader";
@@ -17,12 +17,13 @@ import ProfileScreen from "../screens/ProfileScreen";
 import UserScreen from "../screens/UserScreen";
 import LoginScreen from "../screens/LoginScreen";
 import styles, { styleVars } from "../styles";
+import { LinearGradient } from "expo";
 
 class AppNavigation extends Component {
 	constructor(props) {
 		super(props);
 
-		this._ForumTabBar = TabNavigator(
+		this._ForumTabBar = createMaterialTopTabNavigator(
 			{
 				All: {
 					screen: ForumListScreen,
@@ -38,7 +39,7 @@ class AppNavigation extends Component {
 				}
 			},
 			{
-				tabBarPosition: "top",
+				swipeEnabled: false,
 				tabBarOptions: {
 					upperCaseLabel: true,
 					showIcon: false,
@@ -61,9 +62,9 @@ class AppNavigation extends Component {
 						justifyContent: "center"
 					},
 					tabStyle: {
-						padding: 0,
 						display: "flex",
-						justifyContent: "center"
+						justifyContent: "center",
+						backgroundColor: '#fff'
 					}
 				}
 			}
@@ -78,7 +79,7 @@ class AppNavigation extends Component {
 	}
 
 	_getMainStack(options, initialRoute) {
-		return StackNavigator(
+		return createStackNavigator(
 			{
 				ForumIndex: {
 					screen: this._ForumTabBar
@@ -92,6 +93,7 @@ class AppNavigation extends Component {
 				initialRouteName: initialRoute || 'ForumIndex',
 				cardStyle: styles.stackCardStyle,
 				navigationOptions: Object.assign({
+					title: 'Forums',
 					header: props => {
 						return <CustomHeader {...props} title="Forums" />;
 					},
@@ -111,24 +113,35 @@ class AppNavigation extends Component {
 	 * @return StackNavigator
 	 */
 	_getMasterNavigation() {
-		return StackNavigator(
+		return createStackNavigator(
 			{
 				Root: {
 					screen: this._getPrimaryTabBar(),
 					navigationOptions: {
-						header: false
+						header: null // Hide header because the tab navigator adds it
 					}
 				},
 				CreateTopic: {
-					screen: CreateTopicScreen
+					screen: CreateTopicScreen,
+					headerMode: 'float',
+					navigationOptions: {
+						title: "Create Topic",
+					}
 				},
 				ReplyTopic: {
-					screen: ReplyTopicScreen
+					screen: ReplyTopicScreen,
+					headerMode: 'screen',
+					navigationOptions: {
+						header: props => {
+							return <CustomHeader {...props} title="Reply" />;
+						}
+					}
 				},
 				LoginModal: {
 					screen: LoginScreen,
 					navigationOptions: {
-						header: null
+						header: null,
+						headerMode: 'none'
 					}
 				},
 				UserScreen: {
@@ -144,7 +157,18 @@ class AppNavigation extends Component {
 				}
 			},
 			{
-				mode: "modal"
+				mode: "modal",
+				navigationOptions: {
+					title: 'Forums',
+					header: props => {
+						return <CustomHeader {...props} title="Forums" />;
+					},
+					headerTitleStyle: styles.headerTitle,
+					headerStyle: styles.header,
+					headerBackTitleStyle: styles.headerBack,
+					headerTintColor: "white",
+					headerBackTitle: null
+				}
 			}
 		);
 	}
@@ -251,7 +275,7 @@ class AppNavigation extends Component {
 			};
 		}
 
-		return TabNavigator(tabConfig, {
+		return createBottomTabNavigator(tabConfig, {
 			lazy: true,
 			tabBarPosition: "bottom",
 			tabBarOptions: {

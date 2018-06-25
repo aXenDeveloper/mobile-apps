@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import LinkBlot from "quill/formats/link";
 
 const BROWSER = false;
-const DEBUG = true;
+const DEBUG = false;
 const MESSAGE_PREFIX = "__IPS__";
 
 const util = require("util");
@@ -53,43 +53,49 @@ class QuillComponent extends Component {
 		}
 
 		this.state.quill.on("selection-change", this.selectionChange.bind(this));
+		this.state.quill.on("text-change", this.textChange.bind(this));
 	}
 
 	selectionChange(range, oldRange, source) {
 		// If range is null, that means the editor is not focused.
 		if (range === null) {
 			this.sendMessage("EDITOR_BLUR");
-			return;
+		} else {
+			// Remember our range, so that we can insert content even if we lose focus
+			this.setState({
+				range: {
+					index: range.index,
+					length: range.length
+				}
+			});
+
+			const format = this.state.quill.getFormat(range);
+
+			// If we're inside a link, get the props
+			/*if( range.length === 0 && source === 'user' ){
+				if (format["link"]) {
+					//let [link, offset] = this.state.quill.scroll.descendant(LinkBlot, range.index);
+					let [link, offset] = this.state.quill.getLeaf(range.index);
+
+					//if( link != null ){
+						let preview = LinkBlot.formats(link.domNode);
+						this.addDebug("Link content: " + preview);
+					//}
+
+					this.addDebug("Within link");
+				}
+			}*/
+
+			// If editor is focused, get the formatting at range and send it over
+			this.sendMessage("FORMATTING", {
+				formatState: format
+			});
 		}
+	}
 
-		// Remember our range, so that we can insert content even if we lose focus
-		this.setState({
-			range: {
-				index: range.index,
-				length: range.length
-			}
-		});
-
-		const format = this.state.quill.getFormat(range);
-
-		// If we're inside a link, get the props
-		/*if( range.length === 0 && source === 'user' ){
-			if (format["link"]) {
-				//let [link, offset] = this.state.quill.scroll.descendant(LinkBlot, range.index);
-				let [link, offset] = this.state.quill.getLeaf(range.index);
-
-				//if( link != null ){
-					let preview = LinkBlot.formats(link.domNode);
-					this.addDebug("Link content: " + preview);
-				//}
-
-				this.addDebug("Within link");
-			}
-		}*/
-
-		// If editor is focused, get the formatting at range and send it over
-		this.sendMessage("FORMATTING", {
-			formatState: format
+	textChange() {
+		this.sendMessage("CONTENT", {
+			content: this.state.quill.container.querySelector('.ql-editor').innerHTML
 		});
 	}
 
@@ -117,11 +123,20 @@ class QuillComponent extends Component {
 					case "FOCUS":
 						this.state.quill.getSelection(true);
 						break;
+					case "GET_CONTENT":
+						this.getText(messageData);
+						break;
 				}
 			}
 		} catch (err) {
 			this.addDebug(err);
 		}
+	}
+
+	getText(data) {
+		this.setMessage("CONTENT", {
+			content: this.state.quill.container.querySelector('.ql-editor').innerHTML
+		});
 	}
 
 	insertLink(data) {

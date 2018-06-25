@@ -99,19 +99,25 @@ const styles = StyleSheet.create({
 		backgroundColor: '#ffffff',
 	},
 	readBackground: {
-		backgroundColor: '#f5f5f7'
+		backgroundColor: '#ffffff', //'#f5f5f7'
 	},
 	smallText: {
 		fontSize: 13
 	},
 	lightText: {
-		color: '#8F8F8F'
+		color: '#8e8e8e'
+	},
+	text: {
+		color: '#000'
+	},
+	textRead: {
+		color: '#8e8e8e'
 	},
 	title: {
 		color: '#000'
 	},
 	titleRead: {
-		color: '#505050'
+		color: '#8e8e8e'
 	},
 	hidden: {
 		display: 'none'

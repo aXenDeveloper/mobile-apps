@@ -15,7 +15,7 @@ export default class TopicRow extends Component {
 
 	render() {
 		return (
-			<ContentRow withSpace unread={this.props.data.unread} onPress={this.props.onPress}>
+			<ContentRow unread={this.props.data.unread} onPress={this.props.onPress}>
 				<View style={styles.topicRowInner}>
 					<View style={styles.topicIconContainer}>
 						{( this.props.data.locked ? 
@@ -26,7 +26,7 @@ export default class TopicRow extends Component {
 						<View style={styles.topicTitle}>
 							<Text style={[styles.topicTitleText, this.props.data.unread ? stylesheet.title : stylesheet.titleRead]} numberOfLines={1}>{this.props.data.title}</Text>
 						</View>
-						<Text style={styles.topicSnippet} numberOfLines={1}>
+						<Text style={[styles.topicSnippet, this.props.data.unread ? stylesheet.text : stylesheet.textRead]} numberOfLines={1}>
 							{this.props.data.snippet}
 						</Text>
 						<View style={styles.topicStatuses}>
@@ -44,7 +44,7 @@ export default class TopicRow extends Component {
 
 const styles = StyleSheet.create({
 	outerTopicRow: {
-		marginBottom: 4
+		//marginBottom: 4
 	},
 	topicRowInner: {
 		paddingLeft: 9,
@@ -84,7 +84,8 @@ const styles = StyleSheet.create({
 	},
 	topicSnippet: {
 		fontSize: 15,
-		color: '#555'
+		color: '#000',
+		marginBottom: 4
 	},
 	topicMeta: {
 		backgroundColor: '#FAFAFA',
@@ -101,10 +102,10 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
 		alignItems: 'center',
-		marginTop: 8
+		//marginTop: 8
 	},
 	topicStatusesText: {
-		fontSize: 12,
+		fontSize: 13,
 		color: '#8F8F8F',
 		marginRight: 10
 	}
