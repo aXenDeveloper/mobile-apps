@@ -9,6 +9,7 @@ import Pager from "../atoms/Pager";
 import PagerButton from "../atoms/PagerButton";
 import SectionHeader from "../ecosystems/SectionHeader";
 import TopicRow from "../ecosystems/TopicRow";
+import AddButton from "../atoms/AddButton";
 
 const TopicListQuery = gql`
 	query TopicListQuery($forum: ID!, $offset: Int, $limit: Int) {
@@ -89,17 +90,7 @@ class TopicListScreen extends Component {
 
 			return (
 				<View contentContainerStyle={{ flex: 1 }} style={{ flex: 1 }}>
-					{this.props.data.forums.forum.create.canCreate ? (
-						<Button title="New Topic" onPress={() => this.props.navigation.navigate("CreateTopic", {
-							tagsEnabled: this.props.data.forums.forum.create.tags.enabled,
-							definedTags: this.props.data.forums.forum.create.tags.definedTags,
-							tags_min: this.props.data.core.settings.tags_min,
-							tags_len_min: this.props.data.core.settings.tags_len_min,
-							tags_max: this.props.data.core.settings.tags_max,
-							tags_len_max: this.props.data.core.settings.tags_len_max
-						})} />
-					) : null}
-					<ScrollView style={{ flex: 1 }}>
+					<View style={{ flex: 1 }}>
 						<FlatList
 							style={{ flex: 1 }}
 							renderItem={({ item }) => (
@@ -119,9 +110,19 @@ class TopicListScreen extends Component {
 							)}
 							data={listData}
 							refreshing={this.props.data.networkStatus == 4}
-							onRefresh={() => console.log("refreshing!")}
+							onRefresh={() => this.props.data.refetch()}
 						/>
-					</ScrollView>
+						{this.props.data.forums.forum.create.canCreate ? (
+							<AddButton icon={require('../../resources/compose.png')} title='Add Topic' onPress={() => this.props.navigation.navigate("CreateTopic", {
+								tagsEnabled: this.props.data.forums.forum.create.tags.enabled,
+								definedTags: this.props.data.forums.forum.create.tags.definedTags,
+								tags_min: this.props.data.core.settings.tags_min,
+								tags_len_min: this.props.data.core.settings.tags_len_min,
+								tags_max: this.props.data.core.settings.tags_max,
+								tags_len_max: this.props.data.core.settings.tags_len_max
+							})} />
+						) : null}
+					</View>
 				</View>
 			);
 		}

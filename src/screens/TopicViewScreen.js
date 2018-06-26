@@ -80,7 +80,7 @@ class TopicViewScreen extends Component {
 
 			return (
 				<View style={{flex: 1}}>
-					<ScrollView style={{flex: 1, flexGrow: 1}}>
+					<View style={{flex: 1, flexGrow: 1}}>
 						{topicData.locked ? 
 							<Text>This topic is locked</Text>
 						: null}
@@ -95,8 +95,10 @@ class TopicViewScreen extends Component {
 							style={{flex: 1}}
 							renderItem={({item}) => <Post key={item.key} data={item.data} profileHandler={() => this.props.navigation.navigate('Profile', { id: item.data.author.id, name: item.data.author.name, photo: item.data.author.photo })} />} 
 							data={ listData }
+							refreshing={this.props.data.networkStatus == 4}
+							onRefresh={() => this.props.data.refetch()}
 						/>
-					</ScrollView>
+					</View>
 				</View>
 			);
 		}

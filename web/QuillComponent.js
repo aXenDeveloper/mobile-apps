@@ -25,6 +25,7 @@ class QuillComponent extends Component {
 	}
 
 	componentDidMount() {
+		this._count = 0;
 		this.waitForReady();
 	}
 
@@ -32,14 +33,12 @@ class QuillComponent extends Component {
 		// We want to allow the Native app to set the placeholder by injecting
 		// JS into this page. So we need to wait until it has indicated it is ready
 		// for our page to be initialized. If it's too slow, we'll just go anyway with a default.
-		let count = 0;
-
 		this._timer = setTimeout( () => {
-			if( window._readyToGo || count == 50 ){
+			if( window._readyToGo || this._count == 50 ){
 				this._setUpEditor();
 			} else {
-				count++;
-				waitForReady();
+				this._count++;
+				this.waitForReady();
 			}
 		}, 10);
 	}
