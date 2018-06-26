@@ -15,7 +15,7 @@ export default class TopicRow extends Component {
 
 	render() {
 		return (
-			<ContentRow unread={this.props.data.unread} onPress={this.props.onPress}>
+			<ContentRow withSpace unread={this.props.data.unread} onPress={this.props.onPress}>
 				<View style={styles.topicRowInner}>
 					<View style={styles.topicIconContainer}>
 						{( this.props.data.locked ? 

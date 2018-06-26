@@ -73,7 +73,7 @@ class CreateTopicScreen extends Component {
 		if( !this.state.title ){
 			Alert.alert(
 				'Title Required',
-				'You must enter a topic title',
+				'You must enter a topic title.',
 				[{ text: 'OK'}],
 				{ cancelable: false }
 			);
@@ -83,7 +83,7 @@ class CreateTopicScreen extends Component {
 		if( !this.state.content ){
 			Alert.alert(
 				'Post Required',
-				'You must enter a post',
+				'You must enter a post.',
 				[{ text: 'OK'}],
 				{ cancelable: false }
 			);
@@ -99,7 +99,6 @@ class CreateTopicScreen extends Component {
 			refetchQueries: ['TopicListQuery'],
 		});
 
-		console.log("here");
 		this.props.navigation.goBack();
 	}
 
@@ -110,8 +109,6 @@ class CreateTopicScreen extends Component {
 	}
 
 	render() {
-		console.log( this.props );
-
 		return (
 			<KeyboardAvoidingView style={{ flex: 1 }} enabled behavior="padding">
 				<TextInput style={[styles.field, styles.fieldText]} placeholder="Topic Title" onChangeText={text => this.setState({ title: text })} />

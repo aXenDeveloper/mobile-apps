@@ -44,6 +44,7 @@ class AppNavigation extends Component {
 					upperCaseLabel: true,
 					showIcon: false,
 					activeTintColor: "#2080A7",
+					inactiveTintColor: "#888",
 					iconStyle: {
 						height: 0,
 						width: 0,
@@ -56,15 +57,19 @@ class AppNavigation extends Component {
 						margin: 0
 					},
 					style: {
-						padding: 0,
+						padding: 6,
 						margin: 0,
 						display: "flex",
-						justifyContent: "center"
+						justifyContent: "center",
+						backgroundColor: '#fff'
 					},
 					tabStyle: {
 						display: "flex",
 						justifyContent: "center",
 						backgroundColor: '#fff'
+					},
+					indicatorStyle: {
+						backgroundColor: '#2080A7'
 					}
 				}
 			}
