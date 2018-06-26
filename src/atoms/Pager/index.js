@@ -18,9 +18,12 @@ export default class Pager extends Component {
 
 const styles = StyleSheet.create({
 	pager: {
-		backgroundColor: '#3370AA',
-		height: 55,
-		minHeight: 55,
-		padding: 10
+		backgroundColor: '#37454B',
+		height: 45,
+		minHeight: 45,
+		padding: 10,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center'
 	}
 });

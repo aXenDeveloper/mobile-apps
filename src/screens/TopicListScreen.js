@@ -113,14 +113,17 @@ class TopicListScreen extends Component {
 							onRefresh={() => this.props.data.refetch()}
 						/>
 						{this.props.data.forums.forum.create.canCreate ? (
-							<AddButton icon={require('../../resources/compose.png')} title='Add Topic' onPress={() => this.props.navigation.navigate("CreateTopic", {
-								tagsEnabled: this.props.data.forums.forum.create.tags.enabled,
-								definedTags: this.props.data.forums.forum.create.tags.definedTags,
-								tags_min: this.props.data.core.settings.tags_min,
-								tags_len_min: this.props.data.core.settings.tags_len_min,
-								tags_max: this.props.data.core.settings.tags_max,
-								tags_len_max: this.props.data.core.settings.tags_len_max
-							})} />
+							<Pager>
+								<AddButton icon={require('../../resources/compose.png')} title='Create New Topic' onPress={() => this.props.navigation.navigate("CreateTopic", {
+									forumID: this.props.navigation.state.params.id,
+									tagsEnabled: this.props.data.forums.forum.create.tags.enabled,
+									definedTags: this.props.data.forums.forum.create.tags.definedTags,
+									tags_min: this.props.data.core.settings.tags_min,
+									tags_len_min: this.props.data.core.settings.tags_len_min,
+									tags_max: this.props.data.core.settings.tags_max,
+									tags_len_max: this.props.data.core.settings.tags_len_max
+								})} />
+							</Pager>
 						) : null}
 					</View>
 				</View>

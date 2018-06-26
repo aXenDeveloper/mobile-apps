@@ -8,17 +8,17 @@ export default class TopicIcon extends Component {
 
 	render() {
 		if( this.props.unread ){
-			return <Image style={[this.props.style, styles.topicIcon, styles.activeIcon]} resizeMode='stretch' source={require('../../../resources/topic_unread.png')} />;
+			return <Image style={[this.props.style, styles.topicIcon, styles.activeIcon]} resizeMode='contain' source={require('../../../resources/topic_unread.png')} />;
 		} else {
-			return <Image style={[this.props.style, styles.topicIcon, styles.inactiveIcon]} resizeMode='stretch' source={require('../../../resources/topic_read.png')} />;
+			return <Image style={[this.props.style, styles.topicIcon, styles.inactiveIcon]} resizeMode='contain' source={require('../../../resources/topic_read.png')} />;
 		}
 	}
 }
 
 const styles = StyleSheet.create({
 	topicIcon: {
-		width: 12,
-		height: 12,
+		width: 11,
+		height: 11
 	},
 	activeIcon: {
 		tintColor: '#2080A7'

@@ -8,7 +8,9 @@ const stylesheet = StyleSheet.create({
 		marginBottom: 1
 	},
 	outerContentRowWithSpace: {
-		marginBottom: 4
+		marginBottom: 5,
+		borderBottomWidth: 1,
+		borderBottomColor: 'rgba(0,0,0,0.05)'
 	}
 });
 

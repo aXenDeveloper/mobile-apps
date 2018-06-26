@@ -137,9 +137,7 @@ class AppNavigation extends Component {
 					screen: ReplyTopicScreen,
 					headerMode: 'screen',
 					navigationOptions: {
-						header: props => {
-							return <CustomHeader {...props} title="Reply" />;
-						}
+						title: "Reply"
 					}
 				},
 				LoginModal: {

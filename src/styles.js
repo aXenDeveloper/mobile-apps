@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
 });
 
 export const styleVars = {
-	tabActive: '#1f82a7',
+	tabActive: '#37454B',
 	tabInactive: '#6e797e',
 	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`	
 };

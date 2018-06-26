@@ -18,7 +18,7 @@ export default class TopicStatus extends Component {
 			}
 		};
 
-		return <Text style={[this.props.style, styles.status, styles[this.props.type]]}>{lang[this.props.type]['icon']} {lang[this.props.type]['text']}</Text>
+		return <Text style={[this.props.style, styles.status, styles[this.props.type]]}>{lang[this.props.type]['icon']}{!this.props.noLabel ? lang[this.props.type]['text'] : null}</Text>
 	}
 }
 

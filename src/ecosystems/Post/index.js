@@ -68,7 +68,7 @@ export default class Post extends Component {
 						}
 					</View>
 					<PostControls>
-						<PostControl>Quote</PostControl>
+						{this.props.data.canReply ? <PostControl onPress={this.props.onPressReply}>Quote</PostControl> : null}
 						<PostControl>Like</PostControl>
 					</PostControls>
 					<ActionSheet 

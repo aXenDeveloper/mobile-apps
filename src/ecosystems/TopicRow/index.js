@@ -17,25 +17,23 @@ export default class TopicRow extends Component {
 		return (
 			<ContentRow withSpace unread={this.props.data.unread} onPress={this.props.onPress}>
 				<View style={styles.topicRowInner}>
-					<View style={styles.topicIconContainer}>
-						{( this.props.data.locked ? 
-							<LockedIcon style={styles.lockedIcon} />
-							: <TopicIcon style={styles.topicIcon} unread={this.props.data.unread} /> )}
-					</View>
 					<View style={styles.topicInfo}>
 						<View style={styles.topicTitle}>
-							<Text style={[styles.topicTitleText, this.props.data.unread ? stylesheet.title : stylesheet.titleRead]} numberOfLines={1}>{this.props.data.title}</Text>
+							{this.props.data.unread ? <TopicIcon style={styles.topicIcon} unread={this.props.data.unread} /> : null}
+							<Text style={[styles.topicTitleText, this.props.data.unread ? stylesheet.title : stylesheet.titleRead]} numberOfLines={1}>
+								{this.props.data.title}
+							</Text>
 						</View>
 						<Text style={[styles.topicSnippet, this.props.data.unread ? stylesheet.text : stylesheet.textRead]} numberOfLines={1}>
 							{this.props.data.snippet}
 						</Text>
-						<View style={styles.topicStatuses}>
-							{this.props.data.hot ? <TopicStatus style={styles.topicStatusesText} type="hot" /> : null}
-							{this.props.data.pinned ? <TopicStatus style={styles.topicStatusesText} type="pinned" /> : null}
-							<Text style={[styles.topicStatusesText, styles.topicMetaText]}>{this.props.data.replies} replies</Text>
-						</View>
 					</View>
-					<LastPostInfo style={styles.lastPost} photo={this.props.data.lastPostPhoto} timestamp={this.props.data.lastPostDate} />
+					<LastPostInfo style={styles.lastPost} photo={this.props.data.lastPostPhoto} photoSize={30} timestamp={this.props.data.lastPostDate} />
+				</View>
+				<View style={styles.topicStatuses}>
+					{this.props.data.hot ? <TopicStatus style={styles.topicStatusesText} type="hot" /> : null}
+					{this.props.data.pinned ? <TopicStatus style={styles.topicStatusesText} type="pinned" /> : null}
+					<Text style={[styles.topicStatusesText, styles.topicMetaText]}>{this.props.data.replies} replies</Text>
 				</View>
 			</ContentRow>
 		);
@@ -47,24 +45,21 @@ const styles = StyleSheet.create({
 		//marginBottom: 4
 	},
 	topicRowInner: {
-		paddingLeft: 9,
+		paddingLeft: 15,
 		paddingRight: 16,
-		paddingVertical: 12,
+		paddingVertical: 10,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignContent: 'stretch'
 	},
 	topicInfo: {
 		flex: 1,
-		paddingRight: 30
-	},
-	topicIconContainer: {
-		marginRight: 9,
-		marginTop: 2,
-		alignItems: 'flex-start',
+		paddingTop: 4,
+		paddingRight: 20
 	},
 	topicIcon: {
-		marginTop: 3,
+		marginTop: 5,
+		marginRight: 4,
 		alignSelf: 'flex-start',
 	},
 	lockedIcon: {
@@ -87,11 +82,6 @@ const styles = StyleSheet.create({
 		color: '#000',
 		marginBottom: 4
 	},
-	topicMeta: {
-		backgroundColor: '#FAFAFA',
-		paddingVertical: 13,
-		paddingHorizontal: 16
-	},
 	topicMetaText: {
 		
 	},
@@ -102,7 +92,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
 		alignItems: 'center',
-		//marginTop: 8
+		backgroundColor: '#FAFAFA',
+		height: 32,
+		paddingHorizontal: 15
 	},
 	topicStatusesText: {
 		fontSize: 13,

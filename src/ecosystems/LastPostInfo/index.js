@@ -12,7 +12,7 @@ export default class LastPostInfo extends Component {
 		if( this.props.photo && this.props.timestamp ){
 			return (
 				<View style={this.props.style}>
-					<UserPhoto url={this.props.photo} />
+					<UserPhoto url={this.props.photo} size={this.props.photoSize} />
 					<Text style={styles.timestamp}>{relativeTime.short(this.props.timestamp)}</Text>
 				</View>
 			);
