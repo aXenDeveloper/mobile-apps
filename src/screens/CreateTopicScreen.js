@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Text, Alert, Button, TextInput, View, KeyboardAvoidingView } from "react-native";
+import { StackActions } from 'react-navigation';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import CustomHeader from "../ecosystems/CustomHeader";
@@ -8,9 +9,9 @@ import { QuillEditor } from "../ecosystems/Editor";
 import styles from "../styles";
 
 const CreateTopicMutation = gql`
-	mutation CreateTopicMutation($forumID: ID!, $title: String!, $post: String!) {
-		forumsMutations {
-			createTopic(forumID: $forumID, title: $title, post: $post) {
+	mutation CreateTopicMutation($forumID: ID!, $title: String!, $content: String!) {
+		mutateForums {
+			createTopic(forumID: $forumID, title: $title, content: $content) {
 				id
 				url
 				tags {
@@ -68,25 +69,38 @@ class CreateTopicScreen extends Component {
 		});
 	}
 
-	submitTopic() {
+	async submitTopic() {
 		if( !this.state.title ){
-			// No title
+			Alert.alert(
+				'Title Required',
+				'You must enter a topic title',
+				[{ text: 'OK'}],
+				{ cancelable: false }
+			);
+			return;
 		}
 
-		Alert.alert(
-			this.state.title,
-			this.state.content,
-			[
-				{text: 'OK', onPress: () => console.log('OK Pressed')},
-			],
-			{ cancelable: false }
-		);
+		if( !this.state.content ){
+			Alert.alert(
+				'Post Required',
+				'You must enter a post',
+				[{ text: 'OK'}],
+				{ cancelable: false }
+			);
+			return;
+		}
 
-		/*this.props.mutate({
-			forumID: 1,
-			title: this.state.title,
-			post: "This is a post, I'll figure out the details later..."
-		});*/
+		await this.props.mutate({
+			variables: {
+				forumID: 2,
+				title: this.state.title,
+				content: this.state.content
+			}, 
+			refetchQueries: ['TopicListQuery'],
+		});
+
+		console.log("here");
+		this.props.navigation.goBack();
 	}
 
 	updateContentState(content) {
