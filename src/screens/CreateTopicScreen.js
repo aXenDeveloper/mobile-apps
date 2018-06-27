@@ -7,10 +7,8 @@ import {
 	View,
 	KeyboardAvoidingView
 } from "react-native";
-import { StackActions } from "react-navigation";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
-import CustomHeader from "../ecosystems/CustomHeader";
 import TagEdit from "../ecosystems/TagEdit";
 import { QuillEditor } from "../ecosystems/Editor";
 import styles from "../styles";
@@ -78,6 +76,12 @@ class CreateTopicScreen extends Component {
 		};
 	};
 
+	/**
+	 * Constructor
+	 *
+	 * @param 	object 	props
+	 * @return 	void
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -86,6 +90,9 @@ class CreateTopicScreen extends Component {
 		};
 	}
 
+	/**
+	 * Mount
+	 */
 	componentDidMount() {
 		this.props.navigation.setParams({
 			submitTopic: this.submitTopic.bind(this),
@@ -93,6 +100,11 @@ class CreateTopicScreen extends Component {
 		});
 	}
 
+	/**
+	 * Event handler for clicking the Cancel button in the modal
+	 *
+	 * @return 	void
+	 */
 	cancelTopic() {
 		if (this.state.title || this.state.content) {
 			Alert.alert(
@@ -113,9 +125,16 @@ class CreateTopicScreen extends Component {
 				],
 				{ cancelable: false }
 			);
+		} else {
+			this.props.navigation.goBack();
 		}
 	}
 
+	/**
+	 * Event handler for lcicking the Post button in the modal
+	 *
+	 * @return 	void
+	 */
 	async submitTopic() {
 		if (!this.state.title) {
 			Alert.alert(
@@ -158,12 +177,21 @@ class CreateTopicScreen extends Component {
 		}
 	}
 
+	/**
+	 * Event handler passed into our Editor, allowing us to modify the state with the given content
+	 *
+	 * @param 	string 	content 	The editor content
+	 * @return 	void
+	 */
 	updateContentState(content) {
 		this.setState({
 			content
 		});
 	}
 
+	/**
+	 * Render
+	 */
 	render() {
 		return (
 			<KeyboardAvoidingView

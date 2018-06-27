@@ -58,6 +58,7 @@ class QuillComponent extends Component {
 			})
 		}, () => {
 			this.setUpEvents();
+			this.sendMessage("READY");
 		});
 	}
 

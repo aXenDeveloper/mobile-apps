@@ -12,17 +12,6 @@ const EDITOR_VIEW = require("../../../web/dist/index.html");
 const MESSAGE_PREFIX = Expo.Constants.manifest.extra.message_prefix;
 const util = require("util");
 
-/*const patchPostMessageJsCode = `(${String(function() {
-	var originalPostMessage = window.postMessage;
-	var patchedPostMessage = function(message, targetOrigin, transfer) {
-		originalPostMessage(message, targetOrigin, transfer);
-	};
-	patchedPostMessage.toString = function() {
-		return String(Object.hasOwnProperty).replace("hasOwnProperty", "postMessage");
-	};
-	window.postMessage = patchedPostMessage;
-})})();`;*/
-
 const formattingOptions = {
 	bold: true,
 	italic: true,
@@ -62,9 +51,35 @@ export default class QuillEditor extends Component {
 			formatting: formattingState,
 			content: ''
 		};
+
+		// Optionally set a height on the webview
+		// We need this if we're showing the editor in a scrollview, 
+		// which doesn't support flex elements
+		this.inlineStyles = {};
+		if( props.height ){
+			this.inlineStyles = {
+				height: props.height
+			};
+		}
 	}
 
 	componentDidMount() {}
+
+	/**
+	 * Component update
+	 *
+	 * @param 	prevProps
+	 * @param 	prevState
+	 * @return 	void
+	 */
+	componentDidUpdate(prevProps, prevState) {
+		// If we're now focused, but were not before, call the callback
+		if( !prevState.focused && this.state.focused ){
+			if( this.props.onFocus ){
+				this.props.onFocus.call(null, this.measurer);
+			}
+		}
+	}
 
 	/**
 	 * Handle messages sent from the WebView
@@ -75,38 +90,64 @@ export default class QuillEditor extends Component {
 	onMessage(e) {
 		try {
 			const messageData = JSON.parse(e.nativeEvent.data);
+			const supported = [
+				'READY', 
+				'EDITOR_BLUR', 
+				'FORMATTING', 
+				'CONTENT'
+			];
 
 			if (messageData.hasOwnProperty("message") && messageData.message.startsWith(MESSAGE_PREFIX)) {
 				const messageType = messageData.message.replace(MESSAGE_PREFIX, "");
 
-				switch (messageType) {
-					case "EDITOR_BLUR":
-						this.setState({
-							focused: false
-						});
-						break;
-					case "FORMATTING":
-						this.setState({
-							focused: true
-						});
-
-						this.setButtonState(messageData.formatState);
-						break;
-					case "CONTENT":
-						this.setState({
-							content: messageData.content
-						});
-
-						//if( typeof this.props.update == 'function' ){
-							this.props.update.call(null, messageData.content);
-						//}
-						break;
+				if( supported.indexOf(messageType) !== -1 && this[messageType] ){
+					this[messageType].call(this, messageData);
 				}
 			}
 		} catch (err) {
 			console.error(err);
 		}
 	}
+
+	/**
+	 * ========================================================================
+	 * MESSAGE HANDLERS
+	 * ========================================================================
+	 */
+	READY() {
+		/*if( this.props.autoFocus ){
+			setTimeout( () => {
+				this.sendMessage("FOCUS");
+			}, 500 );
+		}*/
+	}
+
+	EDITOR_BLUR() {
+		this.setState({
+			focused: false
+		});
+	}
+
+	FORMATTING(messageData) {
+		this.setState({
+			focused: true
+		});
+
+		this.setButtonState(messageData.formatState);
+	}
+
+	CONTENT(messageData){
+		this.setState({
+			content: messageData.content
+		});
+
+		this.props.update.call(null, messageData.content);
+	}
+	/**
+	 * ========================================================================
+	 * END MESSAGE HANDLERS
+	 * ========================================================================
+	 */
 
 	/**
 	 * Sets buttons to active/inactive, depending on the state object received from webview
@@ -136,8 +177,7 @@ export default class QuillEditor extends Component {
 					...this.state.formatting,
 					...newState
 				}
-			},
-			() => console.log(this.state)
+			}
 		);
 	}
 
@@ -298,6 +338,7 @@ export default class QuillEditor extends Component {
 						<Button title="Insert link" onPress={() => this.insertLink()} />
 					</View>
 				</Modal>
+				<View ref={measurer => (this.measurer = measurer)} style={{height: 1, backgroundColor: '#fff'}}></View>
 				<WebView
 					source={EDITOR_VIEW}
 					onMessage={this.onMessage.bind(this)}
@@ -306,7 +347,7 @@ export default class QuillEditor extends Component {
 					injectedJavaScript={injectedJavaScript}
 					mixedContentMode="always"
 					scalesPageToFit={false}
-					style={editorStyles.editor}
+					style={[editorStyles.editor, this.inlineStyles]}
 					hideAccessory={true}
 				/>
 				{this.state.focused ? (

@@ -120,7 +120,10 @@ class TopicViewScreen extends Component {
 									}
 									onPressReply={() =>
 										this.props.navigation.navigate(
-											"ReplyTopic"
+											"ReplyTopic",
+											{
+												quotedPost: item.data
+											}
 										)
 									}
 								/>
