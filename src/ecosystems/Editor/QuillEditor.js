@@ -2,10 +2,11 @@ import React, { Fragment, Component } from "react";
 import { View, TextInput, Text, KeyboardAvoidingView, Button, WebView, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
 import { ImagePicker, Permissions } from "expo";
+import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 import _ from "lodash";
+import { connect } from "react-redux";
+import { setFocus, setFormatting, resetEditor, resetImagePicker } from "../../redux/actions/editor";
 import styles from "../../styles";
-import { QuillToolbarButton } from "./QuillToolbarButton";
-import { QuillToolbarSeparator } from "./QuillToolbarSeparator";
 //import AdvancedWebView from 'react-native-advanced-webview';
 
 const EDITOR_VIEW = require("../../../web/dist/index.html");
@@ -20,7 +21,7 @@ const formattingOptions = {
 	link: true
 };
 
-export default class QuillEditor extends Component {
+class QuillEditor extends Component {
 	constructor(props) {
 		super(props);
 		this.webview = null;
@@ -42,28 +43,29 @@ export default class QuillEditor extends Component {
 		this.state = {
 			debug: [],
 			loading: true,
-			focused: false,
 			linkModal: {
 				visible: false,
 				url: "",
 				text: ""
 			},
 			formatting: formattingState,
-			content: ''
+			content: ""
 		};
 
 		// Optionally set a height on the webview
-		// We need this if we're showing the editor in a scrollview, 
+		// We need this if we're showing the editor in a scrollview,
 		// which doesn't support flex elements
 		this.inlineStyles = {};
-		if( props.height ){
+		if (props.height) {
 			this.inlineStyles = {
 				height: props.height
 			};
 		}
 	}
 
-	componentDidMount() {}
+	componentDidMount() {
+		this.props.dispatch(resetEditor());
+	}
 
 	/**
 	 * Component update
@@ -74,10 +76,49 @@ export default class QuillEditor extends Component {
 	 */
 	componentDidUpdate(prevProps, prevState) {
 		// If we're now focused, but were not before, call the callback
-		if( !prevState.focused && this.state.focused ){
-			if( this.props.onFocus ){
+		if (!prevProps.editor.focused && this.props.editor.focused) {
+			if (this.props.onFocus) {
 				this.props.onFocus.call(null, this.measurer);
 			}
+		}
+
+		// Are we opening the link modal?
+		if( !prevProps.editor.linkModalActive && this.props.editor.linkModalActive ){
+			this.showLinkModal();
+		}
+
+		// Are we opening the image picker?
+		if( !prevProps.editor.imagePickerOpened && this.props.editor.imagePickerOpened ){
+			this.showImagePicker();
+			this.props.dispatch(resetImagePicker());
+		}
+
+		// If any of our formatting options have changed, send a SET_FORMAT command to the WebView
+		if (!_.isMatch(prevProps.editor.formatting, this.props.editor.formatting)) {
+			Object.entries(this.props.editor.formatting).forEach(pair => {
+				if (_.isObject(pair[1])) {
+
+					// If this is a button with options, then loop through and find the option that
+					// is currently active. If none are active, we'll send false to Quill.
+					let activeOption = _.find( Object.keys(this.props.editor.formatting[pair[0]]), (val) => {
+						return this.props.editor.formatting[pair[0]][val] === true;
+					});
+
+					this.sendMessage("SET_FORMAT", {
+						type: pair[0],
+						option: activeOption || false
+					});
+				} else {
+
+					// If this is a simple boolean button, send it
+					if (prevProps.editor.formatting[pair[0]] !== this.props.editor.formatting[pair[0]]) {
+						this.sendMessage("SET_FORMAT", {
+							type: pair[0],
+							option: pair[1]
+						});
+					}
+				}
+			});
 		}
 	}
 
@@ -90,17 +131,12 @@ export default class QuillEditor extends Component {
 	onMessage(e) {
 		try {
 			const messageData = JSON.parse(e.nativeEvent.data);
-			const supported = [
-				'READY', 
-				'EDITOR_BLUR', 
-				'FORMATTING', 
-				'CONTENT'
-			];
+			const supported = ["DEBUG", "READY", "EDITOR_BLUR", "FORMATTING", "CONTENT"];
 
 			if (messageData.hasOwnProperty("message") && messageData.message.startsWith(MESSAGE_PREFIX)) {
 				const messageType = messageData.message.replace(MESSAGE_PREFIX, "");
 
-				if( supported.indexOf(messageType) !== -1 && this[messageType] ){
+				if (supported.indexOf(messageType) !== -1 && this[messageType]) {
 					this[messageType].call(this, messageData);
 				}
 			}
@@ -123,26 +159,56 @@ export default class QuillEditor extends Component {
 	}
 
 	EDITOR_BLUR() {
-		this.setState({
-			focused: false
-		});
+		this.props.dispatch(
+			setFocus({
+				focused: false
+			})
+		);
 	}
 
 	FORMATTING(messageData) {
-		this.setState({
-			focused: true
+		// Set editor focus
+		this.props.dispatch(
+			setFocus({
+				focused: true
+			})
+		);
+
+		// Update current selection formatting
+		const formatState = messageData.formatState;
+		const newFormatting = {};
+
+		console.log('FORMAT STATE:');
+		console.log(formatState);
+
+		Object.entries(this.props.editor.formatting).forEach(pair => {
+			if (_.isBoolean(pair[1])) {
+				// Normal boolean button - if it's in the object received from quill, that formatting is currently applied
+				newFormatting[pair[0]] = !_.isUndefined(formatState[pair[0]]);
+			} else {
+				// Buttons with options. If the button type is in the object received, set the current option to true
+				newFormatting[pair[0]] = {};
+				Object.entries(pair[1]).forEach(subPair => {
+					newFormatting[pair[0]][subPair[0]] = !_.isUndefined(formatState[pair[0]]) && formatState[pair[0]] == subPair[0];
+				});
+			}
 		});
 
-		this.setButtonState(messageData.formatState);
+		this.props.dispatch(setFormatting(newFormatting));
 	}
 
-	CONTENT(messageData){
+	CONTENT(messageData) {
 		this.setState({
 			content: messageData.content
 		});
 
 		this.props.update.call(null, messageData.content);
 	}
+
+	DEBUG(messageData) {
+		console.log(`WEBVIEW DEBUG: ${messageData.debugMessage}`);
+	}
+
 	/**
 	 * ========================================================================
 	 * END MESSAGE HANDLERS
@@ -171,14 +237,12 @@ export default class QuillEditor extends Component {
 			}
 		});
 
-		this.setState(
-			{
-				formatting: {
-					...this.state.formatting,
-					...newState
-				}
+		this.setState({
+			formatting: {
+				...this.state.formatting,
+				...newState
 			}
-		);
+		});
 	}
 
 	/**
@@ -237,9 +301,14 @@ export default class QuillEditor extends Component {
 				visible: true,
 				url: "",
 				text: ""
-			},
-			focused: false // Set editor focus to hide the toolbar
+			}
 		});
+
+		this.props.dispatch(
+			setFocus({
+				focused: false
+			})
+		);
 	}
 
 	/**
@@ -253,9 +322,14 @@ export default class QuillEditor extends Component {
 				visible: false,
 				url: "",
 				text: ""
-			},
-			focused: true
+			}
 		});
+
+		this.props.dispatch(
+			setFocus({
+				focused: true
+			})
+		);
 	}
 
 	/**
@@ -287,7 +361,7 @@ export default class QuillEditor extends Component {
 	async showImagePicker() {
 		const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
-		if( status === 'granted' ){
+		if (status === "granted") {
 			let result = await ImagePicker.launchImageLibraryAsync({
 				allowsEditing: true,
 				aspect: [4, 3]
@@ -324,13 +398,21 @@ export default class QuillEditor extends Component {
 							<Text style={styles.modalTitle}>Insert Link</Text>
 						</View>
 						<TextInput
-							onChangeText={url => this.setState({ linkModal: { ...this.state.linkModal, url } })}
+							onChangeText={url =>
+								this.setState({
+									linkModal: { ...this.state.linkModal, url }
+								})
+							}
 							value={this.state.linkModal.url}
 							style={styles.textInput}
 							placeholder="Link URL"
 						/>
 						<TextInput
-							onChangeText={text => this.setState({ linkModal: { ...this.state.linkModal, text } })}
+							onChangeText={text =>
+								this.setState({
+									linkModal: { ...this.state.linkModal, text }
+								})
+							}
 							value={this.state.linkModal.text}
 							style={styles.textInput}
 							placeholder="Link text"
@@ -338,7 +420,7 @@ export default class QuillEditor extends Component {
 						<Button title="Insert link" onPress={() => this.insertLink()} />
 					</View>
 				</Modal>
-				<View ref={measurer => (this.measurer = measurer)} style={{height: 1, backgroundColor: '#fff'}}></View>
+				<View ref={measurer => (this.measurer = measurer)} style={{ height: 1, backgroundColor: "#fff" }} />
 				<WebView
 					source={EDITOR_VIEW}
 					onMessage={this.onMessage.bind(this)}
@@ -350,48 +432,14 @@ export default class QuillEditor extends Component {
 					style={[editorStyles.editor, this.inlineStyles]}
 					hideAccessory={true}
 				/>
-				{this.state.focused ? (
-					<View style={[toolbarStyles.toolbarOuter]}>
-						<View style={toolbarStyles.toolbarInner}>
-							<QuillToolbarButton icon={require("../../../resources/image.png")} onPress={() => this.showImagePicker()} />
-							<QuillToolbarButton
-								active={this.state.linkModal.visible}
-								icon={require("../../../resources/link.png")}
-								onPress={() => this.showLinkModal()}
-							/>
-							<QuillToolbarSeparator />
-							<QuillToolbarButton
-								active={this.state.formatting.bold}
-								icon={require("../../../resources/bold.png")}
-								onPress={() => this.toggleFormatting("bold")}
-							/>
-							<QuillToolbarButton
-								active={this.state.formatting.italic}
-								icon={require("../../../resources/italic.png")}
-								onPress={() => this.toggleFormatting("italic")}
-							/>
-							<QuillToolbarButton
-								active={this.state.formatting.underline}
-								icon={require("../../../resources/underline.png")}
-								onPress={() => this.toggleFormatting("underline")}
-							/>
-							<QuillToolbarButton
-								active={this.state.formatting.listBullet}
-								icon={require("../../../resources/list_unordered.png")}
-								onPress={() => this.toggleFormatting("list", "bullet")}
-							/>
-							<QuillToolbarButton
-								active={this.state.formatting.listOrdered}
-								icon={require("../../../resources/list_ordered.png")}
-								onPress={() => this.toggleFormatting("list", "ordered")}
-							/>
-						</View>
-					</View>
-				) : null}
 			</View>
 		);
 	}
 }
+
+export default connect(state => ({
+	editor: state.editor
+}))(QuillEditor);
 
 const modalStyles = StyleSheet.create({
 	modal: {
@@ -404,27 +452,5 @@ const editorStyles = StyleSheet.create({
 	editor: {
 		flex: 1,
 		borderBottomWidth: 0
-	}
-});
-
-const toolbarStyles = StyleSheet.create({
-	toolbarOuter: {
-		position: "absolute",
-		bottom: 0,
-		left: 0,
-		right: 0,
-		height: 125,
-		backgroundColor: "#ffffff",
-		borderTopWidth: 1,
-		borderTopColor: "#c7c7c7",
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "flex-start"
-	},
-	toolbarInner: {
-		height: 44,
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center"
 	}
 });

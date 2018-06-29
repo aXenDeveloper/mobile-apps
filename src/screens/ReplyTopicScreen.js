@@ -1,17 +1,9 @@
 import React, { Component } from "react";
-import {
-	Text,
-	Alert,
-	Button,
-	TextInput,
-	View,
-	ScrollView,
-	StyleSheet,
-	KeyboardAvoidingView
-} from "react-native";
+import { Text, Alert, Button, TextInput, View, ScrollView, StyleSheet, KeyboardAvoidingView } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
-import { QuillEditor } from "../ecosystems/Editor";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { QuillEditor, QuillToolbar } from "../ecosystems/Editor";
 import RichTextContent from "../atoms/RichTextContent";
 import UserPhoto from "../atoms/UserPhoto";
 import relativeTime from "../utils/RelativeTime";
@@ -23,18 +15,12 @@ export default class ReplyTopicScreen extends Component {
 			title: "Reply To Topic",
 			headerTintColor: "white",
 			headerLeft: (
-				<Text
-					style={{ color: "#fff" }}
-					onPress={navigation.getParam("cancelTopic")}
-				>
+				<Text style={{ color: "#fff" }} onPress={navigation.getParam("cancelTopic")}>
 					Cancel
 				</Text>
 			),
 			headerRight: (
-				<Text
-					style={{ color: "#fff" }}
-					onPress={navigation.getParam("submitTopic")}
-				>
+				<Text style={{ color: "#fff" }} onPress={navigation.getParam("submitTopic")}>
 					Post
 				</Text>
 			)
@@ -76,9 +62,7 @@ export default class ReplyTopicScreen extends Component {
 				<View style={componentStyles.postInfo}>
 					<UserPhoto url={quotedPost.author.photo} size={36} />
 					<View style={componentStyles.postContent}>
-						<Text style={componentStyles.quotingTitle}>
-							Quoting {quotedPost.author.name}
-						</Text>
+						<Text style={componentStyles.quotingTitle}>Quoting {quotedPost.author.name}</Text>
 						<RichTextContent>{quotedPost.content}</RichTextContent>
 					</View>
 				</View>
@@ -86,40 +70,38 @@ export default class ReplyTopicScreen extends Component {
 		}
 
 		return (
-			<ScrollView
-				ref={scrollview => (this.scrollview = scrollview)}
-				style={{ flex: 1 }}
-			>
-				{quotedPostComponent}
-				<KeyboardAvoidingView style={{ flex: 1 }} enabled>
-					<QuillEditor
-						placeholder="Your Reply"
-						update={this.updateContentState.bind(this)}
-						height={400}
-						autoFocus
-						onFocus={measurer => {
-							if (this.offset) {
-								this.scrollview.scrollTo({
-									x: 0,
-									y: this.offset,
-									animated: true
-								});
-							} else {
-								measurer.measure(
-									(fx, fy, width, height, px, py) => {
+			<React.Fragment>
+				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1 }}>
+					{quotedPostComponent}
+					<KeyboardAvoidingView style={{ flex: 1 }} enabled>
+						<QuillEditor
+							placeholder="Your Reply"
+							update={this.updateContentState.bind(this)}
+							height={400}
+							autoFocus
+							onFocus={measurer => {
+								if (this.offset) {
+									this.scrollview.scrollTo({
+										x: 0,
+										y: this.offset,
+										animated: true
+									});
+								} else {
+									measurer.measure((fx, fy, width, height, px, py) => {
 										this.offset = py - 120;
 										this.scrollview.scrollTo({
 											x: 0,
 											y: py - 120,
 											animated: true
 										});
-									}
-								);
-							}
-						}}
-					/>
-				</KeyboardAvoidingView>
-			</ScrollView>
+									});
+								}
+							}}
+						/>
+					</KeyboardAvoidingView>
+				</ScrollView>
+				<QuillToolbar />
+			</React.Fragment>
 		);
 	}
 }

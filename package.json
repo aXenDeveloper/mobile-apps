@@ -50,6 +50,8 @@
     "react-native-actionsheet": "^2.3.0",
     "react-native-advanced-webview": "^0.56.0",
     "react-native-htmlview": "^0.12.1",
+    "react-native-keyboard-accessory": "0.0.12",
+    "react-native-keyboard-aware-scroll-view": "^0.6.0",
     "react-native-modal": "^5.4.0",
     "react-native-render-html": "^3.9.3",
     "react-native-scrollable-tab-view": "^0.8.0",

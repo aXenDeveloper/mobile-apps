@@ -6,6 +6,7 @@ import LinkBlot from "quill/formats/link";
 
 const BROWSER = false;
 const DEBUG = false;
+const REMOTE_DEBUG = true;
 const MESSAGE_PREFIX = "__IPS__";
 
 const util = require("util");
@@ -158,7 +159,7 @@ class QuillComponent extends Component {
 	}
 
 	getText(data) {
-		this.setMessage("CONTENT", {
+		this.sendMessage("CONTENT", {
 			content: this.state.quill.container.querySelector('.ql-editor').innerHTML
 		});
 	}
@@ -200,7 +201,7 @@ class QuillComponent extends Component {
 	}
 
 	sendMessage(message, data = {}) {
-		this.addDebug(`Sending ${message}`);
+		this.addDebug(`Sending ${message}`, false);
 
 		const messageToSend = JSON.stringify({
 			message: `${MESSAGE_PREFIX}${message}`,
@@ -212,19 +213,26 @@ class QuillComponent extends Component {
 		} else if (window.hasOwnProperty("postMessage")) {
 			window.postMessage(messageToSend, "*");
 		} else {
-			this.addDebug(`ERROR: unable to send message`);
+			this.addDebug(`ERROR: unable to send message`, false);
 		}
 	}
 
-	addDebug(message) {
-		if (DEBUG) {
+	addDebug(message, sendRemotely = true) {
+		if (DEBUG || REMOTE_DEBUG) {
 			if (typeof message == "object") {
 				message = util.inspect(message, { showHidden: false, depth: null });
 			}
 
-			this.setState({
-				debug: this.state.debug.concat(message)
-			});
+			if( DEBUG ){
+				this.setState({
+					debug: this.state.debug.concat(message)
+				});
+			}
+			if( REMOTE_DEBUG && sendRemotely ){
+				this.sendMessage("DEBUG", {
+					debugMessage: message
+				});
+			}
 		}
 	}
 
@@ -234,12 +242,12 @@ class QuillComponent extends Component {
 				<div id="container" style={{ height: DEBUG ? "50%" : "100%", display: "flex", flexDirection: "column" }}>
 					<div id="quill" style={{ fontSize: "16px", height: "100%" }} />
 				</div>
-				{DEBUG ? (
+				{DEBUG &&
 					<div style={{ overflow: "auto", height: "50%" }}>
 						<strong>Debug:</strong>
 						<ul>{this.state.debug.map(message => <li>{message}</li>)}</ul>
 					</div>
-				) : null}
+				}
 			</React.Fragment>
 		);
 	}

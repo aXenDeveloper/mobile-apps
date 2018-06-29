@@ -10,7 +10,8 @@ import {
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import TagEdit from "../ecosystems/TagEdit";
-import { QuillEditor } from "../ecosystems/Editor";
+import { QuillEditor, QuillToolbar } from "../ecosystems/Editor";
+import uniqueID from '../utils/UniqueID';
 import styles from "../styles";
 
 const CreateTopicMutation = gql`
@@ -88,6 +89,9 @@ class CreateTopicScreen extends Component {
 			title: "",
 			content: ""
 		};
+		this.editorID = uniqueID();
+
+		console.log( this.editorID );
 	}
 
 	/**
@@ -194,26 +198,31 @@ class CreateTopicScreen extends Component {
 	 */
 	render() {
 		return (
-			<KeyboardAvoidingView
-				style={{ flex: 1 }}
-				enabled
-				behavior="padding"
-			>
-				<TextInput
-					style={[styles.field, styles.fieldText]}
-					placeholder="Topic Title"
-					onChangeText={text => this.setState({ title: text })}
-				/>
-				<TagEdit
-					definedTags={
-						this.props.navigation.state.params.definedTags || null
-					}
-				/>
-				<QuillEditor
-					placeholder="Post"
-					update={this.updateContentState.bind(this)}
-				/>
-			</KeyboardAvoidingView>
+			<React.Fragment>
+				<KeyboardAvoidingView
+					style={{ flex: 1 }}
+					enabled
+					behavior="padding"
+				>
+					<TextInput
+						style={[styles.field, styles.fieldText]}
+						placeholder="Topic Title"
+						onChangeText={text => this.setState({ title: text })}
+					/>
+					<TagEdit
+						definedTags={
+							this.props.navigation.state.params.definedTags || null
+						}
+					/>
+					<QuillEditor
+						placeholder="Post"
+						update={this.updateContentState.bind(this)}
+						style={{flex: 1}}
+						editorID={this.editorID}
+					/>
+				</KeyboardAvoidingView>
+				<QuillToolbar editorID={this.editorID} />
+			</React.Fragment>
 		);
 	}
 }
