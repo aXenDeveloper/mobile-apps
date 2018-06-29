@@ -22,12 +22,25 @@ class LoginScreen extends Component {
 		};
 	}
 
+	/**
+	 * Dispatch a login action containing our credentials
+	 * We also need to pass our ApolloClient instance into the action, so that it can
+	 * reset the store after logging in.
+	 *
+	 * @return 	void
+	 */
 	_login() {
 		const { dispatch } = this.props;
 		dispatch(logIn(this.state.username, this.state.password, this.props.client));
 	}
 
-	componentWillUpdate(nextProps, nextState) {
+	/**
+	 * If we're now authenticated, redirect to our Root component
+	 *
+	 * @param 	object 	nextProps 	New props
+	 * @return 	void
+	 */
+	componentWillUpdate(nextProps) {
 		if (nextProps.auth.authenticated) {
 			this.props.navigation.navigate("Root");
 		}

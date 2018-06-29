@@ -25,15 +25,24 @@ class QuillComponent extends Component {
 		};
 	}
 
+	/**
+	 * Component mounted
+	 *
+	 * @return 	void
+	 */
 	componentDidMount() {
 		this._count = 0;
 		this.waitForReady();
 	}
 
+	/**
+	 * We want to allow the Native app to set the placeholder by injecting
+	 * JS into this page. So we need to wait until it has indicated it is ready
+	 * for our page to be initialized. If it's too slow, we'll just go anyway with a default.
+	 *
+	 * @return 	void
+	 */
 	waitForReady() {
-		// We want to allow the Native app to set the placeholder by injecting
-		// JS into this page. So we need to wait until it has indicated it is ready
-		// for our page to be initialized. If it's too slow, we'll just go anyway with a default.
 		this._timer = setTimeout( () => {
 			if( window._readyToGo || this._count == 50 ){
 				this._setUpEditor();
@@ -44,6 +53,12 @@ class QuillComponent extends Component {
 		}, 10);
 	}
 
+	/**
+	 * Create a new instance of Quill and store it in state.
+	 * Once state saves, set up our event handlers and send a READY command.
+	 *
+	 * @return 	void
+	 */
 	_setUpEditor() {
 		let placeholder = "Content";
 
@@ -63,11 +78,22 @@ class QuillComponent extends Component {
 		});
 	}
 
+	/**
+	 * Make sure we remove event handlers when unmounting
+	 *
+	 * @return 	void
+	 */
 	componentWillUnmount() {
 		clearTimeout( this._timer );
+		document.removeEventListener("message", this.onMessage);
 		window.removeEventListener("message", this.onMessage);
 	}
 
+	/**
+	 * Set up our event handlers
+	 *
+	 * @return 	void
+	 */
 	setUpEvents() {
 		// Add message event listener
 		if (document) {
@@ -81,6 +107,14 @@ class QuillComponent extends Component {
 		this.state.quill.on("text-change", this.textChange.bind(this));
 	}
 
+	/**
+	 * Event handler; handles selection changes triggered by Quill
+	 *
+	 * @param 	object 		range 		New range
+	 * @param 	object 		oldRange	Previous range
+	 * @param 	string 		source 		Where the event came from (e.g. `user`)
+	 * @return 	void
+	 */
 	selectionChange(range, oldRange, source) {
 		// If range is null, that means the editor is not focused.
 		if (range === null) {
@@ -118,12 +152,23 @@ class QuillComponent extends Component {
 		}
 	}
 
+	/**
+	 * Handles text-change event sent from Quill
+	 *
+	 * @return 	void
+	 */
 	textChange() {
 		this.sendMessage("CONTENT", {
 			content: this.state.quill.container.querySelector('.ql-editor').innerHTML
 		});
 	}
 
+	/**
+	 * Our main postMessage event handler. Receives messages from the main app,
+	 * and handles them as necessary.
+	 *
+	 * @return 	void
+	 */
 	onMessage(e) {
 		try {
 			const messageData = JSON.parse(e.data);
@@ -158,12 +203,23 @@ class QuillComponent extends Component {
 		}
 	}
 
+	/**
+	 * Send the current editor contents to the main app
+	 *
+	 * @return 	void
+	 */
 	getText(data) {
 		this.sendMessage("CONTENT", {
 			content: this.state.quill.container.querySelector('.ql-editor').innerHTML
 		});
 	}
 
+	/**
+	 * Inserts a link into the editor
+	 *
+	 * @param 	object 	data 	Link data, used to build the link
+	 * @return 	void
+	 */
 	insertLink(data) {
 		// Todo: validate link/text
 		
@@ -196,10 +252,23 @@ class QuillComponent extends Component {
 		});
 	}
 
+	/**
+	 * Set formatting in the document
+	 *
+	 * @param 	object 		data 	Object containing format 'type', and optional 'option'
+	 * @return 	void
+	 */
 	setFormat(data) {
 		this.state.quill.format(data.type, data.option || false, "user");
 	}
 
+	/**
+	 * Send a message to the main app via postMessage
+	 *
+	 * @param 	string 		message 		The message code to send
+	 * @param 	object 		data 			Object to be serialized and sent with the message
+	 * @return 	void
+	 */
 	sendMessage(message, data = {}) {
 		this.addDebug(`Sending ${message}`, false);
 
@@ -217,6 +286,13 @@ class QuillComponent extends Component {
 		}
 	}
 
+	/**
+	 * Debug helper
+	 *
+	 * @param 	object|string 		message 		Message to log
+	 * @param 	boolean				sendRemotely	Send a DEBUG command to main app?
+	 * @return 	void
+	 */
 	addDebug(message, sendRemotely = true) {
 		if (DEBUG || REMOTE_DEBUG) {
 			if (typeof message == "object") {

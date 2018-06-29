@@ -14,10 +14,22 @@ export default class Post extends Component {
 		super(props);
 	}
 
+	//====================================================================
+	// ACTION SHEET CONFIG
+
+	/**
+	 * Handle tapping an action sheet item
+	 *
+	 * @return 	void
+	 */
 	actionSheetPress(i) {
 		console.log('action sheet');
 	}
-
+	/**
+	 * Return the options to be shown in the action sheet
+	 *
+	 * @return 	array
+	 */
 	actionSheetOptions() {
 		return ([
 			'Cancel',
@@ -25,11 +37,21 @@ export default class Post extends Component {
 			'Report'
 		]);
 	}
-
+	/**
+	 * Return the index of the 'cancel' option
+	 *
+	 * @return 	number
+	 */
 	actionSheetCancelIndex() {
 		return 0;
 	}
+	//====================================================================
 
+	/**
+	 * Handle tapping a reaction count
+	 *
+	 * @return 	number
+	 */
 	reactionOnPress(reactionID) {
 		if( this.props.data.reputation.canViewReps ){
 			console.log('press reaction');
@@ -37,8 +59,6 @@ export default class Post extends Component {
 	}
 
 	render() {
-		//console.log( reactions );
-
 		return (
 			<TouchableHighlight style={styles.postWrapper}>
 				<ShadowedArea style={styles.post}>

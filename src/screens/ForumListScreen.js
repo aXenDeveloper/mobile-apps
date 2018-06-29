@@ -40,11 +40,8 @@ class ForumListScreen extends Component {
 	}
 
 	render() {
-		//console.log( this.props );
-
 		if (this.props.data.loading || this.props.data.error) {
 			console.log(this.props.data.error);
-
 			return <View repeat={7}>{this.props.data.error ? <Text>Error</Text> : <Text>Loading</Text>}</View>;
 		} else {
 			const sectionData = this.props.data.forums.forums.map(category => {

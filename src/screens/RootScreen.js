@@ -47,19 +47,35 @@ class RootScreen extends Component {
 		});
 	}
 
+	/**
+	 * Always refresh the current auth session when we mount this screen
+	 *
+	 * @return 	void
+	 */
 	componentDidMount() {
 		const { dispatch } = this.props;
-
 		// Trigger action to look for an access token, and verify it is valid
 		dispatch(refreshAuth());
 	}
 
+	/**
+	 * Stop our automatic refresh timer if we unmount for some reason
+	 *
+	 * @return 	void
+	 */
 	componentWillUnmount() {
 		if (this._refreshTimer) {
 			clearInterval(this._refreshTimer);
 		}
 	}
 
+	/**
+	 * When we get new props, decide whether to show loading status to the user
+	 * We only need to do this if they aren't already logged in.
+	 *
+	 * @param 	object 		nextProps 		New props coming in
+	 * @return 	void
+	 */
 	componentWillReceiveProps(nextProps) {
 		const { dispatch } = this.props;
 

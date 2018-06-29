@@ -63,6 +63,11 @@ class ReplyTopicScreen extends Component {
 		};
 	}
 
+	/**
+	 * Set navigation params as function references so the header buttons work
+	 *
+	 * @return 	void
+	 */
 	componentDidMount() {
 		this.props.navigation.setParams({
 			submitReply: this.submitReply.bind(this),
@@ -70,6 +75,12 @@ class ReplyTopicScreen extends Component {
 		});
 	}
 
+	/**
+	 * Callback to store editor content in state
+	 *
+	 * @param 	string 		content 	Content HTML provided by editor
+	 * @return 	void
+	 */
 	updateContentState(content) {
 		this.setState({
 			content
@@ -108,11 +119,18 @@ class ReplyTopicScreen extends Component {
 		}
 	}
 
-	cancelReply() {}
+	/**
+	 * Cancel replying to the topic
+	 *
+	 * @return 	void
+	 */
+	cancelReply() {
+
+	}
 
 	render() {
+		// If we're quoting an existing post, build that now
 		let quotedPostComponent = null;
-
 		if (this.props.navigation.state.params.quotedPost) {
 			const quotedPost = this.props.navigation.state.params.quotedPost;
 

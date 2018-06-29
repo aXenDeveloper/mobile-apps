@@ -18,10 +18,22 @@ class Auth {
 		return this;
 	}
 
+	/**
+	 * Store a reference to the ApolloClient we get passed
+	 *
+	 * @param 	<ApolloClient> 	client 	ApolloClient reference
+	 * @return 	void
+	 */
 	setClient(client) {
 		this._client = client;
 	}
 
+	/**
+	 * If we have a token in local storage, get it and pass into
+	 * doRefreshToken
+	 *
+	 * @return 	void
+	 */
 	async checkTokenStatus() {
 		const authData = await AsyncStorage.getItem("@authStore:auth");
 
@@ -33,8 +45,13 @@ class Auth {
 		return this.doRefreshToken(authObj.refresh_token);
 	}
 
+	/**
+	 * When we have a refresh token we will periodically refresh our access token
+	 * so that the user's session continue without expiring in the background.
+	 *
+	 * @return 	void
+	 */
 	startTimerToken() {
-		// Now set a timeout so that we get a new refresh token before the old one expires
 		this._refreshTimer = setTimeout(
 			this.checkTokenStatus,
 			this._expires - 300000

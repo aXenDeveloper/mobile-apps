@@ -63,6 +63,12 @@ class QuillEditor extends Component {
 		}
 	}
 
+	/**
+	 * When mounted we need to reset the editor state
+	 * This is because we only maintain one global editor state
+	 *
+	 * @return 	void
+	 */
 	componentDidMount() {
 		this.props.dispatch(resetEditor());
 	}
@@ -214,59 +220,6 @@ class QuillEditor extends Component {
 	 * END MESSAGE HANDLERS
 	 * ========================================================================
 	 */
-
-	/**
-	 * Sets buttons to active/inactive, depending on the state object received from webview
-	 *
-	 * @param 	object 	buttonStates 	Button state object recieved from quill webview
-	 * @return 	void
-	 */
-	setButtonState(buttonStates) {
-		const newState = {};
-
-		// Loop through each supported formatting option, and determine
-		// whether the button should be set to active or not
-		Object.entries(formattingOptions).forEach(pair => {
-			if (_.isBoolean(pair[1])) {
-				newState[pair[0]] = !_.isUndefined(buttonStates[pair[0]]);
-			} else {
-				for (let i = 0; i < pair[1].length; i++) {
-					const stateKey = pair[0] + (pair[1][i].charAt(0).toUpperCase() + pair[1][i].slice(1));
-					newState[stateKey] = !_.isUndefined(buttonStates[pair[0]]) && pair[1][i] == buttonStates[pair[0]];
-				}
-			}
-		});
-
-		this.setState({
-			formatting: {
-				...this.state.formatting,
-				...newState
-			}
-		});
-	}
-
-	/**
-	 * Event handler for basic formatting buttons
-	 *
-	 * @param 	string 	type 		The button type
-	 * @param 	string 	option 		The option for this button, if applicable
-	 * @return 	void
-	 */
-	toggleFormatting(type, option) {
-		const stateKey = option ? type + (option.charAt(0).toUpperCase() + option.slice(1)) : type;
-		const currentState = this.state.formatting[stateKey];
-
-		this.sendMessage("SET_FORMAT", {
-			type: type,
-			option: !currentState && option ? option : !currentState
-		});
-		this.setState({
-			formatting: {
-				...this.state.formatting,
-				[stateKey]: !this.state.formatting[stateKey]
-			}
-		});
-	}
 
 	/**
 	 * Send a message to WebView

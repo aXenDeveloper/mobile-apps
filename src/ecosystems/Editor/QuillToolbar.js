@@ -12,6 +12,13 @@ class QuillToolbar extends Component {
 		super(props);
 	}
 
+	/**
+	 * Event handler that dispatches actions when formatting buttons are tapped
+	 *
+	 * @param 	string 			button 		Button tapped
+	 * @param 	string|null		option 		Some buttons (e.g. lists) use option values instead of booleans
+	 * @return 	void
+	 */
 	toggleFormatting(button, option = null) {
 		let state = false;
 
@@ -32,10 +39,20 @@ class QuillToolbar extends Component {
 		);
 	}
 
+	/**
+	 * Dispatch action to open the link modal in the editor
+	 *
+	 * @return 	void
+	 */
 	openLinkModal() {
 		this.props.dispatch(openLinkModal());
 	}
 
+	/**
+	 * Dispatch action to open the image picker in the editor
+	 *
+	 * @return 	void
+	 */
 	openImagePicker() {
 		this.props.dispatch(openImagePicker());
 	}

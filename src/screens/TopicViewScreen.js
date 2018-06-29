@@ -65,10 +65,20 @@ class TopicViewScreen extends Component {
 		)
 	});
 
-	componentDidUpdate(prevProps, prevState) {
+	/**
+	 * If we have a goToEnd param, we've probably just added a new post
+	 * After scrolling, reset that flag.
+	 *
+	 * @param 	object 	prevProps 	Previous prop values
+	 * @return 	void
+	 */
+	componentDidUpdate(prevProps) {
 		if (!_.isUndefined(this.props.navigation.state.params.goToEnd)) {
 			if (!prevProps.navigation.state.params.goToEnd && this.props.navigation.state.params.goToEnd) {
 				this._flatList.scrollToEnd();
+				this.props.navigation.setParams({
+					goToEnd: false
+				});
 			}
 		}
 	}
