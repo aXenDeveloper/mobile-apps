@@ -2,14 +2,14 @@ import React, { Component } from "react";
 import { Text, View, Button, ScrollView, FlatList } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
-import relativeTime from "../utils/RelativeTime";
 
-import TwoLineHeader from "../atoms/TwoLineHeader";
-import Pager from "../atoms/Pager";
-import PagerButton from "../atoms/PagerButton";
-import SectionHeader from "../ecosystems/SectionHeader";
-import TopicRow from "../ecosystems/TopicRow";
-import AddButton from "../atoms/AddButton";
+import relativeTime from "../../utils/RelativeTime";
+import TwoLineHeader from "../../atoms/TwoLineHeader";
+import Pager from "../../atoms/Pager";
+import PagerButton from "../../atoms/PagerButton";
+import SectionHeader from "../../ecosystems/SectionHeader";
+import TopicRow from "../../ecosystems/TopicRow";
+import AddButton from "../../atoms/AddButton";
 
 const TopicListQuery = gql`
 	query TopicListQuery($forum: ID!, $offset: Int, $limit: Int) {
@@ -114,7 +114,7 @@ class TopicListScreen extends Component {
 						/>
 						{this.props.data.forums.forum.create.canCreate ? (
 							<Pager>
-								<AddButton icon={require('../../resources/compose.png')} title='Create New Topic' onPress={() => this.props.navigation.navigate("CreateTopic", {
+								<AddButton icon={require('../../../resources/compose.png')} title='Create New Topic' onPress={() => this.props.navigation.navigate("CreateTopic", {
 									forumID: this.props.navigation.state.params.id,
 									tagsEnabled: this.props.data.forums.forum.create.tags.enabled,
 									definedTags: this.props.data.forums.forum.create.tags.definedTags,

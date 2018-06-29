@@ -5,11 +5,11 @@ import { graphql } from 'react-apollo';
 import HeaderBackButton from 'react-navigation';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 
-import ListItem from '../atoms/ListItem';
-import SectionHeader from '../ecosystems/SectionHeader';
-import relativeTime from '../utils/RelativeTime';
-import UserPhoto from '../atoms/UserPhoto';
-import CustomHeader from '../ecosystems/CustomHeader';
+import ListItem from '../../atoms/ListItem';
+import SectionHeader from '../../ecosystems/SectionHeader';
+import relativeTime from '../../utils/RelativeTime';
+import UserPhoto from '../../atoms/UserPhoto';
+import CustomHeader from '../../ecosystems/CustomHeader';
 
 const ProfileQuery = gql`
 	query ProfileQuery($member: ID!) {

@@ -3,12 +3,12 @@ import { Text, Alert, Button, TextInput, View, ScrollView, StyleSheet, KeyboardA
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { QuillEditor, QuillToolbar } from "../ecosystems/Editor";
 import { NavigationActions } from "react-navigation";
-import RichTextContent from "../atoms/RichTextContent";
-import UserPhoto from "../atoms/UserPhoto";
-import relativeTime from "../utils/RelativeTime";
-import styles from "../styles";
+import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
+import RichTextContent from "../../atoms/RichTextContent";
+import UserPhoto from "../../atoms/UserPhoto";
+import relativeTime from "../../utils/RelativeTime";
+import styles from "../../styles";
 
 const ReplyTopicMutation = gql`
 	mutation ReplyTopicMutation($topicID: ID!, $content: String!, $replyingTo: ID) {

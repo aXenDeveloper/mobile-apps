@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import { Text, Alert, Button, TextInput, View, KeyboardAvoidingView } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
-import TagEdit from "../ecosystems/TagEdit";
-import { QuillEditor, QuillToolbar } from "../ecosystems/Editor";
-import uniqueID from "../utils/UniqueID";
-import styles from "../styles";
+import TagEdit from "../../ecosystems/TagEdit";
+import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
+import uniqueID from "../../utils/UniqueID";
+import styles from "../../styles";
 
 const CreateTopicMutation = gql`
 	mutation CreateTopicMutation($forumID: ID!, $title: String!, $content: String!) {

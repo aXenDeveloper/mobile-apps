@@ -5,12 +5,12 @@ import { graphql } from "react-apollo";
 import Modal from "react-native-modal";
 import _ from "underscore";
 
-import TwoLineHeader from "../atoms/TwoLineHeader";
-import Post from "../ecosystems/Post";
-import Tag from "../atoms/Tag";
-import TagList from "../atoms/TagList";
-import Pager from "../atoms/Pager";
-import PagerButton from "../atoms/PagerButton";
+import TwoLineHeader from "../../atoms/TwoLineHeader";
+import Post from "../../ecosystems/Post";
+import Tag from "../../atoms/Tag";
+import TagList from "../../atoms/TagList";
+import Pager from "../../atoms/Pager";
+import PagerButton from "../../atoms/PagerButton";
 
 const TopicViewQuery = gql`
 	query TopicViewQuery($topic: ID!, $offset: Int, $limit: Int) {

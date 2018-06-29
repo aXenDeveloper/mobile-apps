@@ -3,8 +3,8 @@ import { Text, View, Button, SectionList, TouchableHighlight } from "react-nativ
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 
-import SectionHeader from "../ecosystems/SectionHeader";
-import ForumItem from "../ecosystems/ForumItem";
+import SectionHeader from "../../ecosystems/SectionHeader";
+import ForumItem from "../../ecosystems/ForumItem";
 
 const ForumQuery = gql`
 	query ForumQuery {

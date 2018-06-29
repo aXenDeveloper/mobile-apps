@@ -3,19 +3,24 @@ import { createBottomTabNavigator, createMaterialTopTabNavigator, createStackNav
 import { Text, Image } from "react-native";
 import { connect } from "react-redux";
 import CustomHeader from "../ecosystems/CustomHeader";
-import HomeScreen from "../screens/HomeScreen";
-import ForumListScreen from "../screens/ForumListScreen";
-import ForumFollowedScreen from "../screens/ForumFollowedScreen";
-import TopicListScreen from "../screens/TopicListScreen";
-import TopicViewScreen from "../screens/TopicViewScreen";
-import SearchScreen from "../screens/SearchScreen";
-import StreamsScreen from "../screens/StreamsScreen";
-import NotificationsScreen from "../screens/NotificationsScreen";
-import CreateTopicScreen from "../screens/CreateTopicScreen";
-import ReplyTopicScreen from "../screens/ReplyTopicScreen";
-import ProfileScreen from "../screens/ProfileScreen";
-import UserScreen from "../screens/UserScreen";
-import LoginScreen from "../screens/LoginScreen";
+// ----
+// Core screens
+import HomeScreen from "../screens/core/HomeScreen";
+import SearchScreen from "../screens/core/SearchScreen";
+import StreamsScreen from "../screens/core/StreamsScreen";
+import NotificationsScreen from "../screens/core/NotificationsScreen";
+import ProfileScreen from "../screens/core/ProfileScreen";
+import UserScreen from "../screens/core/UserScreen";
+import LoginScreen from "../screens/core/LoginScreen";
+// ----
+// Forums screens
+import ForumListScreen from "../screens/forums/ForumListScreen";
+import ForumFollowedScreen from "../screens/forums/ForumFollowedScreen";
+import TopicListScreen from "../screens/forums/TopicListScreen";
+import TopicViewScreen from "../screens/forums/TopicViewScreen";
+import CreateTopicScreen from "../screens/forums/CreateTopicScreen";
+import ReplyTopicScreen from "../screens/forums/ReplyTopicScreen";
+
 import styles, { styleVars } from "../styles";
 import { LinearGradient } from "expo";
 

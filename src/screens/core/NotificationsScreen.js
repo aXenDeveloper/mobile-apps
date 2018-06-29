@@ -3,7 +3,7 @@ import { Text, View, FlatList, ScrollView } from 'react-native';
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 
-import NotificationRow from "../ecosystems/NotificationRow";
+import NotificationRow from "../../ecosystems/NotificationRow";
 
 const NotificationQuery = gql`
 	query NotificationQuery {

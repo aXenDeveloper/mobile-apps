@@ -3,10 +3,10 @@ import { Text, View, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator,
 import { withApollo } from "react-apollo";
 import { LinearGradient } from "expo";
 import { connect } from "react-redux";
-import { receiveAuth, logIn } from "../redux/actions/auth";
 
-import ToFormData from "../utils/ToFormData";
-import auth from "../utils/Auth";
+import { receiveAuth, logIn } from "../../redux/actions/auth";
+import ToFormData from "../../utils/ToFormData";
+import auth from "../../utils/Auth";
 
 class LoginScreen extends Component {
 	static navigationOptions = {

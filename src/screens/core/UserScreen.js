@@ -3,10 +3,10 @@ import { Text, View, Button, ScrollView, FlatList, StyleSheet, Alert } from "rea
 import gql from "graphql-tag";
 import { graphql, withApollo } from "react-apollo";
 import { connect } from "react-redux";
-import { logOut } from "../redux/actions/auth";
+import { logOut } from "../../redux/actions/auth";
 
-import UserPhoto from "../atoms/UserPhoto";
-import auth from "../utils/Auth";
+import UserPhoto from "../../atoms/UserPhoto";
+import auth from "../../utils/Auth";
 
 const UserQuery = gql`
 	query UserQuery {
