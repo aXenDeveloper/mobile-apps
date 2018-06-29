@@ -4,23 +4,51 @@ import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { QuillEditor, QuillToolbar } from "../ecosystems/Editor";
+import { NavigationActions } from "react-navigation";
 import RichTextContent from "../atoms/RichTextContent";
 import UserPhoto from "../atoms/UserPhoto";
 import relativeTime from "../utils/RelativeTime";
 import styles from "../styles";
 
-export default class ReplyTopicScreen extends Component {
+const ReplyTopicMutation = gql`
+	mutation ReplyTopicMutation($topicID: ID!, $content: String!, $replyingTo: ID) {
+		mutateForums {
+			replyTopic(topicID: $topicID, content: $content, replyingTo: $replyingTo) {
+				id
+				url
+				timestamp
+				author {
+					id
+					photo
+					name
+				}
+				content
+				reputation {
+					canViewReps
+					reactions {
+						id
+						image
+						name
+						count
+					}
+				}
+			}
+		}
+	}
+`;
+
+class ReplyTopicScreen extends Component {
 	static navigationOptions = ({ navigation }) => {
 		return {
 			title: "Reply To Topic",
 			headerTintColor: "white",
 			headerLeft: (
-				<Text style={{ color: "#fff" }} onPress={navigation.getParam("cancelTopic")}>
+				<Text style={{ color: "#fff" }} onPress={navigation.getParam("cancelReply")}>
 					Cancel
 				</Text>
 			),
 			headerRight: (
-				<Text style={{ color: "#fff" }} onPress={navigation.getParam("submitTopic")}>
+				<Text style={{ color: "#fff" }} onPress={navigation.getParam("submitReply")}>
 					Post
 				</Text>
 			)
@@ -37,8 +65,8 @@ export default class ReplyTopicScreen extends Component {
 
 	componentDidMount() {
 		this.props.navigation.setParams({
-			submitTopic: this.submitTopic.bind(this),
-			cancelTopic: this.cancelTopic.bind(this)
+			submitReply: this.submitReply.bind(this),
+			cancelReply: this.cancelReply.bind(this)
 		});
 	}
 
@@ -48,9 +76,39 @@ export default class ReplyTopicScreen extends Component {
 		});
 	}
 
-	submitTopic() {}
+	/**
+	 * Event handler for lcicking the Post button in the modal
+	 *
+	 * @return 	void
+	 */
+	async submitReply() {
+		if (!this.state.content) {
+			Alert.alert("Post Required", "You must enter a post.", [{ text: "OK" }], { cancelable: false });
+			return;
+		}
 
-	cancelTopic() {}
+		try {
+			await this.props.mutate({
+				variables: {
+					topicID: this.props.navigation.state.params.topicID,
+					content: this.state.content,
+					replyingTo: this.props.navigation.state.params.quotedPost.id || null
+				},
+				refetchQueries: ["TopicViewQuery", "TopicListQuery"]
+			});
+
+			const navigateAction = NavigationActions.navigate({
+				params: { goToEnd: true },
+				routeName: "TopicView"
+			});
+			this.props.navigation.dispatch(navigateAction);
+			//this.props.navigation.goBack();
+		} catch (err) {
+			Alert.alert("Error", "Sorry, there was an error posting this reply: " + err.message, [{ text: "OK" }], { cancelable: false });
+		}
+	}
+
+	cancelReply() {}
 
 	render() {
 		let quotedPostComponent = null;
@@ -62,7 +120,7 @@ export default class ReplyTopicScreen extends Component {
 				<View style={componentStyles.postInfo}>
 					<UserPhoto url={quotedPost.author.photo} size={36} />
 					<View style={componentStyles.postContent}>
-						<Text style={componentStyles.quotingTitle}>Quoting {quotedPost.author.name}</Text>
+						<Text style={componentStyles.quotingTitle}>Quoting {quotedPost.author.name}:</Text>
 						<RichTextContent>{quotedPost.content}</RichTextContent>
 					</View>
 				</View>
@@ -105,6 +163,8 @@ export default class ReplyTopicScreen extends Component {
 		);
 	}
 }
+
+export default graphql(ReplyTopicMutation)(ReplyTopicScreen);
 
 const componentStyles = StyleSheet.create({
 	postInfo: {

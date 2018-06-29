@@ -3,6 +3,7 @@ import { Text, View, Button, ScrollView, FlatList } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import Modal from "react-native-modal";
+import _ from "underscore";
 
 import TwoLineHeader from "../atoms/TwoLineHeader";
 import Post from "../ecosystems/Post";
@@ -52,18 +53,25 @@ const TopicViewQuery = gql`
 class TopicViewScreen extends Component {
 	constructor(props) {
 		super(props);
+		this.flatList = null;
 	}
 
 	static navigationOptions = ({ navigation }) => ({
 		headerTitle: (
 			<TwoLineHeader
-				title={`${navigation.state.params.title}`}
-				subtitle={`Started by ${navigation.state.params.author}, ${
-					navigation.state.params.started
-				}`}
+				title={navigation.state.params.title}
+				subtitle={`Started by ${navigation.state.params.author}, ${navigation.state.params.started}`}
 			/>
 		)
 	});
+
+	componentDidUpdate(prevProps, prevState) {
+		if (!_.isUndefined(this.props.navigation.state.params.goToEnd)) {
+			if (!prevProps.navigation.state.params.goToEnd && this.props.navigation.state.params.goToEnd) {
+				this._flatList.scrollToEnd();
+			}
+		}
+	}
 
 	render() {
 		if (this.props.data.loading) {
@@ -73,8 +81,6 @@ class TopicViewScreen extends Component {
 				</View>
 			);
 		} else {
-			//console.log( this.props );
-
 			const topicData = this.props.data.forums.topic;
 			const listData = topicData.posts.map(post => ({
 				key: post.id,
@@ -92,39 +98,28 @@ class TopicViewScreen extends Component {
 			return (
 				<View style={{ flex: 1 }}>
 					<View style={{ flex: 1, flexGrow: 1 }}>
-						{topicData.locked ? (
-							<Text>This topic is locked</Text>
-						) : null}
-						{topicData.tags.length ? (
-							<TagList>
-								{topicData.tags.map(tag => (
-									<Tag key={tag.name}>{tag.name}</Tag>
-								))}
-							</TagList>
-						) : null}
+						{topicData.locked ? <Text>This topic is locked</Text> : null}
+						{topicData.tags.length ? <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList> : null}
 						<FlatList
 							style={{ flex: 1 }}
+							ref={flatList => (this._flatList = flatList)}
+							ListFooterComponent={() => <View style={{ height: 150 }} />}
 							renderItem={({ item }) => (
 								<Post
 									key={item.key}
 									data={item.data}
 									profileHandler={() =>
-										this.props.navigation.navigate(
-											"Profile",
-											{
-												id: item.data.author.id,
-												name: item.data.author.name,
-												photo: item.data.author.photo
-											}
-										)
+										this.props.navigation.navigate("Profile", {
+											id: item.data.author.id,
+											name: item.data.author.name,
+											photo: item.data.author.photo
+										})
 									}
 									onPressReply={() =>
-										this.props.navigation.navigate(
-											"ReplyTopic",
-											{
-												quotedPost: item.data
-											}
-										)
+										this.props.navigation.navigate("ReplyTopic", {
+											topicID: topicData.id,
+											quotedPost: item.data
+										})
 									}
 								/>
 							)}

@@ -1,25 +1,14 @@
 import React, { Component } from "react";
-import {
-	Text,
-	Alert,
-	Button,
-	TextInput,
-	View,
-	KeyboardAvoidingView
-} from "react-native";
+import { Text, Alert, Button, TextInput, View, KeyboardAvoidingView } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import TagEdit from "../ecosystems/TagEdit";
 import { QuillEditor, QuillToolbar } from "../ecosystems/Editor";
-import uniqueID from '../utils/UniqueID';
+import uniqueID from "../utils/UniqueID";
 import styles from "../styles";
 
 const CreateTopicMutation = gql`
-	mutation CreateTopicMutation(
-		$forumID: ID!
-		$title: String!
-		$content: String!
-	) {
+	mutation CreateTopicMutation($forumID: ID!, $title: String!, $content: String!) {
 		mutateForums {
 			createTopic(forumID: $forumID, title: $title, content: $content) {
 				id
@@ -59,18 +48,12 @@ class CreateTopicScreen extends Component {
 			title: "Create Topic",
 			headerTintColor: "white",
 			headerLeft: (
-				<Text
-					style={{ color: "#fff" }}
-					onPress={navigation.getParam("cancelTopic")}
-				>
+				<Text style={{ color: "#fff" }} onPress={navigation.getParam("cancelTopic")}>
 					Cancel
 				</Text>
 			),
 			headerRight: (
-				<Text
-					style={{ color: "#fff" }}
-					onPress={navigation.getParam("submitTopic")}
-				>
+				<Text style={{ color: "#fff" }} onPress={navigation.getParam("submitTopic")}>
 					Post
 				</Text>
 			)
@@ -90,8 +73,6 @@ class CreateTopicScreen extends Component {
 			content: ""
 		};
 		this.editorID = uniqueID();
-
-		console.log( this.editorID );
 	}
 
 	/**
@@ -141,22 +122,12 @@ class CreateTopicScreen extends Component {
 	 */
 	async submitTopic() {
 		if (!this.state.title) {
-			Alert.alert(
-				"Title Required",
-				"You must enter a topic title.",
-				[{ text: "OK" }],
-				{ cancelable: false }
-			);
+			Alert.alert("Title Required", "You must enter a topic title.", [{ text: "OK" }], { cancelable: false });
 			return;
 		}
 
 		if (!this.state.content) {
-			Alert.alert(
-				"Post Required",
-				"You must enter a post.",
-				[{ text: "OK" }],
-				{ cancelable: false }
-			);
+			Alert.alert("Post Required", "You must enter a post.", [{ text: "OK" }], { cancelable: false });
 			return;
 		}
 
@@ -172,12 +143,7 @@ class CreateTopicScreen extends Component {
 
 			this.props.navigation.goBack();
 		} catch (err) {
-			Alert.alert(
-				"Error",
-				"Sorry, there was an error posting this topic",
-				[{ text: "OK" }],
-				{ cancelable: false }
-			);
+			Alert.alert("Error", "Sorry, there was an error posting this topic", [{ text: "OK" }], { cancelable: false });
 		}
 	}
 
@@ -199,27 +165,10 @@ class CreateTopicScreen extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<KeyboardAvoidingView
-					style={{ flex: 1 }}
-					enabled
-					behavior="padding"
-				>
-					<TextInput
-						style={[styles.field, styles.fieldText]}
-						placeholder="Topic Title"
-						onChangeText={text => this.setState({ title: text })}
-					/>
-					<TagEdit
-						definedTags={
-							this.props.navigation.state.params.definedTags || null
-						}
-					/>
-					<QuillEditor
-						placeholder="Post"
-						update={this.updateContentState.bind(this)}
-						style={{flex: 1}}
-						editorID={this.editorID}
-					/>
+				<KeyboardAvoidingView style={{ flex: 1 }} enabled behavior="padding">
+					<TextInput style={[styles.field, styles.fieldText]} placeholder="Topic Title" onChangeText={text => this.setState({ title: text })} />
+					<TagEdit definedTags={this.props.navigation.state.params.definedTags || null} />
+					<QuillEditor placeholder="Post" update={this.updateContentState.bind(this)} style={{ flex: 1 }} editorID={this.editorID} />
 				</KeyboardAvoidingView>
 				<QuillToolbar editorID={this.editorID} />
 			</React.Fragment>
