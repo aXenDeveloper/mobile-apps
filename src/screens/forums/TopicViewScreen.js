@@ -5,6 +5,7 @@ import { graphql } from "react-apollo";
 import Modal from "react-native-modal";
 import _ from "underscore";
 
+import getErrorMessage from '../../utils/getErrorMessage';
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import Post from "../../ecosystems/Post";
 import Tag from "../../atoms/Tag";
@@ -66,6 +67,10 @@ class TopicViewScreen extends Component {
 		)
 	});
 
+	static errors = {
+		'NO_TOPIC': "The topic does not exist."
+	};
+
 	/**
 	 * If we have a goToEnd param, we've probably just added a new post
 	 * After scrolling, reset that flag.
@@ -91,6 +96,11 @@ class TopicViewScreen extends Component {
 					<Text>Loading</Text>
 				</View>
 			);
+		} else if ( this.props.data.error ) {
+			//console.log(JSON.parse(JSON.stringify(this.props.data.error)));
+			//console.log( this.props.data.error );
+			const error = getErrorMessage(this.props.data.error, TopicViewScreen.errors);
+			return ( <Text>{error}</Text> );
 		} else {
 			const topicData = this.props.data.forums.topic;
 			const listData = topicData.posts.map(post => ({
