@@ -5,7 +5,7 @@ import { graphql } from "react-apollo";
 import Modal from "react-native-modal";
 import _ from "underscore";
 
-import getErrorMessage from '../../utils/getErrorMessage';
+import getErrorMessage from "../../utils/getErrorMessage";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import Post from "../../ecosystems/Post";
 import Tag from "../../atoms/Tag";
@@ -68,7 +68,7 @@ class TopicViewScreen extends Component {
 	});
 
 	static errors = {
-		'NO_TOPIC': "The topic does not exist."
+		NO_TOPIC: "The topic does not exist."
 	};
 
 	/**
@@ -89,6 +89,18 @@ class TopicViewScreen extends Component {
 		}
 	}
 
+	buildPostData(post, topicData) {
+		return {
+			id: post.id,
+			author: post.author,
+			content: post.content,
+			timestamp: post.timestamp,
+			reactions: post.reputation.reactions,
+			reputation: post.reputation,
+			canReply: topicData.itemPermissions.canComment
+		};
+	}
+
 	render() {
 		if (this.props.data.loading) {
 			return (
@@ -96,25 +108,12 @@ class TopicViewScreen extends Component {
 					<Text>Loading</Text>
 				</View>
 			);
-		} else if ( this.props.data.error ) {
-			//console.log(JSON.parse(JSON.stringify(this.props.data.error)));
-			//console.log( this.props.data.error );
+		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, TopicViewScreen.errors);
-			return ( <Text>{error}</Text> );
+			return <Text>{error}</Text>;
 		} else {
 			const topicData = this.props.data.forums.topic;
-			const listData = topicData.posts.map(post => ({
-				key: post.id,
-				data: {
-					id: post.id,
-					author: post.author,
-					content: post.content,
-					timestamp: post.timestamp,
-					reactions: post.reputation.reactions,
-					reputation: post.reputation,
-					canReply: topicData.itemPermissions.canComment
-				}
-			}));
+			const listData = topicData.posts.map(post => this.buildPostData(post, topicData));
 
 			return (
 				<View style={{ flex: 1 }}>
@@ -124,22 +123,22 @@ class TopicViewScreen extends Component {
 						<FlatList
 							style={{ flex: 1 }}
 							ref={flatList => (this._flatList = flatList)}
+							keyExtractor={item => item.id}
 							ListFooterComponent={() => <View style={{ height: 150 }} />}
 							renderItem={({ item }) => (
 								<Post
-									key={item.key}
-									data={item.data}
+									data={item}
 									profileHandler={() =>
 										this.props.navigation.navigate("Profile", {
-											id: item.data.author.id,
-											name: item.data.author.name,
-											photo: item.data.author.photo
+											id: item.author.id,
+											name: item.author.name,
+											photo: item.author.photo
 										})
 									}
 									onPressReply={() =>
 										this.props.navigation.navigate("ReplyTopic", {
 											topicID: topicData.id,
-											quotedPost: item.data
+											quotedPost: item
 										})
 									}
 								/>
@@ -148,15 +147,18 @@ class TopicViewScreen extends Component {
 							refreshing={this.props.data.networkStatus == 4}
 							onRefresh={() => this.props.data.refetch()}
 						/>
-						{this.props.data.forums.topic.itemPermissions.canComment &&
+						{this.props.data.forums.topic.itemPermissions.canComment && (
 							<Pager light>
-								<DummyTextInput onPress={() => {
-									this.props.navigation.navigate("ReplyTopic", {
-										topicID: topicData.id
-									})
-								}} placeholder='Write a reply...' />
+								<DummyTextInput
+									onPress={() => {
+										this.props.navigation.navigate("ReplyTopic", {
+											topicID: topicData.id
+										});
+									}}
+									placeholder="Write a reply..."
+								/>
 							</Pager>
-						}
+						)}
 					</View>
 				</View>
 			);
@@ -169,7 +171,7 @@ export default graphql(TopicViewQuery, {
 		variables: {
 			topic: props.navigation.state.params.id,
 			offset: 0,
-			limit: 25
+			limit: Expo.Constants.manifest.extra.per_page
 		}
 	})
 })(TopicViewScreen);
