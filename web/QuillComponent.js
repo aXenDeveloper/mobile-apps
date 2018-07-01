@@ -191,7 +191,11 @@ class QuillComponent extends Component {
 						this.insertLink(messageData);
 						break;
 					case "FOCUS":
-						this.state.quill.getSelection(true);
+						this.addDebug(`Focus event`);
+						setTimeout( () => {
+							this.state.quill.blur();
+							this.state.quill.focus();
+						}, 50 );
 						break;
 					case "GET_CONTENT":
 						this.getText(messageData);

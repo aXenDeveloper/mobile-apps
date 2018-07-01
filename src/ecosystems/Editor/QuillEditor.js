@@ -157,11 +157,13 @@ class QuillEditor extends Component {
 	 * ========================================================================
 	 */
 	READY() {
-		/*if( this.props.autoFocus ){
+		console.log( this.props );
+
+		if( this.props.autoFocus ){
 			setTimeout( () => {
 				this.sendMessage("FOCUS");
 			}, 500 );
-		}*/
+		}
 	}
 
 	EDITOR_BLUR() {

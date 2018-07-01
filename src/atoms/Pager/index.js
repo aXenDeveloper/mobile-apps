@@ -7,9 +7,8 @@ export default class Pager extends Component {
 	}
 
 	render() {
-		console.log("Pager");
 		return (
-			<View style={styles.pager}>
+			<View style={[ styles.pager, this.props.light ? styles.light : styles.dark ]}>
 				{this.props.children}
 			</View>
 		);
@@ -18,12 +17,19 @@ export default class Pager extends Component {
 
 const styles = StyleSheet.create({
 	pager: {
-		backgroundColor: '#37454B',
 		height: 45,
 		minHeight: 45,
-		padding: 10,
+		padding: 7,
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center'
+	},
+	dark: {
+		backgroundColor: '#37454B',
+	},
+	light: {
+		backgroundColor: '#f0f0f0',
+		borderTopWidth: 1,
+		borderTopColor: 'rgba(0,0,0,0.1)'
 	}
 });

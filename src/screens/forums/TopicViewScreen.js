@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, Button, ScrollView, FlatList } from "react-native";
+import { Text, View, Button, ScrollView, FlatList, TextInput } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import Modal from "react-native-modal";
@@ -11,6 +11,7 @@ import Tag from "../../atoms/Tag";
 import TagList from "../../atoms/TagList";
 import Pager from "../../atoms/Pager";
 import PagerButton from "../../atoms/PagerButton";
+import DummyTextInput from "../../atoms/DummyTextInput";
 
 const TopicViewQuery = gql`
 	query TopicViewQuery($topic: ID!, $offset: Int, $limit: Int) {
@@ -137,6 +138,15 @@ class TopicViewScreen extends Component {
 							refreshing={this.props.data.networkStatus == 4}
 							onRefresh={() => this.props.data.refetch()}
 						/>
+						{this.props.data.forums.topic.itemPermissions.canComment &&
+							<Pager light>
+								<DummyTextInput onPress={() => {
+									this.props.navigation.navigate("ReplyTopic", {
+										topicID: topicData.id
+									})
+								}} placeholder='Write a reply...' />
+							</Pager>
+						}
 					</View>
 				</View>
 			);

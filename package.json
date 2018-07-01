@@ -36,6 +36,7 @@
     "apollo-cache-inmemory": "^1.1.4",
     "apollo-client": "^2.1.0",
     "apollo-link": "^1.0.7",
+    "apollo-link-error": "^1.1.0",
     "apollo-link-http": "^1.3.2",
     "expo": "^28.0.0",
     "graphql": "^0.12.3",

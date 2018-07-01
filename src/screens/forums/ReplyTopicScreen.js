@@ -4,6 +4,9 @@ import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { NavigationActions } from "react-navigation";
+import _ from "underscore";
+
+import getErrorMessage from '../../utils/getErrorMessage';
 import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
 import RichTextContent from "../../atoms/RichTextContent";
 import UserPhoto from "../../atoms/UserPhoto";
@@ -55,6 +58,11 @@ class ReplyTopicScreen extends Component {
 		};
 	};
 
+	static errors = {
+		'NO_TOPIC': "The topic you are replying to does not exist.",
+		'NO_POST': "You didn't provide a post."
+	};
+
 	constructor(props) {
 		super(props);
 		this.offset = null;
@@ -103,7 +111,7 @@ class ReplyTopicScreen extends Component {
 				variables: {
 					topicID: this.props.navigation.state.params.topicID,
 					content: this.state.content,
-					replyingTo: this.props.navigation.state.params.quotedPost.id || null
+					replyingTo: !_.isUndefined( this.props.navigation.state.params.quotedPost ) ? this.props.navigation.state.params.quotedPost.id : null
 				},
 				refetchQueries: ["TopicViewQuery", "TopicListQuery"]
 			});
@@ -115,7 +123,8 @@ class ReplyTopicScreen extends Component {
 			this.props.navigation.dispatch(navigateAction);
 			//this.props.navigation.goBack();
 		} catch (err) {
-			Alert.alert("Error", "Sorry, there was an error posting this reply: " + err.message, [{ text: "OK" }], { cancelable: false });
+			const errorMessage = getErrorMessage(err, ReplyTopicScreen.errors);
+			Alert.alert("Error", "Sorry, there was an error posting this reply. " + errorMessage, [{ text: "OK" }], { cancelable: false });
 		}
 	}
 
@@ -147,30 +156,32 @@ class ReplyTopicScreen extends Component {
 
 		return (
 			<React.Fragment>
-				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1 }}>
+				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1, backgroundColor: '#fff' }}>
 					{quotedPostComponent}
 					<KeyboardAvoidingView style={{ flex: 1 }} enabled>
 						<QuillEditor
 							placeholder="Your Reply"
 							update={this.updateContentState.bind(this)}
 							height={400}
-							autoFocus
+							autoFocus={!_.isObject( this.props.navigation.state.params.quotedPost )}
 							onFocus={measurer => {
-								if (this.offset) {
-									this.scrollview.scrollTo({
-										x: 0,
-										y: this.offset,
-										animated: true
-									});
-								} else {
-									measurer.measure((fx, fy, width, height, px, py) => {
-										this.offset = py - 120;
+								if( this.props.navigation.state.params.quotedPost ){
+									if (this.offset) {
 										this.scrollview.scrollTo({
 											x: 0,
-											y: py - 120,
+											y: this.offset,
 											animated: true
 										});
-									});
+									} else {
+										measurer.measure((fx, fy, width, height, px, py) => {
+											this.offset = py - 120;
+											this.scrollview.scrollTo({
+												x: 0,
+												y: py - 120,
+												animated: true
+											});
+										});
+									}
 								}
 							}}
 						/>

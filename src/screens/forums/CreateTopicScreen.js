@@ -60,6 +60,12 @@ class CreateTopicScreen extends Component {
 		};
 	};
 
+	static errors = {
+		'NO_FORUM': "The forum does not exist.",
+		'NO_TITLE': "You didn't provide a title.",
+		'NO_POST': "You didn't provide a post"
+	};
+
 	/**
 	 * Constructor
 	 *
@@ -143,7 +149,8 @@ class CreateTopicScreen extends Component {
 
 			this.props.navigation.goBack();
 		} catch (err) {
-			Alert.alert("Error", "Sorry, there was an error posting this topic", [{ text: "OK" }], { cancelable: false });
+			const errorMessage = getErrorMessage(err, CreateTopicScreen.errors);
+			Alert.alert("Error", "Sorry, there was an error posting this topic." + errorMessage, [{ text: "OK" }], { cancelable: false });
 		}
 	}
 
