@@ -66,7 +66,7 @@ export default class RichTextContent extends Component {
 	}
 
 	render() {
-		console.log(this.props.children);
+		//console.log(this.props.children);
 
 		return (
 			<HTML

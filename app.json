@@ -6,7 +6,8 @@
 		"api_url": "http://localhost/ipsdev/graphql-api/",
 		"api_key": "NGVmNjdkZjA0OGExYTE1MzM5MjVmYmIxNWEyN2MwMjc=",
 		"refresh_token_advance": 300000,
-		"message_prefix": "__IPS__"
+		"message_prefix": "__IPS__",
+		"per_page": 10
 	}
   }
 }
