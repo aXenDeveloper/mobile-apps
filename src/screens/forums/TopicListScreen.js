@@ -58,70 +58,171 @@ class TopicListScreen extends Component {
 		headerTitle: <TwoLineHeader title={`${navigation.state.params.title}`} subtitle={`${navigation.state.params.topics} topics`} />
 	});
 
+	/**
+	 * GraphQL error types
+	 */
+	static errors = {
+		NO_FORUM: "The forum does not exist."
+	};
+
 	constructor(props) {
 		super(props);
+		this.state = {
+			reachedEnd: false
+		}
 	}
 
+	/**
+	 * Handles infinite loading when user scrolls to end
+	 *
+	 * @return 	void
+	 */
+	onEndReached() {
+		if( !this.props.data.loading && !this.state.reachedEnd ){
+			this.props.data.fetchMore({
+				variables: {
+					offset: this.props.data.forums.forum.topics.length
+				},
+				updateQuery: (previousResult, { fetchMoreResult }) => {
+					// Don't do anything if there wasn't any new items
+					if (!fetchMoreResult || fetchMoreResult.forums.forum.topics.length === 0) {
+						this.setState({
+							reachedEnd: true
+						});
+
+						return previousResult;
+					}
+
+					const result = Object.assign({}, previousResult, {
+						forums: {
+							...previousResult.forums,
+							forum: {
+								...previousResult.forums.forum,
+								topics: [...previousResult.forums.forum.topics, ...fetchMoreResult.forums.forum.topics ]
+							}
+						}
+					});
+
+					return result;
+				}
+			});
+		}
+	}
+
+	/**
+	 * Handle refreshing the view
+	 *
+	 * @return 	void
+	 */
+	onRefresh() {
+		this.setState({
+			reachedEnd: false
+		});
+
+		this.props.data.refetch()
+	}
+
+	/**
+	 * Return the footer component. Show a spacer by default, but a loading post
+	 * if we're fetching more items right now.
+	 *
+	 * @return 	Component
+	 */
+	getFooterComponent() {
+		// If we're loading more items in
+		if( this.props.data.networkStatus == 3 && !this.state.reachedEnd ){
+			return <Text style={{ textAlign: 'center' }}>Loading...</Text>;
+		}
+
+		return (<View style={{ height: 150 }} />);
+	}
+
+	/**
+	 * Given a post and topic data, return an object with a more useful structure
+	 *
+	 * @param 	object 	post 		A raw post object from GraphQL
+	 * @param 	object 	topicData 	The topic data
+	 * @return 	object
+	 */
+	buildTopicData(topic, forumData) {
+		return {
+			id: topic.id,
+			unread: topic.isUnread,
+			title: topic.title,
+			replies: parseInt(topic.postCount),
+			author: topic.author.name,
+			started: topic.started,
+			snippet: topic.content.trim(),
+			hot: false,
+			pinned: topic.pinned,
+			locked: topic.locked,
+			lastPostDate: topic.lastPostDate,
+			lastPostPhoto: topic.lastPostAuthor.photo
+		};
+	}
+
+	/**
+	 * Render a topic
+	 *
+	 * @param 	object 	item 		A topic object (already transformed by this.buildTopicData)
+	 * @param 	object 	forumData 	The forum data
+	 * @return 	Component
+	 */
+	renderItem(item, forumData) {
+		return ( <TopicRow
+			data={item}
+			onPress={() =>
+				this.props.navigation.navigate("TopicView", {
+					id: item.id,
+					title: item.title,
+					author: item.author,
+					posts: item.replies,
+					started: relativeTime.long(item.started)
+				})
+			}
+		/> );
+	}	
+
 	render() {
-		if (this.props.data.loading) {
+		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return (
 				<View repeat={7}>
 					<Text>Loading</Text>
 				</View>
 			);
+		} else if (this.props.data.error) {
+			const error = getErrorMessage(this.props.data.error, TopicListScreen.errors);
+			return <Text>{error}</Text>;
 		} else {
-			const listData = this.props.data.forums.forum.topics.map(topic => ({
-				key: topic.id,
-				data: {
-					id: topic.id,
-					unread: topic.isUnread,
-					title: topic.title,
-					replies: parseInt(topic.postCount),
-					author: topic.author.name,
-					started: topic.started,
-					snippet: topic.content.trim(),
-					hot: false,
-					pinned: topic.pinned,
-					locked: topic.locked,
-					lastPostDate: topic.lastPostDate,
-					lastPostPhoto: topic.lastPostAuthor.photo
-				}
-			}));
+			const forumData = this.props.data.forums.forum;
+			const settingsData = this.props.data.core.settings;
+			const listData = forumData.topics.map(topic => this.buildTopicData(topic, forumData));
+
+			console.log( listData );
 
 			return (
 				<View contentContainerStyle={{ flex: 1 }} style={{ flex: 1 }}>
 					<View style={{ flex: 1 }}>
 						<FlatList
 							style={{ flex: 1 }}
-							renderItem={({ item }) => (
-								<TopicRow
-									key={item.key}
-									data={item.data}
-									onPress={() =>
-										this.props.navigation.navigate("TopicView", {
-											id: item.data.id,
-											title: item.data.title,
-											author: item.data.author,
-											posts: item.data.replies,
-											started: relativeTime.long(item.data.started)
-										})
-									}
-								/>
-							)}
+							keyExtractor={item => item.id}
+							ListFooterComponent={() => this.getFooterComponent()}
+							renderItem={({ item }) => this.renderItem(item, forumData)}
 							data={listData}
 							refreshing={this.props.data.networkStatus == 4}
-							onRefresh={() => this.props.data.refetch()}
+							onRefresh={() => this.onRefresh()}
+							onEndReached={() => this.onEndReached()}
 						/>
-						{this.props.data.forums.forum.create.canCreate ? (
+						{forumData.create.canCreate ? (
 							<Pager>
 								<AddButton icon={require('../../../resources/compose.png')} title='Create New Topic' onPress={() => this.props.navigation.navigate("CreateTopic", {
 									forumID: this.props.navigation.state.params.id,
-									tagsEnabled: this.props.data.forums.forum.create.tags.enabled,
-									definedTags: this.props.data.forums.forum.create.tags.definedTags,
-									tags_min: this.props.data.core.settings.tags_min,
-									tags_len_min: this.props.data.core.settings.tags_len_min,
-									tags_max: this.props.data.core.settings.tags_max,
-									tags_len_max: this.props.data.core.settings.tags_len_max
+									tagsEnabled: forumData.create.tags.enabled,
+									definedTags: forumData.create.tags.definedTags,
+									tags_min: settingsData.tags_min,
+									tags_len_min: settingsData.tags_len_min,
+									tags_max: settingsData.tags_max,
+									tags_len_max: settingsData.tags_len_max
 								})} />
 							</Pager>
 						) : null}
@@ -134,10 +235,11 @@ class TopicListScreen extends Component {
 
 export default graphql(TopicListQuery, {
 	options: props => ({
+		notifyOnNetworkStatusChange: true,
 		variables: {
 			forum: props.navigation.state.params.id,
 			offset: 0,
-			limit: 25
+			limit: Expo.Constants.manifest.extra.per_page
 		}
 	})
 })(TopicListScreen);
