@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableHighlight } from 'react-native';
+/*import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient';
+import { Svg } from 'expo';*/
+
+import { PlaceholderElement, PlaceholderContainer } from '../../atoms/Placeholder';
 import ShadowedArea from '../../atoms/ShadowedArea';
 import TopicIcon from '../../atoms/TopicIcon';
 import LockedIcon from '../../atoms/LockedIcon';
@@ -13,7 +17,26 @@ export default class TopicRow extends Component {
 		super(props);
 	}
 
+	loadingComponent() {
+		return (
+			<ContentRow withSpace>
+				<PlaceholderContainer height={45} style={styles.topicRowLoading}>
+					<PlaceholderElement width='80%' height={20} top={0}/>
+					<PlaceholderElement width='70%' height={15} top={27} />
+					<PlaceholderElement circle radius={40} right={0} top={0} />
+				</PlaceholderContainer>
+				<PlaceholderContainer height={20} style={styles.topicStatusesLoading}>
+					<PlaceholderElement width='30%' height={15} />
+				</PlaceholderContainer>
+			</ContentRow>
+		);
+	}
+
 	render() {
+		if( this.props.loading ){
+			return this.loadingComponent();
+		}
+
 		return (
 			<ContentRow withSpace unread={this.props.data.unread} onPress={this.props.onPress}>
 				<View style={styles.topicRowInner}>
@@ -41,9 +64,20 @@ export default class TopicRow extends Component {
 }
 
 const styles = StyleSheet.create({
-	outerTopicRow: {
-		//marginBottom: 4
+	// Loading styles
+	topicRowLoading: {
+		paddingLeft: 15,
+		paddingRight: 15,
+		paddingVertical: 10
 	},
+	topicStatusesLoading: {
+		backgroundColor: '#FAFAFA',
+		height: 32,
+		paddingHorizontal: 15,
+		paddingVertical: 8
+	},
+
+	// Regular styles
 	topicRowInner: {
 		paddingLeft: 15,
 		paddingRight: 16,

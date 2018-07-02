@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
 export const styleVars = {
 	tabActive: '#37454B',
 	tabInactive: '#6e797e',
-	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`	
+	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`,
+	placeholderColor: '#e0e0e0'
 };
 
 export const richTextStyles = {

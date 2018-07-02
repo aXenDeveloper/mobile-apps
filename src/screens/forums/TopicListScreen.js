@@ -186,8 +186,12 @@ class TopicListScreen extends Component {
 	render() {
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return (
-				<View repeat={7}>
-					<Text>Loading</Text>
+				<View style={{ flex: 1 }} repeat={7}>
+					<TopicRow loading={true} />
+					<TopicRow loading={true} />
+					<TopicRow loading={true} />
+					<TopicRow loading={true} />
+					<TopicRow loading={true} />
 				</View>
 			);
 		} else if (this.props.data.error) {
@@ -197,8 +201,6 @@ class TopicListScreen extends Component {
 			const forumData = this.props.data.forums.forum;
 			const settingsData = this.props.data.core.settings;
 			const listData = forumData.topics.map(topic => this.buildTopicData(topic, forumData));
-
-			console.log( listData );
 
 			return (
 				<View contentContainerStyle={{ flex: 1 }} style={{ flex: 1 }}>
