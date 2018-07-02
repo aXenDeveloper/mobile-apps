@@ -136,6 +136,19 @@ class TopicViewScreen extends Component {
 	}
 
 	/**
+	 * Handle refreshing the view
+	 *
+	 * @return 	void
+	 */
+	onRefresh() {
+		this.setState({
+			reachedEnd: false
+		});
+
+		this.props.data.refetch()
+	}
+
+	/**
 	 * Return the footer component. Show a spacer by default, but a loading post
 	 * if we're fetching more items right now.
 	 *
@@ -222,11 +235,8 @@ class TopicViewScreen extends Component {
 							renderItem={({item}) => this.renderItem(item, topicData)}
 							data={listData}
 							refreshing={this.props.data.networkStatus == 4}
-							onRefresh={() => this.props.data.refetch()}
+							onRefresh={() => this.onRefresh()}
 							onEndReached={() => this.onEndReached()}
-							onMomentumScrollBegin={() => {
-								this.onEndReachedCalledDuringMomentum = false;
-							}}
 						/>
 						{this.props.data.forums.topic.itemPermissions.canComment && (
 							<Pager light>
