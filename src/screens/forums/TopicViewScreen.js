@@ -56,8 +56,14 @@ class TopicViewScreen extends Component {
 	constructor(props) {
 		super(props);
 		this.flatList = null;
+		this.state = {
+			reachedEnd: false
+		}
 	}
 
+	/**
+	 * React Navigation config
+	 */
 	static navigationOptions = ({ navigation }) => ({
 		headerTitle: (
 			<TwoLineHeader
@@ -67,6 +73,9 @@ class TopicViewScreen extends Component {
 		)
 	});
 
+	/**
+	 * GraphQL error types
+	 */
 	static errors = {
 		NO_TOPIC: "The topic does not exist."
 	};
@@ -89,6 +98,65 @@ class TopicViewScreen extends Component {
 		}
 	}
 
+	/**
+	 * Handles infinite loading when user scrolls to end
+	 *
+	 * @return 	void
+	 */
+	onEndReached() {
+		if( !this.props.data.loading && !this.state.reachedEnd ){
+			this.props.data.fetchMore({
+				variables: {
+					offset: this.props.data.forums.topic.posts.length
+				},
+				updateQuery: (previousResult, { fetchMoreResult }) => {
+					// Don't do anything if there wasn't any new items
+					if (!fetchMoreResult || fetchMoreResult.forums.topic.posts.length === 0) {
+						this.setState({
+							reachedEnd: true
+						});
+
+						return previousResult;
+					}
+
+					const result = Object.assign({}, previousResult, {
+						forums: {
+							...previousResult.forums,
+							topic: {
+								...previousResult.forums.topic,
+								posts: [...previousResult.forums.topic.posts, ...fetchMoreResult.forums.topic.posts ]
+							}
+						}
+					});
+
+					return result;
+				}
+			});
+		}
+	}
+
+	/**
+	 * Return the footer component. Show a spacer by default, but a loading post
+	 * if we're fetching more items right now.
+	 *
+	 * @return 	Component
+	 */
+	getFooterComponent() {
+		// If we're loading more items in
+		if( this.props.data.networkStatus == 3 && !this.state.reachedEnd ){
+			return <Text style={{ textAlign: 'center' }}>Loading...</Text>;
+		}
+
+		return (<View style={{ height: 150 }} />);
+	}
+
+	/**
+	 * Given a post and topic data, return an object with a more useful structure
+	 *
+	 * @param 	object 	post 		A raw post object from GraphQL
+	 * @param 	object 	topicData 	The topic data
+	 * @return 	object
+	 */
 	buildPostData(post, topicData) {
 		return {
 			id: post.id,
@@ -101,8 +169,34 @@ class TopicViewScreen extends Component {
 		};
 	}
 
+	/**
+	 * Render a post
+	 *
+	 * @param 	object 	item 		A post object (already transformed by this.buildPostData)
+	 * @param 	object 	topicData 	The topic data
+	 * @return 	Component
+	 */
+	renderItem(item, topicData) {
+		return ( <Post
+			data={item}
+			profileHandler={() =>
+				this.props.navigation.navigate("Profile", {
+					id: item.author.id,
+					name: item.author.name,
+					photo: item.author.photo
+				})
+			}
+			onPressReply={() =>
+				this.props.navigation.navigate("ReplyTopic", {
+					topicID: topicData.id,
+					quotedPost: item
+				})
+			}
+		/> );
+	}
+
 	render() {
-		if (this.props.data.loading) {
+		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return (
 				<View repeat={7}>
 					<Text>Loading</Text>
@@ -124,28 +218,15 @@ class TopicViewScreen extends Component {
 							style={{ flex: 1 }}
 							ref={flatList => (this._flatList = flatList)}
 							keyExtractor={item => item.id}
-							ListFooterComponent={() => <View style={{ height: 150 }} />}
-							renderItem={({ item }) => (
-								<Post
-									data={item}
-									profileHandler={() =>
-										this.props.navigation.navigate("Profile", {
-											id: item.author.id,
-											name: item.author.name,
-											photo: item.author.photo
-										})
-									}
-									onPressReply={() =>
-										this.props.navigation.navigate("ReplyTopic", {
-											topicID: topicData.id,
-											quotedPost: item
-										})
-									}
-								/>
-							)}
+							ListFooterComponent={() => this.getFooterComponent()}
+							renderItem={({item}) => this.renderItem(item, topicData)}
 							data={listData}
 							refreshing={this.props.data.networkStatus == 4}
 							onRefresh={() => this.props.data.refetch()}
+							onEndReached={() => this.onEndReached()}
+							onMomentumScrollBegin={() => {
+								this.onEndReachedCalledDuringMomentum = false;
+							}}
 						/>
 						{this.props.data.forums.topic.itemPermissions.canComment && (
 							<Pager light>
@@ -168,6 +249,7 @@ class TopicViewScreen extends Component {
 
 export default graphql(TopicViewQuery, {
 	options: props => ({
+		notifyOnNetworkStatusChange: true,
 		variables: {
 			topic: props.navigation.state.params.id,
 			offset: 0,
