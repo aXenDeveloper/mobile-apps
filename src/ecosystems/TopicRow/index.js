@@ -20,13 +20,13 @@ export default class TopicRow extends Component {
 	loadingComponent() {
 		return (
 			<ContentRow withSpace>
-				<PlaceholderContainer height={45} style={styles.topicRowLoading}>
-					<PlaceholderElement width='80%' height={20} top={0}/>
-					<PlaceholderElement width='70%' height={15} top={27} />
-					<PlaceholderElement circle radius={40} right={0} top={0} />
+				<PlaceholderContainer height={48} style={styles.topicRowLoading}>
+					<PlaceholderElement width='80%' height={15} top={4}/>
+					<PlaceholderElement width='70%' height={12} top={26} />
+					<PlaceholderElement circle radius={30} right={0} top={0} />
 				</PlaceholderContainer>
 				<PlaceholderContainer height={20} style={styles.topicStatusesLoading}>
-					<PlaceholderElement width='30%' height={15} />
+					<PlaceholderElement width='30%' height={14} />
 				</PlaceholderContainer>
 			</ContentRow>
 		);

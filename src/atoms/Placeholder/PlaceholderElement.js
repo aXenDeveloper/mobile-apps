@@ -1,11 +1,31 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Animated } from "react-native";
 import _ from "underscore";
 import { styleVars } from '../../styles';
 
 export default class PlaceholderElement extends Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			backgroundColor: new Animated.Value(0)
+		};
+	}
+
+	componentDidMount() {
+		this.state.backgroundColor.setValue(0);
+		Animated.loop(
+			 Animated.sequence([
+			 	Animated.timing( this.state.backgroundColor, {
+					toValue: 1,
+					duration: 500,
+					delay: 500
+				}),
+				Animated.timing( this.state.backgroundColor, {
+					toValue: 0,
+					duration: 500
+				}),
+			])
+		).start();
 	}
 
 	render() {
@@ -27,21 +47,27 @@ export default class PlaceholderElement extends Component {
 
 		const styles = Object.assign({}, this.props.style, shapeStyles);
 
+		// Animated background
+		const backgroundColor = this.state.backgroundColor.interpolate({
+			inputRange: [ 0, 1 ],
+			outputRange: styleVars.placeholderColors
+		});
+
 		return (
-			<View style={[
+			<Animated.View style={[
+				{ backgroundColor },
 				componentStyles.base, 
 				this.props.circle ? componentStyles.circle : componentStyles.rect,
 				styles
 			]}>
 				<Text>&nbsp;</Text>
-			</View>
+			</Animated.View>
 		);
 	}
 }
 
 const componentStyles = StyleSheet.create({
 	base: {
-		backgroundColor: styleVars.placeholderColor,
 		position: 'absolute'
 	},
 	circle: {

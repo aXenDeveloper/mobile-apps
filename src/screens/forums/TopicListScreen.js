@@ -3,6 +3,7 @@ import { Text, View, Button, ScrollView, FlatList } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 
+import { PlaceholderRepeater } from '../../atoms/Placeholder';
 import relativeTime from "../../utils/RelativeTime";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import Pager from "../../atoms/Pager";
@@ -186,13 +187,9 @@ class TopicListScreen extends Component {
 	render() {
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return (
-				<View style={{ flex: 1 }} repeat={7}>
+				<PlaceholderRepeater repeat={7}>
 					<TopicRow loading={true} />
-					<TopicRow loading={true} />
-					<TopicRow loading={true} />
-					<TopicRow loading={true} />
-					<TopicRow loading={true} />
-				</View>
+				</PlaceholderRepeater>
 			);
 		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, TopicListScreen.errors);

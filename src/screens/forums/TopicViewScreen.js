@@ -5,6 +5,7 @@ import { graphql } from "react-apollo";
 import Modal from "react-native-modal";
 import _ from "underscore";
 
+import { PlaceholderRepeater } from '../../atoms/Placeholder';
 import getErrorMessage from "../../utils/getErrorMessage";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import Post from "../../ecosystems/Post";
@@ -157,7 +158,7 @@ class TopicViewScreen extends Component {
 	getFooterComponent() {
 		// If we're loading more items in
 		if( this.props.data.networkStatus == 3 && !this.state.reachedEnd ){
-			return <Text style={{ textAlign: 'center' }}>Loading...</Text>;
+			return <Post loading={true} />;
 		}
 
 		return (<View style={{ height: 150 }} />);
@@ -211,9 +212,9 @@ class TopicViewScreen extends Component {
 	render() {
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return (
-				<View repeat={7}>
-					<Text>Loading</Text>
-				</View>
+				<PlaceholderRepeater repeat={4}>
+					<Post loading={true} />
+				</PlaceholderRepeater>
 			);
 		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, TopicViewScreen.errors);

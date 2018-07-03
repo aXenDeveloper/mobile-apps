@@ -128,7 +128,7 @@ export const styleVars = {
 	tabActive: '#37454B',
 	tabInactive: '#6e797e',
 	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`,
-	placeholderColor: '#e0e0e0'
+	placeholderColors: ['#e0e0e0', '#f5f5f5']
 };
 
 export const richTextStyles = {
