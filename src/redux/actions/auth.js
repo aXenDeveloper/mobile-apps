@@ -81,51 +81,86 @@ export const refreshAuth = () => {
 			return;
 		}
 
-		const authObj = JSON.parse(authData);
-		const response = await fetch(
-			`${Expo.Constants.manifest.extra.api_url}/oauth/token/index.php`,
-			{
-				method: "post",
-				headers: {
-					"Content-Type": "application/x-www-form-urlencoded"
-				},
-				body: ToFormData({
-					grant_type: "refresh_token",
-					response_type: "token",
-					client_id: Expo.Constants.manifest.extra.oauth_client_id,
-					refresh_token: authObj.refresh_token
-				})
+		// Do the request
+		try {
+			// Set a timeout so we can show an error if we can't connect
+			var timeoutCanceled = false;
+			const timeoutHandler = setTimeout( () => {
+				timeoutCanceled = true;
+
+				dispatch(
+					checkAuthRequestError({
+						error: 'timeout'
+					})
+				);
+			}, 5000);
+			
+			// Now do the request
+			const authObj = JSON.parse(authData);
+			const response = await fetch(
+				`${Expo.Constants.manifest.extra.api_url}/oauth/token/index.php`,
+				{
+					method: "post",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					body: ToFormData({
+						grant_type: "refresh_token",
+						response_type: "token",
+						client_id: Expo.Constants.manifest.extra.oauth_client_id,
+						refresh_token: authObj.refresh_token
+					})
+				}
+			);
+
+			if( timeoutCanceled ){
+				return;
 			}
-		);
+			
+			// Now clear the timeout so we can proceed
+			clearTimeout( timeoutHandler );
 
-		const data = await response.json();
+			const data = await response.json();
 
-		if (data.error || !data.access_token) {
+			if (data.error || !data.access_token) {
+				dispatch(
+					checkAuthRequestError({
+						error: "invalid_token"
+					})
+				);
+			} else if (!response.ok) {
+				dispatch(
+					checkAuthRequestError({
+						error: "server_error"
+					})
+				);
+			} else {
+				await AsyncStorage.setItem(
+					"@authStore:auth",
+					JSON.stringify({
+						refresh_token: authObj.refresh_token,
+						access_token: data.access_token,
+						expires_in: data.expires_in
+					})
+				);
+
+				dispatch(
+					checkAuthRequestSuccess({
+						access_token: data.access_token,
+						expires_in: data.expires_in
+					})
+				);
+			}
+
+		} catch (err) {
+			// If this is true, we've already dispatched an error
+			if( timeoutCanceled ){
+				return;
+			}
+
 			dispatch(
 				checkAuthRequestError({
-					error: "invalid_token"
-				})
-			);
-		} else if (!response.ok) {
-			dispatch(
-				checkAuthRequestError({
-					error: "server_error"
-				})
-			);
-		} else {
-			await AsyncStorage.setItem(
-				"@authStore:auth",
-				JSON.stringify({
-					refresh_token: authObj.refresh_token,
-					access_token: data.access_token,
-					expires_in: data.expires_in
-				})
-			);
-
-			dispatch(
-				checkAuthRequestSuccess({
-					access_token: data.access_token,
-					expires_in: data.expires_in
+					error: err.message
 				})
 			);
 		}

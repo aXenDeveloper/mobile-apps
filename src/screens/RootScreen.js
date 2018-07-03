@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, ActivityIndicator, AsyncStorage } from "react-native";
+import { Text, Alert, View, TouchableHighlight, StyleSheet, ActivityIndicator, AsyncStorage } from "react-native";
 import { ApolloProvider } from "react-apollo";
 import { ApolloClient } from "apollo-client";
 import { HttpLink } from "apollo-link-http";
@@ -19,7 +19,8 @@ class RootScreen extends Component {
 		super(props);
 
 		this.state = {
-			loading: false
+			loading: false,
+			timeout: false
 		};
 
 		// Apollo config & setup
@@ -82,6 +83,15 @@ class RootScreen extends Component {
 		}
 	}
 
+	tryAfterTimeout() {
+		this.setState({
+			loading: true,
+			timeout: false
+		});
+
+		this.props.dispatch(refreshAuth());
+	}
+
 	/**
 	 * When we get new props, decide whether to show loading status to the user
 	 * We only need to do this if they aren't already logged in.
@@ -104,6 +114,24 @@ class RootScreen extends Component {
 			});
 		}
 
+		if( nextProps.auth.error && nextProps.auth.error == 'timeout' ){
+			this.setState({
+				timeout: true
+			});
+
+			Alert.alert(
+				"Network Error",
+				"Sorry, the community you are trying to access isn't available right now.",
+				[
+					{
+						text: "OK",
+					}
+				],
+				{ cancelable: false }
+			);
+			return;
+		}
+
 		// If we're authenticated now, then start a timer so we can refresh the token before it expires
 		if (nextProps.auth.authenticated && !this.props.auth.authenticated) {
 			this._refreshTimer = setInterval(() => {
@@ -121,9 +149,15 @@ class RootScreen extends Component {
 	render() {
 		return (
 			<ApolloProvider client={this._client}>
-				{this.state.loading ? (
+				{this.state.loading || this.state.timeout ? (
 					<View style={styles.wrapper}>
-						<ActivityIndicator size="large" color="#ffffff" />
+						{this.state.loading ? (
+							<ActivityIndicator size="large" color="#ffffff" />
+						) : (
+							<TouchableHighlight style={styles.tryAgain} onPress={() => this.tryAfterTimeout()}>
+								<Text style={styles.tryAgainText}>Try Again</Text>
+							</TouchableHighlight>
+						)}
 					</View>
 				) : (
 					<AppNavigation isMember={this.props.auth.authenticated} />
@@ -139,6 +173,18 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "center"
+	},
+	tryAgain: {
+		//backgroundColor: 'rgba(255,255,255,0.1)',
+		borderWidth: 1,
+		borderColor: 'rgba(255,255,255,0.5)',
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 4
+	},
+	tryAgainText: {
+		color: 'rgba(255,255,255,0.5)',
+		fontSize: 15
 	}
 });
 

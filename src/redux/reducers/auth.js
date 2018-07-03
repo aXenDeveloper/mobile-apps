@@ -37,8 +37,9 @@ export default function auth(state = initialState, { type, payload }) {
 				error: payload.error
 			};
 		case actions.CHECK_AUTH_REQUEST:
+			const { error, ...others } = state;
 			return {
-				...state,
+				...others,
 				checkAuthProcessing: true
 			};
 		case actions.CHECK_AUTH_REQUEST_SUCCESS:
@@ -51,9 +52,10 @@ export default function auth(state = initialState, { type, payload }) {
 			};
 		case actions.CHECK_AUTH_REQUEST_ERROR:
 			// Return object that excludes access_token & expires_in
-			const { access_token, expires_in, error, ...rest } = state;
+			const { access_token, expires_in, ...rest } = state;
 			return {
 				...rest,
+				error: payload.error,
 				checkAuthProcessing: false,
 				authenticated: false
 			};
