@@ -30,9 +30,7 @@ class RootScreen extends Component {
 				credentials: "same-origin",
 				headers: {
 					...context.headers,
-					Authorization: this.props.auth.access_token
-						? `Bearer ${this.props.auth.access_token}`
-						: `Basic ${Expo.Constants.manifest.extra.api_key}`
+					Authorization: this.props.auth.access_token ? `Bearer ${this.props.auth.access_token}` : `Basic ${Expo.Constants.manifest.extra.api_key}`
 				}
 			}));
 			return next(operation);
@@ -114,7 +112,7 @@ class RootScreen extends Component {
 			});
 		}
 
-		if( nextProps.auth.error && nextProps.auth.error == 'timeout' ){
+		if (nextProps.auth.error && nextProps.auth.networkError) {
 			this.setState({
 				timeout: true
 			});
@@ -124,7 +122,7 @@ class RootScreen extends Component {
 				"Sorry, the community you are trying to access isn't available right now.",
 				[
 					{
-						text: "OK",
+						text: "OK"
 					}
 				],
 				{ cancelable: false }
@@ -149,7 +147,7 @@ class RootScreen extends Component {
 	render() {
 		return (
 			<ApolloProvider client={this._client}>
-				{this.state.loading || this.state.timeout ? (
+				{this.state.loading || this.state.timeout || this.props.auth.networkError ? (
 					<View style={styles.wrapper}>
 						{this.state.loading ? (
 							<ActivityIndicator size="large" color="#ffffff" />
@@ -177,13 +175,13 @@ const styles = StyleSheet.create({
 	tryAgain: {
 		//backgroundColor: 'rgba(255,255,255,0.1)',
 		borderWidth: 1,
-		borderColor: 'rgba(255,255,255,0.5)',
+		borderColor: "rgba(255,255,255,0.5)",
 		paddingVertical: 10,
 		paddingHorizontal: 20,
 		borderRadius: 4
 	},
 	tryAgainText: {
-		color: 'rgba(255,255,255,0.5)',
+		color: "rgba(255,255,255,0.5)",
 		fontSize: 15
 	}
 });

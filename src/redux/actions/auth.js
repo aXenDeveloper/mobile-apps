@@ -66,6 +66,9 @@ export const logOutSuccess = data => ({
 /**
  * Refreshes the auth token, if available in AsyncStorage
  */
+var timeoutHandler;
+var timeoutCanceled = false;
+
 export const refreshAuth = () => {
 	return async dispatch => {
 		dispatch(checkAuthRequest());
@@ -75,7 +78,8 @@ export const refreshAuth = () => {
 		if (authData == null) {
 			dispatch(
 				checkAuthRequestError({
-					error: "empty_storage"
+					error: "empty_storage",
+					networkError: false,
 				})
 			);
 			return;
@@ -84,13 +88,13 @@ export const refreshAuth = () => {
 		// Do the request
 		try {
 			// Set a timeout so we can show an error if we can't connect
-			var timeoutCanceled = false;
-			const timeoutHandler = setTimeout( () => {
+			
+			timeoutHandler = setTimeout( () => {
 				timeoutCanceled = true;
-
 				dispatch(
 					checkAuthRequestError({
-						error: 'timeout'
+						error: 'timeout',
+						networkError: true,
 					})
 				);
 			}, 5000);
@@ -116,6 +120,8 @@ export const refreshAuth = () => {
 			if( timeoutCanceled ){
 				return;
 			}
+
+			console.log("AUTH HERE");
 			
 			// Now clear the timeout so we can proceed
 			clearTimeout( timeoutHandler );
@@ -125,13 +131,15 @@ export const refreshAuth = () => {
 			if (data.error || !data.access_token) {
 				dispatch(
 					checkAuthRequestError({
-						error: "invalid_token"
+						error: "invalid_token",
+						networkError: false
 					})
 				);
 			} else if (!response.ok) {
 				dispatch(
 					checkAuthRequestError({
-						error: "server_error"
+						error: "server_error",
+						networkError: true
 					})
 				);
 			} else {
@@ -158,9 +166,12 @@ export const refreshAuth = () => {
 				return;
 			}
 
+			clearTimeout( timeoutHandler );
+
 			dispatch(
 				checkAuthRequestError({
-					error: err.message
+					error: err.message,
+					networkError: true
 				})
 			);
 		}

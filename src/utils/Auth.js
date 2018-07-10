@@ -38,7 +38,7 @@ class Auth {
 		const authData = await AsyncStorage.getItem("@authStore:auth");
 
 		if (authData == null) {
-			throw "no_refresh_token";
+			throw new Error("no_refresh_token");
 		}
 
 		const authObj = JSON.parse(authData);
