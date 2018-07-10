@@ -8,6 +8,7 @@ import CustomHeader from "../ecosystems/CustomHeader";
 import HomeScreen from "../screens/core/HomeScreen";
 import SearchScreen from "../screens/core/SearchScreen";
 import StreamsScreen from "../screens/core/StreamsScreen";
+import StreamViewScreen from "../screens/core/StreamViewScreen";
 import NotificationsScreen from "../screens/core/NotificationsScreen";
 import ProfileScreen from "../screens/core/ProfileScreen";
 import UserScreen from "../screens/core/UserScreen";
@@ -81,6 +82,7 @@ class AppNavigation extends Component {
 		);
 
 		this._CommunityStack = this._getMainStack();
+		this._StreamStack = this._getStreamStack();
 		this._NotificationStack = this._getMainStack({}, 'NotificationsStack');
 
 		this.state = {
@@ -106,6 +108,29 @@ class AppNavigation extends Component {
 					title: 'Forums',
 					header: props => {
 						return <CustomHeader {...props} title="Forums" />;
+					},
+					headerTitleStyle: styles.headerTitle,
+					headerStyle: styles.header,
+					headerBackTitleStyle: styles.headerBack,
+					headerTintColor: "white",
+					headerBackTitle: null
+				}, options || null)
+			}
+		);
+	}
+
+	_getStreamStack(options, initialRoute) {
+		return createStackNavigator(
+			{
+				StreamView: { screen: StreamViewScreen	},
+			},
+			{
+				initialRouteName: initialRoute || 'StreamView',
+				cardStyle: styles.stackCardStyle,
+				navigationOptions: Object.assign({
+					title: 'Streams',
+					header: props => {
+						return <CustomHeader {...props} title="Streams" />;
 					},
 					headerTitleStyle: styles.headerTitle,
 					headerStyle: styles.header,
@@ -212,9 +237,12 @@ class AppNavigation extends Component {
 			}
 		};
 		const Streams = {
-			screen: StreamsScreen,
+			screen: this._StreamStack,
 			navigationOptions: {
 				tabBarLabel: "Streams",
+				header: props => {
+					return <CustomHeader {...props} title="Forums" />;
+				},
 				tabBarIcon: ({ focused, tintColor }) => (
 					<Image
 						style={[styles.tabIcon, { tintColor: tintColor }]}
