@@ -88,7 +88,7 @@ export default class StreamCard extends Component {
 	getCardComponent() {
 		let Component;
 
-		if( this.props.data.isComment && this.props.data.title !== null ){
+		if( !this.props.data.isComment && !this.props.data.isReview ){
 			Component = this.props.view !== 'condensed' ? ExpandedContentItem : CondensedContentItem;
 		} else {
 			Component = this.props.view !== 'condensed' ? ExpandedComment : CondensedComment;

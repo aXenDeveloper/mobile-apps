@@ -111,13 +111,12 @@ class StreamViewScreen extends Component {
 				</PlaceholderRepeater>
 			);
 		} else if (this.props.data.error) {
-			const error = getErrorMessage(this.props.data.error, TopicViewScreen.errors);
+			const error = getErrorMessage(this.props.data.error, {});
 			return <Text>{error}</Text>;
 		} else {
 			const streamData = this.props.data.core.stream;
 			const sectionData = this.buildSectionData(streamData.items, streamData);
 
-			//return (<Text>Stream View</Text>);
 			return (
 				<View style={{ flexGrow: 1 }}>
 					<View style={componentStyles.timeline}></View>

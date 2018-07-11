@@ -19,8 +19,7 @@ class RootScreen extends Component {
 		super(props);
 
 		this.state = {
-			loading: false,
-			timeout: false
+			loading: false
 		};
 
 		// Apollo config & setup
@@ -81,10 +80,9 @@ class RootScreen extends Component {
 		}
 	}
 
-	tryAfterTimeout() {
+	tryAfterNetworkError() {
 		this.setState({
-			loading: true,
-			timeout: false
+			loading: true
 		});
 
 		this.props.dispatch(refreshAuth());
@@ -113,10 +111,6 @@ class RootScreen extends Component {
 		}
 
 		if (nextProps.auth.error && nextProps.auth.networkError) {
-			this.setState({
-				timeout: true
-			});
-
 			Alert.alert(
 				"Network Error",
 				"Sorry, the community you are trying to access isn't available right now.",
@@ -147,12 +141,12 @@ class RootScreen extends Component {
 	render() {
 		return (
 			<ApolloProvider client={this._client}>
-				{this.state.loading || this.state.timeout || this.props.auth.networkError ? (
+				{this.state.loading || this.props.auth.networkError ? (
 					<View style={styles.wrapper}>
 						{this.state.loading ? (
 							<ActivityIndicator size="large" color="#ffffff" />
 						) : (
-							<TouchableHighlight style={styles.tryAgain} onPress={() => this.tryAfterTimeout()}>
+							<TouchableHighlight style={styles.tryAgain} onPress={() => this.tryAfterNetworkError()}>
 								<Text style={styles.tryAgainText}>Try Again</Text>
 							</TouchableHighlight>
 						)}
