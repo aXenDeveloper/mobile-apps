@@ -9,7 +9,7 @@ import StreamHeader from "../../atoms/StreamHeader";
 import StreamCard from "../../ecosystems/StreamCard";
 import { PlaceholderRepeater } from '../../atoms/Placeholder';
 import getErrorMessage from "../../utils/getErrorMessage";
-import isSupportedType from "../../utils/isSupportedType";
+import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 
 const StreamViewQuery = gql`
 	query StreamViewQuery {
@@ -19,7 +19,12 @@ const StreamViewQuery = gql`
 				items {
 					indexID
 					itemID
-					itemUrl
+					url {
+						full
+						app
+						module
+						controller
+					}
 					containerID
 					containerTitle
 					class
@@ -78,19 +83,43 @@ class StreamViewScreen extends Component {
 				};
 			}
 
-			sections[ item.relativeTimeKey ].data.push({
-				...item,
-				isSupported: isSupportedType(item.class)
-			});
+			sections[ item.relativeTimeKey ].data.push(item);
 		});
 
 		return Object.values(sections);
 	}
 
+	/**
+	 * Render an individual stream item
+	 * We also build an onPress handler here, based on whether we are able to view the content
+	 * inside the app. If not, we navigate to our webview screen.
+	 *
+	 * @param 	object 	item 	Item data
+	 * @return 	Component
+	 */
 	renderItem(item) {
-		return <StreamCard data={item} />
+		let onPress;
+		const isSupported = isSupportedUrl([ item.url.app, item.url.module, item.url.controller ]);
+
+		if( isSupported ){
+			onPress = () => this.props.navigation.navigate( isSupported, {
+				id: item.itemID
+			});
+		} else {
+			onPress = () => this.props.navigation.navigate("WebView", {
+				url: item.url.full
+			});
+		}
+
+		return <StreamCard data={item} isSupported={!!isSupported} onPress={onPress} />
 	}
 
+	/**
+	 * Render a stream section
+	 *
+	 * @param 	object 	section 	Section data
+	 * @return 	Component
+	 */
 	renderHeader(section) {
 		const words = {
 			'past_hour': 'Past Hour',

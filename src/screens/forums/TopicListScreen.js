@@ -178,7 +178,7 @@ class TopicListScreen extends Component {
 					title: item.title,
 					author: item.author,
 					posts: item.replies,
-					started: relativeTime.long(item.started)
+					started: item.started
 				})
 			}
 		/> );

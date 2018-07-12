@@ -23,7 +23,12 @@ const NotificationQuery = gql`
 					}
 					title
 					content
-					url
+					url {
+						full
+						app
+						module
+						controller
+					}
 					unread
 				}
 			}

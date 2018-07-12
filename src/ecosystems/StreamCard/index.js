@@ -105,7 +105,7 @@ export default class StreamCard extends Component {
 		const Component = this.getCardComponent();
 
 		return (
-			<TouchableHighlight style={componentStyles.postWrapper}>
+			<TouchableHighlight style={componentStyles.postWrapper} onPress={this.props.onPress}>
 				<ShadowedArea style={componentStyles.post}>
 					<View style={componentStyles.blob}></View>
 					<Component data={this.props.data} image={this.getContentImage()} />

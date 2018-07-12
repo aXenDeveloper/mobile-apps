@@ -13,6 +13,7 @@ import NotificationsScreen from "../screens/core/NotificationsScreen";
 import ProfileScreen from "../screens/core/ProfileScreen";
 import UserScreen from "../screens/core/UserScreen";
 import LoginScreen from "../screens/core/LoginScreen";
+import WebViewScreen from "../screens/core/WebViewScreen";
 // ----
 // Forums screens
 import ForumListScreen from "../screens/forums/ForumListScreen";
@@ -82,7 +83,7 @@ class AppNavigation extends Component {
 		);
 
 		this._CommunityStack = this._getMainStack();
-		this._StreamStack = this._getStreamStack();
+		this._StreamStack = this._getMainStack({}, 'StreamView');
 		this._NotificationStack = this._getMainStack({}, 'NotificationsStack');
 
 		this.state = {
@@ -93,13 +94,12 @@ class AppNavigation extends Component {
 	_getMainStack(options, initialRoute) {
 		return createStackNavigator(
 			{
-				ForumIndex: {
-					screen: this._ForumTabBar
-				},
+				ForumIndex: { screen: this._ForumTabBar	},
 				TopicList: { screen: TopicListScreen },
 				TopicView: { screen: TopicViewScreen },
 				Profile: { screen: ProfileScreen },
-				NotificationsStack: { screen: NotificationsScreen }
+				NotificationsStack: { screen: NotificationsScreen },
+				StreamView: { screen: StreamViewScreen }
 			},
 			{
 				initialRouteName: initialRoute || 'ForumIndex',
@@ -187,6 +187,9 @@ class AppNavigation extends Component {
 						headerTintColor: "white",
 						headerBackTitle: null
 					}
+				},
+				WebView: {
+					screen: WebViewScreen,
 				}
 			},
 			{

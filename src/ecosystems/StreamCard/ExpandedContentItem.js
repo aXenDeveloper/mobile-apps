@@ -33,9 +33,11 @@ export default class ExpandedContentItem extends Component {
 				</View>
 				{this.props.image || null}
 				<View style={componentStyles.streamFooter}>
-					<Text style={componentStyles.snippetText} numberOfLines={3}>
-						{this.props.data.content}
-					</Text>
+					{this.props.data.content && 
+						<Text style={componentStyles.snippetText} numberOfLines={3}>
+							{this.props.data.content}
+						</Text>
+					}
 				</View>
 			</React.Fragment>
 		);

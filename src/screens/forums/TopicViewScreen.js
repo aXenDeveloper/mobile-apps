@@ -5,6 +5,7 @@ import { graphql } from "react-apollo";
 import Modal from "react-native-modal";
 import _ from "underscore";
 
+import relativeTime from "../../utils/RelativeTime";
 import { PlaceholderRepeater } from '../../atoms/Placeholder';
 import getErrorMessage from "../../utils/getErrorMessage";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
@@ -16,11 +17,21 @@ import PagerButton from "../../atoms/PagerButton";
 import DummyTextInput from "../../atoms/DummyTextInput";
 
 const TopicViewQuery = gql`
-	query TopicViewQuery($topic: ID!, $offset: Int, $limit: Int) {
+	query TopicViewQuery($id: ID!, $offset: Int, $limit: Int) {
 		forums {
-			topic(id: $topic) {
+			topic(id: $id) {
 				id
-				url
+				url {
+					full
+					app
+					module
+					controller
+				}
+				started
+				title
+				author {
+					name
+				}
 				tags {
 					name
 				}
@@ -30,7 +41,12 @@ const TopicViewQuery = gql`
 				}
 				posts(offset: $offset, limit: $limit) {
 					id
-					url
+					url {
+						full
+						app
+						module
+						controller
+					}
 					timestamp
 					author {
 						id
@@ -68,8 +84,8 @@ class TopicViewScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
 		headerTitle: (
 			<TwoLineHeader
-				title={navigation.state.params.title}
-				subtitle={`Started by ${navigation.state.params.author}, ${navigation.state.params.started}`}
+				title={navigation.state.params.title || 'Loading...'}
+				subtitle={navigation.state.params.author ? `Started by ${navigation.state.params.author}, ${relativeTime.long(navigation.state.params.started)}` : null}
 			/>
 		)
 	});
@@ -96,6 +112,14 @@ class TopicViewScreen extends Component {
 					goToEnd: false
 				});
 			}
+		}
+
+		if( !this.props.navigation.state.params.author ){
+			this.props.navigation.setParams({
+				author: this.props.data.forums.topic.author.name,
+				started: this.props.data.forums.topic.started,
+				title: this.props.data.forums.topic.title
+			});
 		}
 	}
 
@@ -218,7 +242,7 @@ class TopicViewScreen extends Component {
 			);
 		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, TopicViewScreen.errors);
-			return <Text>{error}</Text>;
+			return <Text>Error: {error}</Text>;
 		} else {
 			const topicData = this.props.data.forums.topic;
 			const listData = topicData.posts.map(post => this.buildPostData(post, topicData));
@@ -262,7 +286,7 @@ export default graphql(TopicViewQuery, {
 	options: props => ({
 		notifyOnNetworkStatusChange: true,
 		variables: {
-			topic: props.navigation.state.params.id,
+			id: props.navigation.state.params.id,
 			offset: 0,
 			limit: Expo.Constants.manifest.extra.per_page
 		}
