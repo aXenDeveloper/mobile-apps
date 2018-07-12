@@ -9,7 +9,7 @@ export default class PostControl extends Component {
 	render() {
 		return (
 			<TouchableOpacity style={styles.control} onPress={this.props.onPress || null}>
-				<Text onPress={this.props.onPress} style={styles.text}>{this.props.children}</Text>
+				<Text style={styles.text}>{this.props.label}</Text>
 			</TouchableOpacity>
 		);
 	}

@@ -10,7 +10,7 @@ export default function getErrorMessage(err, componentErrors = {}) {
 
 	if( !_.isUndefined( err.graphQLErrors ) && err.graphQLErrors.length ){
 		if( !_.isUndefined( errors[ err.graphQLErrors[0].message ] ) ){
-			return errors[ err.graphQLErrors[0].message ];
+			return errors[ err.graphQLErrors[0].message ] || err.graphQLErrors[0].message;
 		}
 	}
 

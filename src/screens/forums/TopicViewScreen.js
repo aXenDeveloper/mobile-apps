@@ -55,7 +55,25 @@ const TopicViewQuery = gql`
 					}
 					content
 					reputation {
+						canReact
+						hasReacted
 						canViewReps
+						isLikeMode
+						givenReaction {
+							id
+							image
+							name
+						}
+						defaultReaction {
+							id
+							image
+							name
+						}
+						availableReactions {
+							id
+							image
+							name
+						}
 						reactions {
 							id
 							image
@@ -246,7 +264,7 @@ class TopicViewScreen extends Component {
 			);
 		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, TopicViewScreen.errors);
-			return <Text>Error: {error}</Text>;
+			return <Text>Error: {this.props.data.error}</Text>;
 		} else {
 			const topicData = this.props.data.forums.topic;
 			const listData = topicData.posts.map(post => this.buildPostData(post, topicData));

@@ -81,6 +81,22 @@ export default class Post extends Component {
 		}
 	}
 
+	getReputationButton() {
+		if( !this.props.data.reputation.canReact ){
+			return null;
+		}
+
+		let label;
+
+		if( this.props.data.reputation.hasReacted ){
+			label = this.props.data.reputation.givenReaction.name;
+		} else {
+			label = this.props.data.reputation.defaultReaction.name;
+		}
+
+		return ( <PostControl label={label} /> );
+	}
+
 	render() {
 		if( this.props.loading ){
 			return this.loadingComponent();
@@ -115,8 +131,8 @@ export default class Post extends Component {
 						}
 					</View>
 					<PostControls>
-						{this.props.data.canReply ? <PostControl onPress={this.props.onPressReply}>Quote</PostControl> : null}
-						<PostControl>Like</PostControl>
+						{this.props.data.canReply && <PostControl label='Quote' onPress={this.props.onPressReply} />}
+						{this.getReputationButton()}
 					</PostControls>
 					<ActionSheet 
 						ref={(o) => this._actionSheet = o} 
