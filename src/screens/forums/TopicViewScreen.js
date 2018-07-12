@@ -83,10 +83,13 @@ class TopicViewScreen extends Component {
 	 */
 	static navigationOptions = ({ navigation }) => ({
 		headerTitle: (
-			<TwoLineHeader
-				title={navigation.state.params.title || 'Loading...'}
-				subtitle={navigation.state.params.author ? `Started by ${navigation.state.params.author}, ${relativeTime.long(navigation.state.params.started)}` : null}
-			/>
+			!navigation.state.params.title || !navigation.state.params.author || !navigation.state.params.started ? 
+				<TwoLineHeader loading={true} />
+			:
+				<TwoLineHeader
+					title={navigation.state.params.title}
+					subtitle={`Started by ${navigation.state.params.author}, ${relativeTime.long(navigation.state.params.started)}`}
+				/> 
 		)
 	});
 
@@ -100,6 +103,7 @@ class TopicViewScreen extends Component {
 	/**
 	 * If we have a goToEnd param, we've probably just added a new post
 	 * After scrolling, reset that flag.
+	 * Here we also update the navigation params to set the title if we came direct, e.g. from search
 	 *
 	 * @param 	object 	prevProps 	Previous prop values
 	 * @return 	void

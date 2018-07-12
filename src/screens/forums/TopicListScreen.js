@@ -3,7 +3,7 @@ import { Text, View, Button, ScrollView, FlatList } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 
-import { PlaceholderRepeater } from '../../atoms/Placeholder';
+import { PlaceholderRepeater } from "../../atoms/Placeholder";
 import relativeTime from "../../utils/RelativeTime";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import Pager from "../../atoms/Pager";
@@ -34,6 +34,8 @@ const TopicListQuery = gql`
 						name
 					}
 				}
+				name
+				topicCount
 				create {
 					canCreate
 					tags {
@@ -56,7 +58,15 @@ const TopicListQuery = gql`
 
 class TopicListScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
-		headerTitle: <TwoLineHeader title={`${navigation.state.params.title}`} subtitle={`${navigation.state.params.topics} topics`} />
+		headerTitle: (
+			!navigation.state.params.title || !navigation.state.params.topics ? 
+				<TwoLineHeader loading={true} />
+			:
+				<TwoLineHeader
+					title={navigation.state.params.title}
+					subtitle={`${navigation.state.params.topics} topics`}
+				/>
+		)
 	});
 
 	/**
@@ -70,6 +80,21 @@ class TopicListScreen extends Component {
 		super(props);
 		this.state = {
 			reachedEnd: false
+		};
+	}
+
+	/**
+	 * Update the navigation params to set the title if we came direct, e.g. from search
+	 *
+	 * @param 	object 	prevProps 	Previous prop values
+	 * @return 	void
+	 */
+	componentDidUpdate(prevProps) {
+		if (!prevProps.navigation.state.params.title || !prevProps.navigation.state.params.topics) {
+			this.props.navigation.setParams({
+				title: this.props.data.forums.forum.name,
+				topics: this.props.data.forums.forum.topicCount
+			});
 		}
 	}
 
@@ -79,7 +104,7 @@ class TopicListScreen extends Component {
 	 * @return 	void
 	 */
 	onEndReached() {
-		if( !this.props.data.loading && !this.state.reachedEnd ){
+		if (!this.props.data.loading && !this.state.reachedEnd) {
 			this.props.data.fetchMore({
 				variables: {
 					offset: this.props.data.forums.forum.topics.length
@@ -99,7 +124,7 @@ class TopicListScreen extends Component {
 							...previousResult.forums,
 							forum: {
 								...previousResult.forums.forum,
-								topics: [...previousResult.forums.forum.topics, ...fetchMoreResult.forums.forum.topics ]
+								topics: [...previousResult.forums.forum.topics, ...fetchMoreResult.forums.forum.topics]
 							}
 						}
 					});
@@ -120,7 +145,7 @@ class TopicListScreen extends Component {
 			reachedEnd: false
 		});
 
-		this.props.data.refetch()
+		this.props.data.refetch();
 	}
 
 	/**
@@ -131,11 +156,11 @@ class TopicListScreen extends Component {
 	 */
 	getFooterComponent() {
 		// If we're loading more items in
-		if( this.props.data.networkStatus == 3 && !this.state.reachedEnd ){
-			return <Text style={{ textAlign: 'center' }}>Loading...</Text>;
+		if (this.props.data.networkStatus == 3 && !this.state.reachedEnd) {
+			return <Text style={{ textAlign: "center" }}>Loading...</Text>;
 		}
 
-		return (<View style={{ height: 150 }} />);
+		return <View style={{ height: 150 }} />;
 	}
 
 	/**
@@ -170,19 +195,21 @@ class TopicListScreen extends Component {
 	 * @return 	Component
 	 */
 	renderItem(item, forumData) {
-		return ( <TopicRow
-			data={item}
-			onPress={() =>
-				this.props.navigation.navigate("TopicView", {
-					id: item.id,
-					title: item.title,
-					author: item.author,
-					posts: item.replies,
-					started: item.started
-				})
-			}
-		/> );
-	}	
+		return (
+			<TopicRow
+				data={item}
+				onPress={() =>
+					this.props.navigation.navigate("TopicView", {
+						id: item.id,
+						title: item.title,
+						author: item.author,
+						posts: item.replies,
+						started: item.started
+					})
+				}
+			/>
+		);
+	}
 
 	render() {
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
@@ -214,15 +241,21 @@ class TopicListScreen extends Component {
 						/>
 						{forumData.create.canCreate ? (
 							<Pager>
-								<AddButton icon={require('../../../resources/compose.png')} title='Create New Topic' onPress={() => this.props.navigation.navigate("CreateTopic", {
-									forumID: this.props.navigation.state.params.id,
-									tagsEnabled: forumData.create.tags.enabled,
-									definedTags: forumData.create.tags.definedTags,
-									tags_min: settingsData.tags_min,
-									tags_len_min: settingsData.tags_len_min,
-									tags_max: settingsData.tags_max,
-									tags_len_max: settingsData.tags_len_max
-								})} />
+								<AddButton
+									icon={require("../../../resources/compose.png")}
+									title="Create New Topic"
+									onPress={() =>
+										this.props.navigation.navigate("CreateTopic", {
+											forumID: this.props.navigation.state.params.id,
+											tagsEnabled: forumData.create.tags.enabled,
+											definedTags: forumData.create.tags.definedTags,
+											tags_min: settingsData.tags_min,
+											tags_len_min: settingsData.tags_len_min,
+											tags_max: settingsData.tags_max,
+											tags_len_max: settingsData.tags_len_max
+										})
+									}
+								/>
 							</Pager>
 						) : null}
 					</View>
