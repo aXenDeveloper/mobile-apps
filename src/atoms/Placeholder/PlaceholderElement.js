@@ -50,7 +50,7 @@ export default class PlaceholderElement extends Component {
 		// Animated background
 		const backgroundColor = this.state.backgroundColor.interpolate({
 			inputRange: [ 0, 1 ],
-			outputRange: styleVars.placeholderColors
+			outputRange: this.props.from ? [this.props.from, this.props.to] : styleVars.placeholderColors
 		});
 
 		return (
