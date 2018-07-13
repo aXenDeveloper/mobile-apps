@@ -6,10 +6,10 @@ import Modal from "react-native-modal";
 import _ from "underscore";
 
 import relativeTime from "../../utils/RelativeTime";
-import { PlaceholderRepeater } from '../../atoms/Placeholder';
+import { PlaceholderRepeater } from "../../atoms/Placeholder";
 import getErrorMessage from "../../utils/getErrorMessage";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
-import Post from "../../ecosystems/Post";
+import { Post, PostFragment } from "../../ecosystems/Post";
 import Tag from "../../atoms/Tag";
 import TagList from "../../atoms/TagList";
 import Pager from "../../atoms/Pager";
@@ -20,8 +20,10 @@ const TopicViewQuery = gql`
 	query TopicViewQuery($id: ID!, $offset: Int, $limit: Int) {
 		forums {
 			topic(id: $id) {
+				__typename
 				id
 				url {
+					__typename
 					full
 					app
 					module
@@ -30,61 +32,25 @@ const TopicViewQuery = gql`
 				started
 				title
 				author {
+					__typename
 					name
 				}
 				tags {
+					__typename
 					name
 				}
 				locked
 				itemPermissions {
+					__typename
 					canComment
 				}
 				posts(offset: $offset, limit: $limit) {
-					id
-					url {
-						full
-						app
-						module
-						controller
-					}
-					timestamp
-					author {
-						id
-						photo
-						name
-					}
-					content
-					reputation {
-						canReact
-						hasReacted
-						canViewReps
-						isLikeMode
-						givenReaction {
-							id
-							image
-							name
-						}
-						defaultReaction {
-							id
-							image
-							name
-						}
-						availableReactions {
-							id
-							image
-							name
-						}
-						reactions {
-							id
-							image
-							name
-							count
-						}
-					}
+					...PostFragment
 				}
 			}
 		}
 	}
+	${PostFragment}
 `;
 
 class TopicViewScreen extends Component {
@@ -93,22 +59,22 @@ class TopicViewScreen extends Component {
 		this.flatList = null;
 		this.state = {
 			reachedEnd: false
-		}
+		};
 	}
 
 	/**
 	 * React Navigation config
 	 */
 	static navigationOptions = ({ navigation }) => ({
-		headerTitle: (
-			!navigation.state.params.title || !navigation.state.params.author || !navigation.state.params.started ? 
+		headerTitle:
+			!navigation.state.params.title || !navigation.state.params.author || !navigation.state.params.started ? (
 				<TwoLineHeader loading={true} />
-			:
+			) : (
 				<TwoLineHeader
 					title={navigation.state.params.title}
 					subtitle={`Started by ${navigation.state.params.author}, ${relativeTime.long(navigation.state.params.started)}`}
-				/> 
-		)
+				/>
+			)
 	});
 
 	/**
@@ -136,7 +102,7 @@ class TopicViewScreen extends Component {
 			}
 		}
 
-		if( !this.props.navigation.state.params.author ){
+		if (!this.props.navigation.state.params.author) {
 			this.props.navigation.setParams({
 				author: this.props.data.forums.topic.author.name,
 				started: this.props.data.forums.topic.started,
@@ -151,7 +117,7 @@ class TopicViewScreen extends Component {
 	 * @return 	void
 	 */
 	onEndReached() {
-		if( !this.props.data.loading && !this.state.reachedEnd ){
+		if (!this.props.data.loading && !this.state.reachedEnd) {
 			this.props.data.fetchMore({
 				variables: {
 					offset: this.props.data.forums.topic.posts.length
@@ -171,7 +137,7 @@ class TopicViewScreen extends Component {
 							...previousResult.forums,
 							topic: {
 								...previousResult.forums.topic,
-								posts: [...previousResult.forums.topic.posts, ...fetchMoreResult.forums.topic.posts ]
+								posts: [...previousResult.forums.topic.posts, ...fetchMoreResult.forums.topic.posts]
 							}
 						}
 					});
@@ -192,7 +158,7 @@ class TopicViewScreen extends Component {
 			reachedEnd: false
 		});
 
-		this.props.data.refetch()
+		this.props.data.refetch();
 	}
 
 	/**
@@ -203,30 +169,11 @@ class TopicViewScreen extends Component {
 	 */
 	getFooterComponent() {
 		// If we're loading more items in
-		if( this.props.data.networkStatus == 3 && !this.state.reachedEnd ){
+		if (this.props.data.networkStatus == 3 && !this.state.reachedEnd) {
 			return <Post loading={true} />;
 		}
 
-		return (<View style={{ height: 150 }} />);
-	}
-
-	/**
-	 * Given a post and topic data, return an object with a more useful structure
-	 *
-	 * @param 	object 	post 		A raw post object from GraphQL
-	 * @param 	object 	topicData 	The topic data
-	 * @return 	object
-	 */
-	buildPostData(post, topicData) {
-		return {
-			id: post.id,
-			author: post.author,
-			content: post.content,
-			timestamp: post.timestamp,
-			reactions: post.reputation.reactions,
-			reputation: post.reputation,
-			canReply: topicData.itemPermissions.canComment
-		};
+		return <View style={{ height: 150 }} />;
 	}
 
 	/**
@@ -237,22 +184,25 @@ class TopicViewScreen extends Component {
 	 * @return 	Component
 	 */
 	renderItem(item, topicData) {
-		return ( <Post
-			data={item}
-			profileHandler={() =>
-				this.props.navigation.navigate("Profile", {
-					id: item.author.id,
-					name: item.author.name,
-					photo: item.author.photo
-				})
-			}
-			onPressReply={() =>
-				this.props.navigation.navigate("ReplyTopic", {
-					topicID: topicData.id,
-					quotedPost: item
-				})
-			}
-		/> );
+		return (
+			<Post
+				data={item}
+				canReply={topicData.itemPermissions.canComment}
+				profileHandler={() =>
+					this.props.navigation.navigate("Profile", {
+						id: item.author.id,
+						name: item.author.name,
+						photo: item.author.photo
+					})
+				}
+				onPressReply={() =>
+					this.props.navigation.navigate("ReplyTopic", {
+						topicID: topicData.id,
+						quotedPost: item
+					})
+				}
+			/>
+		);
 	}
 
 	render() {
@@ -267,7 +217,7 @@ class TopicViewScreen extends Component {
 			return <Text>Error: {this.props.data.error}</Text>;
 		} else {
 			const topicData = this.props.data.forums.topic;
-			const listData = topicData.posts.map(post => this.buildPostData(post, topicData));
+			const listData = topicData.posts;
 
 			return (
 				<View style={{ flex: 1 }}>
@@ -279,7 +229,7 @@ class TopicViewScreen extends Component {
 							ref={flatList => (this._flatList = flatList)}
 							keyExtractor={item => item.id}
 							ListFooterComponent={() => this.getFooterComponent()}
-							renderItem={({item}) => this.renderItem(item, topicData)}
+							renderItem={({ item }) => this.renderItem(item, topicData)}
 							data={listData}
 							refreshing={this.props.data.networkStatus == 4}
 							onRefresh={() => this.onRefresh()}
