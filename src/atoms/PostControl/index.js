@@ -8,8 +8,11 @@ export default class PostControl extends Component {
 
 	render() {
 		return (
-			<TouchableOpacity style={styles.control} onPress={this.props.onPress || null}>
-				<Text style={styles.text}>{this.props.label}</Text>
+			<TouchableOpacity style={styles.control} onLongPress={this.props.onLongPress || null} onPress={this.props.onPress || null}>
+				<View style={[ styles.container, this.props.selected ? styles.selected : null ]}>
+					{this.props.image && <Image source={{ uri: this.props.image }} style={styles.image} />}
+					<Text style={[ styles.text, this.props.textStyle ]}>{this.props.label}</Text>
+				</View>
 			</TouchableOpacity>
 		);
 	}
@@ -17,8 +20,24 @@ export default class PostControl extends Component {
 
 const styles = StyleSheet.create({
 	control: {
-		paddingVertical: 12,
+		paddingVertical: 4,
 		flex: 1
+	},
+	container: {
+		paddingVertical: 8,
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	selected: {
+		backgroundColor: '#f5f5f5',
+		borderRadius: 2
+	},
+	image: {
+		width: 18,
+		height: 18,
+		marginRight: 4
 	},
 	text: {
 		fontSize: 15,

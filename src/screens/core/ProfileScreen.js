@@ -6,7 +6,7 @@ import HeaderBackButton from 'react-navigation';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 
 import ListItem from '../../atoms/ListItem';
-import SectionHeader from '../../ecosystems/SectionHeader';
+import SectionHeader from '../../atoms/SectionHeader';
 import relativeTime from '../../utils/RelativeTime';
 import UserPhoto from '../../atoms/UserPhoto';
 import CustomHeader from '../../ecosystems/CustomHeader';

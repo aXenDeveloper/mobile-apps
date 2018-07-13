@@ -8,7 +8,7 @@ import relativeTime from "../../utils/RelativeTime";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import Pager from "../../atoms/Pager";
 import PagerButton from "../../atoms/PagerButton";
-import SectionHeader from "../../ecosystems/SectionHeader";
+import SectionHeader from "../../atoms/SectionHeader";
 import TopicRow from "../../ecosystems/TopicRow";
 import AddButton from "../../atoms/AddButton";
 

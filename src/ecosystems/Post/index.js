@@ -1,41 +1,45 @@
-import React, { Component } from 'react';
-import { Button, Image, Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from 'react-native';
+import React, { Component } from "react";
+import { Button, Image, Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
+import Modal from "react-native-modal";
+import ActionSheet from "react-native-actionsheet";
 
-import { PlaceholderElement, PlaceholderContainer } from '../../atoms/Placeholder';
-import ShadowedArea from '../../atoms/ShadowedArea';
-import UserPhoto from '../../atoms/UserPhoto';
-import PostControls from '../../atoms/PostControls';
-import PostControl from '../../atoms/PostControl';
-import RichTextContent from '../../atoms/RichTextContent';
-import Reaction from '../../atoms/Reaction';
-import relativeTime from '../../utils/RelativeTime';
-import ActionSheet from 'react-native-actionsheet';
+import { PlaceholderElement, PlaceholderContainer } from "../../atoms/Placeholder";
+import ShadowedArea from "../../atoms/ShadowedArea";
+import UserPhoto from "../../atoms/UserPhoto";
+import PostControls from "../../atoms/PostControls";
+import PostControl from "../../atoms/PostControl";
+import RichTextContent from "../../atoms/RichTextContent";
+import Reaction from "../../atoms/Reaction";
+import { ReactionModal } from "../../atoms/ReactionModal";
+import relativeTime from "../../utils/RelativeTime";
 
-export default class Post extends Component {	
+export default class Post extends Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			reactionModalVisible: false
+		};
 	}
 
 	//====================================================================
 	// LOADING
 	loadingComponent() {
 		return (
-			<ShadowedArea style={[ styles.post, styles.postWrapper ]}>
+			<ShadowedArea style={[styles.post, styles.postWrapper]}>
 				<PlaceholderContainer height={40}>
 					<PlaceholderElement circle radius={40} left={0} top={0} />
 					<PlaceholderElement width={160} height={15} top={0} left={50} />
 					<PlaceholderElement width={70} height={14} top={23} left={50} />
 				</PlaceholderContainer>
 				<PlaceholderContainer height={100} style={styles.postContentContainer}>
-					<PlaceholderElement width='100%' height={12} />
-					<PlaceholderElement width='70%' height={12} top={20} />
-					<PlaceholderElement width='82%' height={12} top={40} />
-					<PlaceholderElement width='97%' height={12} top={60} />
+					<PlaceholderElement width="100%" height={12} />
+					<PlaceholderElement width="70%" height={12} top={20} />
+					<PlaceholderElement width="82%" height={12} top={40} />
+					<PlaceholderElement width="97%" height={12} top={60} />
 				</PlaceholderContainer>
 			</ShadowedArea>
 		);
 	}
-
 
 	//====================================================================
 	// ACTION SHEET CONFIG
@@ -46,7 +50,7 @@ export default class Post extends Component {
 	 * @return 	void
 	 */
 	actionSheetPress(i) {
-		console.log('action sheet');
+		console.log("action sheet");
 	}
 	/**
 	 * Return the options to be shown in the action sheet
@@ -54,11 +58,7 @@ export default class Post extends Component {
 	 * @return 	array
 	 */
 	actionSheetOptions() {
-		return ([
-			'Cancel',
-			'Share',
-			'Report'
-		]);
+		return ["Cancel", "Share", "Report"];
 	}
 	/**
 	 * Return the index of the 'cancel' option
@@ -76,29 +76,50 @@ export default class Post extends Component {
 	 * @return 	number
 	 */
 	reactionOnPress(reactionID) {
-		if( this.props.data.reputation.canViewReps ){
-			console.log('press reaction');
+		if (this.props.data.reputation.canViewReps) {
+			console.log("press reaction");
 		}
+	}
+
+	showReactionModal() {
+		console.log("Show reaction modal");
+
+		this.setState({
+			reactionModalVisible: true
+		});
+	}
+
+	hideReactionModal() {
+		this.setState({
+			reactionModalVisible: false
+		});
 	}
 
 	getReputationButton() {
-		if( !this.props.data.reputation.canReact ){
+		if (!this.props.data.reputation.canReact) {
 			return null;
 		}
 
-		let label;
-
-		if( this.props.data.reputation.hasReacted ){
-			label = this.props.data.reputation.givenReaction.name;
+		if (this.props.data.reputation.hasReacted) {
+			return (
+				<PostControl
+					image={this.props.data.reputation.givenReaction.image}
+					label={this.props.data.reputation.givenReaction.name}
+					onLongPress={() => this.showReactionModal()}
+					selected
+				/>
+			);
 		} else {
-			label = this.props.data.reputation.defaultReaction.name;
+			return <PostControl label={this.props.data.reputation.defaultReaction.name} />;
 		}
+	}
 
-		return ( <PostControl label={label} /> );
+	onReactionPress(reaction) {
+		console.log("Clicked reaction: " + reaction);
 	}
 
 	render() {
-		if( this.props.loading ){
+		if (this.props.loading) {
 			return this.loadingComponent();
 		}
 
@@ -116,30 +137,44 @@ export default class Post extends Component {
 							</View>
 						</TouchableOpacity>
 						<TouchableOpacity style={styles.postInfoButton} onPress={() => this._actionSheet.show()}>
-							<Image style={styles.postMenu} resizeMode='contain' source={require('../../../resources/dots.png')} />
+							<Image style={styles.postMenu} resizeMode="contain" source={require("../../../resources/dots.png")} />
 						</TouchableOpacity>
 					</View>
 					<View style={styles.postContentContainer}>
 						<RichTextContent>{this.props.data.content}</RichTextContent>
-						{this.props.data.reactions.length ? 
+						{this.props.data.reactions.length ? (
 							<View style={styles.postReactionList}>
-								{this.props.data.reactions.map( (reaction) => {
-									return (<Reaction style={styles.reactionItem} key={reaction.id} id={reaction.id} image={reaction.image} count={reaction.count} onPress={() => this.reactionOnPress(reaction.id)} />);
+								{this.props.data.reactions.map(reaction => {
+									return (
+										<Reaction
+											style={styles.reactionItem}
+											key={reaction.id}
+											id={reaction.id}
+											image={reaction.image}
+											count={reaction.count}
+											onPress={() => this.reactionOnPress(reaction.id)}
+										/>
+									);
 								})}
 							</View>
-							: null
-						}
+						) : null}
 					</View>
 					<PostControls>
-						{this.props.data.canReply && <PostControl label='Quote' onPress={this.props.onPressReply} />}
+						{this.props.data.canReply && <PostControl label="Quote" onPress={this.props.onPressReply} />}
 						{this.getReputationButton()}
 					</PostControls>
-					<ActionSheet 
-						ref={(o) => this._actionSheet = o} 
-						title='Post options' 
-						options={this.actionSheetOptions()} 
+					<ActionSheet
+						ref={o => (this._actionSheet = o)}
+						title="Post options"
+						options={this.actionSheetOptions()}
 						cancelButtonIndex={this.actionSheetCancelIndex()}
-						onPress={this.actionSheetPress} 
+						onPress={this.actionSheetPress}
+					/>
+					<ReactionModal
+						visible={this.state.reactionModalVisible}
+						closeModal={() => this.hideReactionModal()}
+						reactions={this.props.data.reputation.availableReactions}
+						onReactionPress={this.onReactionPress}
 					/>
 				</ShadowedArea>
 			</TouchableHighlight>
@@ -156,28 +191,28 @@ const styles = StyleSheet.create({
 		paddingBottom: 0
 	},
 	postHeader: {
-		flexDirection: 'row',
-		alignItems: 'flex-start'
+		flexDirection: "row",
+		alignItems: "flex-start"
 	},
 	postInfo: {
-		flexDirection: 'row',
-		alignItems: 'flex-start',
+		flexDirection: "row",
+		alignItems: "flex-start",
 		flex: 1
 	},
 	meta: {
 		flex: 1,
-		flexDirection: 'column',
-		justifyContent: 'center',
+		flexDirection: "column",
+		justifyContent: "center",
 		marginLeft: 9
 	},
 	username: {
 		fontSize: 17,
 		fontWeight: "600",
-		color: '#171717',
+		color: "#171717"
 	},
 	date: {
 		fontSize: 14,
-		color: '#8F8F8F'
+		color: "#8F8F8F"
 	},
 	postContentContainer: {
 		marginTop: 16
@@ -190,13 +225,13 @@ const styles = StyleSheet.create({
 		height: 24
 	},
 	postInfoButton: {
-		alignSelf: 'flex-start',
+		alignSelf: "flex-start"
 	},
 	postReactionList: {
-		display: 'flex',
-		justifyContent: 'flex-end',
-		flexWrap: 'wrap',
-		flexDirection: 'row',
+		display: "flex",
+		justifyContent: "flex-end",
+		flexWrap: "wrap",
+		flexDirection: "row",
 		marginTop: 15
 	},
 	reactionItem: {
