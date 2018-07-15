@@ -11,7 +11,7 @@ export default class PostControl extends Component {
 			<TouchableOpacity style={styles.control} onLongPress={this.props.onLongPress || null} onPress={this.props.onPress || null}>
 				<View style={[ styles.container, this.props.selected ? styles.selected : null ]}>
 					{this.props.image && <Image source={{ uri: this.props.image }} style={styles.image} />}
-					<Text style={[ styles.text, this.props.textStyle ]}>{this.props.label}</Text>
+					<Text style={[ styles.text, this.props.selected ? styles.selectedText : null, this.props.textStyle ]}>{this.props.label}</Text>
 				</View>
 			</TouchableOpacity>
 		);
@@ -44,5 +44,8 @@ const styles = StyleSheet.create({
 		fontWeight: "500",
 		color: '#171717',
 		textAlign: 'center'
+	},
+	selectedText: {
+		color: '#000',
 	}
 });

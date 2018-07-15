@@ -15,6 +15,7 @@ import TagList from "../../atoms/TagList";
 import Pager from "../../atoms/Pager";
 import PagerButton from "../../atoms/PagerButton";
 import DummyTextInput from "../../atoms/DummyTextInput";
+import UnreadIndicator from "../../atoms/UnreadIndicator";
 
 const TopicViewQuery = gql`
 	query TopicViewQuery($id: ID!, $offset: Int, $limit: Int) {
@@ -29,6 +30,7 @@ const TopicViewQuery = gql`
 					module
 					controller
 				}
+				timeLastRead
 				started
 				title
 				author {
@@ -57,6 +59,7 @@ class TopicViewScreen extends Component {
 	constructor(props) {
 		super(props);
 		this.flatList = null;
+		this.shownUnreadBar = false;
 		this.state = {
 			reachedEnd: false
 		};
@@ -184,24 +187,35 @@ class TopicViewScreen extends Component {
 	 * @return 	Component
 	 */
 	renderItem(item, topicData) {
+		let unreadBar = null;
+
+		if (!this.shownUnreadBar && topicData.timeLastRead && item.timestamp > topicData.timeLastRead) {
+			this.shownUnreadBar = true;
+			unreadBar = <UnreadIndicator label="Unread Posts" />;
+			console.log("Show unread Bar");
+		}
+
 		return (
-			<Post
-				data={item}
-				canReply={topicData.itemPermissions.canComment}
-				profileHandler={() =>
-					this.props.navigation.navigate("Profile", {
-						id: item.author.id,
-						name: item.author.name,
-						photo: item.author.photo
-					})
-				}
-				onPressReply={() =>
-					this.props.navigation.navigate("ReplyTopic", {
-						topicID: topicData.id,
-						quotedPost: item
-					})
-				}
-			/>
+			<React.Fragment>
+				{unreadBar}
+				<Post
+					data={item}
+					canReply={topicData.itemPermissions.canComment}
+					profileHandler={() =>
+						this.props.navigation.navigate("Profile", {
+							id: item.author.id,
+							name: item.author.name,
+							photo: item.author.photo
+						})
+					}
+					onPressReply={() =>
+						this.props.navigation.navigate("ReplyTopic", {
+							topicID: topicData.id,
+							quotedPost: item
+						})
+					}
+				/>
+			</React.Fragment>
 		);
 	}
 
@@ -218,6 +232,9 @@ class TopicViewScreen extends Component {
 		} else {
 			const topicData = this.props.data.forums.topic;
 			const listData = topicData.posts;
+
+			// Reset unread marker
+			this.shownUnreadBar = false;
 
 			return (
 				<View style={{ flex: 1 }}>

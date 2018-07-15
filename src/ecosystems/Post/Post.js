@@ -4,6 +4,7 @@ import Modal from "react-native-modal";
 import ActionSheet from "react-native-actionsheet";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
+import * as Animatable from 'react-native-animatable';
 import _ from "underscore";
 
 import { PlaceholderElement, PlaceholderContainer } from "../../atoms/Placeholder";
@@ -19,7 +20,7 @@ import getErrorMessage from "../../utils/getErrorMessage";
 import PostFragment from "./PostFragment";
 
 const PostReactionMutation = gql`
-	mutation PostReactionMutation($postID: ID!, $reactionID: Int!, $removeReaction: Boolean) {
+	mutation PostReactionMutation($postID: ID!, $reactionID: Int, $removeReaction: Boolean) {
 		mutateForums {
 			postReaction(postID: $postID, reactionID: $reactionID, removeReaction: $removeReaction) {
 				...PostFragment
@@ -138,17 +139,71 @@ class Post extends Component {
 			return null;
 		}
 
+		// Only respond to longPress if we aren't using Like Mode
+		const onLongPress = () => {
+			if (this.props.data.reputation.isLikeMode) {
+				return null;
+			}
+
+			return this.showReactionModal();
+		};
+
+		const onPress = () => {
+			if( this.props.data.reputation.hasReacted ){
+				this.removeReaction();
+			} else {
+				this.onReactionPress( this.props.data.reputation.defaultReaction.id );
+			}
+		};
+
 		if (this.props.data.reputation.hasReacted) {
 			return (
 				<PostControl
 					image={this.props.data.reputation.givenReaction.image}
 					label={this.props.data.reputation.givenReaction.name}
-					onLongPress={() => this.showReactionModal()}
 					selected
+					onPress={onPress}
+					onLongPress={onLongPress}
 				/>
 			);
 		} else {
-			return <PostControl label={this.props.data.reputation.defaultReaction.name} />;
+			return <PostControl label={this.props.data.reputation.defaultReaction.name} onPress={onPress} onLongPress={onLongPress} />;
+		}
+	}
+
+	/**
+	 * A callback method for removing a reaction from the post
+	 * Calls a mutation to update the user's choice of reaction.
+	 *
+	 * @return 	void
+	 */
+	async removeReaction() {
+		try {
+			await this.props.mutate({
+				variables: {
+					postID: this.props.data.id,
+					removeReaction: true
+				},
+				// This is a little difficult to understand, but basically we must return a data structure
+				// in *exactly* the same format that the server will send us. That means we have to manually
+				// specify the __typenames too where they don't already exist in the fetched data.
+				optimisticResponse: {
+					mutateForums: {
+						__typename: "mutate_Forums",
+						postReaction: {
+							...this.props.data,
+							reputation: {
+								...this.props.data.reputation,
+								hasReacted: false,
+								givenReaction: null
+							}
+						}
+					}
+				}
+			});
+		} catch (err) {
+			const errorMessage = getErrorMessage(err, Post.errors);
+			Alert.alert("Error", "Sorry, there was an error removing the reaction from this post." + err, [{ text: "OK" }], { cancelable: false });
 		}
 	}
 
@@ -181,6 +236,7 @@ class Post extends Component {
 							...this.props.data,
 							reputation: {
 								...this.props.data.reputation,
+								hasReacted: true,
 								givenReaction: {
 									__typename: "core_Reaction",
 									id: givenReaction.id,
@@ -195,6 +251,12 @@ class Post extends Component {
 		} catch (err) {
 			const errorMessage = getErrorMessage(err, Post.errors);
 			Alert.alert("Error", "Sorry, there was an error reacting to this post." + errorMessage, [{ text: "OK" }], { cancelable: false });
+		}
+	}
+
+	componentDidUpdate(prevProps) {
+		if( prevProps.data.reputation.reactions.length == 0 && this.props.data.reputation.reactions.length !== 0 ){
+			this._reactionWrap.fadeInRight(200);
 		}
 	}
 
@@ -222,22 +284,24 @@ class Post extends Component {
 					</View>
 					<View style={styles.postContentContainer}>
 						<RichTextContent>{this.props.data.content}</RichTextContent>
-						{this.props.data.reputation.reactions.length ? (
-							<View style={styles.postReactionList}>
-								{this.props.data.reputation.reactions.map(reaction => {
-									return (
-										<Reaction
-											style={styles.reactionItem}
-											key={reaction.id}
-											id={reaction.id}
-											image={reaction.image}
-											count={reaction.count}
-											onPress={() => this.reactionOnPress(reaction.id)}
-										/>
-									);
-								})}
-							</View>
-						) : null}
+						<Animatable.View ref={(r) => this._reactionWrap = r}>
+							{this.props.data.reputation.reactions.length && (
+								<View style={[ styles.postReactionList ]}>
+									{this.props.data.reputation.reactions.map(reaction => {
+										return (
+											<Reaction
+												style={styles.reactionItem}
+												key={reaction.id}
+												id={reaction.id}
+												image={reaction.image}
+												count={reaction.count}
+												onPress={() => this.reactionOnPress(reaction.id)}
+											/>
+										);
+									})}
+								</View>
+							)}
+						</Animatable.View>
 					</View>
 					<PostControls>
 						{this.props.canReply && <PostControl label="Quote" onPress={this.props.onPressReply} />}
@@ -312,7 +376,7 @@ const styles = StyleSheet.create({
 		justifyContent: "flex-end",
 		flexWrap: "wrap",
 		flexDirection: "row",
-		marginTop: 15
+		marginTop: 15,
 	},
 	reactionItem: {
 		marginLeft: 10
