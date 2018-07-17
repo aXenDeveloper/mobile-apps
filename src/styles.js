@@ -1,5 +1,13 @@
 import { StyleSheet } from "react-native";
 
+export const styleVars = {
+	appBackground: '#eeeff1',
+	tabActive: '#37454B',
+	tabInactive: '#6e797e',
+	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`,
+	placeholderColors: ['#ededed', '#f5f5f5']
+};
+
 const styles = StyleSheet.create({
 	header: {
 		backgroundColor: "transparent",
@@ -48,7 +56,7 @@ const styles = StyleSheet.create({
 		color: "white"
 	},
 	stackCardStyle: {
-		backgroundColor: '#eeeff1'
+		backgroundColor: styleVars.appBackground
 	},
 
 	field: {
@@ -124,12 +132,7 @@ const styles = StyleSheet.create({
 	}
 });
 
-export const styleVars = {
-	tabActive: '#37454B',
-	tabInactive: '#6e797e',
-	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`,
-	placeholderColors: ['#ededed', '#f5f5f5']
-};
+export default styles;
 
 export const richTextStyles = {
 	defaultTextStyle: {
@@ -161,5 +164,3 @@ export const richTextStyles = {
 		}
 	}
 };
-
-export default styles;

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, Button, ScrollView, FlatList, TextInput } from "react-native";
+import { Text, View, Button, ScrollView, FlatList, TouchableOpacity, TextInput } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import Modal from "react-native-modal";
@@ -16,9 +16,10 @@ import Pager from "../../atoms/Pager";
 import PagerButton from "../../atoms/PagerButton";
 import DummyTextInput from "../../atoms/DummyTextInput";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
+import LoadMoreComments from "../../atoms/LoadMoreComments";
 
 const TopicViewQuery = gql`
-	query TopicViewQuery($id: ID!, $offset: Int, $limit: Int) {
+	query TopicViewQuery($id: ID!, $offset: Int, $limit: Int, $fromUnread: Boolean) {
 		forums {
 			topic(id: $id) {
 				__typename
@@ -31,6 +32,7 @@ const TopicViewQuery = gql`
 					controller
 				}
 				timeLastRead
+				unreadPostPosition
 				started
 				title
 				author {
@@ -46,7 +48,7 @@ const TopicViewQuery = gql`
 					__typename
 					canComment
 				}
-				posts(offset: $offset, limit: $limit) {
+				posts(offset: $offset, limit: $limit, fromUnread: $fromUnread) {
 					...PostFragment
 				}
 			}
@@ -58,10 +60,12 @@ const TopicViewQuery = gql`
 class TopicViewScreen extends Component {
 	constructor(props) {
 		super(props);
-		this.flatList = null;
+		this._flatList = null;
 		this.shownUnreadBar = false;
 		this.state = {
-			reachedEnd: false
+			reachedEnd: false,
+			earlierPostsAvailable: null,
+			loadingEarlierPosts: false
 		};
 	}
 
@@ -95,7 +99,8 @@ class TopicViewScreen extends Component {
 	 * @param 	object 	prevProps 	Previous prop values
 	 * @return 	void
 	 */
-	componentDidUpdate(prevProps) {
+	componentDidUpdate(prevProps, prevState) {
+		// If goToEnd has been passed in, then scroll to it
 		if (!_.isUndefined(this.props.navigation.state.params.goToEnd)) {
 			if (!prevProps.navigation.state.params.goToEnd && this.props.navigation.state.params.goToEnd) {
 				this._flatList.scrollToEnd();
@@ -105,12 +110,39 @@ class TopicViewScreen extends Component {
 			}
 		}
 
+		// If we mounted without the info we need to set the screen title, then set them now
 		if (!this.props.navigation.state.params.author) {
 			this.props.navigation.setParams({
 				author: this.props.data.forums.topic.author.name,
 				started: this.props.data.forums.topic.started,
 				title: this.props.data.forums.topic.title
 			});
+		}
+
+		// Figure out if we need to change the state that determines whether the
+		// Load Earlier Posts button shows
+		let showEarlierPosts = false;
+
+		if( this.props.data.variables.fromUnread && this.props.data.forums.topic.unreadPostPosition ){
+			showEarlierPosts = true;
+		} 
+
+		if( prevState.earlierPostsAvailable == null || prevState.earlierPostsAvailable !== this.state.earlierPostsAvailable ){
+			if( this.state.earlierPostsAvailable !== false ){
+				this.setState({
+					earlierPostsAvailable: showEarlierPosts
+				});
+
+				// Figure out if we need to scroll to hide the Load Earlier Posts button
+				if (!this.props.data.loading && !this.props.data.error) {
+					if (showEarlierPosts) {
+						this._flatList.scrollToOffset({
+							offset: 40,
+							animated: false
+						});
+					}
+				}
+			}
 		}
 	}
 
@@ -123,7 +155,8 @@ class TopicViewScreen extends Component {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
 			this.props.data.fetchMore({
 				variables: {
-					offset: this.props.data.forums.topic.posts.length
+					fromUnread: false, // When infinite loading, we must disable this otherwise the same unread posts will load again
+					offset: this.props.data.forums.topic.posts.length + (this.props.data.forums.topic.unreadPostPosition || 0)
 				},
 				updateQuery: (previousResult, { fetchMoreResult }) => {
 					// Don't do anything if there wasn't any new items
@@ -135,12 +168,70 @@ class TopicViewScreen extends Component {
 						return previousResult;
 					}
 
+					// Now APPEND the new posts to the existing ones
 					const result = Object.assign({}, previousResult, {
 						forums: {
 							...previousResult.forums,
 							topic: {
 								...previousResult.forums.topic,
 								posts: [...previousResult.forums.topic.posts, ...fetchMoreResult.forums.topic.posts]
+							}
+						}
+					});
+
+					return result;
+				}
+			});
+		}
+	}
+
+	/**
+	 * Loads earlier posts on demand
+	 *
+	 * @return 	void
+	 */
+	loadEarlierComments() {
+		if (!this.props.data.loading) {
+
+			this.setState({
+				loadingEarlierPosts: true
+			});
+
+			// Initial offset
+			const initialOffset = this.props.data.forums.topic.posts.length + (this.props.data.forums.topic.unreadPostPosition || 0);
+
+			this.props.data.fetchMore({
+				variables: {
+					// When infinite loading, we must disable this otherwise the same unread posts will load again
+					fromUnread: false,
+					// Ensure the offset doesn't go below 0
+					offset: Math.max(initialOffset - Expo.Constants.manifest.extra.per_page, 0)
+				},
+				updateQuery: (previousResult, { fetchMoreResult }) => {
+					// We use this state to track whether we should show the Load Earlier Posts button
+					this.setState({
+						earlierPostsAvailable: ( initialOffset - Expo.Constants.manifest.extra.per_page ) > 0,
+						loadingEarlierPosts: false
+					});
+					
+					// Don't do anything if there wasn't any new items
+					if (!fetchMoreResult || fetchMoreResult.forums.topic.posts.length === 0) {
+						return previousResult;
+					}
+
+					// Now PREPEND the loaded posts to the existing ones
+					// Since we're going backwards here, it's possible we're also pulling some of our
+					// existing posts. To make sure we only show each post once, we need to ensure
+					// the post array contains unique values.
+					const postArray = [...fetchMoreResult.forums.topic.posts, ...previousResult.forums.topic.posts];
+					const uniq = _.uniq(postArray, false, post => post.id);
+
+					const result = Object.assign({}, previousResult, {
+						forums: {
+							...previousResult.forums,
+							topic: {
+								...previousResult.forums.topic,
+								posts: uniq
 							}
 						}
 					});
@@ -180,6 +271,35 @@ class TopicViewScreen extends Component {
 	}
 
 	/**
+	 * Return the header component. Shows locked status, tags, etc.
+	 *
+	 * @return 	Component
+	 */
+	getHeaderComponent(topicData) {
+		return (
+			<React.Fragment>
+				{this.getLoadPreviousButton()}
+				{topicData.locked && <Text>This topic is locked</Text>}
+				{topicData.tags.length && <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList>}
+			</React.Fragment>
+		);
+	}
+
+	/**
+	 * Returns a "Load earlier posts" button, for cases where we're starting the post listing
+	 * halfway through (e.g. when user chooses to go to first unread).
+	 *
+	 * @return 	Component
+	 */
+	getLoadPreviousButton() {
+		if (this.state.earlierPostsAvailable) {
+			return <LoadMoreComments loading={this.state.loadingEarlierPosts} onPress={() => this.loadEarlierComments()} label="Load Earlier Posts" />;
+		}
+
+		return null;
+	}
+
+	/**
 	 * Render a post
 	 *
 	 * @param 	object 	item 		A post object (already transformed by this.buildPostData)
@@ -192,7 +312,6 @@ class TopicViewScreen extends Component {
 		if (!this.shownUnreadBar && topicData.timeLastRead && item.timestamp > topicData.timeLastRead) {
 			this.shownUnreadBar = true;
 			unreadBar = <UnreadIndicator label="Unread Posts" />;
-			console.log("Show unread Bar");
 		}
 
 		return (
@@ -220,6 +339,7 @@ class TopicViewScreen extends Component {
 	}
 
 	render() {
+		// status 3 == fetchMore, status 4 == refreshing
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return (
 				<PlaceholderRepeater repeat={4}>
@@ -239,12 +359,11 @@ class TopicViewScreen extends Component {
 			return (
 				<View style={{ flex: 1 }}>
 					<View style={{ flex: 1, flexGrow: 1 }}>
-						{topicData.locked ? <Text>This topic is locked</Text> : null}
-						{topicData.tags.length ? <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList> : null}
 						<FlatList
 							style={{ flex: 1 }}
 							ref={flatList => (this._flatList = flatList)}
 							keyExtractor={item => item.id}
+							ListHeaderComponent={() => this.getHeaderComponent(topicData)}
 							ListFooterComponent={() => this.getFooterComponent()}
 							renderItem={({ item }) => this.renderItem(item, topicData)}
 							data={listData}
@@ -276,7 +395,7 @@ export default graphql(TopicViewQuery, {
 		notifyOnNetworkStatusChange: true,
 		variables: {
 			id: props.navigation.state.params.id,
-			offset: 0,
+			fromUnread: true,
 			limit: Expo.Constants.manifest.extra.per_page
 		}
 	})
