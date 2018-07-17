@@ -255,8 +255,10 @@ class Post extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		if( prevProps.data.reputation.reactions.length == 0 && this.props.data.reputation.reactions.length !== 0 ){
-			this._reactionWrap.fadeInRight(200);
+		if( !this.props.loading ){
+			if( prevProps.data.reputation.reactions.length == 0 && this.props.data.reputation.reactions.length !== 0 ){
+				this._reactionWrap.fadeInRight(200);
+			}
 		}
 	}
 
