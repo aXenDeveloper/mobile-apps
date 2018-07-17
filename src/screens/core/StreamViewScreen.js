@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import _ from "underscore";
 
-import Post from "../../ecosystems/Post";
+import { Post } from "../../ecosystems/Post";
 import StreamHeader from "../../atoms/StreamHeader";
 import StreamCard from "../../ecosystems/StreamCard";
 import { PlaceholderRepeater } from '../../atoms/Placeholder';
