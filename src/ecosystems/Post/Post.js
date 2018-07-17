@@ -366,7 +366,8 @@ const styles = StyleSheet.create({
 	},
 	postMenu: {
 		width: 24,
-		height: 24
+		height: 24,
+		opacity: 0.5
 	},
 	postInfoButton: {
 		alignSelf: "flex-start"

@@ -8,6 +8,7 @@ import _ from "underscore";
 
 import getErrorMessage from '../../utils/getErrorMessage';
 import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
+import { PostFragment } from "../../ecosystems/Post";
 import RichTextContent from "../../atoms/RichTextContent";
 import UserPhoto from "../../atoms/UserPhoto";
 import relativeTime from "../../utils/RelativeTime";
@@ -17,27 +18,11 @@ const ReplyTopicMutation = gql`
 	mutation ReplyTopicMutation($topicID: ID!, $content: String!, $replyingTo: ID) {
 		mutateForums {
 			replyTopic(topicID: $topicID, content: $content, replyingTo: $replyingTo) {
-				id
-				url
-				timestamp
-				author {
-					id
-					photo
-					name
-				}
-				content
-				reputation {
-					canViewReps
-					reactions {
-						id
-						image
-						name
-						count
-					}
-				}
+				...PostFragment
 			}
 		}
 	}
+	${PostFragment}
 `;
 
 class ReplyTopicScreen extends Component {
@@ -117,14 +102,16 @@ class ReplyTopicScreen extends Component {
 			});
 
 			const navigateAction = NavigationActions.navigate({
-				params: { goToEnd: true },
+				params: { 
+					goToEnd: true
+				},
 				routeName: "TopicView"
 			});
 			this.props.navigation.dispatch(navigateAction);
 			//this.props.navigation.goBack();
 		} catch (err) {
 			const errorMessage = getErrorMessage(err, ReplyTopicScreen.errors);
-			Alert.alert("Error", "Sorry, there was an error posting this reply. " + errorMessage, [{ text: "OK" }], { cancelable: false });
+			Alert.alert("Error", "Sorry, there was an error posting this reply. " + err, [{ text: "OK" }], { cancelable: false });
 		}
 	}
 
@@ -165,6 +152,8 @@ class ReplyTopicScreen extends Component {
 							height={400}
 							autoFocus={!_.isObject( this.props.navigation.state.params.quotedPost )}
 							onFocus={measurer => {
+								// If we're quoting a post, we'll scroll the view up
+								// so that the editor is near the top when focused
 								if( this.props.navigation.state.params.quotedPost ){
 									if (this.offset) {
 										this.scrollview.scrollTo({

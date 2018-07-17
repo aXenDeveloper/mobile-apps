@@ -123,12 +123,12 @@ class TopicViewScreen extends Component {
 		// Load Earlier Posts button shows
 		let showEarlierPosts = false;
 
-		if( this.props.data.variables.fromUnread && this.props.data.forums.topic.unreadPostPosition ){
+		if (this.props.data.variables.fromUnread && this.props.data.forums.topic.unreadPostPosition) {
 			showEarlierPosts = true;
-		} 
+		}
 
-		if( prevState.earlierPostsAvailable == null || prevState.earlierPostsAvailable !== this.state.earlierPostsAvailable ){
-			if( this.state.earlierPostsAvailable !== false ){
+		if (prevState.earlierPostsAvailable == null || prevState.earlierPostsAvailable !== this.state.earlierPostsAvailable) {
+			if (this.state.earlierPostsAvailable !== false) {
 				this.setState({
 					earlierPostsAvailable: showEarlierPosts
 				});
@@ -136,7 +136,7 @@ class TopicViewScreen extends Component {
 				// Figure out if we need to scroll to hide the Load Earlier Posts button
 				if (!this.props.data.loading && !this.props.data.error) {
 					if (showEarlierPosts) {
-						this._flatList.scrollToOffset({
+						this.flatList.scrollToOffset({
 							offset: 40,
 							animated: false
 						});
@@ -153,10 +153,16 @@ class TopicViewScreen extends Component {
 	 */
 	onEndReached() {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
+			let offset = this.props.data.forums.topic.posts.length;
+
+			if (this.props.data.variables.fromUnread && this.props.data.forums.topic.unreadPostPosition) {
+				offset += this.props.data.forums.topic.unreadPostPosition;
+			}
+
 			this.props.data.fetchMore({
 				variables: {
 					fromUnread: false, // When infinite loading, we must disable this otherwise the same unread posts will load again
-					offset: this.props.data.forums.topic.posts.length + (this.props.data.forums.topic.unreadPostPosition || 0)
+					offset
 				},
 				updateQuery: (previousResult, { fetchMoreResult }) => {
 					// Don't do anything if there wasn't any new items
@@ -192,7 +198,6 @@ class TopicViewScreen extends Component {
 	 */
 	loadEarlierComments() {
 		if (!this.props.data.loading) {
-
 			this.setState({
 				loadingEarlierPosts: true
 			});
@@ -210,10 +215,10 @@ class TopicViewScreen extends Component {
 				updateQuery: (previousResult, { fetchMoreResult }) => {
 					// We use this state to track whether we should show the Load Earlier Posts button
 					this.setState({
-						earlierPostsAvailable: ( initialOffset - Expo.Constants.manifest.extra.per_page ) > 0,
+						earlierPostsAvailable: initialOffset - Expo.Constants.manifest.extra.per_page > 0,
 						loadingEarlierPosts: false
 					});
-					
+
 					// Don't do anything if there wasn't any new items
 					if (!fetchMoreResult || fetchMoreResult.forums.topic.posts.length === 0) {
 						return previousResult;
@@ -395,7 +400,9 @@ export default graphql(TopicViewQuery, {
 		notifyOnNetworkStatusChange: true,
 		variables: {
 			id: props.navigation.state.params.id,
-			fromUnread: true,
+			//fromUnread: props.navigation.state.params.fromUnread || false,
+			fromUnread: false,
+			offset: 0,
 			limit: Expo.Constants.manifest.extra.per_page
 		}
 	})
