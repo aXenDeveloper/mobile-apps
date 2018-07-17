@@ -312,34 +312,29 @@ class TopicViewScreen extends Component {
 	 * @return 	Component
 	 */
 	renderItem(item, topicData) {
-		let unreadBar = null;
-
-		if (!this.shownUnreadBar && topicData.timeLastRead && item.timestamp > topicData.timeLastRead) {
-			this.shownUnreadBar = true;
-			unreadBar = <UnreadIndicator label="Unread Posts" />;
+		// If this is the unread bar, just return it
+		if (!_.isUndefined(item.isUnreadBar)) {
+			return <UnreadIndicator label="Unread Posts" />;
 		}
 
 		return (
-			<React.Fragment>
-				{unreadBar}
-				<Post
-					data={item}
-					canReply={topicData.itemPermissions.canComment}
-					profileHandler={() =>
-						this.props.navigation.navigate("Profile", {
-							id: item.author.id,
-							name: item.author.name,
-							photo: item.author.photo
-						})
-					}
-					onPressReply={() =>
-						this.props.navigation.navigate("ReplyTopic", {
-							topicID: topicData.id,
-							quotedPost: item
-						})
-					}
-				/>
-			</React.Fragment>
+			<Post
+				data={item}
+				canReply={topicData.itemPermissions.canComment}
+				profileHandler={() =>
+					this.props.navigation.navigate("Profile", {
+						id: item.author.id,
+						name: item.author.name,
+						photo: item.author.photo
+					})
+				}
+				onPressReply={() =>
+					this.props.navigation.navigate("ReplyTopic", {
+						topicID: topicData.id,
+						quotedPost: item
+					})
+				}
+			/>
 		);
 	}
 
@@ -356,10 +351,21 @@ class TopicViewScreen extends Component {
 			return <Text>Error: {this.props.data.error}</Text>;
 		} else {
 			const topicData = this.props.data.forums.topic;
-			const listData = topicData.posts;
+			const listData = [...topicData.posts]; // Need to clone here in case we splice shortly...
 
-			// Reset unread marker
-			this.shownUnreadBar = false;
+			// Figure out if we need to show the unread bar. Get the index of the first
+			// unread item and insert an unread object into our post array.
+			// @todo check member id here to skip faster
+			if (topicData.unreadPostPosition && topicData.timeLastRead) {
+				let firstUnread = listData.findIndex(post => post.timestamp > topicData.timeLastRead);
+
+				if (firstUnread !== -1) {
+					listData.splice(firstUnread, 0, {
+						id: "unread", // We need a dummy id for keyExtractor to read
+						isUnreadBar: true
+					});
+				}
+			}
 
 			return (
 				<View style={{ flex: 1 }}>
