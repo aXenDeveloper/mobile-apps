@@ -20,7 +20,7 @@ import LoadMoreComments from "../../atoms/LoadMoreComments";
 import EndOfComments from "../../atoms/EndOfComments";
 
 const TopicViewQuery = gql`
-	query TopicViewQuery($id: ID!, $offset: Int, $limit: Int, $fromUnread: Boolean) {
+	query TopicViewQuery($id: ID!, $offsetAdjust: Int, $offsetPosition: posts_offset_position, $limit: Int) {
 		forums {
 			topic(id: $id) {
 				__typename
@@ -33,6 +33,7 @@ const TopicViewQuery = gql`
 					controller
 				}
 				timeLastRead
+				postCount
 				unreadPostPosition
 				started
 				title
@@ -49,7 +50,7 @@ const TopicViewQuery = gql`
 					__typename
 					canComment
 				}
-				posts(offset: $offset, limit: $limit, fromUnread: $fromUnread) {
+				posts(offsetAdjust: $offsetAdjust, offsetPosition: $offsetPosition, limit: $limit) {
 					...PostFragment
 				}
 			}
@@ -61,9 +62,10 @@ const TopicViewQuery = gql`
 class TopicViewScreen extends Component {
 	constructor(props) {
 		super(props);
-		this._flatList = null;
-		this._currentOffset = 0;
-		this._initialOffsetDone = false;
+		this._flatList = null; // Ref to the flatlist
+		this._currentOffset = 0; // The offset we're currently displaying in the view
+		this._initialOffsetDone = false; // Flag to indicate we've set our initial offset on render
+		this._aboutToScrollToEnd = false; // Flag to indicate a scrollToEnd is pending so we can avoid other autoscrolls
 		this.state = {
 			reachedEnd: false,
 			earlierPostsAvailable: null,
@@ -97,30 +99,43 @@ class TopicViewScreen extends Component {
 		this.setCurrentOffset(this.props.data.variables.offset || 0);
 	}
 
+	/**
+	 * Set the current offset that we're displaying
+	 *
+	 * @param 	number 		offset 		Offset to set
+	 * @return 	void
+	 */
 	setCurrentOffset(offset) {
-		console.log("Set offset to", offset);
 		this._currentOffset = offset;
 	}
 
 	/**
-	 * If we have a goToEnd param, we've probably just added a new post
-	 * After scrolling, reset that flag.
-	 * Here we also update the navigation params to set the title if we came direct, e.g. from search
+	 * Scroll to the end of our listing
+	 *
+	 * @return 	void
+	 */
+	scrollToEnd() {
+		this._aboutToScrollToEnd = true;
+
+		// I don't like this, but it appears to be necessary to trigger the
+		// scroll after a short timeout to allow time for the list to render
+		setTimeout(() => {
+			this._flatList.scrollToEnd();
+			this._aboutToScrollToEnd = false;
+		}, 500);
+	}
+
+	/**
+	 * Manage several areas that might need to change as we get data:
+	 * - setting screen params if the screen loaded without them
+	 * - setting the offset, and scrolling to the end of the view if needed
+	 * - toggling the 'load earlier posts' button
 	 *
 	 * @param 	object 	prevProps 	Previous prop values
+	 * @param 	object 	prevState 	Previous state values
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps, prevState) {
-		// If goToEnd has been passed in, then scroll to it
-		if (!_.isUndefined(this.props.navigation.state.params.goToEnd)) {
-			if (!prevProps.navigation.state.params.goToEnd && this.props.navigation.state.params.goToEnd) {
-				this._flatList.scrollToEnd();
-				this.props.navigation.setParams({
-					goToEnd: false
-				});
-			}
-		}
-
 		// If we mounted without the info we need to set the screen title, then set them now
 		if (!this.props.navigation.state.params.author) {
 			this.props.navigation.setParams({
@@ -130,24 +145,25 @@ class TopicViewScreen extends Component {
 			});
 		}
 
-		// Update offset tracker for unread, but only if we haven't done it before, otherwise
-		// we'll replace our offset eith the unreadPostPosition every time the component updates
-		if (!this.props.data.loading && !this.props.data.error) {
-			if( !this._initialOffsetDone ){
-				if (this.props.data.variables.fromUnread && this.props.data.forums.topic.unreadPostPosition) {
-					this.setCurrentOffset(this.props.data.forums.topic.unreadPostPosition);
-					this._initialOffsetDone = true;
-				}
+		// Update our offset tracker, but only if we haven't done it before, otherwise
+		// we'll replace our offset with the initial offset every time the component updates
+		if (!this._initialOffsetDone && !this.props.data.loading && !this.props.data.error) {
+			if (this.props.data.variables.offsetPosition == "UNREAD" && this.props.data.forums.topic.unreadPostPosition) {
+				// If we're showing by unread, then the offset will be the last unread post position
+				this.setCurrentOffset(this.props.data.forums.topic.unreadPostPosition);
+				this._initialOffsetDone = true;
+			} else if (this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0) {
+				// If we're showing the last post, the offset will be the total post count plus our adjustment
+				this.setCurrentOffset(this.props.data.forums.topic.postCount + this.props.data.variables.offsetAdjust);
+				this.setState({ reachedEnd: true });
+				this.scrollToEnd();
+				this._initialOffsetDone = true;
 			}
 		}
 
 		// Figure out if we need to change the state that determines whether the
 		// Load Earlier Posts button shows
-		let showEarlierPosts = false;
-
-		if (this.props.data.variables.fromUnread && this.props.data.forums.topic.unreadPostPosition) {
-			showEarlierPosts = true;
-		}
+		let showEarlierPosts = this._currentOffset > 0;
 
 		if (prevState.earlierPostsAvailable == null || prevState.earlierPostsAvailable !== this.state.earlierPostsAvailable) {
 			if (this.state.earlierPostsAvailable !== false) {
@@ -157,7 +173,7 @@ class TopicViewScreen extends Component {
 
 				// Figure out if we need to scroll to hide the Load Earlier Posts button
 				if (!this.props.data.loading && !this.props.data.error) {
-					if (showEarlierPosts) {
+					if (showEarlierPosts && !this._aboutToScrollToEnd) {
 						this._flatList.scrollToOffset({
 							offset: 40,
 							animated: false
@@ -175,12 +191,13 @@ class TopicViewScreen extends Component {
 	 */
 	onEndReached() {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
-			const offset = this._currentOffset + this.props.data.forums.topic.posts.length;
+			const offsetAdjust = this._currentOffset + this.props.data.forums.topic.posts.length;
 
 			this.props.data.fetchMore({
 				variables: {
-					fromUnread: false, // When infinite loading, we must disable this otherwise the same unread posts will load again
-					offset
+					// When infinite loading, we must reset this otherwise the same unread posts will load again
+					offsetPosition: "FIRST",
+					offsetAdjust
 				},
 				updateQuery: (previousResult, { fetchMoreResult }) => {
 					// Don't do anything if there wasn't any new items
@@ -220,14 +237,13 @@ class TopicViewScreen extends Component {
 				loadingEarlierPosts: true
 			});
 
-			const offset = Math.max(this._currentOffset - Expo.Constants.manifest.extra.per_page, 0);
+			// Ensure the offset doesn't go below 0
+			const offsetAdjust = Math.max(this._currentOffset - Expo.Constants.manifest.extra.per_page, 0);
 
 			this.props.data.fetchMore({
 				variables: {
-					// When infinite loading, we must disable this otherwise the same unread posts will load again
-					fromUnread: false,
-					// Ensure the offset doesn't go below 0
-					offset
+					offsetPosition: "FIRST",
+					offsetAdjust
 				},
 				updateQuery: (previousResult, { fetchMoreResult }) => {
 					// We use this state to track whether we should show the Load Earlier Posts button
@@ -236,7 +252,7 @@ class TopicViewScreen extends Component {
 						loadingEarlierPosts: false
 					});
 
-					this.setCurrentOffset( offset );
+					this.setCurrentOffset(offsetAdjust);
 
 					// Don't do anything if there wasn't any new items
 					if (!fetchMoreResult || fetchMoreResult.forums.topic.posts.length === 0) {
@@ -367,7 +383,7 @@ class TopicViewScreen extends Component {
 			);
 		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, TopicViewScreen.errors);
-			return <Text>Error: {this.props.data.error}</Text>;
+			return <Text>Error: {error}</Text>;
 		} else {
 			const topicData = this.props.data.forums.topic;
 			const listData = [...topicData.posts]; // Need to clone here in case we splice shortly...
@@ -421,13 +437,31 @@ class TopicViewScreen extends Component {
 }
 
 export default graphql(TopicViewQuery, {
-	options: props => ({
-		notifyOnNetworkStatusChange: true,
-		variables: {
-			id: props.navigation.state.params.id,
-			fromUnread: ( Expo.Constants.manifest.extra.contentBehavior == 'unread' ),
-			offset: 0,
-			limit: Expo.Constants.manifest.extra.per_page
+	options: props => {
+		let offsetPosition = "FIRST";
+		let offsetAdjust = 0;
+
+		if (props.navigation.state.params.showLastComment || Expo.Constants.manifest.extra.contentBehavior == "last") {
+			// If we're showing the last comment, we'll load the previous 'page' of posts too
+			// via the offsetAdjust arg
+			offsetPosition = "LAST";
+			offsetAdjust = Expo.Constants.manifest.extra.per_page * -1;
+		} else {
+			if (Expo.Constants.manifest.extra.contentBehavior == "unread") {
+				offsetPosition = "UNREAD";
+			}
+
+			offsetAdjust = props.navigation.state.params.offsetAdjust || 0;
 		}
-	})
+
+		return {
+			notifyOnNetworkStatusChange: true,
+			variables: {
+				id: props.navigation.state.params.id,
+				limit: Expo.Constants.manifest.extra.per_page,
+				offsetPosition,
+				offsetAdjust
+			}
+		};
+	}
 })(TopicViewScreen);

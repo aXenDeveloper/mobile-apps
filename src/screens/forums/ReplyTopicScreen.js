@@ -103,7 +103,7 @@ class ReplyTopicScreen extends Component {
 
 			const navigateAction = NavigationActions.navigate({
 				params: { 
-					goToEnd: true
+					showLastComment: true
 				},
 				routeName: "TopicView"
 			});
