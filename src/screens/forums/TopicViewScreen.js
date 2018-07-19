@@ -17,6 +17,7 @@ import PagerButton from "../../atoms/PagerButton";
 import DummyTextInput from "../../atoms/DummyTextInput";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import LoadMoreComments from "../../atoms/LoadMoreComments";
+import EndOfComments from "../../atoms/EndOfComments";
 
 const TopicViewQuery = gql`
 	query TopicViewQuery($id: ID!, $offset: Int, $limit: Int, $fromUnread: Boolean) {
@@ -176,10 +177,6 @@ class TopicViewScreen extends Component {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
 			const offset = this._currentOffset + this.props.data.forums.topic.posts.length;
 
-			/*if (this.props.data.variables.fromUnread && this.props.data.forums.topic.unreadPostPosition) {
-				offset += this.props.data.forums.topic.unreadPostPosition;
-			}*/
-
 			this.props.data.fetchMore({
 				variables: {
 					fromUnread: false, // When infinite loading, we must disable this otherwise the same unread posts will load again
@@ -294,7 +291,7 @@ class TopicViewScreen extends Component {
 			return <Post loading={true} />;
 		}
 
-		return <View style={{ height: 150 }} />;
+		return <EndOfComments />;
 	}
 
 	/**
@@ -428,8 +425,7 @@ export default graphql(TopicViewQuery, {
 		notifyOnNetworkStatusChange: true,
 		variables: {
 			id: props.navigation.state.params.id,
-			//fromUnread: props.navigation.state.params.fromUnread || false,
-			fromUnread: true,
+			fromUnread: ( Expo.Constants.manifest.extra.contentBehavior == 'unread' ),
 			offset: 0,
 			limit: Expo.Constants.manifest.extra.per_page
 		}

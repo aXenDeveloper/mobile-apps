@@ -11,6 +11,7 @@ import PagerButton from "../../atoms/PagerButton";
 import SectionHeader from "../../atoms/SectionHeader";
 import TopicRow from "../../ecosystems/TopicRow";
 import AddButton from "../../atoms/AddButton";
+import EndOfComments from "../../atoms/EndOfComments";
 
 const TopicListQuery = gql`
 	query TopicListQuery($forum: ID!, $offset: Int, $limit: Int) {
@@ -157,10 +158,10 @@ class TopicListScreen extends Component {
 	getFooterComponent() {
 		// If we're loading more items in
 		if (this.props.data.networkStatus == 3 && !this.state.reachedEnd) {
-			return <Text style={{ textAlign: "center" }}>Loading...</Text>;
+			return <TopicRow loading={true} />;
 		}
 
-		return <View style={{ height: 150 }} />;
+		return <EndOfComments label="You've reached the end of this forum." />;
 	}
 
 	/**
@@ -212,6 +213,7 @@ class TopicListScreen extends Component {
 	}
 
 	render() {
+		// status 3 == fetchMore, status 4 == refreshing
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return (
 				<PlaceholderRepeater repeat={7}>
