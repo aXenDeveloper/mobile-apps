@@ -9,6 +9,8 @@ const globalErrors = [
 export default function getErrorMessage(err, componentErrors = {}) {
 	let errors = Object.assign({}, globalErrors, componentErrors);
 
+	console.log( err );
+
 	if( !_.isUndefined( err.graphQLErrors ) && err.graphQLErrors.length ){
 		if( !_.isUndefined( errors[ err.graphQLErrors[0].message ] ) ){
 			return errors[ err.graphQLErrors[0].message ] || err.graphQLErrors[0].message;
