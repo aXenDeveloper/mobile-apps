@@ -34,20 +34,9 @@ class RootScreen extends Component {
 			}));
 			return next(operation);
 		};
-		/*const errorLink = onError(({ graphQLErrors, networkError, forward }) => {
-			if (graphQLErrors){
-				graphQLErrors.map( ({ message, locations, path }) => {
-					console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
-				});
-			}
-			if (networkError) {
-				console.log(`[Network error]: ${networkError}`);
-			}
-		});*/
 
 		const link = ApolloLink.from([
 			authLink,
-			//errorLink,
 			new HttpLink({
 				uri: `${Expo.Constants.manifest.extra.api_url}/api/graphql/`
 			})
@@ -130,11 +119,6 @@ class RootScreen extends Component {
 				console.log("Refreshing access_token");
 				dispatch(refreshAuth());
 			}, nextProps.auth.expires_in - Expo.Constants.manifest.extra.refresh_token_advance);
-
-			/*
-			if (!this.props.user.loaded) {
-				dispatch(fetchUser());
-			}*/
 		}
 	}
 
