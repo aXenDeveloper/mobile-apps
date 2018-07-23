@@ -214,7 +214,7 @@ class AppNavigation extends Component {
 	 *
 	 * @return TabNavigator
 	 */
-	_getPrimaryTabBar() {
+	_getPrimaryTabBar() {		
 		const Home = {
 			screen: this._CommunityStack,
 			navigationOptions: {
@@ -272,8 +272,8 @@ class AppNavigation extends Component {
 				tabBarLabel: "My Account",
 				tabBarIcon: ({ focused, tintColor }) => (
 					<Image
-						style={[styles.tabIcon, { tintColor: tintColor }]}
-						source={focused ? require("../../resources/login_active.png") : require("../../resources/login.png")}
+						style={[styles.tabIcon, this._getUserPhotoStyle(tintColor)]}
+						source={this._getUserPhoto(focused)}
 					/>
 				),
 				tabBarOnPress: (tab, jumpToIndex) => {
@@ -324,6 +324,32 @@ class AppNavigation extends Component {
 				style: styles.primaryTabBar
 			}
 		});
+	}
+
+	/**
+	 * Return a URL for the user tab bar icon. Photo if it's a member, icon if it's a guest
+	 *
+	 * @return object|file resource
+	 */
+	_getUserPhoto(focused) {		
+		if( !this.props.user.isGuest && this.props.user.photo ){
+			return { uri: this.props.user.photo };
+		} else {
+			return focused ? require("../../resources/login_active.png") : require("../../resources/login.png")
+		}
+	}
+
+	/**
+	 * Returns the tint color style
+	 *
+	 * @return object|null
+	 */
+	_getUserPhotoStyle(tintColor) {
+		if( !this.props.user.isGuest && this.props.user.photo ){
+			return styles.userTabIcon;
+		} else {
+			return { tintColor };
+		}
 	}
 
 	/**

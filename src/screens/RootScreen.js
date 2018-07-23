@@ -7,19 +7,32 @@ import { ApolloLink } from "apollo-link";
 import { onError } from "apollo-link-error";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { connect } from "react-redux";
-import { refreshAuth } from "../redux/actions/auth";
-import { fetchUser } from "../redux/actions/user";
+import gql from "graphql-tag";
+import { graphql } from "react-apollo";
 
+import { refreshAuth } from "../redux/actions/auth";
+import { userLoaded, guestLoaded } from "../redux/actions/user";
 import AppNavigation from "../navigation/AppNavigation";
 import ToFormData from "../utils/ToFormData";
-import auth from "../utils/Auth";
+
+const BootQuery = gql`
+	query BootQuery {
+		core {
+			me {
+				id
+				name
+				photo
+			}
+		}
+	}
+`;
 
 class RootScreen extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			loading: false
+			loading: true
 		};
 
 		// Apollo config & setup
@@ -52,8 +65,9 @@ class RootScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	componentDidMount() {
+	async componentDidMount() {
 		const { dispatch } = this.props;
+
 		// Trigger action to look for an access token, and verify it is valid
 		dispatch(refreshAuth());
 	}
@@ -87,30 +101,8 @@ class RootScreen extends Component {
 	componentWillReceiveProps(nextProps) {
 		const { dispatch } = this.props;
 
-		// Show loading status if we're checking the token *and* aren't already logged in
-		// Checks when already logged in shouldn't interrupt the user; if they fail they'll just be logged out anyway
-		if (nextProps.auth.checkAuthProcessing && !this.props.auth.authenticated) {
-			this.setState({
-				loading: true
-			});
-		} else {
-			this.setState({
-				loading: false
-			});
-		}
-
 		if (nextProps.auth.error && nextProps.auth.networkError) {
-			Alert.alert(
-				"Network Error",
-				"Sorry, the community you are trying to access isn't available right now.",
-				[
-					{
-						text: "OK"
-					}
-				],
-				{ cancelable: false }
-			);
-			return;
+			return this.showLoadError();
 		}
 
 		// If we're authenticated now, then start a timer so we can refresh the token before it expires
@@ -120,6 +112,71 @@ class RootScreen extends Component {
 				dispatch(refreshAuth());
 			}, nextProps.auth.expires_in - Expo.Constants.manifest.extra.refresh_token_advance);
 		}
+	}
+
+	/**
+	 * Called after component update
+	 *
+	 * @param 	object 		prevProps 		Old props
+	 * @param 	object 		prevState 		Old state
+	 * @return 	void
+	 */
+	componentDidUpdate(prevProps, prevState) {
+		// If we're done checking authentication, run our boot query to get initial data
+		if( prevProps.auth.checkAuthProcessing && !this.props.auth.checkAuthProcessing ){
+			this.runBootQuery();
+		}
+	}
+
+	/**
+	 * Manually execute the boot query to fetch community data
+	 *
+	 * @return 	void
+	 */
+	async runBootQuery() {
+		const { dispatch } = this.props;
+		
+		try {
+			const { data } = await this._client.query({
+				query: BootQuery,
+				variables: {}
+			});
+
+			// Send out our user info
+			if( this.props.auth.authenticated && data.core.me.id ){
+				dispatch(userLoaded({
+					...data.core.me
+				}));
+			} else {
+				dispatch(guestLoaded());
+			}
+
+			// We can now proceed to show the home screen
+			this.setState({
+				loading: false
+			});
+		} catch (err) {
+			console.log(err);
+			return this.showLoadError();
+		}
+	}
+
+	/**
+	 * Show an error alert. Called when we can't connect to the community.
+	 *
+	 * @return 	void
+	 */
+	showLoadError() {
+		Alert.alert(
+			"Network Error",
+			"Sorry, the community you are trying to access isn't available right now.",
+			[
+				{
+					text: "OK"
+				}
+			],
+			{ cancelable: false }
+		);
 	}
 
 	render() {

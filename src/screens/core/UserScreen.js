@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import { logOut } from "../../redux/actions/auth";
 
 import UserPhoto from "../../atoms/UserPhoto";
-import auth from "../../utils/Auth";
 
 const UserQuery = gql`
 	query UserQuery {

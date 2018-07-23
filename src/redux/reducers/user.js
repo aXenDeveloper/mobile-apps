@@ -1,16 +1,27 @@
-import { TEST_USER } from "../actions/user";
+import { USER_LOADED, GUEST_LOADED } from "../actions/user";
 
 const initialState = {
-	loaded: false,
-	id: 1
+	isGuest: true,
+	id: 0,
+	name: 'Guest',
+	photo: '',
+	notificationCount: 0
 };
 
 export default function user(state = initialState, { type, payload }) {
 	switch (type) {
-		case TEST_USER:
+		case GUEST_LOADED:
 			return {
-				...state
+				...initialState
 			};
+		case USER_LOADED:
+			return {
+				isGuest: false,
+				id: payload.id,
+				name: payload.name,
+				photo: payload.photo,
+				notificationCount: payload.notificationCount
+			}
 		default:
 			return { ...state };
 	}

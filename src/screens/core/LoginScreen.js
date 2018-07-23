@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 
 import { receiveAuth, logIn } from "../../redux/actions/auth";
 import ToFormData from "../../utils/ToFormData";
-import auth from "../../utils/Auth";
 
 class LoginScreen extends Component {
 	static navigationOptions = {

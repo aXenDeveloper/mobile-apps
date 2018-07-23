@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
 		width: 25,
 		height: 25
 	},
+	userTabIcon: {
+		borderRadius: 12.5
+	},
 	primaryTabBar: {
 		/*backgroundColor: '#37454B',*/
 		//backgroundColor: "#252D31"
