@@ -14,7 +14,6 @@ import _ from "underscore";
 import Lang from "../utils/Lang";
 import { refreshAuth } from "../redux/actions/auth";
 import { userLoaded, guestLoaded } from "../redux/actions/user";
-import { langStringsLoaded } from "../redux/actions/lang";
 import AppNavigation from "../navigation/AppNavigation";
 import ToFormData from "../utils/ToFormData";
 import LangFragment from "../LangFragment";
@@ -39,6 +38,7 @@ class RootScreen extends Component {
 	constructor(props) {
 		super(props);
 
+		this._alertShown = false;
 		this.state = {
 			loading: true
 		};
@@ -91,6 +91,11 @@ class RootScreen extends Component {
 		}
 	}
 
+	/**
+	 * Try loading the community again
+	 *
+	 * @return 	void
+	 */
 	tryAfterNetworkError() {
 		this.setState({
 			loading: true
@@ -189,16 +194,22 @@ class RootScreen extends Component {
 			loading: false
 		});
 
-		Alert.alert(
-			"Network Error",
-			"Sorry, the community you are trying to access isn't available right now.",
-			[
-				{
-					text: "OK"
-				}
-			],
-			{ cancelable: false }
-		);
+		// Track whether the alert is showing so we don't bombard the user
+		if( !this._alertShown ){
+			Alert.alert(
+				"Network Error",
+				"Sorry, the community you are trying to access isn't available right now.",
+				[
+					{
+						text: "OK",
+						onPress: () => this._alertShown = false
+					}
+				],
+				{ cancelable: false }
+			);
+
+			this._alertShown = true;
+		}
 	}
 
 	render() {
