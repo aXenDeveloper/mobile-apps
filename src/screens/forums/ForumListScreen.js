@@ -3,6 +3,7 @@ import { Text, View, Button, SectionList, TouchableHighlight } from "react-nativ
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 
+import Lang from "../../utils/Lang";
 import SectionHeader from "../../atoms/SectionHeader";
 import ForumItem from "../../ecosystems/ForumItem";
 
@@ -73,7 +74,7 @@ class ForumListScreen extends Component {
 									this.props.navigation.navigate("TopicList", {
 										id: item.data.id,
 										title: item.data.title,
-										topics: item.data.topics
+										subtitle: Lang.pluralize( Lang.get("topics"), item.data.topics)
 									})
 								}
 							/>

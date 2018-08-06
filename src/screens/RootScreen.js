@@ -9,11 +9,15 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { connect } from "react-redux";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
+import _ from "underscore";
 
+import Lang from "../utils/Lang";
 import { refreshAuth } from "../redux/actions/auth";
 import { userLoaded, guestLoaded } from "../redux/actions/user";
+import { langStringsLoaded } from "../redux/actions/lang";
 import AppNavigation from "../navigation/AppNavigation";
 import ToFormData from "../utils/ToFormData";
+import LangFragment from "../LangFragment";
 
 const BootQuery = gql`
 	query BootQuery {
@@ -23,8 +27,12 @@ const BootQuery = gql`
 				name
 				photo
 			}
+			language {
+				...LangFragment
+			}
 		}
 	}
+	${LangFragment}
 `;
 
 class RootScreen extends Component {
@@ -151,6 +159,16 @@ class RootScreen extends Component {
 				dispatch(guestLoaded());
 			}
 
+			// Set our lang strings
+			if( _.size( data.core.language ) ){
+				// We don't want __typename, so discard that
+				const { __typename, ...rest } = data.core.language;
+				/*dispatch(langStringsLoaded({
+					...rest
+				}));*/
+				Lang.setWords( rest );
+			}
+
 			// We can now proceed to show the home screen
 			this.setState({
 				loading: false
@@ -167,6 +185,10 @@ class RootScreen extends Component {
 	 * @return 	void
 	 */
 	showLoadError() {
+		this.setState({
+			loading: false
+		});
+
 		Alert.alert(
 			"Network Error",
 			"Sorry, the community you are trying to access isn't available right now.",

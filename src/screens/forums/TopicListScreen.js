@@ -3,6 +3,7 @@ import { Text, View, Button, ScrollView, FlatList } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 
+import Lang from "../../utils/Lang";
 import { PlaceholderRepeater } from "../../atoms/Placeholder";
 import relativeTime from "../../utils/RelativeTime";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
@@ -60,12 +61,12 @@ const TopicListQuery = gql`
 class TopicListScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
 		headerTitle: (
-			!navigation.state.params.title || !navigation.state.params.topics ? 
+			!navigation.state.params.title || !navigation.state.params.subtitle ? 
 				<TwoLineHeader loading={true} />
 			:
 				<TwoLineHeader
 					title={navigation.state.params.title}
-					subtitle={`${navigation.state.params.topics} topics`}
+					subtitle={navigation.state.params.subtitle}
 				/>
 		)
 	});
@@ -91,10 +92,10 @@ class TopicListScreen extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps) {
-		if (!prevProps.navigation.state.params.title || !prevProps.navigation.state.params.topics) {
+		if (!prevProps.navigation.state.params.title || !prevProps.navigation.state.params.subtitle) {
 			this.props.navigation.setParams({
 				title: this.props.data.forums.forum.name,
-				topics: this.props.data.forums.forum.topicCount
+				subtitle: Lang.pluralize( Lang.get("topics"), this.props.data.forums.forum.topicCount)
 			});
 		}
 	}
@@ -161,7 +162,7 @@ class TopicListScreen extends Component {
 			return <TopicRow loading={true} />;
 		}
 
-		return <EndOfComments label="You've reached the end of this forum." />;
+		return <EndOfComments label={Lang.get('end_of_forum')} />;
 	}
 
 	/**

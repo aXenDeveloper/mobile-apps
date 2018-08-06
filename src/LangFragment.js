@@ -1,0 +1,19 @@
+import gql from "graphql-tag";
+
+const LangFragment = gql`
+	fragment LangFragment on core_Language {
+		topics: phrase(key: "app_topics")
+		posts: phrase(key: "app_posts")
+		quote: phrase(key: "app_quote")
+		post_options: phrase(key: "app_post_options")
+		end_of_forum: phrase(key: "app_end_of_forum")
+		cancel: phrase(key: "app_cancel")
+		share: phrase(key: "app_share")
+		report: phrase(key: "app_report")
+		load_earlier: phrase(key: "app_load_earlier")
+		write_reply: phrase(key: "app_write_reply")
+		unread_posts: phrase(key: "app_unread_posts")
+	}
+`;
+
+export default LangFragment;

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableHighlight } from 'react-native';
 import Swipeable from 'react-native-swipeable';
 
+import Lang from "../../utils/Lang";
 import ForumIcon from '../../atoms/ForumIcon';
 import LastPostInfo from '../../ecosystems/LastPostInfo';
 import styles from '../../styles';
@@ -29,7 +30,7 @@ export default class ForumItem extends Component {
 									{this.props.data.title}
 								</Text>
 								<Text style={componentStyles.forumMeta}>
-									{this.props.data.posts} posts
+									{Lang.pluralize( Lang.get('posts'), this.props.data.posts)}
 								</Text>
 							</View>
 						</View>

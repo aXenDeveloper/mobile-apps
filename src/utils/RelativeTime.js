@@ -1,4 +1,5 @@
 import moment from 'moment';
+import Lang from './Lang';
 
 class RelativeTime {
 	constructor() {

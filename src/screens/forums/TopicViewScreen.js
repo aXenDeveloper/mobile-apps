@@ -5,6 +5,7 @@ import { graphql } from "react-apollo";
 import Modal from "react-native-modal";
 import _ from "underscore";
 
+import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import { PlaceholderRepeater } from "../../atoms/Placeholder";
 import getErrorMessage from "../../utils/getErrorMessage";
@@ -333,7 +334,7 @@ class TopicViewScreen extends Component {
 	 */
 	getLoadPreviousButton() {
 		if (this.state.earlierPostsAvailable) {
-			return <LoadMoreComments loading={this.state.loadingEarlierPosts} onPress={() => this.loadEarlierComments()} label="Load Earlier Posts" />;
+			return <LoadMoreComments loading={this.state.loadingEarlierPosts} onPress={() => this.loadEarlierComments()} label={Lang.get('load_earlier')} />;
 		}
 
 		return null;
@@ -349,7 +350,7 @@ class TopicViewScreen extends Component {
 	renderItem(item, topicData) {
 		// If this is the unread bar, just return it
 		if (!_.isUndefined(item.isUnreadBar)) {
-			return <UnreadIndicator label="Unread Posts" />;
+			return <UnreadIndicator label={Lang.get('unread_posts')} />;
 		}
 
 		return (
@@ -425,7 +426,7 @@ class TopicViewScreen extends Component {
 											topicID: topicData.id
 										});
 									}}
-									placeholder="Write a reply..."
+									placeholder={Lang.get('write_reply')}
 								/>
 							</Pager>
 						)}

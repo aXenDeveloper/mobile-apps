@@ -7,6 +7,7 @@ import { graphql } from "react-apollo";
 import * as Animatable from 'react-native-animatable';
 import _ from "underscore";
 
+import Lang from "../../utils/Lang";
 import { PlaceholderElement, PlaceholderContainer } from "../../atoms/Placeholder";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import UserPhoto from "../../atoms/UserPhoto";
@@ -82,7 +83,7 @@ class Post extends Component {
 	 * @return 	array
 	 */
 	actionSheetOptions() {
-		return ["Cancel", "Share", "Report"];
+		return [Lang.get('cancel'), Lang.get('share'), Lang.get('report')];
 	}
 	/**
 	 * Return the index of the 'cancel' option
@@ -306,12 +307,12 @@ class Post extends Component {
 						</Animatable.View>
 					</View>
 					<PostControls>
-						{this.props.canReply && <PostControl label="Quote" onPress={this.props.onPressReply} />}
+						{this.props.canReply && <PostControl label={Lang.get('quote')} onPress={this.props.onPressReply} />}
 						{this.getReputationButton()}
 					</PostControls>
 					<ActionSheet
 						ref={o => (this._actionSheet = o)}
-						title="Post options"
+						title={Lang.get('post_options')}
 						options={this.actionSheetOptions()}
 						cancelButtonIndex={this.actionSheetCancelIndex()}
 						onPress={this.actionSheetPress}
