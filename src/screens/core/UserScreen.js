@@ -10,7 +10,8 @@ import UserPhoto from "../../atoms/UserPhoto";
 const UserQuery = gql`
 	query UserQuery {
 		core {
-			member(loggedIn: true) {
+			me {
+				id
 				name
 				email
 				photo
@@ -51,10 +52,12 @@ class UserScreen extends Component {
 				</View>
 			);
 		} else {
+			console.log( this.props.data );
+
 			return (
 				<View style={styles.loggedInHeader}>
-					<UserPhoto url={this.props.photo} size={100} />
-					<Text style={styles.username}>{this.props.data.core.member.name}</Text>
+					<UserPhoto url={this.props.data.core.me.photo} size={100} />
+					<Text style={styles.username}>{this.props.data.core.me.name}</Text>
 					<Button onPress={() => this._logOut()} style={styles.button} title="Sign Out" />
 				</View>
 			);

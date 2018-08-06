@@ -181,11 +181,11 @@ class AppNavigation extends Component {
 					screen: UserScreen,
 					navigationOptions: {
 						headerTitle: "Account",
-						headerTitleStyle: styles.headerTitle,
+						/*headerTitleStyle: styles.headerTitle,
 						headerStyle: styles.altHeader,
 						headerBackTitleStyle: styles.headerBack,
 						headerTintColor: "white",
-						headerBackTitle: null
+						headerBackTitle: null*/
 					}
 				},
 				WebView: {
