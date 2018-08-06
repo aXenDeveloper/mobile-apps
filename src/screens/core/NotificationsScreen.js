@@ -9,6 +9,7 @@ const NotificationQuery = gql`
 	query NotificationQuery {
 		core {
 			me {
+				id
 				notifications {
 					id
 					type
@@ -19,6 +20,7 @@ const NotificationQuery = gql`
 					updatedDate
 					readDate
 					author {
+						id
 						photo
 					}
 					title
