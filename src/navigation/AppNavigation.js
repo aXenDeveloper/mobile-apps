@@ -15,6 +15,7 @@ import ProfileScreen from "../screens/core/ProfileScreen";
 import UserScreen from "../screens/core/UserScreen";
 import LoginScreen from "../screens/core/LoginScreen";
 import WebViewScreen from "../screens/core/WebViewScreen";
+import AccountSettingsScreen from "../screens/core/AccountSettingsScreen";
 // ----
 // Forums screens
 import ForumListScreen from "../screens/forums/ForumListScreen";
@@ -36,7 +37,7 @@ class AppNavigation extends Component {
 				All: {
 					screen: ForumListScreen,
 					navigationOptions: {
-						tabBarLabel: "All Forums".toUpperCase()
+						tabBarLabel: "All Forums".toUpperCase(),
 					}
 				},
 				Followed: {
@@ -95,21 +96,31 @@ class AppNavigation extends Component {
 	_getMainStack(options, initialRoute) {
 		return createStackNavigator(
 			{
-				ForumIndex: { screen: this._ForumTabBar	},
+				ForumIndex: { 
+					screen: this._ForumTabBar,
+					navigationOptions: {
+						title: 'Forums'
+					}
+				},
 				TopicList: { screen: TopicListScreen },
 				TopicView: { screen: TopicViewScreen },
 				Profile: { screen: ProfileScreen },
 				NotificationsStack: { screen: NotificationsScreen },
 				NotificationsSettings: { screen: NotificationsSettingsScreen },
+				AccountSettings: { 
+					screen: this._getSettingsStack(),
+					navigationOptions: {
+						title: 'Account Settings'
+					}
+				},
 				StreamView: { screen: StreamViewScreen }
 			},
 			{
 				initialRouteName: initialRoute || 'ForumIndex',
 				cardStyle: styles.stackCardStyle,
 				navigationOptions: Object.assign({
-					title: 'Forums',
 					header: props => {
-						return <CustomHeader {...props} title="Forums" />;
+						return <CustomHeader {...props} />;
 					},
 					headerTitleStyle: styles.headerTitle,
 					headerStyle: styles.header,
@@ -121,7 +132,23 @@ class AppNavigation extends Component {
 		);
 	}
 
-	_getStreamStack(options, initialRoute) {
+	_getSettingsStack(options) {
+		return createStackNavigator(
+			{
+				AccountSettingsScreen: { screen: AccountSettingsScreen }
+			},
+			{
+				initialRouteName: 'AccountSettingsScreen',
+				cardStyle: styles.stackCardStyle,
+				navigationOptions: Object.assign({
+					title: 'Settings',
+					header: null
+				}, options || null)
+			}
+		);
+	}
+
+	/*_getStreamStack(options, initialRoute) {
 		return createStackNavigator(
 			{
 				StreamView: { screen: StreamViewScreen	},
@@ -142,7 +169,7 @@ class AppNavigation extends Component {
 				}, options || null)
 			}
 		);
-	}
+	}*/
 
 	/**
 	 * Return the overall master navigation component
@@ -177,17 +204,6 @@ class AppNavigation extends Component {
 					navigationOptions: {
 						header: null,
 						headerMode: 'none'
-					}
-				},
-				UserScreen: {
-					screen: UserScreen,
-					navigationOptions: {
-						headerTitle: "Account",
-						/*headerTitleStyle: styles.headerTitle,
-						headerStyle: styles.altHeader,
-						headerBackTitleStyle: styles.headerBack,
-						headerTintColor: "white",
-						headerBackTitle: null*/
 					}
 				},
 				WebView: {

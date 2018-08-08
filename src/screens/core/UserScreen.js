@@ -6,6 +6,7 @@ import {
 	ScrollView,
 	FlatList,
 	StyleSheet,
+	TouchableOpacity,
 	Alert,
 	StatusBar,
 	Image
@@ -70,18 +71,14 @@ class UserScreen extends Component {
 		}
 	}
 
+	goToProfile() {
+		this.props.navigation.navigate("Profile", {
+			id: this.props.data.core.me.id
+		});
+	}
+
 	getMenuOptions() {
 		return [
-			{
-				key: "profile",
-				icon: require("../../../resources/profile.png"),
-				text: Lang.get("your_profile"),
-				onPress: () => {
-					this.props.navigation.navigate("Profile", {
-						id: this.props.data.core.me.id
-					});
-				}
-			},
 			{
 				key: "edit_profile",
 				icon: require("../../../resources/edit_profile.png"),
@@ -95,7 +92,8 @@ class UserScreen extends Component {
 				icon: require("../../../resources/settings.png"),
 				text: Lang.get("settings"),
 				onPress: () => {
-					console.log("settings");
+					this.props.navigation.closeDrawer();
+					this.props.navigation.navigate("AccountSettingsScreen");
 				}
 			},
 			{
@@ -103,6 +101,7 @@ class UserScreen extends Component {
 				icon: require("../../../resources/notification_settings.png"),
 				text: Lang.get("notification_settings"),
 				onPress: () => {
+					this.props.navigation.closeDrawer();
 					this.props.navigation.navigate("NotificationsSettings");
 				}
 			},
@@ -146,12 +145,14 @@ class UserScreen extends Component {
 								url={this.props.data.core.me.photo}
 								size={60}
 							/>
-							<Text style={componentStyles.username}>
-								{this.props.data.core.me.name}
-							</Text>
-							<Text style={componentStyles.meta}>
-								Member for 5 days
-							</Text>
+							<TouchableOpacity onPress={() => this.goToProfile()}>
+								<Text style={componentStyles.username}>
+									{this.props.data.core.me.name}
+								</Text>
+								<Text style={componentStyles.meta}>
+									{Lang.get('your_profile')}
+								</Text>
+							</TouchableOpacity>
 
 							<FlatList
 								style={componentStyles.profileMenu}
