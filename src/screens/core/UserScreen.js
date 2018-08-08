@@ -83,6 +83,14 @@ class UserScreen extends Component {
 				}
 			},
 			{
+				key: "edit_profile",
+				icon: require("../../../resources/edit_profile.png"),
+				text: Lang.get("edit_profile"),
+				onPress: () => {
+					console.log("edit_profile");
+				}
+			},
+			{
 				key: "settings",
 				icon: require("../../../resources/settings.png"),
 				text: Lang.get("settings"),

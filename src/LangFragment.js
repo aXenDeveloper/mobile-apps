@@ -19,6 +19,7 @@ const LangFragment = gql`
 		notification_settings: phrase(key: "app_notification_settings")
 		disabled_notification: phrase(key: "app_disabled_notification")
 		legal_notices: phrase(key: "app_legal_notices")
+		edit_profile: phrase(key: "app_edit_profile")
 	}
 `;
 
