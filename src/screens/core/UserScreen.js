@@ -1,11 +1,25 @@
 import React, { Component } from "react";
-import { Text, View, Button, ScrollView, FlatList, StyleSheet, Alert } from "react-native";
+import {
+	Text,
+	View,
+	Button,
+	ScrollView,
+	FlatList,
+	StyleSheet,
+	Alert,
+	StatusBar,
+	Image
+} from "react-native";
+import { SafeAreaView } from "react-navigation";
 import gql from "graphql-tag";
 import { graphql, withApollo } from "react-apollo";
 import { connect } from "react-redux";
-import { logOut } from "../../redux/actions/auth";
 
+import { logOut } from "../../redux/actions/auth";
+import MenuItem from "../../atoms/MenuItem";
+import Lang from "../../utils/Lang";
 import UserPhoto from "../../atoms/UserPhoto";
+import styles, { styleVars } from "../../styles";
 
 const UserQuery = gql`
 	query UserQuery {
@@ -15,6 +29,10 @@ const UserQuery = gql`
 				name
 				email
 				photo
+				coverPhoto {
+					image
+					offset
+				}
 			}
 		}
 	}
@@ -32,16 +50,63 @@ class UserScreen extends Component {
 	_logOut() {
 		const { dispatch } = this.props;
 
-		Alert.alert("Confirm", "Are you sure you want to log out on this device?", [
-			{ text: "Cancel", onPress: () => console.log("Canceled") },
-			{ text: "Log Out", onPress: () => dispatch(logOut(this.props.client)), style: "destructive" }
-		]);
+		Alert.alert(
+			"Confirm",
+			"Are you sure you want to log out on this device?",
+			[
+				{ text: "Cancel", onPress: () => console.log("Canceled") },
+				{
+					text: "Log Out",
+					onPress: () => dispatch(logOut(this.props.client)),
+					style: "destructive"
+				}
+			]
+		);
 	}
 
 	componentWillUpdate(nextProps, nextState) {
 		if (this.props.auth.authenticated && !nextProps.auth.authenticated) {
 			this.props.navigation.navigate("Root");
 		}
+	}
+
+	getMenuOptions() {
+		return [
+			{
+				key: "profile",
+				icon: require("../../../resources/profile.png"),
+				text: Lang.get("your_profile"),
+				onPress: () => {
+					this.props.navigation.navigate("Profile", {
+						id: this.props.data.core.me.id
+					});
+				}
+			},
+			{
+				key: "settings",
+				icon: require("../../../resources/settings.png"),
+				text: Lang.get("settings"),
+				onPress: () => {
+					console.log("settings");
+				}
+			},
+			{
+				key: "notifications",
+				icon: require("../../../resources/notification_settings.png"),
+				text: Lang.get("notification_settings"),
+				onPress: () => {
+					this.props.navigation.navigate("NotificationsSettings");
+				}
+			},
+			{
+				key: "signout",
+				icon: require("../../../resources/signout.png"),
+				text: Lang.get("sign_out"),
+				onPress: () => {
+					this._logOut();
+				}
+			}
+		];
 	}
 
 	render() {
@@ -52,18 +117,60 @@ class UserScreen extends Component {
 				</View>
 			);
 		} else {
-			console.log( this.props.data );
-
 			return (
-				<View style={styles.loggedInHeader}>
-					<UserPhoto url={this.props.data.core.me.photo} size={100} />
-					<Text style={styles.username}>{this.props.data.core.me.name}</Text>
-					<Button onPress={() => this._logOut()} style={styles.button} title="Sign Out" />
+				<View style={componentStyles.container}>
+					<StatusBar barStyle="light-content" translucent />
+					<SafeAreaView style={componentStyles.innerContainer}>
+						<View style={componentStyles.profileHeader}>
+							{this.props.data.core.me.coverPhoto.image ? (
+								<Image
+									source={{
+										uri: this.props.data.core.me.coverPhoto
+											.image
+									}}
+									style={componentStyles.coverPhoto}
+									resizeMode="cover"
+								/>
+							) : null}
+						</View>
+						<View style={componentStyles.mainArea}>
+							<UserPhoto
+								url={this.props.data.core.me.photo}
+								size={60}
+							/>
+							<Text style={componentStyles.username}>
+								{this.props.data.core.me.name}
+							</Text>
+							<Text style={componentStyles.meta}>
+								Member for 5 days
+							</Text>
+
+							<FlatList
+								style={componentStyles.profileMenu}
+								data={this.getMenuOptions()}
+								renderItem={({ item }) => (
+									<MenuItem data={item} />
+								)}
+							/>
+						</View>
+						<View style={componentStyles.footer}>
+							<Image
+								source={require("../../../resources/info_filled.png")}
+								resizeMode="contain"
+								style={componentStyles.infoIcon}
+							/>
+							<Text style={[styles.veryLightText, componentStyles.footerText]}>
+								{Lang.get('legal_notices')}
+							</Text>
+						</View>
+					</SafeAreaView>
 				</View>
 			);
 		}
 	}
 }
+
+// <Button onPress={() => this._logOut()} style={componentStyles.button} title="Sign Out" />
 
 export default graphql(UserQuery)(
 	connect(state => {
@@ -71,14 +178,63 @@ export default graphql(UserQuery)(
 	})(withApollo(UserScreen))
 );
 
-const styles = StyleSheet.create({
-	loggedInHeader: {
+const componentStyles = StyleSheet.create({
+	container: {
+		backgroundColor: "#fff",
 		display: "flex",
-		alignItems: "center",
-		marginTop: 50
+		flex: 1
+	},
+	innerContainer: {
+		display: "flex",
+		flex: 1,
+		alignItems: "stretch"
+	},
+	profileHeader: {
+		height: 90,
+		marginTop: -20
+	},
+	coverPhoto: {
+		position: "absolute",
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+		height: 90,
+		backgroundColor: "#f0f0f0"
+	},
+	mainArea: {
+		display: "flex",
+		alignItems: "flex-start",
+		flex: 1,
+		paddingHorizontal: styleVars.spacing.veryWide,
+		marginTop: -20
 	},
 	username: {
-		fontSize: 24,
+		fontSize: 20,
+		fontWeight: "bold",
 		marginTop: 10
+	},
+	meta: {
+		fontSize: 15,
+		color: styleVars.lightText
+	},
+	profileMenu: {
+		marginTop: 20
+	},
+	footer: {
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center',
+		paddingHorizontal: styleVars.spacing.veryWide,
+		paddingVertical: styleVars.spacing.wide
+	},
+	footerText: {
+		marginLeft: styleVars.spacing.veryTight
+	},
+	infoIcon: {
+		width: 17,
+		height: 17,
+		opacity: 0.7,
+		tintColor: styleVars.veryLightText
 	}
 });

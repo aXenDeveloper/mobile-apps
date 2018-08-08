@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { createBottomTabNavigator, createMaterialTopTabNavigator, createStackNavigator, TabView, TabBarTop, NavigationActions } from "react-navigation";
+import { createBottomTabNavigator, createMaterialTopTabNavigator, createDrawerNavigator, createStackNavigator, TabView, TabBarTop, NavigationActions } from "react-navigation";
 import { Text, Image } from "react-native";
 import { connect } from "react-redux";
 import CustomHeader from "../ecosystems/CustomHeader";
@@ -10,6 +10,7 @@ import SearchScreen from "../screens/core/SearchScreen";
 import StreamsScreen from "../screens/core/StreamsScreen";
 import StreamViewScreen from "../screens/core/StreamViewScreen";
 import NotificationsScreen from "../screens/core/NotificationsScreen";
+import NotificationsSettingsScreen from "../screens/core/NotificationsSettingsScreen";
 import ProfileScreen from "../screens/core/ProfileScreen";
 import UserScreen from "../screens/core/UserScreen";
 import LoginScreen from "../screens/core/LoginScreen";
@@ -99,6 +100,7 @@ class AppNavigation extends Component {
 				TopicView: { screen: TopicViewScreen },
 				Profile: { screen: ProfileScreen },
 				NotificationsStack: { screen: NotificationsScreen },
+				NotificationsSettings: { screen: NotificationsSettingsScreen },
 				StreamView: { screen: StreamViewScreen }
 			},
 			{
@@ -148,7 +150,7 @@ class AppNavigation extends Component {
 	 * @return StackNavigator
 	 */
 	_getMasterNavigation() {
-		return createStackNavigator(
+		const masterStack = createStackNavigator(
 			{
 				Root: {
 					screen: this._getPrimaryTabBar(),
@@ -207,6 +209,15 @@ class AppNavigation extends Component {
 				}
 			}
 		);
+
+		return createDrawerNavigator({
+			Master: {
+				screen: masterStack
+			}
+		}, {
+			drawerPosition: 'left',
+			contentComponent: UserScreen
+		});
 	}
 
 	/**
@@ -277,7 +288,8 @@ class AppNavigation extends Component {
 					/>
 				),
 				tabBarOnPress: (tab, jumpToIndex) => {
-					navigation.navigation.navigate("UserScreen");
+					navigation.navigation.openDrawer();
+					//navigation.navigation.navigate("UserScreen");
 				}
 			})
 		};

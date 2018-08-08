@@ -1,11 +1,22 @@
 import { StyleSheet } from "react-native";
 
 export const styleVars = {
+	text: '#000000',
+	lightText: '#657686',
+	veryLightText: '#9ba3ab',
 	appBackground: '#eeeff1',
 	tabActive: '#37454B',
 	tabInactive: '#6e797e',
 	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`,
-	placeholderColors: ['#ededed', '#f5f5f5']
+	placeholderColors: ['#ededed', '#f5f5f5'],
+	toggleTint: '#1888a7',
+	spacing: {
+		veryTight: 4,
+		tight: 8,
+		standard: 12,
+		wide: 16,
+		veryWide: 20
+	}
 };
 
 const styles = StyleSheet.create({
@@ -85,6 +96,13 @@ const styles = StyleSheet.create({
 		marginBottom: 5
 	},
 
+	/* Rows */
+	row: {
+		backgroundColor: '#fff',
+		borderBottomWidth: 1,
+		borderBottomColor: '#F2F4F7',
+	},
+
 	/* Modal styles */
 	modal: {
 		backgroundColor: '#f3f3f3',
@@ -116,7 +134,10 @@ const styles = StyleSheet.create({
 		fontSize: 13
 	},
 	lightText: {
-		color: '#8e8e8e'
+		color: styleVars.lightText
+	},
+	veryLightText: {
+		color: styleVars.veryLightText
 	},
 	text: {
 		color: '#000'

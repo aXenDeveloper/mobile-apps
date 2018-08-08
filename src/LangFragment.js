@@ -13,6 +13,12 @@ const LangFragment = gql`
 		load_earlier: phrase(key: "app_load_earlier")
 		write_reply: phrase(key: "app_write_reply")
 		unread_posts: phrase(key: "app_unread_posts")
+		your_profile: phrase(key: "app_your_profile")
+		settings: phrase(key: "app_settings")
+		sign_out: phrase(key: "app_sign_out")
+		notification_settings: phrase(key: "app_notification_settings")
+		disabled_notification: phrase(key: "app_disabled_notification")
+		legal_notices: phrase(key: "app_legal_notices")
 	}
 `;
 
