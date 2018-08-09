@@ -97,12 +97,7 @@ class AppNavigation extends Component {
 	_getMainStack(options, initialRoute) {
 		return createStackNavigator(
 			{
-				ForumIndex: { 
-					screen: this._ForumTabBar,
-					navigationOptions: {
-						title: 'Forums'
-					}
-				},
+				ForumIndex: { screen: ForumListScreen },
 				TopicList: { screen: TopicListScreen },
 				TopicView: { screen: TopicViewScreen },
 				Profile: { screen: ProfileScreen },
