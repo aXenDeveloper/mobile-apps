@@ -11,14 +11,15 @@ export default class SettingRow extends Component {
 
 	render() {
 		return (
-			<View style={[styles.row, componentStyles.menuItemWrap]}>
+			<TouchableOpacity style={[styles.row, componentStyles.menuItemWrap]} onPress={this.props.data.onPress || null}>
 				<View style={componentStyles.menuItem}>
 					<Text style={componentStyles.label}>{this.props.data.title}</Text>
 					<Text style={componentStyles.value}>
 						{this.props.data.value}
 					</Text>
 				</View>
-			</View>
+				<Image source={require('../../../resources/row_arrow.png')} style={componentStyles.arrow} resizeMode='cover' />
+			</TouchableOpacity>
 		);
 	}
 }
@@ -28,25 +29,32 @@ const componentStyles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'row',
 		alignItems: 'center',
-		paddingVertical: styleVars.spacing.tight,
+		paddingVertical: styleVars.spacing.standard,
 		paddingHorizontal: styleVars.spacing.wide
 	},
 	icon: {
 		width: 24,
 		height: 24,
 		tintColor: styleVars.lightText,
-		marginRight: 12
+		marginRight: styleVars.spacing.standard
 	},
 	menuItem: {
 		flex: 1
 	},
 	label: {
-		fontSize: 15,
+		fontSize: 17,
 		color: styleVars.text,
 		fontWeight: '500',
 	},
 	value: {
-		color: styleVars.veryLightText,
-		fontSize: 13
+		color: styleVars.lightText,
+		fontSize: 15,
+		marginTop: 2
 	},
+	arrow: {
+		width: 11,
+		height: 17,
+		tintColor: styleVars.lightText,
+		marginLeft: styleVars.spacing.standard
+	}
 });

@@ -3,8 +3,8 @@ import { Text, View, FlatList, ScrollView, SectionList } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 
-import SectionHeader from "../../atoms/SectionHeader";
-import SettingRow from "../../atoms/SettingRow";
+import SectionHeader from "../../../atoms/SectionHeader";
+import SettingRow from "../../../atoms/SettingRow";
 
 class AccountSettingsScreen extends Component {
 	static navigationOptions = {
@@ -33,6 +33,19 @@ class AccountSettingsScreen extends Component {
 					}
 				]
 			},
+			{
+				title: "App Settings For This Device",
+				data: [
+					{
+						key: "content_order",
+						title: "Comment Views",
+						value: 'Start at unread comments',
+						onPress: () => {
+							this.props.navigation.navigate("CommentViewSettingsScreen");
+						}
+					},
+				],
+			}
 		];
 	}
 

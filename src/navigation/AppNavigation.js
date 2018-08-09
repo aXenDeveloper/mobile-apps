@@ -15,7 +15,8 @@ import ProfileScreen from "../screens/core/ProfileScreen";
 import UserScreen from "../screens/core/UserScreen";
 import LoginScreen from "../screens/core/LoginScreen";
 import WebViewScreen from "../screens/core/WebViewScreen";
-import AccountSettingsScreen from "../screens/core/AccountSettingsScreen";
+import AccountSettingsScreen from "../screens/core/AccountSettings/AccountSettingsScreen";
+import CommentViewSettingsScreen from "../screens/core/AccountSettings/CommentViewSettingsScreen";
 // ----
 // Forums screens
 import ForumListScreen from "../screens/forums/ForumListScreen";
@@ -135,7 +136,8 @@ class AppNavigation extends Component {
 	_getSettingsStack(options) {
 		return createStackNavigator(
 			{
-				AccountSettingsScreen: { screen: AccountSettingsScreen }
+				AccountSettingsScreen: { screen: AccountSettingsScreen },
+				CommentViewSettingsScreen: { screen: CommentViewSettingsScreen }
 			},
 			{
 				initialRouteName: 'AccountSettingsScreen',
@@ -213,9 +215,8 @@ class AppNavigation extends Component {
 			{
 				mode: "modal",
 				navigationOptions: {
-					title: 'Forums',
 					header: props => {
-						return <CustomHeader {...props} title="Forums" />;
+						return <CustomHeader {...props} />;
 					},
 					headerTitleStyle: styles.headerTitle,
 					headerStyle: styles.header,
