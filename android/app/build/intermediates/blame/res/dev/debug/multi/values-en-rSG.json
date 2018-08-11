@@ -1,0 +1,26 @@
+[
+    {
+        "outputFile": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/incremental/mergeDevDebugResources/merged.dir/values-en-rSG/values-en-rSG.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 103,
+                    "endOffset": 154
+                },
+                "from": {
+                    "file": "/Users/rikkitissier/.android/build-cache/5048cafce7184667e0111c0dc812096dffe56251/output/res/values-en-rSG/values.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 0,
+                        "startOffset": 244,
+                        "endColumn": 99,
+                        "endOffset": 343
+                    }
+                }
+            }
+        ]
+    }
+]

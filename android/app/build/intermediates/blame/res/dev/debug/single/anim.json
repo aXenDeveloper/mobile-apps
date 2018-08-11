@@ -1,0 +1,98 @@
+[
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/cycle.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/4b44d0315cbdaac7f454a6afc7fd4fc3ca2eb8d9/output/res/anim/cycle.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/abc_fade_out.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/anim/abc_fade_out.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/catalyst_fade_in.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/7a6b182757ca0d282599a1f4e2c743e2b1cb4d80/output/res/anim/catalyst_fade_in.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/abc_grow_fade_in_from_bottom.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/anim/abc_grow_fade_in_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/abc_fade_in.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/anim/abc_fade_in.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/abc_popup_exit.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/anim/abc_popup_exit.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/catalyst_push_up_in.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/7a6b182757ca0d282599a1f4e2c743e2b1cb4d80/output/res/anim/catalyst_push_up_in.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/abc_shrink_fade_out_from_bottom.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/anim/abc_shrink_fade_out_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/tooltip_enter.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/anim/tooltip_enter.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/abc_slide_in_bottom.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/anim/abc_slide_in_bottom.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/slide_down.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/ebaa9c507d38e5c008bfe7b013a839a22ddfe79b/output/res/anim/slide_down.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/abc_popup_enter.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/anim/abc_popup_enter.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/catalyst_push_up_out.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/7a6b182757ca0d282599a1f4e2c743e2b1cb4d80/output/res/anim/catalyst_push_up_out.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/fade_in.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/ebaa9c507d38e5c008bfe7b013a839a22ddfe79b/output/res/anim/fade_in.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/abc_slide_out_bottom.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/anim/abc_slide_out_bottom.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/catalyst_slide_up.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/7a6b182757ca0d282599a1f4e2c743e2b1cb4d80/output/res/anim/catalyst_slide_up.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/tooltip_exit.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/anim/tooltip_exit.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/fade_out.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/ebaa9c507d38e5c008bfe7b013a839a22ddfe79b/output/res/anim/fade_out.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/abc_slide_in_top.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/anim/abc_slide_in_top.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/abc_slide_out_top.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/anim/abc_slide_out_top.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/catalyst_slide_down.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/7a6b182757ca0d282599a1f4e2c743e2b1cb4d80/output/res/anim/catalyst_slide_down.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/catalyst_fade_out.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/7a6b182757ca0d282599a1f4e2c743e2b1cb4d80/output/res/anim/catalyst_fade_out.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/slide_up.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/ebaa9c507d38e5c008bfe7b013a839a22ddfe79b/output/res/anim/slide_up.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/anim/shake.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/4b44d0315cbdaac7f454a6afc7fd4fc3ca2eb8d9/output/res/anim/shake.xml"
+    }
+]

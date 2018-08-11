@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev19/debug/drawable-v21/abc_btn_colored_material.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/drawable-v21/abc_btn_colored_material.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev19/debug/drawable-v21/abc_action_bar_item_background_material.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/drawable-v21/abc_action_bar_item_background_material.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev19/debug/drawable-v21/abc_edit_text_material.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/drawable-v21/abc_edit_text_material.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev19/debug/drawable-v21/notification_action_background.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/c5c9381b4baa319441e322abc20058ee26fedd8f/output/res/drawable-v21/notification_action_background.xml"
+    }
+]

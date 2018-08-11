@@ -1,0 +1,1130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/d8f2adb7efd146dfd86a3b26db2375af36a66ec3/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_6cb7356b0ea053014c5d944d276eddab8d1258fa/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.2.3/1a0113da2cab5f4c216b4e5e7c1dbfaa67087e14/jackson-core-2.2.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="1a0113da2cab5f4c216b4e5e7c1dbfaa67087e14">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/jackson-core-2.2.3_9de15d3d48c966f7b6b7c24ddfe61bee2241a5c8/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.10/4b95f4897fa13f2cd904aee711aeafc0c5295cd8/commons-codec-1.10.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="4b95f4897fa13f2cd904aee711aeafc0c5295cd8">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/commons-codec-1.10_e89cb242bcaebb59ea8be1cfc55565f2e7d99edc/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/Development/invision-community-app/android/maven/expolib_v1/com/squareup/okio/okio/1.13.0/okio-1.13.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="89890cffce351fec7caf3fdfd4351c7f4b4769b4">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/okio-1.13.0_f5a0e0ba529ff5c64835e7fc1863bf6f982d4e36/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.squareup.picasso/picasso/2.5.2/7446d06ec8d4f7ffcc53f1da37c95f200dcb9387/picasso-2.5.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/picasso-2.5.2_a2ea75758fde95c07d2350961b23a4e209d19397/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/1464ed5b727a26e06f8ec65d32585e0b0a4a02c7/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="9f6d236bac26d02b410e4ee186ba517ace5ee661">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_f55235a015d28c5041f128bf4be654583b5e05db/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.facebook.stetho/stetho/1.3.1/2c4076b466a0eb4d6ddf5721edd35cd1adc1f317/stetho-1.3.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="2c4076b466a0eb4d6ddf5721edd35cd1adc1f317">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/stetho-1.3.1_142af207319f3afc3b31a9f1207944bcbffb1a4c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/1ac1f813e8f5c00e8dc75d6d7de349343e59f7bf/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="ec224ad624f39212bacaf5903d989fe066166e7a">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_1794a705bb8d57b2e1b8894852937c941f6952ec/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/7c26f24414ea2d328d7100a3a6cc8891238bdbf7/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="e6172a6e0872c156ae82fe8b51d82b2daed424aa">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_bd853bb424e4f3b16dca1bebbbc15b475ab6eec4/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/720558eae88503f9f5efc1d39ba9eaedc24c23e4/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="ca851be26ff89f5b32cc222cee98139fb3fac830">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_e42f97831f17160f8380fd3bb641dbb48c699e28/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/1422d7f307b4ec7f68b25138d286466f615d0986/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="5a61f17cd72e20aa4323cbf5f909b7c609619275">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_6bdda5ea4041b210eb05c63fd811f35b10e9fde1/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/d1c4f49b4137bb1f802ac8ec223b12adef9489d0/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="a34a28ae586a32e1a33eeb63378732b473cad2be">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_e7b1d8400a9c75f972b23264cf2759fb08321ff3/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/92aeb2fb2fbe61bfeebcf10af3e9c47e59b82372/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="a7bf36963372211d8b9e000939020b1c3242234e">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_b0a6e411bb09d9b16dc80e83e35737a2e6ad0ea4/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/c4079cc7c856d01d2d87997e0a7edd6d0263f4f6/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="7e92aadd0697922316d1395c1887a23aebec640a">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_8b836cb51fe31c4c1c6142ca06e178a86d2454c6/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.0/5871fb60dc68d67da54a663c3fd636a10a532948/jsr305-3.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="5871fb60dc68d67da54a663c3fd636a10a532948">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/jsr305-3.0.0_416be57e22258b110bb0051a69eb555d741a6a55/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.nostra13.universalimageloader/universal-image-loader/1.9.5/442dbfb517b9ab5cb5c6da7ebf8cc28ec5bd0375/universal-image-loader-1.9.5.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="442dbfb517b9ab5cb5c6da7ebf8cc28ec5bd0375">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/universal-image-loader-1.9.5_2f335dd911878690a73fc14bb1ce5f395b0e7a2c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/db1101e9d9f297b04a37e97a35817273cf8a6a25/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="04bbbddf868aa02dd33f9e90d8f5d908c360f638">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_959f4c0f0773745e9bc24bd07cc7185a07330f75/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/1e8ee263a8603e6999b322bc7fbf73b607fcf34a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="cf836a435a496eb22ff2aa69aa1e619462549f81">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_2a890b9d6d3947263fec458afaa6798ae93b8774/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/ad6fb1f885f992431e91faba0e7daad84aaf6971/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="fa112f9589a72edd6c8458764cd65e80a39e6d8c">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_58f7c3acea99ddbb9cc7c2683098bfcafceda022/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/070d56e8345cfb1a01f26a0467ee92f08d472fa7/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="0d394688dd7030b83dea8eed3fa483410c24afe0">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_b171d20ba1812987cdfb5921b32eee2b78193803/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.facebook.fbui.textlayoutbuilder/staticlayout-proxy/1.0/f162442a19fff13995fbd51ba414d9ee05579080/staticlayout-proxy-1.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="f162442a19fff13995fbd51ba414d9ee05579080">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/staticlayout-proxy-1.0_46b2c84aace2d881d90c5fc37b5afd99af9bd4ef/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/ca1bb12873076d97c88d241ea7a24cbb1ffb266e/output/jars/libs/infer-annotations-4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="ea01f90e60978bc6871543cd76136a97a19450b5">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/infer-annotations-4.0_c06fefb4ca21e2beffee2b7a04b848deb93616f9/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/f89a78cf1b8ca8ddf81b96f16affd7cd0929f7dc/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="131115ec18ae3951c1584c543de8baa9ac20012a">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_ff03e871d4a4fa31155b5bd691d90ae3c00d8235/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/5048cafce7184667e0111c0dc812096dffe56251/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="910c013c511f752c4bbe24c5f492f669f4a3ccc0">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_42c2f05c02e8a16133e946c5920326ff2561a232/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/ce78714396b4d0f985ae27d8d0b00706d3ccc074/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="dc83ab7a5ce1e0296cf18a52a6edbcfef815e6cf">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_0bd0d759c338070a27afaf0618f9b4610f4a2f54/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/3ee5645b5cbda7c39754d4e6570cb29cdc829a50/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="a30aea7df545072ad3c06f56b2efc13e67222140">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_43907380b491b05219bf8ea933cf11689e9d3504/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/54056438e8db60fdf21268025c21aa7d13a6d557/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="ee5304fd374e0b4ebf6b42d4037fbfb2c5336511">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_6f82d4eefa9536b06511ddb6a5a3e5724839f171/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/819041b1a6642b2481f62a3116472798dfabb39c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="c9ef45dcbd082cd63aac09a5e2cd443adb5df837">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_4cd6922fce39a218cf536d4065116758ae7a0c82/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/476de35efff9b4265dc00e8371f55ec677a8f5d8/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="a7a04d6b7c01e569a285fa627cf64f5b05295906">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_b490620edbbf1d315b9830dfeab97df538718c0a/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/cfa897f7da3dbf4f52bf237d38b6f9730c303ae4/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="9dae58326f6f6a515022468cce56dd04ec3b9fdb">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_32d2eec9262f7027884909d3e6b3a3c19ad1215d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/5f8eac8fed53802bb5fdaac8f9ee4af4acb13905/output/jars/libs/infer-annotations-4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="7a30a80d40b875fec941cafdceaf514b74ca6d76">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/infer-annotations-4.0_ad4cf4ee3a6a6c22fcd4e9ea8611e1c963eb138e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/38ea296d1c821fcd91dfcc793eebef98dce83767/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="a1ed98e01bd58976d80c062fd0ea2968a1ff68a1">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_07e3243cb09967c0132fe9e6dfd8a113d3c72391/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/736c70ea7187abf6679e5fefd629f55ec56c2310/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="418dca1ee8bac0cc2f78f8f34b594c4d89eec057">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_d19ddd0c3a0241ee66f2f5ac6a943b2000c5cb86/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/69ec81ec8b3d31b1bdef9495df04fa464ebfde8c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="6a2f9209ff0d33539df6866d019181ecd1ecd047">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_9f172834c6f30626b4bc1681e586697b5382ccfa/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/4bf213bea79a31292c61073e85f89fcfba04111e/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="5b65ec1ebc84af3baecfd28954c9e7ff01b937a8">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_0f7e0e900fcd54856ec3b23712b3fd6be7877c58/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/d2041406c31772b46de17c1b119dea73848f22ef/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="083e7bc5a9d9404b49b8f34e5091532361fa28e6">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_b661cca1211ba6545ee62735b01f2606cb045f54/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/12c3e14bdf5e18df789ba866d0dceb772dade88a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="2668e49e4e31c7d451b76a36009b902bf44e0d70">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_87bd582b8e8ec0028ec329f9bf968fdfc6aebcae/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/3ae7b48628bb6ddd39c0fadf58316c31ca857b38/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="10c32fcf3d0acc4b208fc39f8d2e16b69ef8bd3b">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_b1e80285c44cda3bddc2267dabf15b14cd9b2fda/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/ebaa9c507d38e5c008bfe7b013a839a22ddfe79b/output/jars/libs/infer-annotations-4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="6eb79bde4cf6bbb7573bcf7dfbaf8a313f57612e">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/infer-annotations-4.0_8dd7379c84916774afb6c79b2bf8604382010347/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/commons-cli/commons-cli/1.2/2bf96b7aa8b611c177d329452af1dc933e14501c/commons-cli-1.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="2bf96b7aa8b611c177d329452af1dc933e14501c">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/commons-cli-1.2_d6d56fc654def6273bb257414d0046495b254e23/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/4a850434537fc3cf1421cdaece3caa9310b30c50/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="190a642ba16d1421296a4d794606279b80039c59">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_217a099c700a59984dd48fd8e926860881fa20fe/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/c5c9381b4baa319441e322abc20058ee26fedd8f/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="22c673e65215e0764add61e3102946de895439e4">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_047c55ab665801e9171a20babf8674ab993add92/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/1e1b7beb0147068dae030cf00a6f63cbfda5c2ba/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="53e8932b1ac8c7dfc35cfeda1f9efbc9822ceaf3">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_59976120020219e54a9fee48bc04c16af8e04d51/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/c6b6e1499967a7cd05b6b4b2f869ca62c298edb3/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="ffde64dbb0fc07c8b9735c6c42a06a36be15ed13">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_26fbf15111fb0d82b9299a4f445b131890115a5e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.jakewharton/butterknife/7.0.1/d5d13ea991eab0252e3710e5df3d6a9d4b21d461/butterknife-7.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="d5d13ea991eab0252e3710e5df3d6a9d4b21d461">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/butterknife-7.0.1_c03dc2c01c9a3a0a4ef8460c14602abd27f3a43e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/ed67cbb05456eaa8ae83f8ae0e4646b50e1095e0/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="b8b26b28aae0ba8e2db55ad9fe0ebc770530c5ef">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_2fab1b7556bf2cc849bc8a843a15d7ae763e17cb/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/cded728978ef7901a9cf2441395a8bd73403cf51/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="a315c4dce1b163f2ddf71bab62f3b56eb05c6a15">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_a60245f1a7394c920e83d4b998c3d4b014264be8/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.google.zxing/core/3.3.0/73c49077166faa4c3c0059c5f583d1d7bd1475fe/core-3.3.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="73c49077166faa4c3c0059c5f583d1d7bd1475fe">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/core-3.3.0_4d0dd8120c645e9095834bbddfadb7f265a20f90/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.madgag.spongycastle/core/1.53.0.0/619f704791db186304325bd129b2e7ec34f77438/core-1.53.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="619f704791db186304325bd129b2e7ec34f77438">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/core-1.53.0.0_fa0f49daef3bd606ee61cf282c2b3a56b90b0b49/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/4b44d0315cbdaac7f454a6afc7fd4fc3ca2eb8d9/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="9111e38999fee0b16a1ccd057b779f5b08f330e2">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_1b5c7b793bbffd9b6c15ecaa89d0ae21af06d772/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/b7651cef1ba540e57eef9f3dc3b117bf5015d879/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="6b6f292b8b951dcf2ecf2b20853e3eabc7d65c48">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_fe3dd7332e5001de3280b600b0b68d055d5eaa68/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/d36dae99677afb8177563d1586ce4f0eca2d185e/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="68d8ffe33fc5c2feb623b2e216dfc180e7540cd5">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_fb95a8913978a4f0cd917dc3342cc79264d146f7/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/e5182a09fb3c7d804c18e50a59932403f8d93211/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="e7424f816f538c2acfba6169b25e297ea22afbd8">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_f94a6988a15d7e15d1f3e651e446da3e71fefa43/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/64dec78cd13bf9994dbc24365e73208904b6fe8a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="c61641e333fa88da21758bab8cc28ee16604b05f">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_d36719f8db6d7c08c50076e0b43b45cc0a974f66/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/7a6b182757ca0d282599a1f4e2c743e2b1cb4d80/output/jars/libs/infer-annotations-4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="9809e90be788acdb479b2b44e2112f3295a03068">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/infer-annotations-4.0_1679fab7ead4adb25a8a7e76a88dbca269913c82/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/7a6b182757ca0d282599a1f4e2c743e2b1cb4d80/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="9efb4d1173374e0c0072b5e36e7871112660dd3c">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_0bfd001aff0424c6c2d148e60d2b7ea4f1335b85/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/ca1bb12873076d97c88d241ea7a24cbb1ffb266e/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="2f1cc63c85dfeb86263311713a0810d23112495e">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_e1c5613117c1a2ddbde80406734b26d68cc2e488/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/Development/invision-community-app/android/maven/expolib_v1/com/squareup/okhttp3/okhttp-urlconnection/3.6.0/okhttp-urlconnection-3.6.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="ae77d4921dcf287b3776baabfbca09b55616ab13">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/okhttp-urlconnection-3.6.0_9f9797a4882c8743eb5afaf719ad5874212a3a6b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/030c9cf1b8c0b86f79b4f883d3da3ee3d8a9531e/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="71af915b7f4f7ec0b5f768b365145bb6a5cb9a66">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_198ca59d8dac95fe649f0aa9fd834b5628e1fe30/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.facebook.device.yearclass/yearclass/1.0.1/adfc67ed7e13d1648f20c2a5d6cb757ce43d9c22/yearclass-1.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="adfc67ed7e13d1648f20c2a5d6cb757ce43d9c22">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/yearclass-1.0.1_47b96ce4874ab6e37fd1f976c72aac9312b6985c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/d36dae99677afb8177563d1586ce4f0eca2d185e/output/jars/libs/infer-annotations-4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="f9558f8bf566536221101e576b5c398787cfcbc3">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/infer-annotations-4.0_6d66c94c06c03da048af7f05986d9fe72902bae8/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-applinks/1.4.0/8ad21bf21784dacce5f2043afb97218cc377e835/bolts-applinks-1.4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="8ad21bf21784dacce5f2043afb97218cc377e835">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/bolts-applinks-1.4.0_6c6d1683c86bf5f481329de2b9f377a40daae962/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/357e39a48ccfe3dd4cd15c31c8feb94ce5b90450/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="2482bfd874e8b3927f4141105674ad392ff83698">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_dc2ff080ff412d547574d31fa34f4cd1b8607c11/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/9a8aa9b4991b5ba6b067333d667729868683316a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="03530f261b6f66dbcae414f12c732bd943f5ba53">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_ef0b583d17fec65f6d33a8595c1f2f83822a273c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/e489505e467fdeb60876098b54e996d54e3c9a9a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="79b01f1eace6ce22c6ffd67000bd6b5c5d2477a9">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_1b5707ad34731d1c452fdea8dd4c02ca3db168c2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/530e05aad46fa06b2c2dccff7f57543bdd037153/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="287f4dec8dc2d40a238b12562b437438499cd2fb">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_1122b45e04b3a92695b42a7706b6ffabb0a32aea/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/dd44f79f67b477b79113dd77cce4db1c457955c6/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="50e35ae101a679c4c8ef3dda075b1df9d5d947d9">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_84a7014a5e6a1bc1fabeed3bd95c063581f755a2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/6975da39a7040257bd51d21a231b76c915872d38/javax.inject-1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="6975da39a7040257bd51d21a231b76c915872d38">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/javax.inject-1_ff66769fd923e9bf56ff232a037b569976260d65/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.raizlabs.android/DBFlow-Core/2.2.1/e07bfc8e2041edf27469bd94e08bc19f52f4dee7/DBFlow-Core-2.2.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="e07bfc8e2041edf27469bd94e08bc19f52f4dee7">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/DBFlow-Core-2.2.1_a34f6a5b1f283db6075b0bd15ffd75c5a99e793c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/ecc6b722b9422529846f04e6e808e64ea88cc55e/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="dff4d8f88fe2c0e57306e6981fd9b90caeead7e3">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_26d24e36eb1ed804af1dcbe2ee4c10962a1b087b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="681eeeaec5300e5257ad9bf889c3859ba3833d5a">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_56b60e781455497168baf486560c3cb1301f4bfb/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.amplitude/android-sdk/2.9.2/5ff2f760c3bcad9d4e60f1f84aa695321184ebc0/android-sdk-2.9.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="5ff2f760c3bcad9d4e60f1f84aa695321184ebc0">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/android-sdk-2.9.2_905f12a06fea9d593ac8efe9c6a13c5f695fd881/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/7c5509dc82318220efb2acc88ccf16c1873302b8/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="78ea232052df889856dcb7b7b542707c89bb3bfb">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_62471228581c5a2cd83658f4157755e315936edf/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/b13867cbd5da7d041a65960d2196eb0cd58ddf49/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="d9c4402c3057225d80cbbbec52154e7a25b0ebdf">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_3343f366d7b17ecdee9530b33a18fbaea48ff3ea/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/0fd6c1cd78e19ba2e65353645bda108f53253e89/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="4a88eaa7f9a31907def9a7968367475bdf5170be">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_81098ae43cdffe59ad16e1b8257b37f3c537b7b0/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/fb09da33ad7f5303d1b46053c53913fdf8025663/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="ad5bb101ced4d3939225c9b57e5a3d81547c1fbb">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_aeed2552e99f9a0570a2e0967c88624c2bec49f2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.facebook.stetho/stetho-okhttp3/1.3.1/c596b3b33b5a92107bb70544bb5ee35f597bc6d8/stetho-okhttp3-1.3.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="c596b3b33b5a92107bb70544bb5ee35f597bc6d8">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/stetho-okhttp3-1.3.1_29515c8811d4b136ccb3ca607721ce12d27380a6/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/0dac207e03bc0dd9bc5468ad48762124a38626b1/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="13469de5eef4b3c0488c0e4963fef197fc745f8a">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_df69c00ead5b8348edb6a51a7892f8fe7afcffd1/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/c4ea96d654d9888ed8b4d1082d486a896352413f/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="d095503f29a8dedc55b9326ed97a5902a1527ab9">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_c87965105d6572d8ef4610160fe37817de13f64d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/ba14db099d72cd0ddefeaab912469ac17f248321/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="ba9b39366b723ccff6359d1117332968e98a4aca">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_857072dd1fc75909b8c570681ed3689d12cf0d36/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/f01e911569320fe269bc58668f51921e5ba13c59/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="8f615bca00639150c9eb6175d4b5471193f70794">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_9e8fc0891a53b763ca0e4fe7d5dc7afa0eb5cbee/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/2d9e62773f3ff918a2770036b1ad035c3302e55a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="9b8a151bbb87fe639150db51bf038e19edbfb651">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_9d530babcfe2172a5a867360eb55c5bc31eb898e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/af11c3ecefaf5652e1c8bedec255ae361dbee21f/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="a4590fa7eadce322ca893129fdc999074e1aa5bf">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_21f2170b599d7bbd90c320f762c3c6b888819b2b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/31057eed7da12f84cac8323f71ec6f7c4ec7a2c7/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="ab6e491b5d7bda2f47991a30f6bfe9a8b134ff8b">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_4f3e8fc6da659d678c28c71ae7b5eb773e4c83d3/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/cded728978ef7901a9cf2441395a8bd73403cf51/output/jars/libs/infer-annotations-4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="43579bbbc605c8815aa55ad85d856fb5588250d2">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/infer-annotations-4.0_de3dd3ff5aa05c573557bd1ffd1ce36c1cb89e0a/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.4.1/c7c4f9e35c2fd5900da24f9872e3971801f08ce0/okhttp-3.4.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="c7c4f9e35c2fd5900da24f9872e3971801f08ce0">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/okhttp-3.4.1_32b715e059f07279d3335ef1e91067844750a754/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.madgag.spongycastle/prov/1.53.0.0/72c4892e05c7563fbab0c4ada0187cd879113389/prov-1.53.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="72c4892e05c7563fbab0c4ada0187cd879113389">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/prov-1.53.0.0_7d9521c1465cb9110d2b0dc1c955ba2233c5ee52/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/7c26f24414ea2d328d7100a3a6cc8891238bdbf7/output/jars/libs/infer-annotations-4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="83d6e98f2b48f3cf1ec0e7c2b3bf2b3d4618f680">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/infer-annotations-4.0_473fff27d3fda330436524e0a4fcceb3964a6edd/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/736c70ea7187abf6679e5fefd629f55ec56c2310/output/jars/libs/infer-annotations-4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="82231c00c16c59ee23a508bec9fc6bc3e60c96b2">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/infer-annotations-4.0_ebdaf29d0f3b014a445e321dab0a5ffe69111ddf/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/6a2ec7f2cf6f06ac25807622d82b357894c9c98a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="bf2e1838e4428616c1aa26edf43de72b5b99bf84">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_0a290e5788d03c7ae691b1e9010818c69d5c454a/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp-ws/3.4.1/8ace66ef7002d98f633377c9e67daeeb196d8c3b/okhttp-ws-3.4.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="8ace66ef7002d98f633377c9e67daeeb196d8c3b">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/okhttp-ws-3.4.1_a5c5094e614a05d7afab5300226077b192e09191/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/b3284beca8a5c7521fd643dcc8524aefce1bacc3/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="ae335c9696bc1513f7e3bb96a731b722712d7a63">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_da7e783ca4ad8488fe826e4bb5c1bc5bae880a48/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.segment.analytics.android/analytics/4.3.0/88ab91d4641af4bed4b39aa3fd7cf487b66b9d5e/analytics-4.3.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="88ab91d4641af4bed4b39aa3fd7cf487b66b9d5e">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/analytics-4.3.0_5a4711c08ca0e0b9f7c1db5e34af8f6168a06cff/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/2ca08d871e48f052c43053c30e906ae542bba9b9/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="b346a5d3fc5d6d1d36c6262c8cc865b76df9f40c">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_1750f4d074a596e655037509f3d8a3cca313fbb5/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/6b8c4a6984a50fadd263b839e48e3f7946b1bcf8/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="611605b6b640c1558f9bdea41de8ff837ab68ca8">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_6a5182943cf60ef0377cb3808ff155460f628e43/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/41d6a4eb66126dcd79da0c2bae9027b05e5a8059/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="9ff04cc3470178a44512624036751a803418c2ca">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_60cde1a8db6f484b5e24ef57b676219c9801a1dd/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/82dfb3b02813789bcc6bd762fd26c1483b9137aa/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="af69623378285932372eb7b3b8ff0ef66fa42b93">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_21fa8ba9f65b1711728559dac7a5afe25ff4fb11/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/1.3.2/b6dde38349ba9bb5e6ea6320531eae969985dae5/commons-io-1.3.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="b6dde38349ba9bb5e6ea6320531eae969985dae5">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/commons-io-1.3.2_3f818c1b69910663ea075a4cd0b50c1ea7ffb049/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/5f8eac8fed53802bb5fdaac8f9ee4af4acb13905/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="a774607cf90ca991586347daa59ed0de0ad9cb49">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_9af1344f654787488219a244d5807ad2a5395d3f/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.android.support/support-annotations/26.0.1/e1bb32b12b25e2f78e6786059ca7ea878f8345e0/support-annotations-26.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="e1bb32b12b25e2f78e6786059ca7ea878f8345e0">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/support-annotations-26.0.1_36907ce7ff78f5d61dc04bc82b26301959a72aa7/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/c95d1a8d12838fc6b384df223d5f74d9b66e4191/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="adfb92acadeeff1086115fff6b318e95df8b2b29">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_e090e8da35356c250a2f3d19a9cf31920f146c30/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/8b391ba41230f58bb36630f765056641f538c0ec/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="82ea5a937ab84229fbd2f3fc8cf2a72cbdf0ee0f">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_51169c0f76886ad5fbe47d5b09779be24141e42b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/36a33d9975ee70730db109f60651d52fc84b01f2/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="a5db9a2dd46d84285ef737f65030b74b6e8ee2a4">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_90789d763834ebaa399b1321e2e59e9a463b0a42/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/3a9eab736fd0b87f252001b8d352148f00903290/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="cef85cfc7df40e29fbea58844dd4c1e7d0b15542">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_ff42e1dfc1f27c8f4e81e122a67fd4bb763980f4/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/70e8a9091cd59cde54c911b96782615ffd05d491/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="906fdd57c143ec9adc27a76a697fed1c0cfd6348">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_7e69098404764004a552855e877a80213c6beece/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.9.0/f824591a0016efbaeddb8300bee54832a1398cfa/okio-1.9.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="f824591a0016efbaeddb8300bee54832a1398cfa">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/okio-1.9.0_d7bfc53316c2168b2c619f9328cb2ad9f2ee5bb0/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/f65e98c0f20946eea8bc70ae4a5333ec41863a5a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="42a37372fca7123a593202ba76a7f98fbd691f05">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_d7ed257279fe09db7fd2d0a54f97aaf1a2258663/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-tasks/1.4.0/d85884acf6810a3bbbecb587f239005cbc846dc4/bolts-tasks-1.4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="d85884acf6810a3bbbecb587f239005cbc846dc4">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/bolts-tasks-1.4.0_55013d39e35f7ffed0874b3d0d562bb2fab43f7c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/25b0b86f6648fcc903f745acb8355b17e252789d/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="050f688115ea65a0292d8483a6ffe6bcdab1e2ef">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_0c8bf03795a102ecbcf4646944358d59ee2b082f/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/ee843ca41935dcc46c3b325c3f7579aac5b4ac38/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="e9b2cfdfd59b03643f1e240668275378b96615a8">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_083c10023790935fceade501dbabd187faa5d75f/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/d28426ef32512546ed2278abb8dc3f5019992973/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="c83a644dfc8545d77ed076721762fc4eb4092d81">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_07c2fe118c01f9cf3c826fd8d772771f097ffd11/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/2ce6c0b8b0bfff5fa87c56571b011f97a2539414/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="85299bf1924dde0200109a58033c5ef84ecb6991">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_d99747859f054d4397e7b8457de0c4fbe2de4321/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/96324b4004cb89c5b819275dbba78e0253219172/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="dae2154348a4c38a18e8d1042cf445faea4647d0">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_4f38c0315980c7ce37e068ba5d2affbf30e6c7a2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/ebaa9c507d38e5c008bfe7b013a839a22ddfe79b/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="cac4539de2fbfcb1c4c44c55166f0332b92d34b7">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_f2b6cef99eaa2a4d2a9d431f6c85a4b423904517/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp-urlconnection/3.4.1/63994437f62bc861bc20c605d12962f7246116d1/okhttp-urlconnection-3.4.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="63994437f62bc861bc20c605d12962f7246116d1">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/okhttp-urlconnection-3.4.1_23c98871a90ecb22a9921395d96b46ec4c56e227/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/bebc5f090c047285151b3b1d4515a54645b9896a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="f2d240dd085626f03f759c41d628a0c8b63e491f">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_ef9c1f3113db50d3b84cc7945cc18af083f1ebf0/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/982e7123de9f8b3a9f9f47b8113ad18a62417edf/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="16afe57c1d7f8165d107c7806ce7b0c71de87159">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_b65dd898de96dc52732b7b142e99db5e7d900c5f/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/932e203e70b735d124fffe3bbe59a569750a7e9e/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="53dc9d74b0ac22d201549cd806780597d9679e9a">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_278294dcf61e1a1253dadea44ad8df7c069f16ab/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/4b2f998c5942e71e4468acfd12f6883892ef02c4/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="c97dc8446f6a46da5620f40b3737e162d53c40c2">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_9eadc641c2ec8b1b7ebfaaeb4e3e98cb708a939a/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.gradle/caches/modules-2/files-2.1/de.greenrobot/eventbus/2.4.0/ddd166d01b3158d1c00576d29f7ed15c030df719/eventbus-2.4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="ddd166d01b3158d1c00576d29f7ed15c030df719">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/eventbus-2.4.0_b80da48b2daa9957c89cd170158bf61342a75e9f/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/7ada154893658fae23621e8162684dccb57df46c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="363a20f1d25336e827dd24020f2ecdc42d62638f">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_6dc2e62f749f9acf94edf2deed151ea6328c17bd/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/6b8685e0213bfaff890d7bff12d7af9f50a00a51/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="f90b593491e4044903f0bbf68dc3fa2790b151b9">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_6c557591a24df46ba5a5731ae07c271d8e0fdca5/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/Development/invision-community-app/android/maven/expolib_v1/com/squareup/okhttp3/okhttp/3.6.0/okhttp-3.6.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="565de69ddf97fffe074cba6cb0512520cdce4394">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/okhttp-3.6.0_1c7aea1664ce7cc2552a770aec4c81796896d17e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/182a4f23dd08d89b3125eacf1d2a56ddf3026965/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="122ec9237acd8a57d974b9d529987f1ee6ca5aea">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_f0015fa36bf618ff9c4c1855fdd6f1a4c76f3bdb/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/rikkitissier/.android/build-cache/c0e5f6ca677b901aaa519ffb4a071bf1ec566629/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.1"
+        sha1="9af3b9b8114e685291aa00e6572b0a9131244956">
+        <dex dex="/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/transforms/dex/dev/debug/folders/1000/10/classes_c3c8d238cc5894d8d87ed0827de150f5e2dcd0fd/classes.dex" />
+    </item>
+
+</items>

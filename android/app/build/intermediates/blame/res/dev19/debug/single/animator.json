@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev19/debug/animator/card_flip_left_in.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/2d9e62773f3ff918a2770036b1ad035c3302e55a/output/res/animator/card_flip_left_in.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev19/debug/animator/card_flip_right_in.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/2d9e62773f3ff918a2770036b1ad035c3302e55a/output/res/animator/card_flip_right_in.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev19/debug/animator/card_flip_left_out.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/2d9e62773f3ff918a2770036b1ad035c3302e55a/output/res/animator/card_flip_left_out.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev19/debug/animator/card_flip_right_out.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/2d9e62773f3ff918a2770036b1ad035c3302e55a/output/res/animator/card_flip_right_out.xml"
+    }
+]

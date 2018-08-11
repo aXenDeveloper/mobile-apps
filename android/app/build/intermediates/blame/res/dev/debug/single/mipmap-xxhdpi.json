@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/mipmap-xxhdpi/ic_launcher.png",
+        "source": "/Users/rikkitissier/Development/invision-community-app/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev/debug/mipmap-xxhdpi/dev_icon.png",
+        "source": "/Users/rikkitissier/Development/invision-community-app/android/app/src/main/res/mipmap-xxhdpi/dev_icon.png"
+    }
+]
