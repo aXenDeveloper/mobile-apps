@@ -106,7 +106,7 @@ export const refreshAuth = () => {
 				{
 					method: "post",
 					headers: {
-						"Content-Type": "application/x-www-form-urlencoded"
+						"Content-Type": "multipart/form-data"
 					},
 					body: ToFormData({
 						grant_type: "refresh_token",
@@ -192,7 +192,7 @@ export const logIn = (username, password, apolloClient) => {
 			{
 				method: "post",
 				headers: {
-					"Content-Type": "application/x-www-form-urlencoded"
+					"Content-Type": "multipart/form-data"
 				},
 				body: ToFormData({
 					grant_type: "password",
