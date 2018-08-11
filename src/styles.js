@@ -158,9 +158,9 @@ const styles = StyleSheet.create({
 
 export default styles;
 
-export const richTextStyles = {
+export const richTextStyles = (dark) => ({
 	defaultTextStyle: {
-		color: '#222',
+		color: dark ? '#fff' : '#222',
 		//fontSize: 15,
 		lineHeight: 21
 	},
@@ -187,4 +187,4 @@ export const richTextStyles = {
 			padding: 15
 		}
 	}
-};
+});

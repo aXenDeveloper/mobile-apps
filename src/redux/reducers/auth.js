@@ -56,7 +56,7 @@ export default function auth(state = initialState, { type, payload }) {
 			return {
 				...rest,
 				error: payload.error,
-				networkError: payload.networkError || true,
+				networkError: payload.networkError,
 				checkAuthProcessing: false,
 				authenticated: false
 			};

@@ -20,6 +20,7 @@ const LangFragment = gql`
 		disabled_notification: phrase(key: "app_disabled_notification")
 		legal_notices: phrase(key: "app_legal_notices")
 		edit_profile: phrase(key: "app_edit_profile")
+		offline: phrase(key: "app_offline")
 	}
 `;
 

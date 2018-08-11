@@ -5,22 +5,24 @@ const initialState = {
 	id: 0,
 	name: 'Guest',
 	photo: '',
-	notificationCount: 0
+	group: {
+		canAccessSite: false,
+		canAccessOffline: false,
+		groupType: 'GUEST'
+	}
 };
 
 export default function user(state = initialState, { type, payload }) {
 	switch (type) {
 		case GUEST_LOADED:
 			return {
-				...initialState
+				...initialState,
 			};
 		case USER_LOADED:
 			return {
-				isGuest: false,
-				id: payload.id,
-				name: payload.name,
-				photo: payload.photo,
-				notificationCount: payload.notificationCount
+				...state,
+				...payload,
+				isGuest: false
 			}
 		default:
 			return { ...state };

@@ -71,13 +71,14 @@ export default class RichTextContent extends Component {
 		return (
 			<HTML
 				renderers={this.renderers()}
-				tagsStyles={richTextStyles.tagStyles}
-				classesStyles={richTextStyles.classes}
+				containerStyle={this.props.style || {}}
+				tagsStyles={richTextStyles(this.props.dark).tagStyles}
+				classesStyles={richTextStyles(this.props.dark).classes}
 				alterChildren={this.alterChildren}
 				alterNode={this.alterNode}
 				alterData={this.alterData}
 				baseFontStyle={
-					this.props.baseFontStyle || richTextStyles.defaultTextStyle
+					this.props.baseFontStyle || richTextStyles(this.props.dark).defaultTextStyle
 				}
 				html={this.props.children}
 				imagesMaxWidth={parseInt(Dimensions.get("window").width) - 35}

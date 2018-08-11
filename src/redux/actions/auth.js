@@ -120,8 +120,6 @@ export const refreshAuth = () => {
 			if( timeoutCanceled ){
 				return;
 			}
-
-			console.log("AUTH HERE");
 			
 			// Now clear the timeout so we can proceed
 			clearTimeout( timeoutHandler );

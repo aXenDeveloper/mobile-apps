@@ -3,6 +3,11 @@ import _ from "underscore";
 class Lang {
 	constructor() {
 		this.words = {};
+
+		// Set up mustache-style templates for language interpolation in underscore
+		_.templateSettings = {
+			interpolate: /\{\{(.+?)\}\}/g
+		};
 	}
 
 	/**
@@ -16,8 +21,6 @@ class Lang {
 			...this.words,
 			...langPack
 		};
-
-		console.log( this.words );
 	}
 
 	/**
@@ -27,9 +30,12 @@ class Lang {
 	 * @param 	string 		key 	Key of phrase to get
 	 * @return 	string
 	 */
-	get(key) {
-		if( !_.isUndefined( this.words[key] ) ){
-			return this.words[key];
+	get(key, replacements = {}) {
+		if (!_.isUndefined(this.words[key])) {
+			if (this.words[key].indexOf("{{") === -1) {
+				return this.words[key];
+			}
+			return _.template(this.words[key])(replacements);
 		}
 
 		return key;
@@ -67,18 +73,32 @@ class Lang {
 
 				if (x == "?") {
 					fallback = y.replace("#", replacement);
-				} else if (x.charAt(0) == "%" && x.substring(1) == replacement.substring(0, x.substring(1).length)) {
+				} else if (
+					x.charAt(0) == "%" &&
+					x.substring(1) ==
+						replacement.substring(0, x.substring(1).length)
+				) {
 					value = y.replace("#", replacement);
-				} else if (x.charAt(0) == "*" && x.substring(1) == replacement.substr(-x.substring(1).length)) {
+				} else if (
+					x.charAt(0) == "*" &&
+					x.substring(1) == replacement.substr(-x.substring(1).length)
+				) {
 					value = y.replace("#", replacement);
 				} else if (x == replacement) {
 					value = y.replace("#", replacement);
 				}
 			});
 
-			output = a.replace(/^\{/, "").replace(/\}$/, "").replace("!#", "");
-			output = output.replace(b + "#", replacement).replace("#", replacement);
-			output = output.replace(/\[.+\]/, value == null ? fallback : value).trim();
+			output = a
+				.replace(/^\{/, "")
+				.replace(/\}$/, "")
+				.replace("!#", "");
+			output = output
+				.replace(b + "#", replacement)
+				.replace("#", replacement);
+			output = output
+				.replace(/\[.+\]/, value == null ? fallback : value)
+				.trim();
 
 			return output;
 		});

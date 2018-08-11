@@ -1,5 +1,15 @@
 import React, { Component } from "react";
-import { Text, Alert, View, TouchableHighlight, StyleSheet, ActivityIndicator, AsyncStorage } from "react-native";
+import {
+	Text,
+	Alert,
+	View,
+	Image,
+	TouchableHighlight,
+	StyleSheet,
+	ActivityIndicator,
+	AsyncStorage,
+	StatusBar
+} from "react-native";
 import { ApolloProvider } from "react-apollo";
 import { ApolloClient } from "apollo-client";
 import { HttpLink } from "apollo-link-http";
@@ -11,12 +21,16 @@ import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import _ from "underscore";
 
+import LoginScreen from "./core/LoginScreen";
+import RichTextContent from "../atoms/RichTextContent";
 import Lang from "../utils/Lang";
 import { refreshAuth } from "../redux/actions/auth";
 import { userLoaded, guestLoaded } from "../redux/actions/user";
+import { setSiteSettings } from "../redux/actions/site";
 import AppNavigation from "../navigation/AppNavigation";
 import ToFormData from "../utils/ToFormData";
 import LangFragment from "../LangFragment";
+import { styleVars } from "../styles";
 
 const BootQuery = gql`
 	query BootQuery {
@@ -25,6 +39,16 @@ const BootQuery = gql`
 				id
 				name
 				photo
+				group {
+					canAccessSite
+					canAccessOffline
+					groupType
+				}
+			}
+			settings {
+				site_online
+				site_offline_message
+				board_name
 			}
 			language {
 				...LangFragment
@@ -38,9 +62,16 @@ class RootScreen extends Component {
 	constructor(props) {
 		super(props);
 
-		this._alertShown = false;
+		this._alerts = {
+			networkError: false,
+			offline: false
+		};
+
 		this.state = {
-			loading: true
+			loading: true,
+			siteOffline: false,
+			canAccess: false,
+			showOfflineBanner: false
 		};
 
 		// Apollo config & setup
@@ -50,7 +81,9 @@ class RootScreen extends Component {
 				credentials: "same-origin",
 				headers: {
 					...context.headers,
-					Authorization: this.props.auth.access_token ? `Bearer ${this.props.auth.access_token}` : `Basic ${Expo.Constants.manifest.extra.api_key}`
+					Authorization: this.props.auth.access_token
+						? `Bearer ${this.props.auth.access_token}`
+						: `Basic ${Expo.Constants.manifest.extra.api_key}`
 				}
 			}));
 			return next(operation);
@@ -115,7 +148,7 @@ class RootScreen extends Component {
 		const { dispatch } = this.props;
 
 		if (nextProps.auth.error && nextProps.auth.networkError) {
-			return this.showLoadError();
+			this.showLoadError();
 		}
 
 		// If we're authenticated now, then start a timer so we can refresh the token before it expires
@@ -136,8 +169,18 @@ class RootScreen extends Component {
 	 */
 	componentDidUpdate(prevProps, prevState) {
 		// If we're done checking authentication, run our boot query to get initial data
-		if( prevProps.auth.checkAuthProcessing && !this.props.auth.checkAuthProcessing ){
+		if (
+			prevProps.auth.checkAuthProcessing &&
+			!this.props.auth.checkAuthProcessing
+		) {
 			this.runBootQuery();
+		}
+
+		if( !this.props.site.site_online && this.props.user.group.canAccessOffline ){
+			if( !this._alerts.offline ){
+				this.showOfflineMessage();
+				this._alerts.offline = true;
+			}
 		}
 	}
 
@@ -148,7 +191,7 @@ class RootScreen extends Component {
 	 */
 	async runBootQuery() {
 		const { dispatch } = this.props;
-		
+
 		try {
 			const { data } = await this._client.query({
 				query: BootQuery,
@@ -156,23 +199,24 @@ class RootScreen extends Component {
 			});
 
 			// Send out our user info
-			if( this.props.auth.authenticated && data.core.me.id ){
-				dispatch(userLoaded({
-					...data.core.me
-				}));
+			if (
+				this.props.auth.authenticated &&
+				data.core.me.group.groupType !== "GUEST"
+			) {
+				dispatch(userLoaded({ ...data.core.me }));
 			} else {
 				dispatch(guestLoaded());
 			}
 
 			// Set our lang strings
-			if( _.size( data.core.language ) ){
+			if (_.size(data.core.language)) {
 				// We don't want __typename, so discard that
 				const { __typename, ...rest } = data.core.language;
-				/*dispatch(langStringsLoaded({
-					...rest
-				}));*/
-				Lang.setWords( rest );
+				Lang.setWords(rest);
 			}
+
+			// Set our system settings
+			dispatch(setSiteSettings(data.core.settings));
 
 			// We can now proceed to show the home screen
 			this.setState({
@@ -182,6 +226,24 @@ class RootScreen extends Component {
 			console.log(err);
 			return this.showLoadError();
 		}
+	}
+
+	/**
+	 * Show an offline message to users who can access the site offline
+	 *
+	 * @return 	void
+	 */
+	showOfflineMessage(siteName) {
+		Alert.alert(
+			"Community Offline",
+			`${this.props.site.board_name} is currently offline, but your permissions allow you to access it.`,
+			[
+				{
+					text: "OK"
+				}
+			],
+			{ cancelable: false }
+		);
 	}
 
 	/**
@@ -195,40 +257,90 @@ class RootScreen extends Component {
 		});
 
 		// Track whether the alert is showing so we don't bombard the user
-		if( !this._alertShown ){
+		if (!this._alerts.networkError) {
 			Alert.alert(
 				"Network Error",
 				"Sorry, the community you are trying to access isn't available right now.",
 				[
 					{
 						text: "OK",
-						onPress: () => this._alertShown = false
+						onPress: () => (this._alerts.networkError = false)
 					}
 				],
 				{ cancelable: false }
 			);
 
-			this._alertShown = true;
+			this._alerts.networkError = true;
 		}
 	}
 
 	render() {
-		return (
-			<ApolloProvider client={this._client}>
-				{this.state.loading || this.props.auth.networkError ? (
+		let appContent;
+
+		if (this.state.loading) {
+			appContent = (
+				<View style={styles.wrapper}>
+					<StatusBar barStyle='light-content' />
+					<ActivityIndicator size="large" color="#ffffff" />
+				</View>
+			);
+		} else if (this.props.auth.networkError) {
+			appContent = (
+				<View style={styles.wrapper}>
+					<StatusBar barStyle='light-content' />
+					<TouchableHighlight
+						style={styles.tryAgain}
+						onPress={() => this.tryAfterNetworkError()}
+					>
+						<Text style={styles.tryAgainText}>Try Again</Text>
+					</TouchableHighlight>
+				</View>
+			);
+		} else if (!this.props.site.site_online && !this.props.user.group.canAccessOffline) {
+			// Site is offline and this user cannot access it
+			appContent = (
+				<View style={[styles.wrapper, styles.offlineWrapper]}>
+					<StatusBar barStyle='light-content' />
+					<Image source={require('../../resources/offline.png')} resizeMode='contain' style={styles.icon} />
+					<Text style={styles.title}>{Lang.get('offline', { siteName: this.props.site.board_name })}</Text>
+					{this.props.site.site_offline_message && <RichTextContent dark style={styles.offlineMessage}>{this.props.site.site_offline_message}</RichTextContent>}
+					{!this.props.auth.authenticated &&
+						<TouchableHighlight
+							style={styles.tryAgain}
+							onPress={() => this.tryAfterNetworkError()}
+						>
+							<Text style={styles.tryAgainText}>Sign In Now</Text>
+						</TouchableHighlight>
+					}
+				</View>
+			);
+		} else if (!this.props.user.group.canAccessSite ) {
+			if (this.props.user.group.groupType !== 'GUEST') {
+				// User is in a banned group
+				appContent = (
 					<View style={styles.wrapper}>
-						{this.state.loading ? (
-							<ActivityIndicator size="large" color="#ffffff" />
-						) : (
-							<TouchableHighlight style={styles.tryAgain} onPress={() => this.tryAfterNetworkError()}>
-								<Text style={styles.tryAgainText}>Try Again</Text>
-							</TouchableHighlight>
-						)}
+						<StatusBar barStyle='light-content' />
+						<Image source={require('../../resources/banned.png')} resizeMode='contain' style={styles.icon} />
+						<Text style={styles.title}>You are banned</Text>
+						<Text style={styles.offlineMessage}>
+							Sorry, you do not have permission to access {this.props.site.board_name}.
+						</Text>
 					</View>
-				) : (
-					<AppNavigation isMember={this.props.auth.authenticated} />
-				)}
-			</ApolloProvider>
+				);
+			} else {
+				// User is a guest, so site requires a login to view anything
+				appContent = (
+					<LoginScreen />
+				);
+			}
+		} else {
+			appContent = (
+				<AppNavigation />
+			);
+		}
+
+		return (
+			<ApolloProvider client={this._client}>{appContent}</ApolloProvider>
 		);
 	}
 }
@@ -251,10 +363,33 @@ const styles = StyleSheet.create({
 	tryAgainText: {
 		color: "rgba(255,255,255,0.5)",
 		fontSize: 15
+	},
+	title: {
+		fontSize: 19,
+		color: '#fff',
+		fontWeight: '500',
+		marginTop: styleVars.spacing.veryWide,
+		marginBottom: styleVars.spacing.standard,
+	},
+	offlineWrapper: {
+		justifyContent: 'flex-start',
+		alignItems: 'flex-start',
+		paddingTop: 60,
+		paddingHorizontal: styleVars.spacing.veryWide
+	},
+	offlineMessage: {
+		marginBottom: styleVars.spacing.veryWide
+	},
+	icon: {
+		width: 60,
+		height: 60,
+		tintColor: '#fff',
+		opacity: 0.6
 	}
 });
 
 export default connect(state => ({
 	auth: state.auth,
-	user: state.user
+	user: state.user,
+	site: state.site
 }))(RootScreen);

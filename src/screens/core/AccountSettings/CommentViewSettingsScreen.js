@@ -26,7 +26,7 @@ class CommentViewSettingsScreen extends Component {
 	}
 
 	onValueChange(selected) {
-		console.log(selected);
+		//console.log(selected);
 	}
 
 	render() {
