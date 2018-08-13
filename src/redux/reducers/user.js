@@ -17,6 +17,8 @@ export default function user(state = initialState, { type, payload }) {
 		case GUEST_LOADED:
 			return {
 				...initialState,
+				...payload,
+				isGuest: true
 			};
 		case USER_LOADED:
 			return {

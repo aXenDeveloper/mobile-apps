@@ -170,14 +170,19 @@ class RootScreen extends Component {
 	componentDidUpdate(prevProps, prevState) {
 		// If we're done checking authentication, run our boot query to get initial data
 		if (
-			prevProps.auth.checkAuthProcessing &&
-			!this.props.auth.checkAuthProcessing
+			(prevProps.auth.checkAuthProcessing &&
+				!this.props.auth.checkAuthProcessing) ||
+			prevProps.user.isGuest !== this.props.user.isGuest
 		) {
+			console.log("RUNNING BOOT QUERY");
 			this.runBootQuery();
 		}
 
-		if( !this.props.site.site_online && this.props.user.group.canAccessOffline ){
-			if( !this._alerts.offline ){
+		if (
+			!this.props.site.site_online &&
+			this.props.user.group.canAccessOffline
+		) {
+			if (!this._alerts.offline) {
 				this.showOfflineMessage();
 				this._alerts.offline = true;
 			}
@@ -205,7 +210,7 @@ class RootScreen extends Component {
 			) {
 				dispatch(userLoaded({ ...data.core.me }));
 			} else {
-				dispatch(guestLoaded());
+				dispatch(guestLoaded({ ...data.core.me }));
 			}
 
 			// Set our lang strings
@@ -236,7 +241,9 @@ class RootScreen extends Component {
 	showOfflineMessage(siteName) {
 		Alert.alert(
 			"Community Offline",
-			`${this.props.site.board_name} is currently offline, but your permissions allow you to access it.`,
+			`${
+				this.props.site.board_name
+			} is currently offline, but your permissions allow you to access it.`,
 			[
 				{
 					text: "OK"
@@ -280,14 +287,14 @@ class RootScreen extends Component {
 		if (this.state.loading) {
 			appContent = (
 				<View style={styles.wrapper}>
-					<StatusBar barStyle='light-content' />
+					<StatusBar barStyle="light-content" />
 					<ActivityIndicator size="large" color="#ffffff" />
 				</View>
 			);
 		} else if (this.props.auth.networkError) {
 			appContent = (
 				<View style={styles.wrapper}>
-					<StatusBar barStyle='light-content' />
+					<StatusBar barStyle="light-content" />
 					<TouchableHighlight
 						style={styles.tryAgain}
 						onPress={() => this.tryAfterNetworkError()}
@@ -296,47 +303,63 @@ class RootScreen extends Component {
 					</TouchableHighlight>
 				</View>
 			);
-		} else if (!this.props.site.site_online && !this.props.user.group.canAccessOffline) {
+		} else if (
+			!this.props.site.site_online &&
+			!this.props.user.group.canAccessOffline
+		) {
 			// Site is offline and this user cannot access it
 			appContent = (
 				<View style={[styles.wrapper, styles.offlineWrapper]}>
-					<StatusBar barStyle='light-content' />
-					<Image source={require('../../resources/offline.png')} resizeMode='contain' style={styles.icon} />
-					<Text style={styles.title}>{Lang.get('offline', { siteName: this.props.site.board_name })}</Text>
-					{this.props.site.site_offline_message && <RichTextContent dark style={styles.offlineMessage}>{this.props.site.site_offline_message}</RichTextContent>}
-					{!this.props.auth.authenticated &&
+					<StatusBar barStyle="light-content" />
+					<Image
+						source={require("../../resources/offline.png")}
+						resizeMode="contain"
+						style={styles.icon}
+					/>
+					<Text style={styles.title}>
+						{Lang.get("offline", {
+							siteName: this.props.site.board_name
+						})}
+					</Text>
+					{this.props.site.site_offline_message && (
+						<RichTextContent dark style={styles.offlineMessage}>
+							{this.props.site.site_offline_message}
+						</RichTextContent>
+					)}
+					{!this.props.auth.authenticated && (
 						<TouchableHighlight
 							style={styles.tryAgain}
 							onPress={() => this.tryAfterNetworkError()}
 						>
 							<Text style={styles.tryAgainText}>Sign In Now</Text>
 						</TouchableHighlight>
-					}
+					)}
 				</View>
 			);
-		} else if (!this.props.user.group.canAccessSite ) {
-			if (this.props.user.group.groupType !== 'GUEST') {
+		} else if (!this.props.user.group.canAccessSite) {
+			if (this.props.user.group.groupType !== "GUEST") {
 				// User is in a banned group
 				appContent = (
 					<View style={styles.wrapper}>
-						<StatusBar barStyle='light-content' />
-						<Image source={require('../../resources/banned.png')} resizeMode='contain' style={styles.icon} />
+						<StatusBar barStyle="light-content" />
+						<Image
+							source={require("../../resources/banned.png")}
+							resizeMode="contain"
+							style={styles.icon}
+						/>
 						<Text style={styles.title}>You are banned</Text>
 						<Text style={styles.offlineMessage}>
-							Sorry, you do not have permission to access {this.props.site.board_name}.
+							Sorry, you do not have permission to access{" "}
+							{this.props.site.board_name}.
 						</Text>
 					</View>
 				);
 			} else {
 				// User is a guest, so site requires a login to view anything
-				appContent = (
-					<LoginScreen />
-				);
+				appContent = <LoginScreen />;
 			}
 		} else {
-			appContent = (
-				<AppNavigation />
-			);
+			appContent = <AppNavigation />;
 		}
 
 		return (
@@ -366,14 +389,14 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontSize: 19,
-		color: '#fff',
-		fontWeight: '500',
+		color: "#fff",
+		fontWeight: "500",
 		marginTop: styleVars.spacing.veryWide,
-		marginBottom: styleVars.spacing.standard,
+		marginBottom: styleVars.spacing.standard
 	},
 	offlineWrapper: {
-		justifyContent: 'flex-start',
-		alignItems: 'flex-start',
+		justifyContent: "flex-start",
+		alignItems: "flex-start",
 		paddingTop: 60,
 		paddingHorizontal: styleVars.spacing.veryWide
 	},
@@ -383,7 +406,7 @@ const styles = StyleSheet.create({
 	icon: {
 		width: 60,
 		height: 60,
-		tintColor: '#fff',
+		tintColor: "#fff",
 		opacity: 0.6
 	}
 });
