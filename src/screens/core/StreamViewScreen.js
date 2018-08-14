@@ -7,7 +7,7 @@ import _ from "underscore";
 import { Post } from "../../ecosystems/Post";
 import StreamHeader from "../../atoms/StreamHeader";
 import StreamCard from "../../ecosystems/StreamCard";
-import { PlaceholderRepeater } from '../../atoms/Placeholder';
+import { PlaceholderRepeater } from '../../ecosystems/Placeholder';
 import getErrorMessage from "../../utils/getErrorMessage";
 import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 

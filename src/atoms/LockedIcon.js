@@ -7,7 +7,7 @@ export default class LockedIcon extends Component {
 	}
 
 	render() {
-		return <Image style={[this.props.style, styles.topicIcon]} resizeMode='stretch' source={require('../../../resources/locked.png')} />;
+		return <Image style={[this.props.style, styles.topicIcon]} resizeMode='stretch' source={require('../../resources/locked.png')} />;
 	}
 }
 

@@ -8,9 +8,9 @@ export default class ForumIcon extends Component {
 
 	render() {
 		if( this.props.unread ){
-			return <Image style={[this.props.style, styles.forumIcon, styles.activeIcon]} source={require('../../../resources/forum_unread.png')} />;
+			return <Image style={[this.props.style, styles.forumIcon, styles.activeIcon]} source={require('../../resources/forum_unread.png')} />;
 		} else {
-			return <Image style={[this.props.style, styles.forumIcon, styles.inactiveIcon]} source={require('../../../resources/forum_read.png')} />;
+			return <Image style={[this.props.style, styles.forumIcon, styles.inactiveIcon]} source={require('../../resources/forum_read.png')} />;
 		}
 	}
 }

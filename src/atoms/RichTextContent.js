@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Image, Dimensions } from "react-native";
 import HTML from "react-native-render-html";
-import { styleVars, richTextStyles } from "../../styles.js";
-import dom from "../../utils/DOM";
+
+import { styleVars, richTextStyles } from "../styles.js";
+import dom from "../utils/DOM";
 
 export default class RichTextContent extends Component {
 	constructor(props) {

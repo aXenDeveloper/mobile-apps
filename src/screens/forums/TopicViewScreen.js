@@ -7,7 +7,7 @@ import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
-import { PlaceholderRepeater } from "../../atoms/Placeholder";
+import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import getErrorMessage from "../../utils/getErrorMessage";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import { Post, PostFragment } from "../../ecosystems/Post";

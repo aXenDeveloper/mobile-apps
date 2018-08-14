@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
-import { PlaceholderElement, PlaceholderContainer } from '../../atoms/Placeholder';
+import { PlaceholderElement, PlaceholderContainer } from '../ecosystems/Placeholder';
 
 export default class TwoLineHeader extends Component {	
 	constructor(props) {

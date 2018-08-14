@@ -10,11 +10,11 @@ export default class TopicStatus extends Component {
 		const lang = {
 			pinned: {
 				text: "Pinned",
-				icon: <Image style={[styles.statusIcon, styles.pinnedIcon]} resizeMode='stretch' source={require('../../../resources/pinned.png')} />
+				icon: <Image style={[styles.statusIcon, styles.pinnedIcon]} resizeMode='stretch' source={require('../../resources/pinned.png')} />
 			},
 			hot: {
 				text: "Hot",
-				icon: <Image style={[styles.statusIcon, styles.hotIcon]} resizeMode='stretch' source={require('../../../resources/hot.png')} />
+				icon: <Image style={[styles.statusIcon, styles.hotIcon]} resizeMode='stretch' source={require('../../resources/hot.png')} />
 			}
 		};
 

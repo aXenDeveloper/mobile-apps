@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 
 import Lang from "../../utils/Lang";
-import { PlaceholderRepeater } from "../../atoms/Placeholder";
+import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import relativeTime from "../../utils/RelativeTime";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import Pager from "../../atoms/Pager";

@@ -8,9 +8,9 @@ export default class TopicIcon extends Component {
 
 	render() {
 		if( this.props.unread ){
-			return <Image style={[this.props.style, styles.topicIcon, styles.activeIcon]} resizeMode='contain' source={require('../../../resources/topic_unread.png')} />;
+			return <Image style={[this.props.style, styles.topicIcon, styles.activeIcon]} resizeMode='contain' source={require('../../resources/topic_unread.png')} />;
 		} else {
-			return <Image style={[this.props.style, styles.topicIcon, styles.inactiveIcon]} resizeMode='contain' source={require('../../../resources/topic_read.png')} />;
+			return <Image style={[this.props.style, styles.topicIcon, styles.inactiveIcon]} resizeMode='contain' source={require('../../resources/topic_read.png')} />;
 		}
 	}
 }

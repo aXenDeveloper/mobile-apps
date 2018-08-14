@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-import { styles, styleVars } from '../../styles';
+import { styles, styleVars } from '../styles';
 
 export default class MenuItem extends Component {	
 	constructor(props) {

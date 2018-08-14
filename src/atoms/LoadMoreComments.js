@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import PropTypes from "prop-types";
 
-import { styleVars } from "../../styles";
+import { styleVars } from "../styles";
 
 export default class LoadMoreComments extends Component {
 	constructor(props) {

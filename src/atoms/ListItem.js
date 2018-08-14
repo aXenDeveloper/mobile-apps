@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableHighlight } from 'react-native';
 
-import RichTextContent from '../RichTextContent';
-import styles from '../../styles';
+import RichTextContent from './RichTextContent';
+import styles from '../styles';
 
 export default class ListItem extends Component {	
 	constructor(props) {

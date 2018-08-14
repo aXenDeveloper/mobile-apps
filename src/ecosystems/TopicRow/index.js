@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableHighlight } from 'react-native';
 /*import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient';
 import { Svg } from 'expo';*/
 
-import { PlaceholderElement, PlaceholderContainer } from '../../atoms/Placeholder';
+import { PlaceholderElement, PlaceholderContainer } from '../../ecosystems/Placeholder';
 import ShadowedArea from '../../atoms/ShadowedArea';
 import TopicIcon from '../../atoms/TopicIcon';
 import LockedIcon from '../../atoms/LockedIcon';

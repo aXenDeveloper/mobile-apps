@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import { Post } from "../../ecosystems/Post";
 import LargeTitle from "../../atoms/LargeTitle";
 import StreamCard from "../../ecosystems/StreamCard";
-import { PlaceholderRepeater } from '../../atoms/Placeholder';
+import { PlaceholderRepeater } from '../../ecosystems/Placeholder';
 import getErrorMessage from "../../utils/getErrorMessage";
 import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 

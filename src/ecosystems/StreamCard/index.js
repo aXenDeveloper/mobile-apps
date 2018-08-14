@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Image, Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from 'react-native';
 
-import { PlaceholderElement, PlaceholderContainer } from '../../atoms/Placeholder';
+import { PlaceholderElement, PlaceholderContainer } from '../../ecosystems/Placeholder';
 import ExpandedContentItem from './ExpandedContentItem';
 import CondensedContentItem from './CondensedContentItem';
 import ExpandedComment from './ExpandedComment';

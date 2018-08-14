@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet } from 'react-native';
 
-import { styleVars } from '../../styles';
+import { styleVars } from '../styles';
 
 export default class SectionHeader extends Component {	
 	constructor(props) {

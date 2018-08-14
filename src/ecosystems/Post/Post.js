@@ -8,7 +8,7 @@ import * as Animatable from 'react-native-animatable';
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
-import { PlaceholderElement, PlaceholderContainer } from "../../atoms/Placeholder";
+import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import UserPhoto from "../../atoms/UserPhoto";
 import PostControls from "../../atoms/PostControls";

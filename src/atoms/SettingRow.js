@@ -1,23 +1,25 @@
 import React, { Component } from 'react';
 import { Text, View, Image, Switch, StyleSheet, TouchableOpacity } from 'react-native';
 
-import Lang from '../../utils/Lang';
-import styles, { styleVars } from '../../styles';
+import Lang from '../utils/Lang';
+import styles, { styleVars } from '../styles';
 
-export default class NotificationSettingRow extends Component {	
+export default class SettingRow extends Component {	
 	constructor(props) {
 		super(props);
 	}
 
 	render() {
 		return (
-			<View style={[styles.row, componentStyles.menuItemWrap]}>
+			<TouchableOpacity style={[styles.row, componentStyles.menuItemWrap]} onPress={this.props.data.onPress || null}>
 				<View style={componentStyles.menuItem}>
 					<Text style={componentStyles.label}>{this.props.data.title}</Text>
-					{!this.props.data.enabled && <Text style={componentStyles.metaText}>{Lang.get('disabled_notification')}</Text>}
+					<Text style={componentStyles.value}>
+						{this.props.data.value}
+					</Text>
 				</View>
-				<Switch onTintColor={styleVars.toggleTint} value={this.props.data.on} disabled={!this.props.data.enabled} style={componentStyles.switch} />
-			</View>
+				<Image source={require('../../resources/row_arrow.png')} style={componentStyles.arrow} resizeMode='cover' />
+			</TouchableOpacity>
 		);
 	}
 }
@@ -27,28 +29,32 @@ const componentStyles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'row',
 		alignItems: 'center',
-		paddingVertical: styleVars.spacing.tight,
+		paddingVertical: styleVars.spacing.standard,
 		paddingHorizontal: styleVars.spacing.wide
 	},
 	icon: {
 		width: 24,
 		height: 24,
 		tintColor: styleVars.lightText,
-		marginRight: 12
+		marginRight: styleVars.spacing.standard
 	},
 	menuItem: {
 		flex: 1
 	},
 	label: {
-		fontSize: 15,
+		fontSize: 17,
 		color: styleVars.text,
 		fontWeight: '500',
 	},
-	metaText: {
-		color: styleVars.veryLightText,
-		fontSize: 12
+	value: {
+		color: styleVars.lightText,
+		fontSize: 15,
+		marginTop: 2
 	},
-	switch: {
+	arrow: {
+		width: 11,
+		height: 17,
+		tintColor: styleVars.lightText,
 		marginLeft: styleVars.spacing.standard
 	}
 });
