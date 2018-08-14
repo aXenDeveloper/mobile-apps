@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { createBottomTabNavigator, createMaterialTopTabNavigator, createDrawerNavigator, createStackNavigator, TabView, TabBarTop, NavigationActions } from "react-navigation";
-import { Text, Image } from "react-native";
+import { Image } from "react-native";
 import { connect } from "react-redux";
 import CustomHeader from "../ecosystems/CustomHeader";
 // ----
@@ -33,58 +33,7 @@ class AppNavigation extends Component {
 	constructor(props) {
 		super(props);
 
-		this._ForumTabBar = createMaterialTopTabNavigator(
-			{
-				All: {
-					screen: ForumListScreen,
-					navigationOptions: {
-						tabBarLabel: "All Forums".toUpperCase(),
-					}
-				},
-				Followed: {
-					screen: ForumFollowedScreen,
-					navigationOptions: {
-						tabBarLabel: "Followed Forums".toUpperCase()
-					}
-				}
-			},
-			{
-				swipeEnabled: false,
-				tabBarOptions: {
-					upperCaseLabel: true,
-					showIcon: false,
-					activeTintColor: "#2080A7",
-					inactiveTintColor: "#888",
-					iconStyle: {
-						height: 0,
-						width: 0,
-						padding: 0
-					},
-					labelStyle: {
-						fontSize: 13,
-						fontWeight: "500",
-						padding: 0,
-						margin: 0
-					},
-					style: {
-						padding: 6,
-						margin: 0,
-						display: "flex",
-						justifyContent: "center",
-						backgroundColor: '#fff'
-					},
-					tabStyle: {
-						display: "flex",
-						justifyContent: "center",
-						backgroundColor: '#fff'
-					},
-					indicatorStyle: {
-						backgroundColor: '#2080A7'
-					}
-				}
-			}
-		);
-
+		this._ForumTabBar = this._getForumTabBar();
 		this._CommunityStack = this._getMainStack();
 		this._StreamStack = this._getMainStack({}, 'StreamView');
 		this._NotificationStack = this._getMainStack({}, 'NotificationsStack');
@@ -97,6 +46,7 @@ class AppNavigation extends Component {
 	_getMainStack(options, initialRoute) {
 		return createStackNavigator(
 			{
+				HomeScreen: { screen: HomeScreen },
 				ForumIndex: { screen: ForumListScreen },
 				TopicList: { screen: TopicListScreen },
 				TopicView: { screen: TopicViewScreen },
@@ -112,7 +62,7 @@ class AppNavigation extends Component {
 				StreamView: { screen: StreamViewScreen }
 			},
 			{
-				initialRouteName: initialRoute || 'ForumIndex',
+				initialRouteName: initialRoute || 'HomeScreen',
 				cardStyle: styles.stackCardStyle,
 				navigationOptions: Object.assign({
 					header: props => {
@@ -348,6 +298,65 @@ class AppNavigation extends Component {
 				style: styles.primaryTabBar
 			}
 		});
+	}
+
+	/**
+	 * Return the tab bar for forum view
+	 *
+	 * @return object
+	 */
+	_getForumTabBar() {
+		return createMaterialTopTabNavigator(
+			{
+				All: {
+					screen: ForumListScreen,
+					navigationOptions: {
+						tabBarLabel: "All Forums".toUpperCase(),
+					}
+				},
+				Followed: {
+					screen: ForumFollowedScreen,
+					navigationOptions: {
+						tabBarLabel: "Followed Forums".toUpperCase()
+					}
+				}
+			},
+			{
+				swipeEnabled: false,
+				tabBarOptions: {
+					upperCaseLabel: true,
+					showIcon: false,
+					activeTintColor: "#2080A7",
+					inactiveTintColor: "#888",
+					iconStyle: {
+						height: 0,
+						width: 0,
+						padding: 0
+					},
+					labelStyle: {
+						fontSize: 13,
+						fontWeight: "500",
+						padding: 0,
+						margin: 0
+					},
+					style: {
+						padding: 6,
+						margin: 0,
+						display: "flex",
+						justifyContent: "center",
+						backgroundColor: '#fff'
+					},
+					tabStyle: {
+						display: "flex",
+						justifyContent: "center",
+						backgroundColor: '#fff'
+					},
+					indicatorStyle: {
+						backgroundColor: '#2080A7'
+					}
+				}
+			}
+		);
 	}
 
 	/**
