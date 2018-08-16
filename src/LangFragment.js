@@ -23,6 +23,8 @@ const LangFragment = gql`
 		offline: phrase(key: "app_offline")
 		home: phrase(key: "app_home")
 		browse: phrase(key: "app_browse")
+		our_picks: phrase(key: "app_our_picks")
+		new_for_you: phrase(key: "app_new_for_you")
 	}
 `;
 

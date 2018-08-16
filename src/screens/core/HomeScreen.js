@@ -81,7 +81,7 @@ class HomeScreen extends Component {
 			return <Text>{error}</Text>;
 		} else {
 			return (
-				<ScrollView style={{ flexGrow: 1 }}>
+				<ScrollView style={componentStyles.browseWrapper}>
 					{HomeSectionsToShow.map( (section) => {
 						const SectionComponent = HomeSections[section].component;
 						return <SectionComponent key={section} loading={this.state.loading} data={this.state.data} cardWidth={HomeScreen.CARD_WIDTH} />
@@ -99,10 +99,6 @@ export default connect(state => ({
 
 const componentStyles = StyleSheet.create({
 	browseWrapper: {
-		backgroundColor: '#fff',
-		padding: styleVars.spacing.wide
-	},
-	feed: {
-		overflow: 'visible'
+		
 	}
 });

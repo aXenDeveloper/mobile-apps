@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, FlatList, StyleSheet, TouchableHighlight } from 'react-native';
+import _ from "underscore";
 
 import LargeTitle from "../../atoms/LargeTitle";
 import StreamCard from "../../ecosystems/StreamCard";
@@ -15,8 +16,19 @@ class OurPicks extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<LargeTitle icon={require('../../../resources/home_ourpicks.png')}>Our Picks</LargeTitle>
-				{!this.props.loading &&
+				<LargeTitle icon={require('../../../resources/home_ourpicks.png')}>{Lang.get('our_picks')}</LargeTitle>
+				{this.props.loading ?
+					<FlatList
+						horizontal
+						snapToInterval={this.props.cardWidth + styleVars.spacing.wide}
+						snapToAlignment='start'
+						decelerationRate='fast'
+						showsHorizontalScrollIndicator={false}
+						style={componentStyles.feed}
+						data={_.range(5).map( (idx) => ({ key: idx.toString() }) )}
+						renderItem={({item}) => <ContentCard style={{ width: this.props.cardWidth, marginLeft: styleVars.spacing.wide }} loading={true} />}
+					/>
+				:
 					<FlatList
 						horizontal
 						snapToInterval={this.props.cardWidth + styleVars.spacing.wide}
@@ -27,7 +39,8 @@ class OurPicks extends Component {
 						data={this.props.data.core.ourPicks.items}
 						keyExtractor={item => item.indexID}
 						renderItem={({item}) => <ContentCard style={{ width: this.props.cardWidth, marginLeft: styleVars.spacing.wide }} data={item} />}
-					/>}
+					/>
+				}
 			</React.Fragment>
 		);
 	}
