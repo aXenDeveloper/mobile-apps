@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { Text, View, Image, StyleSheet, TouchableHighlight, TouchableOpacity } from 'react-native';
+import FadeIn from 'react-native-fade-in-image';
 
 import UserPhoto from '../../atoms/UserPhoto';
 import RichTextContent from '../../atoms/RichTextContent';
 import relativeTime from '../../utils/RelativeTime';
 import getSuitableImage from '../../utils/getSuitableImage';
 import { PlaceholderContainer, PlaceholderElement } from '../../ecosystems/Placeholder';
+import { styleVars } from '../../styles';
 
 export default class ContentCard extends Component {	
 	constructor(props) {
@@ -24,9 +26,10 @@ export default class ContentCard extends Component {
 			return <View style={componentStyles.imageContainer}></View>;
 		}
 
-		return ( <View style={componentStyles.imageContainer}>
-					<Image style={componentStyles.image} source={{ uri: imageToUse }} resizeMode='cover' />
-				</View> );
+		return ( 	<FadeIn style={componentStyles.imageContainer} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
+						<Image style={componentStyles.image} source={{ uri: imageToUse }} resizeMode='cover' />
+					</FadeIn>
+				);
 	}
 
 	render() {
@@ -177,7 +180,8 @@ const componentStyles = StyleSheet.create({
 		backgroundColor: '#333'
 	},
 	image: {
-		flex: 1
+		flex: 1,
+		width: '100%'
 	},
 
 	// ============
