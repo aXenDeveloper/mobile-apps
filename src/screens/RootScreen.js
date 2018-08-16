@@ -49,6 +49,8 @@ const BootQuery = gql`
 				site_online
 				site_offline_message
 				board_name
+				allow_reg
+				allow_reg_target
 			}
 			language {
 				...LangFragment
@@ -174,7 +176,6 @@ class RootScreen extends Component {
 				!this.props.auth.checkAuthProcessing) ||
 			prevProps.user.isGuest !== this.props.user.isGuest
 		) {
-			console.log("RUNNING BOOT QUERY");
 			this.runBootQuery();
 		}
 

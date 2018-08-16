@@ -45,7 +45,7 @@ export default class PlaceholderElement extends Component {
 			}
 		});
 
-		const styles = Object.assign({}, this.props.style, shapeStyles);
+		const styles = Object.assign({}, shapeStyles, this.props.style);
 
 		// Animated background
 		const backgroundColor = this.state.backgroundColor.interpolate({

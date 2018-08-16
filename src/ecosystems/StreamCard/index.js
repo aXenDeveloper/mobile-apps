@@ -10,6 +10,7 @@ import ShadowedArea from '../../atoms/ShadowedArea';
 import UserPhoto from '../../atoms/UserPhoto';
 import RichTextContent from '../../atoms/RichTextContent';
 import relativeTime from '../../utils/RelativeTime';
+import getSuitableImage from '../../utils/getSuitableImage';
 import componentStyles from './styles';
 
 export default class StreamCard extends Component {	
@@ -66,16 +67,8 @@ export default class StreamCard extends Component {
 			return;
 		}
 
-		// Find only https images
-		/*let imageToUse;
-		for( let i = 0; i < this.props.data.contentImages.length; i++ ){
-			if( this.props.data.contentImages[i].indexOf('https') === 0 ){
-				imageToUse = this.props.data.contentImages[i];
-				break;
-			}
-		}*/
-		let imageToUse = this.props.data.contentImages[0];
-
+		// Fetch an image to show
+		const imageToUse = getSuitableImage( this.props.data.contentImages );
 		if( !imageToUse ){
 			return;
 		}

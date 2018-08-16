@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 
+/* VARIABLES USED THROUGHOUT THE APP */
 export const styleVars = {
 	text: '#000000',
 	lightText: '#657686',
@@ -10,15 +11,21 @@ export const styleVars = {
 	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`,
 	placeholderColors: ['#ededed', '#f5f5f5'],
 	toggleTint: '#1888a7',
+	primaryButton: {
+		backgroundColor: '#3370AA',
+		color: '#fff'
+	},
 	spacing: {
 		veryTight: 4,
 		tight: 8,
 		standard: 12,
 		wide: 16,
-		veryWide: 20
+		veryWide: 20,
+		extraWide: 24
 	}
 };
 
+/* REUSABLE STYLE CLASSES */
 const styles = StyleSheet.create({
 	header: {
 		backgroundColor: "transparent",
@@ -158,6 +165,7 @@ const styles = StyleSheet.create({
 
 export default styles;
 
+/* STYLES FOR THE RICH TEXT COMPONENT */
 export const richTextStyles = (dark) => ({
 	defaultTextStyle: {
 		color: dark ? '#fff' : '#222',
@@ -188,3 +196,37 @@ export const richTextStyles = (dark) => ({
 		}
 	}
 });
+
+/* STYLES FOR BASIC TAB BARS */
+export const tabStyles = {
+	upperCaseLabel: true,
+	showIcon: false,
+	activeTintColor: "#2080A7",
+	inactiveTintColor: "#888",
+	iconStyle: {
+		height: 0,
+		width: 0,
+		padding: 0
+	},
+	labelStyle: {
+		fontSize: 13,
+		fontWeight: "500",
+		padding: 0,
+		margin: 0
+	},
+	style: {
+		padding: 6,
+		margin: 0,
+		display: "flex",
+		justifyContent: "center",
+		backgroundColor: '#fff'
+	},
+	tabStyle: {
+		display: "flex",
+		justifyContent: "center",
+		backgroundColor: '#fff'
+	},
+	indicatorStyle: {
+		backgroundColor: '#2080A7'
+	}
+};

@@ -2,10 +2,12 @@ import React, { Component } from "react";
 import { createBottomTabNavigator, createMaterialTopTabNavigator, createDrawerNavigator, createStackNavigator, TabView, TabBarTop, NavigationActions } from "react-navigation";
 import { Image } from "react-native";
 import { connect } from "react-redux";
-import CustomHeader from "../ecosystems/CustomHeader";
+import { LinearGradient } from "expo";
+
 // ----
 // Core screens
 import HomeScreen from "../screens/core/HomeScreen";
+import BrowseCommunityScreen from "../screens/core/BrowseCommunityScreen";
 import SearchScreen from "../screens/core/SearchScreen";
 import StreamsScreen from "../screens/core/StreamsScreen";
 import StreamViewScreen from "../screens/core/StreamViewScreen";
@@ -26,13 +28,16 @@ import TopicViewScreen from "../screens/forums/TopicViewScreen";
 import CreateTopicScreen from "../screens/forums/CreateTopicScreen";
 import ReplyTopicScreen from "../screens/forums/ReplyTopicScreen";
 
-import styles, { styleVars } from "../styles";
-import { LinearGradient } from "expo";
+import CustomHeader from "../ecosystems/CustomHeader";
+import styles, { styleVars, tabStyles } from "../styles";
+import Lang from '../utils/Lang';
+
 
 class AppNavigation extends Component {
 	constructor(props) {
 		super(props);
 
+		this._HomeTabBar = this._getHomeTabBar();
 		this._ForumTabBar = this._getForumTabBar();
 		this._CommunityStack = this._getMainStack();
 		this._StreamStack = this._getMainStack({}, 'StreamView');
@@ -46,7 +51,12 @@ class AppNavigation extends Component {
 	_getMainStack(options, initialRoute) {
 		return createStackNavigator(
 			{
-				HomeScreen: { screen: HomeScreen },
+				HomeScreen: { 
+					screen: this._HomeTabBar,
+					navigationOptions: {
+						title: "Invision Community"
+					}
+				},
 				ForumIndex: { screen: ForumListScreen },
 				TopicList: { screen: TopicListScreen },
 				TopicView: { screen: TopicViewScreen },
@@ -323,38 +333,38 @@ class AppNavigation extends Component {
 			},
 			{
 				swipeEnabled: false,
-				tabBarOptions: {
-					upperCaseLabel: true,
-					showIcon: false,
-					activeTintColor: "#2080A7",
-					inactiveTintColor: "#888",
-					iconStyle: {
-						height: 0,
-						width: 0,
-						padding: 0
-					},
-					labelStyle: {
-						fontSize: 13,
-						fontWeight: "500",
-						padding: 0,
-						margin: 0
-					},
-					style: {
-						padding: 6,
-						margin: 0,
-						display: "flex",
-						justifyContent: "center",
-						backgroundColor: '#fff'
-					},
-					tabStyle: {
-						display: "flex",
-						justifyContent: "center",
-						backgroundColor: '#fff'
-					},
-					indicatorStyle: {
-						backgroundColor: '#2080A7'
+				tabBarOptions: tabStyles
+			}
+		);
+	}
+
+	/**
+	 * Return the tab bar for forum view
+	 *
+	 * @return object
+	 */
+	_getHomeTabBar() {
+		return createMaterialTopTabNavigator(
+			{
+				All: {
+					screen: HomeScreen,
+					navigationOptions: {
+						tabBarLabel: Lang.get('home').toUpperCase(),
+					}
+				},
+				Followed: {
+					screen: BrowseCommunityScreen,
+					navigationOptions: {
+						tabBarLabel: Lang.get('browse').toUpperCase()
 					}
 				}
+			},
+			{
+				swipeEnabled: false,
+				tabBarPosition: 'bottom',
+				tabBarOptions: Object.assign({}, tabStyles, {
+					tabBarPosition: 'bottom'
+				})
 			}
 		);
 	}

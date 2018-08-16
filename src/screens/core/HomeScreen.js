@@ -1,144 +1,92 @@
 import React, { Component } from 'react';
-import { Text, View, Button, StyleSheet, FlatList } from 'react-native';
+import { Text, ScrollView, View, StyleSheet, FlatList } from 'react-native';
 import gql from "graphql-tag";
-import { graphql } from "react-apollo";
+import { graphql, withApollo } from "react-apollo";
 import _ from "underscore";
 import { connect } from "react-redux";
 
 import { Post } from "../../ecosystems/Post";
+import Button from "../../atoms/Button";
 import LargeTitle from "../../atoms/LargeTitle";
 import StreamCard from "../../ecosystems/StreamCard";
+import ContentCard from "../../ecosystems/ContentCard";
 import { PlaceholderRepeater } from '../../ecosystems/Placeholder';
 import getErrorMessage from "../../utils/getErrorMessage";
 import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
+import { styleVars } from '../../styles';
 
-const HomeQuery = gql`
-	query StreamViewQuery($streamID: ID!) {
-		core {
-			stream(id: $streamID) {
-				title
-				items {
-					indexID
-					itemID
-					url {
-						full
-						app
-						module
-						controller
-					}
-					containerID
-					containerTitle
-					class
-					content
-					contentImages
-					title
-					hidden
-					updated
-					created
-					isComment
-					isReview
-					relativeTimeKey
-					itemAuthor {
-						id
-						name
-						photo
-					}
-					author {
-						id
-						name
-						photo
-					}
-				}
-			}
-		}
-	}
-`;
+import { HomeSections } from '../../ecosystems/HomeSections';
+
+/*
+NOTE: In this component we don't use the HOC graphql(), instead manually calling
+this.props.client.query on mount. This allows us to build a dynamic query based
+on the homepage widgets that have been configured on the site.
+*/
+
+const HomeSectionsToShow = ['new_content', 'our_picks'];
 
 class HomeScreen extends Component {
 	static navigationOptions = {
-		title: "Community"
+		title: "Invision Community"
 	};
 
-	/**
-	 * Build the section data we need for SectionList
-	 * Each stream item has a 'relative time' string. Loop each item, and create sections
-	 * based on that string.
-	 *
-	 * @param 	object 	item 		A raw item object from GraphQL
-	 * @param 	object 	streamData 	The stream data
-	 * @return 	object
-	 */
-	/*buildListData(items, streamData) {
-		const data = {};
+	static CARD_WIDTH = 285;
 
-		if( !items.length ){
-			return [];
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			loading: true,
+			error: false,
+			data: null
 		}
+	}
 
-		items.forEach(item => {
-			if( _.isUndefined( sections[ item.relativeTimeKey ] ) ){
-				sections[ item.relativeTimeKey ] = {
-					title: item.relativeTimeKey,
-					data: []
-				};
+	async componentDidMount() {
+
+		let queryFragments = [];
+		let queryIncludes = [];
+
+		// Dynamically build the fragments we'll need
+		HomeSectionsToShow.forEach( (section) => {
+			if( !_.isUndefined( HomeSections[ section ] ) ){
+				queryFragments.push( '...' + HomeSections[section].fragmentName );
+				queryIncludes.push( HomeSections[section].fragment );
 			}
-
-			sections[ item.relativeTimeKey ].data.push(item);
 		});
 
-		return Object.values(sections);
-	}*/
+		const query = gql`
+			query HomeQuery {
+				core {
+					${queryFragments.join('\n')}
+				}
+			}
+			${gql( queryIncludes.join('\n') )}
+		`;
 
-	/**
-	 * Render an individual stream item
-	 * We also build an onPress handler here, based on whether we are able to view the content
-	 * inside the app. If not, we navigate to our webview screen.
-	 *
-	 * @param 	object 	item 	Item data
-	 * @return 	Component
-	 */
-	renderItem(item) {
-		let onPress;
-		const isSupported = isSupportedUrl([ item.url.app, item.url.module, item.url.controller ]);
+		const { data } = await this.props.client.query({
+			query,
+			variables: {}
+		});
 
-		if( isSupported ){
-			onPress = () => this.props.navigation.navigate( isSupported, {
-				id: item.itemID
-			});
-		} else {
-			onPress = () => this.props.navigation.navigate("WebView", {
-				url: item.url.full
-			});
-		}
-
-		return <StreamCard data={item} isSupported={!!isSupported} onPress={onPress} />
+		this.setState({
+			loading: false,
+			data
+		});		
 	}
 
 	render() {
-		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
-			return (
-				<PlaceholderRepeater repeat={4}>
-					<Post loading={true} />
-				</PlaceholderRepeater>
-			);
-		} else if (this.props.data.error) {
-			const error = getErrorMessage(this.props.data.error, {});
+		if( this.state.error ){
+			const error = getErrorMessage(this.state.data.error, {});
 			return <Text>{error}</Text>;
 		} else {
-			const streamData = this.props.data.core.stream;
-			//const listData = this.buildListData(streamData.items, streamData);
-
 			return (
-				<View style={{ flexGrow: 1 }}>
-					<LargeTitle>New For You</LargeTitle>
-					<FlatList
-						horizontal
-						style={componentStyles.feed}
-						data={streamData.items}
-						keyExtractor={item => item.indexID}
-						renderItem={({item}) => this.renderItem(item)}
-					/>
-				</View>
+				<ScrollView style={{ flexGrow: 1 }}>
+					{HomeSectionsToShow.map( (section) => {
+						const SectionComponent = HomeSections[section].component;
+						return <SectionComponent key={section} loading={this.state.loading} data={this.state.data} cardWidth={HomeScreen.CARD_WIDTH} />
+					})}
+				</ScrollView>
 			);
 		}
 	}
@@ -147,30 +95,14 @@ class HomeScreen extends Component {
 export default connect(state => ({
 	user: state.user,
 	site: state.site
-}))( graphql(HomeQuery, {
-	options: props => ({
-		notifyOnNetworkStatusChange: true,
-		variables: {
-			streamID: props.user.isGuest ? null : 1
-		}
-	}),
-})( HomeScreen ));
+}))( withApollo(HomeScreen) );
 
 const componentStyles = StyleSheet.create({
-	header: {
-		//marginLeft: -25
-	},
-	timeline: { 
-		/*backgroundColor: '#888', 
-		width: 2, 
-		position: 'absolute', 
-		top: 15, 
-		left: 13, 
-		bottom: 0 */
+	browseWrapper: {
+		backgroundColor: '#fff',
+		padding: styleVars.spacing.wide
 	},
 	feed: {
-		//marginHorizontal: 9
-		/*paddingLeft: 30,
-		marginRight: 9*/
+		overflow: 'visible'
 	}
 });

@@ -21,6 +21,8 @@ const LangFragment = gql`
 		legal_notices: phrase(key: "app_legal_notices")
 		edit_profile: phrase(key: "app_edit_profile")
 		offline: phrase(key: "app_offline")
+		home: phrase(key: "app_home")
+		browse: phrase(key: "app_browse")
 	}
 `;
 
