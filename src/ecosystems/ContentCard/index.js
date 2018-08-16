@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, Image, StyleSheet, TouchableHighlight, TouchableOpacity } from 'react-native';
 import FadeIn from 'react-native-fade-in-image';
 
+import Lang from '../../utils/Lang';
 import UserPhoto from '../../atoms/UserPhoto';
 import RichTextContent from '../../atoms/RichTextContent';
 import relativeTime from '../../utils/RelativeTime';
@@ -55,7 +56,7 @@ export default class ContentCard extends Component {
 						<View style={componentStyles.streamMetaInner}>
 							<UserPhoto url={this.props.data.author.photo} size={20} />
 							<Text style={[componentStyles.streamMetaText, componentStyles.streamMetaAction]} numberOfLines={1}>
-								{this.props.data.author.name} replied to a topic
+								{Lang.buildStreamActionString( this.props.data )}
 							</Text>
 						</View>
 					</View>

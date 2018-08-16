@@ -105,6 +105,41 @@ class Lang {
 
 		return word;
 	}
+
+	/**
+	 * When provided with a search result object, this method will return the action string
+	 * e.g. 'Dave replied to a topic' or 'Susan posted a gallery image'
+	 *
+	 * @param 	string 		word 	Phrase to parse
+	 * @param 	array 		params 	Values to swap into the phrase
+	 * @return 	string
+	 */
+	buildStreamActionString(data) {
+		// Check we have the required data
+		if( _.isUndefined( data.firstCommentRequired ) || _.isUndefined( data.articleLang ) ){
+			return this.get('activity_generic');
+		}
+
+		try {
+			let langKey;
+
+			if( data.isComment ){
+				if( data.firstCommentRequired ){
+					langKey = 'activity_replied';
+				} else {
+					langKey = 'activity_commented';
+				}
+			} else if( data.isReview ){
+				langKey = 'activity_reviewed';
+			} else {
+				langKey = 'activity_posted_item';
+			}
+
+			return this.get(langKey, { user: data.author.name, article: data.articleLang.indefinite });
+		} catch (err) {
+			return this.get('activity_generic');
+		}
+	}
 }
 
 const langClass = new Lang();

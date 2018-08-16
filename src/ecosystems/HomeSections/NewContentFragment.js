@@ -42,6 +42,11 @@ const NewContentFragment = `
 					name
 					photo
 				}
+				firstCommentRequired
+				articleLang {
+					indefinite
+					definite
+				}
 			}
 		}
 	}

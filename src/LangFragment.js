@@ -25,6 +25,11 @@ const LangFragment = gql`
 		browse: phrase(key: "app_browse")
 		our_picks: phrase(key: "app_our_picks")
 		new_for_you: phrase(key: "app_new_for_you")
+		activity_replied: phrase(key: "app_activity_replied")
+		activity_commented: phrase(key: "app_activity_commented")
+		activity_reviewed: phrase(key: "app_activity_reviewed")
+		activity_posted_item: phrase(key: "app_activity_posted_item")
+		activity_generic: phrase(key: "app_activity_generic")
 	}
 `;
 
