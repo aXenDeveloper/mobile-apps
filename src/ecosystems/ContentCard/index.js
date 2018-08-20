@@ -89,10 +89,11 @@ const componentStyles = StyleSheet.create({
 		shadowColor: 'rgba(0,0,0,0.05)',
 		shadowOffset: {
 			width: 0,
-			height: 12
+			height: 5
 		},
 		shadowOpacity: 1,
-		shadowRadius: 12
+		shadowRadius: 12,
+		marginBottom: 15
 	},
 	streamHeader: {
 		/*flex: 1,
