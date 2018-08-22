@@ -22,7 +22,9 @@ export const styleVars = {
 		wide: 16,
 		veryWide: 20,
 		extraWide: 24
-	}
+	},
+	positive: '#43A047',
+	negative: '#E53935'
 };
 
 /* REUSABLE STYLE CLASSES */

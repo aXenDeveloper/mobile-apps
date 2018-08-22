@@ -3,6 +3,8 @@ import NewContent from './NewContent';
 import NewContentFragment from './NewContentFragment';
 import OurPicks from './OurPicks';
 import OurPicksFragment from './OurPicksFragment';
+import ActiveUsers from './ActiveUsers';
+import ActiveUsersFragment from './ActiveUsersFragment';
 
 //export { Post as Post };
 //export { NewContent as NewContent };
@@ -12,16 +14,19 @@ export const HomeSections = {
 	new_content: {
 		component: NewContent,
 		fragment: NewContentFragment,
-		fragmentName: 'NewContentFragment'
+		fragmentName: 'NewContentFragment',
+		icon: require("../../../resources/home_new.png")
 	},
 	'our_picks': {
 		component: OurPicks,
 		fragment: OurPicksFragment,
-		fragmentName: 'OurPicksFragment'
+		fragmentName: 'OurPicksFragment',
+		icon: require("../../../resources/home_ourpicks.png")
 	},
-	'online_users': {
-		component: NewContent,
-		fragment: NewContentFragment,
-		fragmentName: 'NewContentFragment'
+	'active_users': {
+		component: ActiveUsers,
+		fragment: ActiveUsersFragment,
+		fragmentName: 'ActiveUsersFragment',
+		icon: require("../../../resources/home_activeusers.png")
 	}
 };

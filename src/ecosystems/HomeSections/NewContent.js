@@ -25,37 +25,32 @@ class NewContent extends Component {
 
 	render() {
 		return (
-			<React.Fragment>
-				<LargeTitle icon={require("../../../resources/home_new.png")}>
-					{Lang.get("new_for_you")}
-				</LargeTitle>
-				<FlatList
-					horizontal
-					snapToInterval={
-						this.props.cardWidth + styleVars.spacing.wide
-					}
-					snapToAlignment="start"
-					decelerationRate="fast"
-					showsHorizontalScrollIndicator={false}
-					style={componentStyles.feed}
-					data={
-						this.props.loading
-							? this.getDummyData()
-							: this.props.data.core.newContent.items
-					}
-					keyExtractor={item => this.props.loading ? item.key : item.indexID}
-					renderItem={({ item }) => (
-						<ContentCard
-							style={{
-								width: this.props.cardWidth,
-								marginLeft: styleVars.spacing.wide
-							}}
-							loading={this.props.loading}
-							data={this.props.loading ? null : item}
-						/>
-					)}
-				/>
-			</React.Fragment>
+			<FlatList
+				horizontal
+				snapToInterval={
+					this.props.cardWidth + styleVars.spacing.wide
+				}
+				snapToAlignment="start"
+				decelerationRate="fast"
+				showsHorizontalScrollIndicator={false}
+				style={componentStyles.feed}
+				data={
+					this.props.loading
+						? this.getDummyData()
+						: this.props.data.core.newContent.items
+				}
+				keyExtractor={item => this.props.loading ? item.key : item.indexID}
+				renderItem={({ item }) => (
+					<ContentCard
+						style={{
+							width: this.props.cardWidth,
+							marginLeft: styleVars.spacing.wide
+						}}
+						loading={this.props.loading}
+						data={this.props.loading ? null : item}
+					/>
+				)}
+			/>
 		);
 	}
 }

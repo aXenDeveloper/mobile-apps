@@ -15,33 +15,29 @@ class OurPicks extends Component {
 
 	render() {
 		return (
-			<React.Fragment>
-				<LargeTitle icon={require('../../../resources/home_ourpicks.png')}>{Lang.get('our_picks')}</LargeTitle>
-				{this.props.loading ?
-					<FlatList
-						horizontal
-						snapToInterval={this.props.cardWidth + styleVars.spacing.wide}
-						snapToAlignment='start'
-						decelerationRate='fast'
-						showsHorizontalScrollIndicator={false}
-						style={componentStyles.feed}
-						data={_.range(5).map( (idx) => ({ key: idx.toString() }) )}
-						renderItem={({item}) => <ContentCard style={{ width: this.props.cardWidth, marginLeft: styleVars.spacing.wide }} loading={true} />}
-					/>
-				:
-					<FlatList
-						horizontal
-						snapToInterval={this.props.cardWidth + styleVars.spacing.wide}
-						snapToAlignment='start'
-						decelerationRate='fast'
-						showsHorizontalScrollIndicator={false}
-						style={componentStyles.feed}
-						data={this.props.data.core.ourPicks.items}
-						keyExtractor={item => item.indexID}
-						renderItem={({item}) => <ContentCard style={{ width: this.props.cardWidth, marginLeft: styleVars.spacing.wide }} data={item} />}
-					/>
-				}
-			</React.Fragment>
+			this.props.loading ?
+				<FlatList
+					horizontal
+					snapToInterval={this.props.cardWidth + styleVars.spacing.wide}
+					snapToAlignment='start'
+					decelerationRate='fast'
+					showsHorizontalScrollIndicator={false}
+					style={componentStyles.feed}
+					data={_.range(5).map( (idx) => ({ key: idx.toString() }) )}
+					renderItem={({item}) => <ContentCard style={{ width: this.props.cardWidth, marginLeft: styleVars.spacing.wide }} loading={true} />}
+				/>
+			:
+				<FlatList
+					horizontal
+					snapToInterval={this.props.cardWidth + styleVars.spacing.wide}
+					snapToAlignment='start'
+					decelerationRate='fast'
+					showsHorizontalScrollIndicator={false}
+					style={componentStyles.feed}
+					data={this.props.data.core.ourPicks.items}
+					keyExtractor={item => item.indexID}
+					renderItem={({item}) => <ContentCard style={{ width: this.props.cardWidth, marginLeft: styleVars.spacing.wide }} data={item} />}
+				/>				
 		);
 	}
 }

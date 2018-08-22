@@ -5,6 +5,7 @@ import { graphql, withApollo } from "react-apollo";
 import _ from "underscore";
 import { connect } from "react-redux";
 
+import Lang from "../../utils/Lang";
 import { Post } from "../../ecosystems/Post";
 import Button from "../../atoms/Button";
 import LargeTitle from "../../atoms/LargeTitle";
@@ -23,7 +24,7 @@ this.props.client.query on mount. This allows us to build a dynamic query based
 on the homepage widgets that have been configured on the site.
 */
 
-const HomeSectionsToShow = ['new_content', 'our_picks'];
+const HomeSectionsToShow = ['active_users', 'new_content', 'our_picks'];
 
 class HomeScreen extends Component {
 	static navigationOptions = {
@@ -84,7 +85,14 @@ class HomeScreen extends Component {
 				<ScrollView style={componentStyles.browseWrapper}>
 					{HomeSectionsToShow.map( (section) => {
 						const SectionComponent = HomeSections[section].component;
-						return <SectionComponent key={section} loading={this.state.loading} data={this.state.data} cardWidth={HomeScreen.CARD_WIDTH} />
+						return (
+							<React.Fragment key={section}>
+								<LargeTitle icon={HomeSections[section].icon || null}>
+									{Lang.get(section)}
+								</LargeTitle>
+								<SectionComponent loading={this.state.loading} data={this.state.data} cardWidth={HomeScreen.CARD_WIDTH} />
+							</React.Fragment>
+						);
 					})}
 				</ScrollView>
 			);

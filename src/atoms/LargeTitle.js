@@ -11,7 +11,6 @@ export default class LargeTitle extends Component {
 	render() {
 		return (
 			<View style={componentStyles.wrapper}>
-				{this.props.icon && <View style={componentStyles.iconWrap}><Image source={this.props.icon} style={componentStyles.icon} resizeMode='contain' /></View>}
 				<Text style={componentStyles.largeTitle}>
 					{this.props.children}
 				</Text>
@@ -19,6 +18,8 @@ export default class LargeTitle extends Component {
 		);
 	}
 }
+
+//{this.props.icon && <View style={componentStyles.iconWrap}><Image source={this.props.icon} style={componentStyles.icon} resizeMode='contain' /></View>}
 
 const componentStyles = StyleSheet.create({
 	wrapper: {
@@ -48,6 +49,6 @@ const componentStyles = StyleSheet.create({
 	largeTitle: {
 		fontWeight: 'bold',
 		fontSize: 26,
-		color: '#333',
+		color: '#000',
 	}
 });
