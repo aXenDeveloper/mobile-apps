@@ -5,6 +5,7 @@ import FadeIn from 'react-native-fade-in-image';
 
 import LargeTitle from "../../atoms/LargeTitle";
 import ContentCard from "../../ecosystems/ContentCard";
+import { ReactionOverview } from "../../ecosystems/Reaction";
 import getSuitableImage from "../../utils/getSuitableImage";
 import Lang from "../../utils/Lang";
 import styles, { styleVars } from '../../styles';
@@ -53,6 +54,12 @@ class OurPicks extends Component {
 							{data.description}
 						</Text>
 					</View>
+					{(data.reputation.reactions.length || data.dataCount.count) &&
+						<View style={componentStyles.infoFooter}>
+							{data.reputation.reactions.length && <ReactionOverview style={[styles.mtTight, componentStyles.reactionOverview]} reactions={data.reputation.reactions} />}
+							{data.dataCount.count && <Text style={[componentStyles.dataCount, styles.lightText]}>{data.dataCount.words}</Text>}
+						</View>
+					}
 				</React.Fragment>
 			)
 		};
@@ -96,7 +103,7 @@ export default OurPicks;
 
 const componentStyles = StyleSheet.create({
 	streamMetaText: {
-		fontSize: 13
+		fontSize: styleVars.fontSizes.small
 	},
 	streamMetaAction: {
 		marginLeft: 5,
@@ -110,12 +117,12 @@ const componentStyles = StyleSheet.create({
 		marginLeft: 9
 	},
 	streamItemTitle: {
-		fontSize: 17,
+		fontSize: styleVars.fontSizes.large,
 		fontWeight: "600",
 		color: "#171717"
 	},
 	streamItemTitleSmall: {
-		fontSize: 15
+		fontSize: styleVars.fontSizes.large
 	},
 	streamItemContainer: {
 		color: "#8F8F8F"
@@ -124,7 +131,8 @@ const componentStyles = StyleSheet.create({
 		marginTop: 9
 	},
 	snippetText: {
-		fontSize: 14
+		fontSize: styleVars.fontSizes.standard,
+		lineHeight: styleVars.lineHeight.standard
 	},
 	imageContainer: {
 		height: 135,
@@ -134,5 +142,21 @@ const componentStyles = StyleSheet.create({
 	image: {
 		flex: 1,
 		width: "100%"
+	},
+	infoFooter: {
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		marginTop: styleVars.spacing.standard,
+		paddingTop: styleVars.spacing.veryTight,
+		borderTopWidth: 1,
+		borderTopColor: '#f0f0f0',
+	},
+	reactionOverview: {
+		marginLeft: styleVars.spacing.wide,
+	},
+	dataCount: {
+		marginTop: 6
 	}
 });

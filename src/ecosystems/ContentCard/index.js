@@ -100,6 +100,7 @@ export default class ContentCard extends Component {
 
 const componentStyles = StyleSheet.create({
 	contentCard: {
+		borderRadius: 5,
 		backgroundColor: "#fff",
 		shadowColor: "rgba(0,0,0,0.05)",
 		shadowOffset: {

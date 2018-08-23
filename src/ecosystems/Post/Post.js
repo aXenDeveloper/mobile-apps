@@ -19,6 +19,7 @@ import { ReactionModal } from "../../atoms/ReactionModal";
 import relativeTime from "../../utils/RelativeTime";
 import getErrorMessage from "../../utils/getErrorMessage";
 import PostFragment from "./PostFragment";
+import { styleVars } from "../../styles";
 
 const PostReactionMutation = gql`
 	mutation PostReactionMutation($postID: ID!, $reactionID: Int, $removeReaction: Boolean) {
@@ -353,19 +354,19 @@ const styles = StyleSheet.create({
 		marginLeft: 9
 	},
 	username: {
-		fontSize: 17,
+		fontSize: styleVars.fontSizes.large,
 		fontWeight: "600",
 		color: "#171717"
 	},
 	date: {
-		fontSize: 14,
+		fontSize: styleVars.fontSizes.standard,
 		color: "#8F8F8F"
 	},
 	postContentContainer: {
 		marginTop: 16
 	},
 	postContent: {
-		fontSize: 16
+		fontSize: styleVars.fontSizes.content
 	},
 	postMenu: {
 		width: 24,

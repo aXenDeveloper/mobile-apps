@@ -23,30 +23,21 @@ export const styleVars = {
 		veryWide: 20,
 		extraWide: 24
 	},
+	fontSizes: {
+		small: 13,
+		standard: 14,
+		content: 16,
+		large: 17
+	},
+	lineHeight: {
+		standard: 18
+	},
 	positive: '#43A047',
-	negative: '#E53935'
+	negative: '#E53935',
 };
 
 /* REUSABLE STYLE CLASSES */
 const styles = StyleSheet.create({
-	mbVeryTight: {
-		marginBottom: styleVars.spacing.veryTight
-	},
-	mbTight: {
-		marginBottom: styleVars.spacing.tight
-	},
-	mbStandard: {
-		marginBottom: styleVars.spacing.standard
-	},
-	mbWide: {
-		marginBottom: styleVars.spacing.wide
-	},
-	mbVeryWide: {
-		marginBottom: styleVars.spacing.veryWide
-	},
-	mbExtraWide: {
-		marginBottom: styleVars.spacing.extraWide
-	},
 	header: {
 		backgroundColor: "transparent",
 		paddingTop: 25,
@@ -180,7 +171,45 @@ const styles = StyleSheet.create({
 	},
 	hidden: {
 		display: 'none'
-	}
+	},
+
+	/* Spacing styles */
+	mbVeryTight: {
+		marginBottom: styleVars.spacing.veryTight
+	},
+	mbTight: {
+		marginBottom: styleVars.spacing.tight
+	},
+	mbStandard: {
+		marginBottom: styleVars.spacing.standard
+	},
+	mbWide: {
+		marginBottom: styleVars.spacing.wide
+	},
+	mbVeryWide: {
+		marginBottom: styleVars.spacing.veryWide
+	},
+	mbExtraWide: {
+		marginBottom: styleVars.spacing.extraWide
+	},
+	mtVeryTight: {
+		marginTop: styleVars.spacing.veryTight
+	},
+	mtTight: {
+		marginTop: styleVars.spacing.tight
+	},
+	mtStandard: {
+		marginTop: styleVars.spacing.standard
+	},
+	mtWide: {
+		marginTop: styleVars.spacing.wide
+	},
+	mtVeryWide: {
+		marginTop: styleVars.spacing.veryWide
+	},
+	mtExtraWide: {
+		marginTop: styleVars.spacing.extraWide
+	},
 });
 
 export default styles;

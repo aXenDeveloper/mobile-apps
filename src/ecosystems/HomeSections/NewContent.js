@@ -61,7 +61,7 @@ class NewContent extends Component {
 				<React.Fragment>
 					<View style={componentStyles.streamItemInfo}>
 						<View style={componentStyles.streamItemInfoInner}>
-							<Text style={[ componentStyles.streamItemTitle, componentStyles.streamItemTitleSmall ]} numberOfLines={1}>{data.title}</Text>
+							<Text style={[ componentStyles.streamItemTitle ]} numberOfLines={1}>{data.title}</Text>
 							<Text style={componentStyles.streamItemContainer} numberOfLines={1}>In {data.containerTitle}</Text>
 						</View>
 					</View>
@@ -114,7 +114,7 @@ export default NewContent;
 
 const componentStyles = StyleSheet.create({	
 	streamMetaText: {
-		fontSize: 13
+		fontSize: styleVars.fontSizes.small
 	},
 	streamMetaAction: {
 		marginLeft: 5,
@@ -128,12 +128,12 @@ const componentStyles = StyleSheet.create({
 		marginLeft: 9
 	},
 	streamItemTitle: {
-		fontSize: 17,
+		fontSize: styleVars.fontSizes.large,
 		fontWeight: "600",
 		color: "#171717"
 	},
 	streamItemTitleSmall: {
-		fontSize: 15
+		fontSize: styleVars.fontSizes.standard
 	},
 	streamItemContainer: {
 		color: "#8F8F8F"
@@ -142,7 +142,8 @@ const componentStyles = StyleSheet.create({
 		marginTop: 9
 	},
 	snippetText: {
-		fontSize: 14
+		fontSize: styleVars.fontSizes.standard,
+		lineHeight: styleVars.lineHeight.standard
 	},
 	imageContainer: {
 		height: 135,

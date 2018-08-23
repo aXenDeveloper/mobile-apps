@@ -17,9 +17,14 @@ const OurPicksFragment = `
 			title
 			description
 			images
+			dataCount {
+				count
+				words
+			}
 			reputation {
 				reactionCount
 				reactions {
+					id
 					image
 					count
 				}
