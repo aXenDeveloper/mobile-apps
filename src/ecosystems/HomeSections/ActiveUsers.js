@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import _ from "underscore";
 
+import { PlaceholderContainer, PlaceholderElement } from '../../ecosystems/Placeholder';
 import LargeTitle from "../../atoms/LargeTitle";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
@@ -160,7 +161,13 @@ class ActiveUsers extends Component {
 	render() {
 		if( this.props.loading ){
 			return (
-				<View style={componentStyles.wrapper}>...</View>
+				<View style={[ componentStyles.wrapper, { height: 100 } ]}>
+					<PlaceholderElement left={16} top={15} width='60%' />
+					<PlaceholderElement circle radius={36} left={16} top={48} />
+					<PlaceholderElement circle radius={36} left={64} top={48} />
+					<PlaceholderElement circle radius={36} left={112} top={48} />
+					<PlaceholderElement circle radius={36} left={160} top={48} />
+				</View>
 			);
 		}
 
