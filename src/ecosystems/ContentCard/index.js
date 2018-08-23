@@ -165,7 +165,7 @@ const componentStyles = StyleSheet.create({
 		marginTop: 9
 	},
 	snippetText: {
-		fontSize: 15
+		fontSize: 14
 	},
 	blob: {
 		backgroundColor: '#888',

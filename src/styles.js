@@ -29,6 +29,24 @@ export const styleVars = {
 
 /* REUSABLE STYLE CLASSES */
 const styles = StyleSheet.create({
+	mbVeryTight: {
+		marginBottom: styleVars.spacing.veryTight
+	},
+	mbTight: {
+		marginBottom: styleVars.spacing.tight
+	},
+	mbStandard: {
+		marginBottom: styleVars.spacing.standard
+	},
+	mbWide: {
+		marginBottom: styleVars.spacing.wide
+	},
+	mbVeryWide: {
+		marginBottom: styleVars.spacing.veryWide
+	},
+	mbExtraWide: {
+		marginBottom: styleVars.spacing.extraWide
+	},
 	header: {
 		backgroundColor: "transparent",
 		paddingTop: 25,

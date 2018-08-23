@@ -6,7 +6,7 @@ const ActiveUsersFragment = `
 		activeUsers {
 			__typename
 			count(includeGuests: true)
-			users(limit: 9) {
+			users(limit: 14) {
 				anonymous
 				lang
 				timestamp

@@ -27,6 +27,8 @@ const LangFragment = gql`
 		new_content: phrase(key: "app_new_content")
 		active_users: phrase(key: "app_active_users")
 		x_more: phrase(key: "app_x_more")
+		no_users_online: phrase(key: "app_no_users_online")
+		x_guests_online: phrase(key: "app_x_guests_online")
 		activity_replied: phrase(key: "app_activity_replied")
 		activity_commented: phrase(key: "app_activity_commented")
 		activity_reviewed: phrase(key: "app_activity_reviewed")

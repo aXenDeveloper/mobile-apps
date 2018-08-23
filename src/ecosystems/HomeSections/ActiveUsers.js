@@ -34,7 +34,7 @@ class ActiveUsers extends Component {
 	/* 
 	 * @brief 	How many names we'll require to show the ticker. Too few looks a bit daft.
 	 */
-	static minimumTickerNames = 3;
+	static minimumTickerNames = 2;
 
 	/**
 	 * Component update
@@ -161,7 +161,7 @@ class ActiveUsers extends Component {
 	render() {
 		if( this.props.loading ){
 			return (
-				<View style={[ componentStyles.wrapper, { height: 100 } ]}>
+				<View style={[ componentStyles.wrapper, styles.row, { height: 100 } ]}>
 					<PlaceholderElement left={16} top={15} width='60%' />
 					<PlaceholderElement circle radius={36} left={16} top={48} />
 					<PlaceholderElement circle radius={36} left={64} top={48} />
@@ -171,15 +171,29 @@ class ActiveUsers extends Component {
 			);
 		}
 
-		return (
-			<View style={componentStyles.wrapper}>
-				{this.state.tickerReady && <View style={componentStyles.tickerWrapper}>{this.getTicker()}</View>}
-				<View style={componentStyles.cellContainer}>
-					{this.getCells()}
-					{this.getMoreBubble()}
+		if( !this.props.data.core.activeUsers.count ){
+			return (
+				<View style={[componentStyles.wrapper, styles.row]}>
+					<Text style={[styles.lightText, styles.mbTight]}>{Lang.get('no_users_online')}</Text>
 				</View>
-			</View>
-		);
+			)
+		} else if( this.props.data.core.activeUsers.count && !this.props.data.core.activeUsers.users.length ) {
+			return (
+				<View style={[componentStyles.wrapper, styles.row]}>
+					<Text style={[styles.lightText, styles.mbTight]}>{Lang.pluralize( Lang.get('x_guests_online'), this.props.data.core.activeUsers.count )}</Text>
+				</View>
+			)
+		} else {
+			return (
+				<View style={[componentStyles.wrapper, styles.row]}>
+					{this.state.tickerReady && <View style={componentStyles.tickerWrapper}>{this.getTicker()}</View>}
+					<View style={componentStyles.cellContainer}>
+						{this.getCells()}
+						{this.getMoreBubble()}
+					</View>
+				</View>
+			);
+		}
 	}
 }
 
@@ -190,7 +204,8 @@ const componentStyles = StyleSheet.create({
 		backgroundColor: "#fff",
 		paddingHorizontal: styleVars.spacing.wide,
 		paddingTop: styleVars.spacing.standard,
-		paddingBottom: styleVars.spacing.veryTight
+		paddingBottom: styleVars.spacing.veryTight,
+		marginBottom: 15
 	},
 	cellContainer: {
 		display: "flex",
