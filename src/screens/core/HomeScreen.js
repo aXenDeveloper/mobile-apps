@@ -90,7 +90,7 @@ class HomeScreen extends Component {
 								<LargeTitle icon={HomeSections[section].icon || null}>
 									{Lang.get(section)}
 								</LargeTitle>
-								<SectionComponent loading={this.state.loading} data={this.state.data} cardWidth={HomeScreen.CARD_WIDTH} />
+								<SectionComponent loading={this.state.loading} data={this.state.data} cardWidth={HomeScreen.CARD_WIDTH} navigation={this.props.navigation} />
 							</React.Fragment>
 						);
 					})}

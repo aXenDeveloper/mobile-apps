@@ -7,6 +7,7 @@ import LargeTitle from "../../atoms/LargeTitle";
 import ContentCard from "../../ecosystems/ContentCard";
 import { ReactionOverview } from "../../ecosystems/Reaction";
 import getSuitableImage from "../../utils/getSuitableImage";
+import { isSupportedUrl } from "../../utils/isSupportedType";
 import Lang from "../../utils/Lang";
 import styles, { styleVars } from '../../styles';
 
@@ -70,10 +71,25 @@ class OurPicks extends Component {
 					width: this.props.cardWidth,
 					marginLeft: styleVars.spacing.wide
 				}}
+				onPress={() => this.onPressItem(data)}
 				image={cardPieces.image}
 				content={cardPieces.content}
 			/>
 		);
+	}
+
+	onPressItem(data) {
+		const isSupported = isSupportedUrl([ data.url.app, data.url.module, data.url.controller ]);
+
+		if( isSupported ){
+			this.props.navigation.navigate( isSupported, {
+				id: 1 // @todo get the proper id
+			});
+		} else {
+			this.props.navigation.navigate("WebView", {
+				url: data.url.full
+			});
+		}
 	}
 
 	render() {
