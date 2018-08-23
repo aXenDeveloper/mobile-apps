@@ -10,5 +10,5 @@ export default function getSuitableImage(data) {
 	}
 	return imageToUse;*/
 
-	return data.length ? data[0] : false;	
+	return data !== null && data.length ? data[0] : false;	
 }

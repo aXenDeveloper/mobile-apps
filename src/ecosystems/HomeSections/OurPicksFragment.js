@@ -3,44 +3,25 @@ import gql from "graphql-tag";
 const OurPicksFragment = `
 	fragment OurPicksFragment on core {
 		__typename
-		ourPicks: stream {
+		ourPicks {
 			id
-			__typename
+			addedBy {
+				name
+			}
+			url {
+				full
+				app
+				controller
+				module
+			}
 			title
-			items {
-				__typename
-				indexID
-				itemID
-				url {
-					__typename
-					full
-					app
-					module
-					controller
-				}
-				containerID
-				containerTitle
-				class
-				content
-				contentImages
-				title
-				hidden
-				updated
-				created
-				isComment
-				isReview
-				relativeTimeKey
-				itemAuthor {
-					__typename
-					id
-					name
-					photo
-				}
-				author {
-					__typename
-					id
-					name
-					photo
+			description
+			images
+			reputation {
+				reactionCount
+				reactions {
+					image
+					count
 				}
 			}
 		}
