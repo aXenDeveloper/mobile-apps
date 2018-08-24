@@ -97,6 +97,7 @@ class HomeScreen extends Component {
 				closable
 				register={this.props.site.allow_reg !== "DISABLED"}
 				registerUrl={this.props.site.allow_reg_target || null}
+				navigation={this.props.navigation}
 				message={Lang.get( this.props.site.allow_reg !== "DISABLED" ? 'login_register_prompt' : 'login_prompt', {
 					siteName: this.props.site.board_name
 				})}

@@ -9,12 +9,36 @@ export default class LoginRegisterPrompt extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			hiding: false
+			hiding: false,
+			showPopup: false
 		};
 		this._origHeight = 0;
 		this._wrapper = null;
 		this._animatedValue = new Animated.Value(1);
 	}
+
+	/**
+	 * Check if we have a 
+	 *
+	 * @return 	void
+	 */
+	async componentDidMount() {
+		try {
+			const lastClosed = await AsyncStorage.getItem("@settingStore:loginPopupShown");
+
+			// If the time we last closed it is more than a day ago...
+			if( lastClosed == null || ( lastClosed + 86400 ) < ( Date.now() / 1000 ) ){
+				this.setState({
+					showPopup: true
+				});
+			}
+		} catch (err) {
+			this.setState({
+				showPopup: true
+			});
+		}
+	}
+
 
 	/**
 	 * Handles tapping the X to close the prompt
@@ -23,7 +47,7 @@ export default class LoginRegisterPrompt extends Component {
 	 *
 	 * @return 	void
 	 */
-	closeLoginBox() {
+	async closeLoginBox() {
 		this._animation = Animated.timing(
 			this._animatedValue,
 			{
@@ -39,7 +63,15 @@ export default class LoginRegisterPrompt extends Component {
 
 		this._animation.start();
 
-
+		// Store timestamp in local storage
+		try {
+			await AsyncStorage.setItem(
+				"@settingStore:loginPopupShown",
+				Data.now() / 1000 // seconds
+			);
+		} catch (err) {
+			console.log("Couldn't store a loginPopupShown value");
+		}
 	}
 
 	/**
@@ -51,6 +83,32 @@ export default class LoginRegisterPrompt extends Component {
 	 */
 	_onWrapperLayout(e) {
 		this._origHeight = e.nativeEvent.layout.height;
+	}
+
+	/**
+	 * Handle tapping the sign in button
+	 * Send them to the login modal
+	 *
+	 * @return 	void
+	 */
+	onLoginPress() {
+		this.props.navigation.navigate('LoginModal');
+	}
+
+	/**
+	 * Handle tapping the register button
+	 * Send them to the register flow, or to webview if there's external registration set up
+	 *
+	 * @return 	void
+	 */
+	onRegisterPress() {
+		if( this.props.registerUrl ){
+			this.props.navigation.navigate('WebView', {
+				url: this.props.registerUrl
+			});
+		} else {
+			console.log("REGISTER");
+		}
 	}
 
 	/**
@@ -68,7 +126,7 @@ export default class LoginRegisterPrompt extends Component {
 			outputRange: [0.5, 1]
 		});
 
-		if( height === 0 ){
+		if( height === 0 || !this.state.showPopup ){
 			return null;
 		}
 
@@ -87,8 +145,8 @@ export default class LoginRegisterPrompt extends Component {
 								</TouchableOpacity>}
 						</View>
 						<View style={componentStyles.buttonBar}>
-							<Button title='Register' style={[componentStyles.button, styles.mrTight]} /> 
-							<Button title='Sign In' style={[componentStyles.button, this.props.register ? styles.mlTight : null]} />
+							<Button title='Register' onPress={() => this.onRegisterPress()} style={[componentStyles.button, styles.mrTight]} /> 
+							<Button title='Sign In' onPress={() => this.onLoginPress()} style={[componentStyles.button, this.props.register ? styles.mlTight : null]} />
 						</View>
 					</View>
 				</Animated.View>
