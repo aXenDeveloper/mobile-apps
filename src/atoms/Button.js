@@ -10,9 +10,9 @@ export default class Button extends Component {
 
 	render() {
 		return (
-			<TouchableOpacity style={componentStyles.button} onPress={this.props.onPress}>
+			<TouchableOpacity style={[ componentStyles.button, this.props.style ]} onPress={this.props.onPress}>
 				<React.Fragment>
-					<Image style={componentStyles.icon} resizeMode='stretch' source={this.props.icon} /> 
+					{this.props.icon &&	<Image style={componentStyles.icon} resizeMode='stretch' source={this.props.icon} />}
 					<Text style={componentStyles.text}>{this.props.title}</Text>
 				</React.Fragment>
 			</TouchableOpacity>
@@ -27,8 +27,9 @@ const componentStyles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		backgroundColor: styleVars.primaryButton.backgroundColor,
-		borderRadius: 3,
-		padding: styleVars.spacing.tight
+		borderRadius: 24,
+		height: 30,
+		paddingHorizontal: styleVars.spacing.wide
 	},
 	icon: {
 		width: 16,
@@ -36,7 +37,6 @@ const componentStyles = StyleSheet.create({
 	},
 	text: {
 		color: styleVars.primaryButton.color,
-		fontSize: 15,
-		marginLeft: 6
+		fontSize: styleVars.fontSizes.standard,
 	}
 });

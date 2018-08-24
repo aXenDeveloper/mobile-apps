@@ -25,8 +25,8 @@ const styles = StyleSheet.create({
 	shadowedArea: {
 		backgroundColor: '#fff',
 		shadowColor: '#C8C7CC',
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.6,
-		shadowRadius: 3
+		shadowOffset: { width: 0, height: 5 },
+		shadowOpacity: 0.4,
+		shadowRadius: 6
 	}
 });

@@ -192,6 +192,7 @@ const styles = StyleSheet.create({
 	mbExtraWide: {
 		marginBottom: styleVars.spacing.extraWide
 	},
+	//--
 	mtVeryTight: {
 		marginTop: styleVars.spacing.veryTight
 	},
@@ -209,6 +210,44 @@ const styles = StyleSheet.create({
 	},
 	mtExtraWide: {
 		marginTop: styleVars.spacing.extraWide
+	},
+	//--
+	mlVeryTight: {
+		marginLeft: styleVars.spacing.veryTight
+	},
+	mlTight: {
+		marginLeft: styleVars.spacing.tight
+	},
+	mlStandard: {
+		marginLeft: styleVars.spacing.standard
+	},
+	mlWide: {
+		marginLeft: styleVars.spacing.wide
+	},
+	mlVeryWide: {
+		marginLeft: styleVars.spacing.veryWide
+	},
+	mlExtraWide: {
+		marginLeft: styleVars.spacing.extraWide
+	},
+	//--
+	mrVeryTight: {
+		marginRight: styleVars.spacing.veryTight
+	},
+	mrTight: {
+		marginRight: styleVars.spacing.tight
+	},
+	mrStandard: {
+		marginRight: styleVars.spacing.standard
+	},
+	mrWide: {
+		marginRight: styleVars.spacing.wide
+	},
+	mrVeryWide: {
+		marginRight: styleVars.spacing.veryWide
+	},
+	mrExtraWide: {
+		marginRight: styleVars.spacing.extraWide
 	},
 });
 
