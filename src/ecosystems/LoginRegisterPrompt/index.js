@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Text, Image, View, Animated, Easing, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, Image, View, Animated, Easing, AsyncStorage, TouchableOpacity, StyleSheet } from 'react-native';
 
 import ShadowedArea from "../../atoms/ShadowedArea";
 import Button from "../../atoms/Button";
+import Lang from "../../utils/Lang";
 import styles, { styleVars } from '../../styles';
 
 export default class LoginRegisterPrompt extends Component {	
@@ -27,7 +28,7 @@ export default class LoginRegisterPrompt extends Component {
 			const lastClosed = await AsyncStorage.getItem("@settingStore:loginPopupShown");
 
 			// If the time we last closed it is more than a day ago...
-			if( lastClosed == null || ( lastClosed + 86400 ) < ( Date.now() / 1000 ) ){
+			if( lastClosed == null || ( JSON.parse( lastClosed ) + 86400 ) < ( Date.now() / 1000 ) ){
 				this.setState({
 					showPopup: true
 				});
@@ -67,10 +68,11 @@ export default class LoginRegisterPrompt extends Component {
 		try {
 			await AsyncStorage.setItem(
 				"@settingStore:loginPopupShown",
-				Data.now() / 1000 // seconds
+				JSON.stringify( Date.now() / 1000 ) // seconds
 			);
 		} catch (err) {
 			console.log("Couldn't store a loginPopupShown value");
+			console.log(err);
 		}
 	}
 
@@ -145,8 +147,8 @@ export default class LoginRegisterPrompt extends Component {
 								</TouchableOpacity>}
 						</View>
 						<View style={componentStyles.buttonBar}>
-							<Button title='Register' onPress={() => this.onRegisterPress()} style={[componentStyles.button, styles.mrTight]} /> 
-							<Button title='Sign In' onPress={() => this.onLoginPress()} style={[componentStyles.button, this.props.register ? styles.mlTight : null]} />
+							<Button title={Lang.get('register')} onPress={() => this.onRegisterPress()} style={[componentStyles.button, styles.mrTight]} /> 
+							<Button title={Lang.get('sign_in')} onPress={() => this.onLoginPress()} style={[componentStyles.button, this.props.register ? styles.mlTight : null]} />
 						</View>
 					</View>
 				</Animated.View>

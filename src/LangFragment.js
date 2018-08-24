@@ -36,6 +36,8 @@ const LangFragment = gql`
 		activity_generic: phrase(key: "app_activity_generic")
 		login_prompt: phrase(key: "app_login_prompt")
 		login_register_prompt: phrase(key: "app_login_register_prompt")
+		register: phrase(key: "app_register")
+		sign_in: phrase(key: "app_sign_in")
 	}
 `;
 

@@ -13,7 +13,7 @@ export default class Button extends Component {
 			<TouchableOpacity style={[ componentStyles.button, this.props.style ]} onPress={this.props.onPress}>
 				<React.Fragment>
 					{this.props.icon &&	<Image style={componentStyles.icon} resizeMode='stretch' source={this.props.icon} />}
-					<Text style={componentStyles.text}>{this.props.title}</Text>
+					<Text style={componentStyles.text} numberOfLines={1}>{this.props.title}</Text>
 				</React.Fragment>
 			</TouchableOpacity>
 		);
