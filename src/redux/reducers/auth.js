@@ -28,7 +28,8 @@ export default function auth(state = initialState, { type, payload }) {
 				refresh_token: payload.refresh_token,
 				expires_in: payload.expires_in,
 				access_token: payload.access_token,
-				authenticated: true
+				authenticated: true,
+				networkError: false
 			};
 		case actions.LOGIN_ERROR:
 			return {
@@ -48,7 +49,8 @@ export default function auth(state = initialState, { type, payload }) {
 				checkAuthProcessing: false,
 				authenticated: true,
 				expires_in: payload.expires_in,
-				access_token: payload.access_token
+				access_token: payload.access_token,
+				networkError: false
 			};
 		case actions.CHECK_AUTH_REQUEST_ERROR:
 			// Return object that excludes access_token & expires_in
