@@ -38,6 +38,7 @@ const LangFragment = gql`
 		login_register_prompt: phrase(key: "app_login_register_prompt")
 		register: phrase(key: "app_register")
 		sign_in: phrase(key: "app_sign_in")
+		home_view_error: phrase(key: "app_home_view_error")
 	}
 `;
 

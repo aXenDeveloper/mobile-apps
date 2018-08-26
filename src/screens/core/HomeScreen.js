@@ -15,6 +15,7 @@ import { connect } from "react-redux";
 import Lang from "../../utils/Lang";
 import { Post } from "../../ecosystems/Post";
 import LargeTitle from "../../atoms/LargeTitle";
+import ErrorBox from "../../atoms/ErrorBox";
 import StreamCard from "../../ecosystems/StreamCard";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import ContentCard from "../../ecosystems/ContentCard";
@@ -50,7 +51,16 @@ class HomeScreen extends Component {
 		};
 	}
 
-	async componentDidMount() {
+	componentDidMount() {
+		this.startHomeQuery();
+	}
+
+	async startHomeQuery() {
+		this.setState({
+			loading: true,
+			error: false
+		});
+
 		let queryFragments = [];
 		let queryIncludes = [];
 
@@ -71,15 +81,22 @@ class HomeScreen extends Component {
 			${gql(queryIncludes.join("\n"))}
 		`;
 
-		const { data } = await this.props.client.query({
-			query,
-			variables: {}
-		});
+		try {
+			const { data } = await this.props.client.query({
+				query,
+				variables: {}
+			});
 
-		this.setState({
-			loading: false,
-			data
-		});
+			this.setState({
+				loading: false,
+				data
+			});
+		} catch (err) {
+			this.setState({
+				loading: false,
+				error: true
+			});
+		}
 	}
 
 	/**
@@ -105,10 +122,18 @@ class HomeScreen extends Component {
 		);
 	}
 
+	/**
+	 * Try refreshing the home screen
+	 *
+	 * @return 	void
+	 */
+	refreshAfterError() {
+		this.startHomeQuery();
+	}
+
 	render() {
 		if (this.state.error) {
-			const error = getErrorMessage(this.state.data.error, {});
-			return <Text>{error}</Text>;
+			return <ErrorBox message={Lang.get('home_view_error')} refresh={() => this.refreshAfterError()} />;
 		} else {
 			return (
 				<React.Fragment>
