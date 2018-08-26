@@ -54,7 +54,7 @@ class AppNavigation extends Component {
 				HomeScreen: { 
 					screen: this._HomeTabBar,
 					navigationOptions: {
-						title: "Invision Community"
+						title: this.props.site.board_name
 					}
 				},
 				ForumIndex: { screen: ForumListScreen },
@@ -419,5 +419,6 @@ class AppNavigation extends Component {
 
 export default connect(state => ({
 	user: state.user,
-	auth: state.auth
+	auth: state.auth,
+	site: state.site
 }))(AppNavigation);
