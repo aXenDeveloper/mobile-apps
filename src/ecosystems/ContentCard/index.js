@@ -75,7 +75,7 @@ export default class ContentCard extends Component {
 		}
 
 		return (
-			<TouchableHighlight style={[componentStyles.contentCard, this.props.style]} onPress={this.props.onPress || null}>
+			<TouchableOpacity activeOpacity={styleVars.touchOpacity} style={[componentStyles.contentCard, this.props.style]} onPress={this.props.onPress || null}>
 				<View style={[componentStyles.contentCardInner]}>
 					{this.props.header && (
 						<View style={componentStyles.streamHeader}>
@@ -93,7 +93,7 @@ export default class ContentCard extends Component {
 						</View>
 					)}
 				</View>
-			</TouchableHighlight>
+			</TouchableOpacity>
 		);
 	}
 }

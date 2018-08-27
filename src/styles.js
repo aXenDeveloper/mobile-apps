@@ -10,6 +10,8 @@ export const styleVars = {
 	tabInactive: '#6e797e',
 	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`,
 	placeholderColors: ['#ededed', '#f5f5f5'],
+	touchColor: 'rgba(0,0,0,0.05)',
+	touchOpacity: 0.7,
 	toggleTint: '#1888a7',
 	primaryButton: {
 		backgroundColor: '#3370AA',

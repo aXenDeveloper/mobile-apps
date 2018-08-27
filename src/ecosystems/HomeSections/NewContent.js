@@ -80,11 +80,16 @@ class NewContent extends Component {
 					width: this.props.cardWidth,
 					marginLeft: styleVars.spacing.wide
 				}}
+				onPress={() => this.onPressItem(data)}
 				header={cardPieces.header}
 				image={cardPieces.image}
 				content={cardPieces.content}
 			/>
 		);
+	}
+
+	onPressItem() {
+		console.log('tap');
 	}
 
 	render() {
