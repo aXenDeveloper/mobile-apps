@@ -11,6 +11,7 @@ const NewContentFragment = `
 				__typename
 				indexID
 				itemID
+				objectID
 				url {
 					__typename
 					full

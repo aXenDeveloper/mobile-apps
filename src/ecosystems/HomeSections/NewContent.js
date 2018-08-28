@@ -14,6 +14,7 @@ import LargeTitle from "../../atoms/LargeTitle";
 import UserPhoto from "../../atoms/UserPhoto";
 import ContentCard from "../../ecosystems/ContentCard";
 import getSuitableImage from "../../utils/getSuitableImage";
+import { isSupportedUrl } from "../../utils/isSupportedType";
 import Lang from "../../utils/Lang";
 import styles, { styleVars } from "../../styles";
 
@@ -88,8 +89,19 @@ class NewContent extends Component {
 		);
 	}
 
-	onPressItem() {
-		console.log('tap');
+	onPressItem(data) {
+		const isSupported = isSupportedUrl([ data.url.app, data.url.module, data.url.controller ]);
+
+		if( isSupported ){
+			this.props.navigation.navigate( isSupported, {
+				id: data.itemID,
+				findComment: data.isComment ? data.objectID : null
+			});
+		} else {
+			this.props.navigation.navigate("WebView", {
+				url: data.url.full
+			});
+		}
 	}
 
 	render() {
