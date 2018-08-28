@@ -197,7 +197,13 @@ class TopicViewScreen extends Component {
 	 */
 	onEndReached() {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
+
 			const offsetAdjust = this._currentOffset + this.props.data.forums.topic.posts.length;
+
+			// Don't try loading more if we're already showing everything in the topic
+			if( offsetAdjust >= this.props.data.forums.topic.commentCount ){
+				return;
+			}			
 
 			this.props.data.fetchMore({
 				variables: {
