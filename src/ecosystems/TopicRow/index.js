@@ -37,17 +37,20 @@ export default class TopicRow extends Component {
 			return this.loadingComponent();
 		}
 
+		// Only show as unread if we're a member and unread flag is true
+		const showAsUnread = this.props.isGuest || this.props.data.unread;
+
 		return (
-			<ContentRow withSpace unread={this.props.data.unread} onPress={this.props.onPress}>
+			<ContentRow withSpace unread={showAsUnread} onPress={this.props.onPress}>
 				<View style={styles.topicRowInner}>
 					<View style={styles.topicInfo}>
 						<View style={styles.topicTitle}>
-							{this.props.data.unread ? <TopicIcon style={styles.topicIcon} unread={this.props.data.unread} /> : null}
-							<Text style={[styles.topicTitleText, this.props.data.unread ? stylesheet.title : stylesheet.titleRead]} numberOfLines={1}>
+							{!this.props.isGuest && showAsUnread ? <TopicIcon style={styles.topicIcon} unread={this.props.data.unread} /> : null}
+							<Text style={[styles.topicTitleText, showAsUnread ? stylesheet.title : stylesheet.titleRead]} numberOfLines={1}>
 								{this.props.data.title}
 							</Text>
 						</View>
-						<Text style={[styles.topicSnippet, this.props.data.unread ? stylesheet.text : stylesheet.textRead]} numberOfLines={1}>
+						<Text style={[styles.topicSnippet, showAsUnread ? stylesheet.text : stylesheet.textRead]} numberOfLines={1}>
 							{this.props.data.snippet}
 						</Text>
 					</View>

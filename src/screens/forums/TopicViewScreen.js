@@ -21,7 +21,7 @@ import LoadMoreComments from "../../atoms/LoadMoreComments";
 import EndOfComments from "../../atoms/EndOfComments";
 
 const TopicViewQuery = gql`
-	query TopicViewQuery($id: ID!, $offsetAdjust: Int, $offsetPosition: posts_offset_position, $limit: Int) {
+	query TopicViewQuery($id: ID!, $offsetAdjust: Int, $offsetPosition: posts_offset_position, $limit: Int, $findComment: Int) {
 		forums {
 			topic(id: $id) {
 				__typename
@@ -34,8 +34,9 @@ const TopicViewQuery = gql`
 					controller
 				}
 				timeLastRead
-				postCount
-				unreadPostPosition
+				commentCount
+				unreadCommentPosition
+				findCommentPosition(findComment: $findComment)
 				started
 				title
 				author {
@@ -51,7 +52,7 @@ const TopicViewQuery = gql`
 					__typename
 					canComment
 				}
-				posts(offsetAdjust: $offsetAdjust, offsetPosition: $offsetPosition, limit: $limit) {
+				posts(offsetAdjust: $offsetAdjust, offsetPosition: $offsetPosition, limit: $limit, findComment: $findComment) {
 					...PostFragment
 				}
 			}
@@ -149,13 +150,17 @@ class TopicViewScreen extends Component {
 		// Update our offset tracker, but only if we haven't done it before, otherwise
 		// we'll replace our offset with the initial offset every time the component updates
 		if (!this._initialOffsetDone && !this.props.data.loading && !this.props.data.error) {
-			if (this.props.data.variables.offsetPosition == "UNREAD" && this.props.data.forums.topic.unreadPostPosition) {
+			if (this.props.data.variables.offsetPosition == "ID" && this.props.data.forums.topic.findCommentPosition) {
+				// If we're starting at a specific post, then set the offset to that post's position
+				this.setCurrentOffset(this.props.data.forums.topic.findCommentPosition);
+				this._initialOffsetDone = true;
+			} else if (this.props.data.variables.offsetPosition == "UNREAD" && this.props.data.forums.topic.unreadCommentPosition) {
 				// If we're showing by unread, then the offset will be the last unread post position
-				this.setCurrentOffset(this.props.data.forums.topic.unreadPostPosition);
+				this.setCurrentOffset(this.props.data.forums.topic.unreadCommentPosition);
 				this._initialOffsetDone = true;
 			} else if (this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0) {
 				// If we're showing the last post, the offset will be the total post count plus our adjustment
-				this.setCurrentOffset(this.props.data.forums.topic.postCount + this.props.data.variables.offsetAdjust);
+				this.setCurrentOffset(this.props.data.forums.topic.commentCount + this.props.data.variables.offsetAdjust);
 				this.setState({ reachedEnd: true });
 				this.scrollToEnd();
 				this._initialOffsetDone = true;
@@ -334,7 +339,7 @@ class TopicViewScreen extends Component {
 	 */
 	getLoadPreviousButton() {
 		if (this.state.earlierPostsAvailable) {
-			return <LoadMoreComments loading={this.state.loadingEarlierPosts} onPress={() => this.loadEarlierComments()} label={Lang.get('load_earlier')} />;
+			return <LoadMoreComments loading={this.state.loadingEarlierPosts} onPress={() => this.loadEarlierComments()} label={Lang.get("load_earlier")} />;
 		}
 
 		return null;
@@ -350,7 +355,7 @@ class TopicViewScreen extends Component {
 	renderItem(item, topicData) {
 		// If this is the unread bar, just return it
 		if (!_.isUndefined(item.isUnreadBar)) {
-			return <UnreadIndicator label={Lang.get('unread_posts')} />;
+			return <UnreadIndicator label={Lang.get("unread_posts")} />;
 		}
 
 		return (
@@ -392,7 +397,7 @@ class TopicViewScreen extends Component {
 			// Figure out if we need to show the unread bar. Get the index of the first
 			// unread item and insert an unread object into our post array.
 			// @todo check member id here to skip faster
-			if (topicData.unreadPostPosition && topicData.timeLastRead) {
+			if (topicData.unreadCommentPosition && topicData.timeLastRead) {
 				let firstUnread = listData.findIndex(post => post.timestamp > topicData.timeLastRead);
 
 				if (firstUnread !== -1) {
@@ -426,7 +431,7 @@ class TopicViewScreen extends Component {
 											topicID: topicData.id
 										});
 									}}
-									placeholder={Lang.get('write_reply')}
+									placeholder={Lang.get("write_reply")}
 								/>
 							</Pager>
 						)}
@@ -441,8 +446,12 @@ export default graphql(TopicViewQuery, {
 	options: props => {
 		let offsetPosition = "FIRST";
 		let offsetAdjust = 0;
+		let findComment = null;
 
-		if (props.navigation.state.params.showLastComment || Expo.Constants.manifest.extra.contentBehavior == "last") {
+		if (_.isNumber(props.navigation.state.params.findComment)) {
+			offsetPosition = "ID";
+			findComment = props.navigation.state.params.findComment;
+		} else if (props.navigation.state.params.showLastComment || Expo.Constants.manifest.extra.contentBehavior == "last") {
 			// If we're showing the last comment, we'll load the previous 'page' of posts too
 			// via the offsetAdjust arg
 			offsetPosition = "LAST";
@@ -461,7 +470,8 @@ export default graphql(TopicViewQuery, {
 				id: props.navigation.state.params.id,
 				limit: Expo.Constants.manifest.extra.per_page,
 				offsetPosition,
-				offsetAdjust
+				offsetAdjust,
+				findComment
 			}
 		};
 	}

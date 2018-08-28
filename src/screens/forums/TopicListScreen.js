@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { Text, View, Button, ScrollView, FlatList } from "react-native";
 import gql from "graphql-tag";
-import { graphql } from "react-apollo";
+import { graphql, compose } from "react-apollo";
+import { connect } from "react-redux";
 
 import Lang from "../../utils/Lang";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import relativeTime from "../../utils/RelativeTime";
+import getErrorMessage from "../../utils/getErrorMessage";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import Pager from "../../atoms/Pager";
 import PagerButton from "../../atoms/PagerButton";
@@ -21,7 +23,7 @@ const TopicListQuery = gql`
 				topics(offset: $offset, limit: $limit) {
 					id
 					title
-					postCount
+					commentCount
 					content(stripped: true, singleLine: true, truncateLength: 100)
 					pinned
 					locked
@@ -177,7 +179,7 @@ class TopicListScreen extends Component {
 			id: topic.id,
 			unread: topic.isUnread,
 			title: topic.title,
-			replies: parseInt(topic.postCount),
+			replies: parseInt(topic.commentCount),
 			author: topic.author.name,
 			started: topic.started,
 			snippet: topic.content.trim(),
@@ -200,6 +202,7 @@ class TopicListScreen extends Component {
 		return (
 			<TopicRow
 				data={item}
+				isGuest={!this.props.auth.authenticated}
 				onPress={() =>
 					this.props.navigation.navigate("TopicView", {
 						id: item.id,
@@ -268,13 +271,18 @@ class TopicListScreen extends Component {
 	}
 }
 
-export default graphql(TopicListQuery, {
-	options: props => ({
-		notifyOnNetworkStatusChange: true,
-		variables: {
-			forum: props.navigation.state.params.id,
-			offset: 0,
-			limit: Expo.Constants.manifest.extra.per_page
-		}
-	})
-})(TopicListScreen);
+export default compose(
+	graphql(TopicListQuery, {
+		options: props => ({
+			notifyOnNetworkStatusChange: true,
+			variables: {
+				forum: props.navigation.state.params.id,
+				offset: 0,
+				limit: Expo.Constants.manifest.extra.per_page
+			}
+		})
+	}),
+	connect(state => ({
+		auth: state.auth
+	}))
+)(TopicListScreen);
