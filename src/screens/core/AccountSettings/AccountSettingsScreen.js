@@ -44,7 +44,15 @@ class AccountSettingsScreen extends Component {
 							this.props.navigation.navigate("CommentViewSettingsScreen");
 						}
 					},
-				],
+					{
+						key: "home_screen",
+						title: "Default Home Screen",
+						value: 'Community overview',
+						onPress: () => {
+							this.props.navigation.navigate("CommentViewSettingsScreen");
+						}
+					},
+				]
 			}
 		];
 	}

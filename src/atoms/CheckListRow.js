@@ -24,7 +24,7 @@ const componentStyles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'row',
 		alignItems: 'center',
-		paddingVertical: styleVars.spacing.standard,
+		paddingVertical: styleVars.spacing.wide,
 		paddingHorizontal: styleVars.spacing.wide
 	},
 	check: {
