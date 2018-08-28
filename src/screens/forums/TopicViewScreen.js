@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Text, View, Button, ScrollView, FlatList, TouchableOpacity, TextInput } from "react-native";
 import gql from "graphql-tag";
-import { graphql } from "react-apollo";
+import { graphql, compose } from "react-apollo";
+import { connect } from "react-redux";
 import Modal from "react-native-modal";
 import _ from "underscore";
 
@@ -19,6 +20,7 @@ import DummyTextInput from "../../atoms/DummyTextInput";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import LoadMoreComments from "../../atoms/LoadMoreComments";
 import EndOfComments from "../../atoms/EndOfComments";
+import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 
 const TopicViewQuery = gql`
 	query TopicViewQuery($id: ID!, $offsetAdjust: Int, $offsetPosition: posts_offset_position, $limit: Int, $findComment: Int) {
@@ -51,6 +53,7 @@ const TopicViewQuery = gql`
 				itemPermissions {
 					__typename
 					canComment
+					canCommentIfSignedIn
 				}
 				posts(offsetAdjust: $offsetAdjust, offsetPosition: $offsetPosition, limit: $limit, findComment: $findComment) {
 					...PostFragment
@@ -360,8 +363,18 @@ class TopicViewScreen extends Component {
 	 */
 	renderItem(item, topicData) {
 		// If this is the unread bar, just return it
-		if (!_.isUndefined(item.isUnreadBar)) {
+		if (item.id === 'unread') {
 			return <UnreadIndicator label={Lang.get("unread_posts")} />;
+		} else if( item.id === 'loginPrompt' ){
+			return <LoginRegisterPrompt
+				style={{ marginBottom: 7 }}
+				register={this.props.site.allow_reg !== "DISABLED"}
+				registerUrl={this.props.site.allow_reg_target || null}
+				navigation={this.props.navigation}
+				message={Lang.get( this.props.site.allow_reg !== "DISABLED" ? 'login_register_prompt_comment' : 'login_prompt_comment', {
+					siteName: this.props.site.board_name
+				})}
+			/>;
 		}
 
 		return (
@@ -385,6 +398,39 @@ class TopicViewScreen extends Component {
 		);
 	}
 
+	/**
+	 * Modify our raw posts array to insert components for login prompt, unread bar etc.
+	 * This function inserts a dummy object that renderItem() will see to use the correct component
+	 *
+	 * @return 	array
+	 */
+	getListData() {
+		const topicData = this.props.data.forums.topic;
+		const returnedData = [...topicData.posts]; // Need to clone here in case we splice shortly...
+
+		// If they're a guest, insert an item so that a login prompt will show
+		// Only if we're at the start of the topic
+		if( !this.props.auth.authenticated && topicData.posts[0].isFirstPost && topicData.itemPermissions.canCommentIfSignedIn ){
+			returnedData.splice(1, 0, {
+				id: "loginPrompt"
+			});
+		}
+
+		// Figure out if we need to show the unread bar. Get the index of the first
+		// unread item and insert an unread object into our post array.
+		if (this.props.auth.authenticated && topicData.unreadCommentPosition && topicData.timeLastRead) {
+			let firstUnread = topicData.posts.findIndex(post => post.timestamp > topicData.timeLastRead);
+
+			if (firstUnread !== -1) {
+				returnedData.splice(firstUnread, 0, {
+					id: "unread", // We need a dummy id for keyExtractor to read
+				});
+			}
+		}
+
+		return returnedData;
+	}
+
 	render() {
 		// status 3 == fetchMore, status 4 == refreshing
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
@@ -398,21 +444,7 @@ class TopicViewScreen extends Component {
 			return <Text>Error: {error}</Text>;
 		} else {
 			const topicData = this.props.data.forums.topic;
-			const listData = [...topicData.posts]; // Need to clone here in case we splice shortly...
-
-			// Figure out if we need to show the unread bar. Get the index of the first
-			// unread item and insert an unread object into our post array.
-			// @todo check member id here to skip faster
-			if (topicData.unreadCommentPosition && topicData.timeLastRead) {
-				let firstUnread = listData.findIndex(post => post.timestamp > topicData.timeLastRead);
-
-				if (firstUnread !== -1) {
-					listData.splice(firstUnread, 0, {
-						id: "unread", // We need a dummy id for keyExtractor to read
-						isUnreadBar: true
-					});
-				}
-			}
+			const listData = this.getListData(); 
 
 			return (
 				<View style={{ flex: 1 }}>
@@ -448,37 +480,43 @@ class TopicViewScreen extends Component {
 	}
 }
 
-export default graphql(TopicViewQuery, {
-	options: props => {
-		let offsetPosition = "FIRST";
-		let offsetAdjust = 0;
-		let findComment = null;
+export default compose(
+	graphql(TopicViewQuery, {
+		options: props => {
+			let offsetPosition = "FIRST";
+			let offsetAdjust = 0;
+			let findComment = null;
 
-		if (_.isNumber(props.navigation.state.params.findComment)) {
-			offsetPosition = "ID";
-			findComment = props.navigation.state.params.findComment;
-		} else if (props.navigation.state.params.showLastComment || Expo.Constants.manifest.extra.contentBehavior == "last") {
-			// If we're showing the last comment, we'll load the previous 'page' of posts too
-			// via the offsetAdjust arg
-			offsetPosition = "LAST";
-			offsetAdjust = Expo.Constants.manifest.extra.per_page * -1;
-		} else {
-			if (Expo.Constants.manifest.extra.contentBehavior == "unread") {
-				offsetPosition = "UNREAD";
+			if (_.isNumber(props.navigation.state.params.findComment)) {
+				offsetPosition = "ID";
+				findComment = props.navigation.state.params.findComment;
+			} else if (props.navigation.state.params.showLastComment || Expo.Constants.manifest.extra.contentBehavior == "last") {
+				// If we're showing the last comment, we'll load the previous 'page' of posts too
+				// via the offsetAdjust arg
+				offsetPosition = "LAST";
+				offsetAdjust = Expo.Constants.manifest.extra.per_page * -1;
+			} else {
+				if (Expo.Constants.manifest.extra.contentBehavior == "unread") {
+					offsetPosition = "UNREAD";
+				}
+
+				offsetAdjust = props.navigation.state.params.offsetAdjust || 0;
 			}
 
-			offsetAdjust = props.navigation.state.params.offsetAdjust || 0;
+			return {
+				notifyOnNetworkStatusChange: true,
+				variables: {
+					id: props.navigation.state.params.id,
+					limit: Expo.Constants.manifest.extra.per_page,
+					offsetPosition,
+					offsetAdjust,
+					findComment
+				}
+			};
 		}
-
-		return {
-			notifyOnNetworkStatusChange: true,
-			variables: {
-				id: props.navigation.state.params.id,
-				limit: Expo.Constants.manifest.extra.per_page,
-				offsetPosition,
-				offsetAdjust,
-				findComment
-			}
-		};
-	}
-})(TopicViewScreen);
+	}),
+	connect(state => ({
+		auth: state.auth,
+		site: state.site
+	}))
+)(TopicViewScreen);

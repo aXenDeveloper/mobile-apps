@@ -25,7 +25,7 @@ export default class UserPhoto extends Component {
 					style={[photoSize, componentStyles.photo, !_.isUndefined( this.props.anon ) && this.props.anon ? componentStyles.anonymous : null]}
 					resizeMode="cover"
 				/>
-				{!_.isUndefined(this.props.online) && (
+				{_.isBoolean(this.props.online) && (
 					<View
 						style={[
 							componentStyles.onlineBubble,

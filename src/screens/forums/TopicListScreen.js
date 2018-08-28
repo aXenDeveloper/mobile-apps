@@ -9,6 +9,7 @@ import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import relativeTime from "../../utils/RelativeTime";
 import getErrorMessage from "../../utils/getErrorMessage";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
+import ErrorBox from "../../atoms/ErrorBox";
 import Pager from "../../atoms/Pager";
 import PagerButton from "../../atoms/PagerButton";
 import SectionHeader from "../../atoms/SectionHeader";
@@ -226,7 +227,7 @@ class TopicListScreen extends Component {
 			);
 		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, TopicListScreen.errors);
-			return <Text>{error}</Text>;
+			return <ErrorBox message={Lang.get('topic_view_error')} refresh={() => this.refreshAfterError()} />;
 		} else {
 			const forumData = this.props.data.forums.forum;
 			const settingsData = this.props.data.core.settings;

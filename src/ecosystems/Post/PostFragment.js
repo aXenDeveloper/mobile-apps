@@ -17,8 +17,10 @@ const PostFragment = gql`
 			id
 			photo
 			name
+			isOnline
 		}
 		content
+		isFirstPost
 		reputation {
 			__typename
 			canReact

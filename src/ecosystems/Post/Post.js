@@ -269,13 +269,15 @@ class Post extends Component {
 			return this.loadingComponent();
 		}
 
+		const repButton = this.getReputationButton();
+
 		return (
 			<TouchableHighlight style={styles.postWrapper}>
 				<ShadowedArea style={styles.post}>
 					<View style={styles.postHeader}>
 						<TouchableOpacity style={styles.postInfo} onPress={this.props.profileHandler}>
 							<View style={styles.postInfo}>
-								<UserPhoto url={this.props.data.author.photo} size={36} />
+								<UserPhoto url={this.props.data.author.photo} online={this.props.data.author.isOnline || null} size={36} />
 								<View style={styles.meta}>
 									<Text style={styles.username}>{this.props.data.author.name}</Text>
 									<Text style={styles.date}>{relativeTime.long(this.props.data.timestamp)}</Text>
@@ -307,10 +309,11 @@ class Post extends Component {
 							)}
 						</Animatable.View>
 					</View>
-					<PostControls>
-						{this.props.canReply && <PostControl label={Lang.get('quote')} onPress={this.props.onPressReply} />}
-						{this.getReputationButton()}
-					</PostControls>
+					{(repButton || this.props.canReply) &&
+						<PostControls>
+							{this.props.canReply && <PostControl label={Lang.get('quote')} onPress={this.props.onPressReply} />}
+							{repButton}
+						</PostControls>}
 					<ActionSheet
 						ref={o => (this._actionSheet = o)}
 						title={Lang.get('post_options')}
@@ -363,10 +366,8 @@ const styles = StyleSheet.create({
 		color: "#8F8F8F"
 	},
 	postContentContainer: {
-		marginTop: 16
-	},
-	postContent: {
-		fontSize: styleVars.fontSizes.content
+		marginTop: 16,
+		marginBottom: 16
 	},
 	postMenu: {
 		width: 24,

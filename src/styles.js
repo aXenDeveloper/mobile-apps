@@ -28,7 +28,7 @@ export const styleVars = {
 	fontSizes: {
 		small: 13,
 		standard: 14,
-		content: 16,
+		content: 15,
 		large: 17
 	},
 	lineHeight: {
@@ -259,7 +259,7 @@ export default styles;
 export const richTextStyles = (dark) => ({
 	defaultTextStyle: {
 		color: dark ? '#fff' : '#222',
-		//fontSize: 15,
+		fontSize: styleVars.fontSizes.content,
 		lineHeight: 21
 	},
 	tagStyles: {

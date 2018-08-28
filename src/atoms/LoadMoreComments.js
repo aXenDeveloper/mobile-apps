@@ -25,17 +25,21 @@ export default class LoadMoreComments extends Component {
 const componentStyles = StyleSheet.create({
 	wrapper: {
 		display: "flex",
+		flexDirection: 'row',
 		alignItems: "center",
-		marginTop: 12,
-		marginBottom: 8
+		marginTop: styleVars.spacing.standard,
+		marginBottom: styleVars.spacing.tight,
+		marginHorizontal: styleVars.spacing.standard
 	},
 	button: {
 		backgroundColor: "rgba(0,0,0,0.05)",
 		paddingHorizontal: 12,
-		paddingVertical: 7
+		paddingVertical: 7,
+		flexGrow: 1
 	},
 	buttonText: {
-		fontSize: 11
+		fontSize: 11,
+		textAlign: 'center'
 	},
 	loadingText: {
 		color: 'rgba(0,0,0,0.3)'

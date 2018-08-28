@@ -7,21 +7,24 @@ export default class PostControls extends Component {
 	}
 
 	render() {
+		if( !this.props.children.length ){
+			return null;
+		}
+
 		return (
-			<View style={styles.postControls}>
+			<View style={[componentStyles.postControls, this.props.style]}>
 				{this.props.children}
 			</View>
 		);
 	}
 }
 
-const styles = StyleSheet.create({
+const componentStyles = StyleSheet.create({
 	postControls: {
 		borderTopWidth: 1,
 		borderTopColor: '#CED6DB',
 		flexDirection: 'row',
 		alignItems: 'stretch',
 		justifyContent: 'center',
-		marginTop: 16
 	}
 });
