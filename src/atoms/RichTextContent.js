@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Image, Dimensions } from "react-native";
+import { Text, View, StyleSheet, Image, Dimensions } from "react-native";
 import HTML from "react-native-render-html";
+import _ from "underscore";
 
-import { styleVars, richTextStyles } from "../styles.js";
+import Embed from '../ecosystems/Embed';
+import { styleVars, richTextStyles } from "../styles";
 import dom from "../utils/DOM";
 
 export default class RichTextContent extends Component {
@@ -46,18 +48,32 @@ export default class RichTextContent extends Component {
 				...(node.attribs || {}),
 				style: `marginBottom: 0`
 			};
+			return node;
+		}
+
 		// If this is a Text node within the citation, add the citation text styling
-		} else if (parent && parent.attribs.class === "ipsQuote_citation") {
+		if (parent && parent.attribs.class === "ipsQuote_citation") {
 			node.attribs = {
 				...(node.attribs || {}),
 				style: styleVars.citationTextStyle
 			};
+			return node;
 		}
+
+		// Internal embeds
+		/*if (name === "iframe" && !_.isUndefined( node.attribs['data-embedcontent'] ) && !_.isUndefined( node.attribs['data-embedid'] ) ) {
+			return <Text>THis is an embed</Text>
+		}*/
 	}
 
 	renderers() {
 		return {
-			br: () => null
+			br: () => null,
+			iframe: ({...attribs}) => {
+				if( !_.isUndefined( attribs['data-embedcontent'] ) ){
+					return <Embed url={attribs.src} key={attribs['data-embedid']} />;
+				}
+			}
 		};
 	}
 
