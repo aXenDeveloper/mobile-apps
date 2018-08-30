@@ -19,6 +19,8 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { connect } from "react-redux";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
+import { IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
+import introspectionQueryResultData from '../fragmentTypes.json';
 import _ from "underscore";
 
 import LoginScreen from "./core/LoginScreen";
@@ -76,6 +78,13 @@ class RootScreen extends Component {
 			showOfflineBanner: false
 		};
 
+		// In order for Apollo to use fragments with union types, as we do for generic core_Content
+		// queries, we need to pass it the schema definition in advance. 
+		// See https://www.apollographql.com/docs/react/advanced/fragments.html#fragment-matcher
+		const fragmentMatcher = new IntrospectionFragmentMatcher({
+			introspectionQueryResultData
+		});
+
 		// Apollo config & setup
 		const authLink = (operation, next) => {
 			operation.setContext(context => ({
@@ -99,7 +108,7 @@ class RootScreen extends Component {
 		]);
 		this._client = new ApolloClient({
 			link: link,
-			cache: new InMemoryCache()
+			cache: new InMemoryCache({ fragmentMatcher })
 		});
 	}
 

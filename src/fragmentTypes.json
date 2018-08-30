@@ -1,0 +1,18 @@
+{
+	"__schema": {
+		"types": [
+			{
+				"kind": "UNION",
+				"name": "core_Content",
+				"possibleTypes": [
+					{
+						"name": "core_Comment"
+					},
+					{
+						"name": "core_Item"
+					}
+				]
+			}
+		]
+	}
+}
