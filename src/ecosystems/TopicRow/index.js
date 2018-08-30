@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableHighlight } from 'react-native';
-/*import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient';
-import { Svg } from 'expo';*/
 
+import Lang from '../../utils/Lang';
 import { PlaceholderElement, PlaceholderContainer } from '../../ecosystems/Placeholder';
 import ShadowedArea from '../../atoms/ShadowedArea';
 import TopicIcon from '../../atoms/TopicIcon';
@@ -10,7 +9,7 @@ import LockedIcon from '../../atoms/LockedIcon';
 import TopicStatus from '../../atoms/TopicStatus';
 import LastPostInfo from '../../ecosystems/LastPostInfo';
 import ContentRow from '../../ecosystems/ContentRow';
-import stylesheet from '../../styles.js';
+import styles from '../../styles.js';
 
 export default class TopicRow extends Component {	
 	constructor(props) {
@@ -20,12 +19,12 @@ export default class TopicRow extends Component {
 	loadingComponent() {
 		return (
 			<ContentRow withSpace>
-				<PlaceholderContainer height={48} style={styles.topicRowLoading}>
+				<PlaceholderContainer height={48} style={componentStyles.topicRowLoading}>
 					<PlaceholderElement width='80%' height={15} top={4}/>
 					<PlaceholderElement width='70%' height={12} top={26} />
 					<PlaceholderElement circle radius={30} right={0} top={0} />
 				</PlaceholderContainer>
-				<PlaceholderContainer height={20} style={styles.topicStatusesLoading}>
+				<PlaceholderContainer height={20} style={componentStyles.topicStatusesLoading}>
 					<PlaceholderElement width='30%' height={14} />
 				</PlaceholderContainer>
 			</ContentRow>
@@ -42,31 +41,31 @@ export default class TopicRow extends Component {
 
 		return (
 			<ContentRow withSpace unread={showAsUnread} onPress={this.props.onPress}>
-				<View style={styles.topicRowInner}>
-					<View style={styles.topicInfo}>
-						<View style={styles.topicTitle}>
-							{!this.props.isGuest && showAsUnread ? <TopicIcon style={styles.topicIcon} unread={this.props.data.unread} /> : null}
-							<Text style={[styles.topicTitleText, showAsUnread ? stylesheet.title : stylesheet.titleRead]} numberOfLines={1}>
+				<View style={componentStyles.topicRowInner}>
+					<View style={componentStyles.topicInfo}>
+						<View style={componentStyles.topicTitle}>
+							{!this.props.isGuest && showAsUnread ? <TopicIcon style={componentStyles.topicIcon} unread={this.props.data.unread} /> : null}
+							<Text style={[componentStyles.topicTitleText, showAsUnread ? styles.title : styles.titleRead]} numberOfLines={1}>
 								{this.props.data.title}
 							</Text>
 						</View>
-						<Text style={[styles.topicSnippet, showAsUnread ? stylesheet.text : stylesheet.textRead]} numberOfLines={1}>
+						<Text style={[componentStyles.topicSnippet, showAsUnread ? styles.text : styles.textRead]} numberOfLines={1}>
 							{this.props.data.snippet}
 						</Text>
 					</View>
-					<LastPostInfo style={styles.lastPost} photo={this.props.data.lastPostPhoto} photoSize={30} timestamp={this.props.data.lastPostDate} />
+					<LastPostInfo style={componentStyles.lastPost} photo={this.props.data.lastPostPhoto} photoSize={30} timestamp={this.props.data.lastPostDate} />
 				</View>
-				<View style={styles.topicStatuses}>
-					{this.props.data.hot ? <TopicStatus style={styles.topicStatusesText} type="hot" /> : null}
-					{this.props.data.pinned ? <TopicStatus style={styles.topicStatusesText} type="pinned" /> : null}
-					<Text style={[styles.topicStatusesText, styles.topicMetaText]}>{this.props.data.replies} replies</Text>
+				<View style={componentStyles.topicStatuses}>
+					{this.props.data.hot ? <TopicStatus style={componentStyles.topicStatusesText} type="hot" /> : null}
+					{this.props.data.pinned ? <TopicStatus style={componentStyles.topicStatusesText} type="pinned" /> : null}
+					<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText]}>{Lang.pluralize(Lang.get('replies'), this.props.data.replies)}</Text>
 				</View>
 			</ContentRow>
 		);
 	}
 }
 
-const styles = StyleSheet.create({
+const componentStyles = StyleSheet.create({
 	// Loading styles
 	topicRowLoading: {
 		paddingLeft: 15,
