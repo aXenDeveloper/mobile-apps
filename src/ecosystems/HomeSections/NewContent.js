@@ -47,7 +47,7 @@ class NewContent extends Component {
 				<React.Fragment>
 					<UserPhoto url={data.author.photo} size={20} />
 					<Text style={[componentStyles.streamMetaText, componentStyles.streamMetaAction]} numberOfLines={1}>
-						{Lang.buildStreamActionString( data )}
+						{Lang.buildActionString(data.isComment, data.isReview, data.firstCommentRequired, data.author.name, data.articleLang)}
 					</Text>
 				</React.Fragment>
 			),

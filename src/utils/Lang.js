@@ -108,34 +108,37 @@ class Lang {
 
 	/**
 	 * When provided with a search result object, this method will return the action string
-	 * e.g. 'Dave replied to a topic' or 'Susan posted a gallery image'
+	 * e.g. 'Dave replied to a topic' or 'Susan posted a gallery image'.
 	 *
-	 * @param 	string 		word 	Phrase to parse
-	 * @param 	array 		params 	Values to swap into the phrase
+	 * @param 	boolean 		isComment 				Is this content a comment?
+	 * @param 	boolean 		isReview 				Is this content a review?
+	 * @param 	boolean			firstCommentRequired	Does the content container require a first comment (e.g. like a forum)
+	 * @param 	string 			user					Username to sprintf
+	 * @param 	object 			articleLang				Object containing words for indef article, def article etc.
 	 * @return 	string
 	 */
-	buildStreamActionString(data) {
+	buildActionString(isComment = false, isReview = false, firstCommentRequired = false, user, articleLang) {
 		// Check we have the required data
-		if( _.isUndefined( data.firstCommentRequired ) || _.isUndefined( data.articleLang ) ){
+		if( _.isUndefined( articleLang ) ){
 			return this.get('activity_generic');
 		}
 
 		try {
 			let langKey;
 
-			if( data.isComment ){
-				if( data.firstCommentRequired ){
+			if( isComment ){
+				if( firstCommentRequired ){
 					langKey = 'activity_replied';
 				} else {
 					langKey = 'activity_commented';
 				}
-			} else if( data.isReview ){
+			} else if( isReview ){
 				langKey = 'activity_reviewed';
 			} else {
 				langKey = 'activity_posted_item';
 			}
 
-			return this.get(langKey, { user: data.author.name, article: data.articleLang.indefinite });
+			return this.get(langKey, { user, article: articleLang.indefinite });
 		} catch (err) {
 			return this.get('activity_generic');
 		}
