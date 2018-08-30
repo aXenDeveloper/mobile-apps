@@ -36,6 +36,11 @@ export const styleVars = {
 	},
 	positive: '#43A047',
 	negative: '#E53935',
+	borderColors: {
+		dark: '#CED6DB',
+		medium: '#e1e7eb',
+		light: '#f5f5f5',
+	}
 };
 
 /* REUSABLE STYLE CLASSES */

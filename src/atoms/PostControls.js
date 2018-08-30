@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 
+import { styleVars } from '../styles';
+
 export default class PostControls extends Component {	
 	constructor(props) {
 		super(props);
@@ -22,7 +24,7 @@ export default class PostControls extends Component {
 const componentStyles = StyleSheet.create({
 	postControls: {
 		borderTopWidth: 1,
-		borderTopColor: '#CED6DB',
+		borderTopColor: styleVars.borderColors.dark,
 		flexDirection: 'row',
 		alignItems: 'stretch',
 		justifyContent: 'center',
