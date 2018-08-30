@@ -24,7 +24,7 @@ const TopicListQuery = gql`
 				topics(offset: $offset, limit: $limit) {
 					id
 					title
-					commentCount
+					postCount
 					content(stripped: true, singleLine: true, truncateLength: 100)
 					pinned
 					locked
@@ -180,7 +180,7 @@ class TopicListScreen extends Component {
 			id: topic.id,
 			unread: topic.isUnread,
 			title: topic.title,
-			replies: parseInt(topic.commentCount),
+			replies: parseInt(topic.postCount),
 			author: topic.author.name,
 			started: topic.started,
 			snippet: topic.content.trim(),

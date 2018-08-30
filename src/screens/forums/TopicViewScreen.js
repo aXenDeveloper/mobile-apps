@@ -23,7 +23,7 @@ import EndOfComments from "../../atoms/EndOfComments";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 
 const TopicViewQuery = gql`
-	query TopicViewQuery($id: ID!, $offsetAdjust: Int, $offsetPosition: posts_offset_position, $limit: Int, $findComment: Int) {
+	query TopicViewQuery($id: ID!, $offsetAdjust: Int, $offsetPosition: forums_Post_offset_position, $limit: Int, $findComment: Int) {
 		forums {
 			topic(id: $id) {
 				__typename
@@ -36,7 +36,7 @@ const TopicViewQuery = gql`
 					controller
 				}
 				timeLastRead
-				commentCount
+				postCount
 				unreadCommentPosition
 				findCommentPosition(findComment: $findComment)
 				started

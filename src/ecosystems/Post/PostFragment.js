@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 const PostFragment = gql`
-	fragment PostFragment on forums_post {
+	fragment PostFragment on forums_Post {
 		id
 		__typename
 		url {
