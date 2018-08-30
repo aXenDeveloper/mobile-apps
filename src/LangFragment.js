@@ -2,6 +2,7 @@ import gql from "graphql-tag";
 
 const LangFragment = gql`
 	fragment LangFragment on core_Language {
+		replies: phrase(key: "app_replies")
 		topics: phrase(key: "app_topics")
 		posts: phrase(key: "app_posts")
 		quote: phrase(key: "app_quote")
