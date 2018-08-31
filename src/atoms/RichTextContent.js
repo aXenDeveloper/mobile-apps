@@ -3,8 +3,8 @@ import { Text, View, StyleSheet, Image, Dimensions } from "react-native";
 import HTML from "react-native-render-html";
 import _ from "underscore";
 
-import Lightbox from '../ecosystems/Lightbox';
-import Embed from '../ecosystems/Embed';
+import Lightbox from "../ecosystems/Lightbox";
+import Embed from "../ecosystems/Embed";
 import { styleVars, richTextStyles } from "../styles";
 import dom from "../utils/DOM";
 
@@ -48,7 +48,7 @@ export default class RichTextContent extends Component {
 		const { name, parent } = node;
 
 		// Remove bottom margin from last p. Behaves like :last-child.
-		if (name === "p" && dom.isLastChild(node) ) {
+		if (name === "p" && dom.isLastChild(node)) {
 			node.attribs = {
 				...(node.attribs || {}),
 				style: `marginBottom: 0`
@@ -65,19 +65,19 @@ export default class RichTextContent extends Component {
 			return node;
 		}
 
-		if( name === 'img' && !_.isUndefined( node.attribs['data-fileid'] ) ){
-			this._lightboxedImages[ parent.attribs.href ] = true;
+		if (name === "img" && !_.isUndefined(node.attribs["data-fileid"])) {
+			this._lightboxedImages[parent.attribs.href] = true;
 		}
 	}
 
 	renderers() {
 		return {
 			br: () => null,
-			iframe: ({...attribs}) => {
-				if( !_.isUndefined( attribs['data-embedcontent'] ) ){
-					return <Embed url={attribs.src} key={attribs['data-embedid']} />;
+			iframe: ({ ...attribs }) => {
+				if (!_.isUndefined(attribs["data-embedcontent"])) {
+					return <Embed url={attribs.src} key={attribs["data-embedid"]} />;
 				}
-			},
+			}
 			/*a: (attribs, children) => {
 				// Track images that should be lightboxed so we can access them in our onLinkPress handler
 				// @todo This may need to be modified to account for lazy-loaded images
@@ -92,7 +92,7 @@ export default class RichTextContent extends Component {
 	}
 
 	onLinkPress(evt, data, attribs) {
-		if( !_.isUndefined( attribs.class ) && attribs.class.indexOf('ipsAttachLink_image') !== -1 ){
+		if (!_.isUndefined(attribs.class) && attribs.class.indexOf("ipsAttachLink_image") !== -1) {
 			// Trigger the lightbox
 			this.setState({
 				lightboxVisible: true,
@@ -116,15 +116,19 @@ export default class RichTextContent extends Component {
 					alterChildren={this.alterChildren.bind(this)}
 					alterNode={this.alterNode.bind(this)}
 					alterData={this.alterData.bind(this)}
-					baseFontStyle={
-						this.props.baseFontStyle || richTextStyles(this.props.dark).defaultTextStyle
-					}
+					baseFontStyle={this.props.baseFontStyle || richTextStyles(this.props.dark).defaultTextStyle}
 					html={this.props.children}
 					imagesMaxWidth={parseInt(Dimensions.get("window").width) - 35}
 					staticContentMaxWidth={parseInt(Dimensions.get("window").width) - 35}
 					onLinkPress={this.props.onLinkPress || this.onLinkPress.bind(this)}
 				/>
-				<Lightbox animationIn="bounceIn" isVisible={this.state.lightboxVisible} data={this._lightboxedImages} />
+				<Lightbox
+					animationIn="bounceIn"
+					isVisible={this.state.lightboxVisible}
+					data={this._lightboxedImages}
+					initialImage={this.state.defaultImage || false}
+					close={() => this.setState({ lightboxVisible: false })}
+				/>
 			</React.Fragment>
 		);
 	}
