@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, Image } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
+
+import { styleVars } from '../styles';
 
 export default class TopicStatus extends Component {	
 	constructor(props) {
@@ -10,27 +12,39 @@ export default class TopicStatus extends Component {
 		const lang = {
 			pinned: {
 				text: "Pinned",
-				icon: <Image style={[styles.statusIcon, styles.pinnedIcon]} resizeMode='stretch' source={require('../../resources/pinned.png')} />
+				icon: <Image style={[componentStyles.statusIcon, componentStyles.pinnedIcon]} resizeMode='stretch' source={require('../../resources/pinned.png')} />
 			},
 			hot: {
 				text: "Hot",
-				icon: <Image style={[styles.statusIcon, styles.hotIcon]} resizeMode='stretch' source={require('../../resources/hot.png')} />
+				icon: <Image style={[componentStyles.statusIcon, componentStyles.hotIcon]} resizeMode='stretch' source={require('../../resources/hot.png')} />
 			}
 		};
 
-		return <Text style={[this.props.style, styles.status, styles[this.props.type]]}>{lang[this.props.type]['icon']}{!this.props.noLabel ? lang[this.props.type]['text'] : null}</Text>
+		return (
+			<View style={[componentStyles.wrapper, this.props.style || null ]}>
+				{lang[this.props.type]['icon']}
+				{!this.props.noLabel && <Text style={[this.props.textStyle, componentStyles.status, componentStyles[this.props.type]]}>
+					{lang[this.props.type]['text']}
+				</Text>}
+			</View>
+		);
 	}
 }
 
-const styles = StyleSheet.create({
+const componentStyles = StyleSheet.create({
+	wrapper: {
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center'
+	},
 	status: {
 		fontWeight: "500",
 		fontSize: 13
 	},
 	statusIcon: {
-		width: 10,
-		height: 6,
-		marginTop: 2
+		width: 12,
+		height: 12,
+		marginRight: styleVars.spacing.veryTight
 	},
 	pinned: {
 		color: '#409c69'

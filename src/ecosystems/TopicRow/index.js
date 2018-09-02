@@ -73,15 +73,12 @@ export default class TopicRow extends Component {
 				</View>
 				<View style={componentStyles.topicStatusesWrap}>
 					<View style={componentStyles.topicMeta}>
-						<View style={componentStyles.lastPoster}>
-							<UserPhoto style={componentStyles.lastPosterPhoto} url={this.props.data.lastPostPhoto} size={18} /> <Text style={componentStyles.lastPostTime}>{relativeTime.short(this.props.data.lastPostDate)}</Text>
-						</View>
+						{this.props.data.hot && <TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="hot" />}
+						{this.props.data.pinned && <TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="pinned" />}
+						<Image source={require('../../../resources/reply.png')} resizeMode='contain' style={componentStyles.repliesIcon} /> 
+						<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText, componentStyles.lastPostTime]}>{relativeTime.short(this.props.data.lastPostDate)}</Text>
 						<Image source={require('../../../resources/comment.png')} resizeMode='contain' style={componentStyles.repliesIcon} /> 
 						<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText]}>{Lang.pluralize(Lang.get('replies'), this.props.data.replies)}</Text>
-					</View>
-					<View style={componentStyles.topicStatus}>
-						{this.props.data.hot ? <TopicStatus style={componentStyles.topicStatusesText} type="hot" /> : null}
-						{this.props.data.pinned ? <TopicStatus style={componentStyles.topicStatusesText} type="pinned" /> : null}
 					</View>
 				</View>
 			</ContentRow>
@@ -89,7 +86,9 @@ export default class TopicRow extends Component {
 	}
 }
 
-//  
+//  <View style={componentStyles.lastPoster}>
+//							<UserPhoto style={componentStyles.lastPosterPhoto} url={this.props.data.lastPostPhoto} size={18} /> <Text style={componentStyles.lastPostTime}>{relativeTime.short(this.props.data.lastPostDate)}</Text>
+//						</View>
 
 const componentStyles = StyleSheet.create({
 	// Loading styles
@@ -147,19 +146,15 @@ const componentStyles = StyleSheet.create({
 		color: '#000',
 		marginBottom: 4
 	},
-	topicMetaText: {
-		
-	},
 	lastPoster: {
 		display: 'flex',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'flex-end',
-		marginRight: styleVars.spacing.wide
+		marginRight: styleVars.spacing.tight
 	},
 	lastPostTime: {
-		color: styleVars.lightText,
-		fontSize: 13
+		marginRight: styleVars.spacing.wide
 	},
 	lastPosterPhoto: {
 		marginRight: styleVars.spacing.veryTight
@@ -172,21 +167,27 @@ const componentStyles = StyleSheet.create({
 		height: 32,
 		paddingHorizontal: 15
 	},
+	topicStatus: {
+		marginRight: styleVars.spacing.wide
+	},
 	topicStatusesText: {
 		fontSize: 13,
-		color: styleVars.lightText,
-		marginLeft: styleVars.spacing.veryTight
+		color: styleVars.lightText
 	},
 	topicMeta: {
 		display: 'flex',
 		flexDirection: 'row',
 		alignItems: 'center'
 	},
+	topicMetaText: {
+		opacity: 0.9
+	},
 	repliesIcon: {
 		width: 14,
 		height: 14,
 		tintColor: styleVars.lightText,
-		opacity: 0.6
+		marginRight: styleVars.spacing.veryTight,
+		opacity: 0.5
 	},
 	thumbnail: {
 		width: 75,
