@@ -19,7 +19,7 @@ export default class UserPhoto extends Component {
 		};
 
 		return (
-			<View >
+			<View style={this.props.style || null}>
 				<Image
 					source={{ uri: this.props.url }}
 					style={[photoSize, componentStyles.photo, !_.isUndefined( this.props.anon ) && this.props.anon ? componentStyles.anonymous : null]}
