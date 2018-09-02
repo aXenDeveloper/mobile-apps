@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableHighlight } from 'react-native';
+import { Text, Image, View, StyleSheet, TouchableHighlight } from 'react-native';
 
 import Lang from '../../utils/Lang';
+import getSuitableImage from '../../utils/getSuitableImage';
+import relativeTime from '../../utils/RelativeTime';
 import { PlaceholderElement, PlaceholderContainer } from '../../ecosystems/Placeholder';
 import ShadowedArea from '../../atoms/ShadowedArea';
+import UserPhoto from '../../atoms/UserPhoto';
 import TopicIcon from '../../atoms/TopicIcon';
 import LockedIcon from '../../atoms/LockedIcon';
 import TopicStatus from '../../atoms/TopicStatus';
 import LastPostInfo from '../../ecosystems/LastPostInfo';
 import ContentRow from '../../ecosystems/ContentRow';
-import styles from '../../styles.js';
+import styles, { styleVars } from '../../styles.js';
 
 export default class TopicRow extends Component {	
 	constructor(props) {
@@ -31,6 +34,16 @@ export default class TopicRow extends Component {
 		);
 	}
 
+	getThumbnail() {
+		const suitableImage = getSuitableImage(this.props.data.contentImages);
+
+		if( suitableImage ){
+			return <Image source={{ url: suitableImage }} resizeMode='cover' style={componentStyles.thumbnailImage} />
+		}
+
+		return null;
+	}
+
 	render() {
 		if( this.props.loading ){
 			return this.loadingComponent();
@@ -38,10 +51,11 @@ export default class TopicRow extends Component {
 
 		// Only show as unread if we're a member and unread flag is true
 		const showAsUnread = this.props.isGuest || this.props.data.unread;
+		const image = this.getThumbnail();
 
 		return (
 			<ContentRow withSpace unread={showAsUnread} onPress={this.props.onPress}>
-				<View style={componentStyles.topicRowInner}>
+				<View style={[componentStyles.topicRowInner, image !== null ? componentStyles.topicRowInnerWithImage : null]}>
 					<View style={componentStyles.topicInfo}>
 						<View style={componentStyles.topicTitle}>
 							{!this.props.isGuest && showAsUnread ? <TopicIcon style={componentStyles.topicIcon} unread={this.props.data.unread} /> : null}
@@ -53,17 +67,29 @@ export default class TopicRow extends Component {
 							{this.props.data.snippet}
 						</Text>
 					</View>
-					<LastPostInfo style={componentStyles.lastPost} photo={this.props.data.lastPostPhoto} photoSize={30} timestamp={this.props.data.lastPostDate} />
+					<View style={componentStyles.thumbnail}>
+						{image}
+					</View>
 				</View>
-				<View style={componentStyles.topicStatuses}>
-					{this.props.data.hot ? <TopicStatus style={componentStyles.topicStatusesText} type="hot" /> : null}
-					{this.props.data.pinned ? <TopicStatus style={componentStyles.topicStatusesText} type="pinned" /> : null}
-					<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText]}>{Lang.pluralize(Lang.get('replies'), this.props.data.replies)}</Text>
+				<View style={componentStyles.topicStatusesWrap}>
+					<View style={componentStyles.topicMeta}>
+						<View style={componentStyles.lastPoster}>
+							<UserPhoto style={componentStyles.lastPosterPhoto} url={this.props.data.lastPostPhoto} size={18} /> <Text style={componentStyles.lastPostTime}>{relativeTime.short(this.props.data.lastPostDate)}</Text>
+						</View>
+						<Image source={require('../../../resources/comment.png')} resizeMode='contain' style={componentStyles.repliesIcon} /> 
+						<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText]}>{Lang.pluralize(Lang.get('replies'), this.props.data.replies)}</Text>
+					</View>
+					<View style={componentStyles.topicStatus}>
+						{this.props.data.hot ? <TopicStatus style={componentStyles.topicStatusesText} type="hot" /> : null}
+						{this.props.data.pinned ? <TopicStatus style={componentStyles.topicStatusesText} type="pinned" /> : null}
+					</View>
 				</View>
 			</ContentRow>
 		);
 	}
 }
+
+//  
 
 const componentStyles = StyleSheet.create({
 	// Loading styles
@@ -87,6 +113,9 @@ const componentStyles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignContent: 'stretch'
+	},
+	topicRowInnerWithImage: {
+		paddingRight: 90
 	},
 	topicInfo: {
 		flex: 1,
@@ -121,12 +150,23 @@ const componentStyles = StyleSheet.create({
 	topicMetaText: {
 		
 	},
-	lastPost: {
-		alignSelf: 'flex-start'
-	},
-	topicStatuses: {
+	lastPoster: {
+		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'flex-start',
+		alignItems: 'center',
+		justifyContent: 'flex-end',
+		marginRight: styleVars.spacing.wide
+	},
+	lastPostTime: {
+		color: styleVars.lightText,
+		fontSize: 13
+	},
+	lastPosterPhoto: {
+		marginRight: styleVars.spacing.veryTight
+	},
+	topicStatusesWrap: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
 		alignItems: 'center',
 		backgroundColor: '#FAFAFA',
 		height: 32,
@@ -134,7 +174,28 @@ const componentStyles = StyleSheet.create({
 	},
 	topicStatusesText: {
 		fontSize: 13,
-		color: '#8F8F8F',
-		marginRight: 10
+		color: styleVars.lightText,
+		marginLeft: styleVars.spacing.veryTight
+	},
+	topicMeta: {
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center'
+	},
+	repliesIcon: {
+		width: 14,
+		height: 14,
+		tintColor: styleVars.lightText,
+		opacity: 0.6
+	},
+	thumbnail: {
+		width: 75,
+		position: 'absolute',
+		right: 8,
+		top: 8,
+		bottom: 8
+	},
+	thumbnailImage: {
+		...StyleSheet.absoluteFillObject	
 	}
 });
