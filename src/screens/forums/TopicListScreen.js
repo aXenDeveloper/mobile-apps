@@ -38,6 +38,7 @@ const TopicListQuery = gql`
 					author {
 						name
 					}
+					contentImages
 				}
 				name
 				topicCount
@@ -188,7 +189,8 @@ class TopicListScreen extends Component {
 			pinned: topic.pinned,
 			locked: topic.locked,
 			lastPostDate: topic.lastPostDate,
-			lastPostPhoto: topic.lastPostAuthor.photo
+			lastPostPhoto: topic.lastPostAuthor.photo,
+			contentImages: topic.contentImages
 		};
 	}
 
