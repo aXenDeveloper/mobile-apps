@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, Button, ScrollView, FlatList } from "react-native";
+import { Text, Image, View, Button, ScrollView, FlatList } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
 import { connect } from "react-redux";
@@ -8,6 +8,7 @@ import Lang from "../../utils/Lang";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import relativeTime from "../../utils/RelativeTime";
 import getErrorMessage from "../../utils/getErrorMessage";
+import FollowButton from "../../atoms/FollowButton";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import ErrorBox from "../../atoms/ErrorBox";
 import Pager from "../../atoms/Pager";
@@ -16,6 +17,7 @@ import SectionHeader from "../../atoms/SectionHeader";
 import TopicRow from "../../ecosystems/TopicRow";
 import AddButton from "../../atoms/AddButton";
 import EndOfComments from "../../atoms/EndOfComments";
+import { FollowModal, FollowModalFragment } from "../../ecosystems/FollowModal";
 
 const TopicListQuery = gql`
 	query TopicListQuery($forum: ID!, $offset: Int, $limit: Int) {
@@ -40,6 +42,9 @@ const TopicListQuery = gql`
 					}
 					contentImages
 				}
+				follow {
+					...FollowModalFragment
+				}
 				name
 				topicCount
 				create {
@@ -60,6 +65,7 @@ const TopicListQuery = gql`
 			}
 		}
 	}
+	${FollowModalFragment}
 `;
 
 class TopicListScreen extends Component {
@@ -72,6 +78,9 @@ class TopicListScreen extends Component {
 					title={navigation.state.params.title}
 					subtitle={navigation.state.params.subtitle}
 				/>
+		),
+		headerRight: navigation.state.params.showFollowControl && (
+			<FollowButton followed onPress={navigation.state.params.onPressFollow} />
 		)
 	});
 
@@ -85,8 +94,22 @@ class TopicListScreen extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			reachedEnd: false
+			reachedEnd: false,
+			followModalVisible: false
 		};
+
+		if( this.props.auth.authenticated ){
+			this.props.navigation.setParams({
+				showFollowControl: true,
+				onPressFollow: this.toggleFollowModal.bind(this)
+			});
+		}
+	}
+
+	toggleFollowModal() {
+		this.setState({
+			followModalVisible: !this.state.followModalVisible
+		});
 	}
 
 	/**
@@ -237,6 +260,7 @@ class TopicListScreen extends Component {
 
 			return (
 				<View contentContainerStyle={{ flex: 1 }} style={{ flex: 1 }}>
+					<FollowModal isVisible={this.state.followModalVisible} followData={forumData.follow} close={() => this.toggleFollowModal()} />
 					<View style={{ flex: 1 }}>
 						<FlatList
 							style={{ flex: 1 }}

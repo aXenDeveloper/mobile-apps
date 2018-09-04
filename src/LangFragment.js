@@ -43,6 +43,11 @@ const LangFragment = gql`
 		sign_in: phrase(key: "app_sign_in")
 		home_view_error: phrase(key: "app_home_view_error")
 		topic_view_error: phrase(key: "app_topic_view_error")
+		x_follow_this: phrase(key: "app_x_follow_this")
+		follow_immediate: phrase(key: "app_follow_immediate")		
+		follow_weekly: phrase(key: "app_follow_weekly")
+		follow_daily: phrase(key: "app_follow_daily")
+		follow_none: phrase(key: "app_follow_none")		
 	}
 `;
 
