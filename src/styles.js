@@ -14,8 +14,16 @@ export const styleVars = {
 	touchOpacity: 0.7,
 	toggleTint: '#1888a7',
 	primaryButton: {
-		backgroundColor: '#3370AA',
-		color: '#fff'
+		mainColor: '#3370AA',
+		inverseColor: '#fff'
+	},
+	lightButton: {
+		mainColor: '#ecf0f3',
+		inverseColor: '#262b2f'
+	},
+	warningButton: {
+		mainColor: '#cc1e3a',
+		inverseColor: '#fff'
 	},
 	spacing: {
 		veryTight: 4,
