@@ -28,9 +28,10 @@ const componentStyles = StyleSheet.create({
 		paddingHorizontal: styleVars.spacing.wide
 	},
 	check: {
-		width: 14,
-		height: 11,
-		marginRight: styleVars.spacing.standard
+		width: 16,
+		height: 13,
+		marginRight: styleVars.spacing.standard,
+		tintColor: styleVars.checkmarkColor
 	},
 	label: {
 		fontSize: 15,

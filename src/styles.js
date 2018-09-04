@@ -48,7 +48,8 @@ export const styleVars = {
 		dark: '#CED6DB',
 		medium: '#e1e7eb',
 		light: '#f5f5f5',
-	}
+	},
+	checkmarkColor: '#3370AA'
 };
 
 /* REUSABLE STYLE CLASSES */
