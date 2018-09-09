@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Text, Image, View, Button, ScrollView, FlatList } from "react-native";
 import gql from "graphql-tag";
-import { graphql, compose } from "react-apollo";
+import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
 
 import Lang from "../../utils/Lang";
@@ -17,12 +17,15 @@ import SectionHeader from "../../atoms/SectionHeader";
 import TopicRow from "../../ecosystems/TopicRow";
 import AddButton from "../../atoms/AddButton";
 import EndOfComments from "../../atoms/EndOfComments";
-import { FollowModal, FollowModalFragment } from "../../ecosystems/FollowModal";
+import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 
 const TopicListQuery = gql`
 	query TopicListQuery($forum: ID!, $offset: Int, $limit: Int) {
 		forums {
 			forum(id: $forum) {
+				id
+				name
+				topicCount
 				topics(offset: $offset, limit: $limit) {
 					id
 					title
@@ -45,8 +48,6 @@ const TopicListQuery = gql`
 				follow {
 					...FollowModalFragment
 				}
-				name
-				topicCount
 				create {
 					canCreate
 					tags {
@@ -70,17 +71,14 @@ const TopicListQuery = gql`
 
 class TopicListScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
-		headerTitle: (
-			!navigation.state.params.title || !navigation.state.params.subtitle ? 
+		headerTitle:
+			!navigation.state.params.title || !navigation.state.params.subtitle ? (
 				<TwoLineHeader loading={true} />
-			:
-				<TwoLineHeader
-					title={navigation.state.params.title}
-					subtitle={navigation.state.params.subtitle}
-				/>
-		),
+			) : (
+				<TwoLineHeader title={navigation.state.params.title} subtitle={navigation.state.params.subtitle} />
+			),
 		headerRight: navigation.state.params.showFollowControl && (
-			<FollowButton followed onPress={navigation.state.params.onPressFollow} />
+			<FollowButton followed={navigation.state.params.isFollowed} onPress={navigation.state.params.onPressFollow} />
 		)
 	});
 
@@ -98,14 +96,20 @@ class TopicListScreen extends Component {
 			followModalVisible: false
 		};
 
-		if( this.props.auth.authenticated ){
+		if (this.props.auth.authenticated) {
 			this.props.navigation.setParams({
-				showFollowControl: true,
+				showFollowControl: this.props.canFollow || false,
+				isFollowed: false,
 				onPressFollow: this.toggleFollowModal.bind(this)
 			});
 		}
 	}
 
+	/**
+	 * Toggles between showing/hiding the follow modal
+	 *
+	 * @return 	void
+	 */
 	toggleFollowModal() {
 		this.setState({
 			followModalVisible: !this.state.followModalVisible
@@ -122,7 +126,14 @@ class TopicListScreen extends Component {
 		if (!prevProps.navigation.state.params.title || !prevProps.navigation.state.params.subtitle) {
 			this.props.navigation.setParams({
 				title: this.props.data.forums.forum.name,
-				subtitle: Lang.pluralize( Lang.get("topics"), this.props.data.forums.forum.topicCount)
+				subtitle: Lang.pluralize(Lang.get("topics"), this.props.data.forums.forum.topicCount)
+			});
+		}
+
+		if (prevProps.data.loading && !this.props.data.loading) {
+			this.props.navigation.setParams({
+				showFollowControl: true,
+				isFollowed: this.props.data.forums.forum.follow.isFollowing
 			});
 		}
 	}
@@ -189,7 +200,7 @@ class TopicListScreen extends Component {
 			return <TopicRow loading={true} />;
 		}
 
-		return <EndOfComments label={Lang.get('end_of_forum')} />;
+		return <EndOfComments label={Lang.get("end_of_forum")} />;
 	}
 
 	/**
@@ -242,6 +253,66 @@ class TopicListScreen extends Component {
 		);
 	}
 
+	/**
+	 * Event handler for following the forum
+	 *
+	 * @param 	object 		followData 		Object with the selected values from the modal
+	 * @return 	void
+	 */
+	async onFollow(followData) {
+		this.setState({
+			followModalVisible: false
+		});
+
+		try {
+			await this.props.client.mutate({
+				mutation: FollowMutation,
+				variables: {
+					app: "forums",
+					area: "forum",
+					id: this.props.data.forums.forum.id,
+					anonymous: followData.anonymous,
+					type: followData.option.toUpperCase()
+				}
+			});
+
+			this.props.navigation.setParams({
+				isFollowed: true
+			});
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
+	/**
+	 * Event handler for unfollowing the forum
+	 *
+	 * @return 	void
+	 */
+	async onUnfollow() {
+		this.setState({
+			followModalVisible: false
+		});
+
+		try {
+			await this.props.client.mutate({
+				mutation: UnfollowMutation,
+				variables: {
+					app: "forums",
+					area: "forum",
+					id: this.props.data.forums.forum.id,
+					followID: this.props.data.forums.forum.follow.followID
+				}
+			});
+
+			this.props.navigation.setParams({
+				isFollowed: false
+			});
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
 	render() {
 		// status 3 == fetchMore, status 4 == refreshing
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
@@ -252,7 +323,7 @@ class TopicListScreen extends Component {
 			);
 		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, TopicListScreen.errors);
-			return <ErrorBox message={Lang.get('topic_view_error')} refresh={() => this.refreshAfterError()} />;
+			return <ErrorBox message={Lang.get("topic_view_error")} refresh={() => this.refreshAfterError()} />;
 		} else {
 			const forumData = this.props.data.forums.forum;
 			const settingsData = this.props.data.core.settings;
@@ -260,7 +331,13 @@ class TopicListScreen extends Component {
 
 			return (
 				<View contentContainerStyle={{ flex: 1 }} style={{ flex: 1 }}>
-					<FollowModal isVisible={this.state.followModalVisible} followData={forumData.follow} close={() => this.toggleFollowModal()} />
+					<FollowModal
+						isVisible={this.state.followModalVisible}
+						followData={forumData.follow}
+						onFollow={followData => this.onFollow(followData)}
+						onUnfollow={() => this.onUnfollow()}
+						close={() => this.toggleFollowModal()}
+					/>
 					<View style={{ flex: 1 }}>
 						<FlatList
 							style={{ flex: 1 }}
@@ -311,5 +388,6 @@ export default compose(
 	}),
 	connect(state => ({
 		auth: state.auth
-	}))
+	})),
+	withApollo
 )(TopicListScreen);

@@ -2,7 +2,10 @@ import gql from "graphql-tag";
 
 const FollowModalFragment = gql`
 	fragment FollowModalFragment on Follow {
+		id
+		followID
 		isFollowing
+		followType
 		followOptions {
 			type
 			disabled

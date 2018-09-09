@@ -4,6 +4,7 @@ import { Text, View, Image, Switch, StyleSheet, TouchableOpacity } from 'react-n
 import Lang from '../utils/Lang';
 import styles, { styleVars } from '../styles';
 
+// @todo abstract this to a more general toggle row
 export default class NotificationSettingRow extends Component {	
 	constructor(props) {
 		super(props);

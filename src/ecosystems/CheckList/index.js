@@ -7,7 +7,7 @@ class CheckList extends Component {
 	render() {
 		return <FlatList 
 			data={this.props.data}
-			renderItem={({item}) => <CheckListRow {...item} />}
+			renderItem={({item}) => <CheckListRow {...item} onPress={() => this.props.onPress(item)} />}
 		/>;
 	}
 }
