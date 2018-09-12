@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, Image, View, Button, ScrollView, FlatList } from "react-native";
+import { Text, Image, View, Button, ScrollView, SectionList } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
@@ -14,6 +14,7 @@ import ErrorBox from "../../atoms/ErrorBox";
 import Pager from "../../atoms/Pager";
 import PagerButton from "../../atoms/PagerButton";
 import SectionHeader from "../../atoms/SectionHeader";
+import ForumItem from "../../ecosystems/ForumItem";
 import TopicRow from "../../ecosystems/TopicRow";
 import AddButton from "../../atoms/AddButton";
 import EndOfComments from "../../atoms/EndOfComments";
@@ -26,6 +27,17 @@ const TopicListQuery = gql`
 				id
 				name
 				topicCount
+				subforums {
+					id
+					name
+					topicCount
+					postCount
+					hasUnread
+					lastPostAuthor {
+						photo
+					}
+					lastPostDate
+				}
 				topics(offset: $offset, limit: $limit) {
 					id
 					title
@@ -98,7 +110,7 @@ class TopicListScreen extends Component {
 
 		if (this.props.auth.authenticated) {
 			this.props.navigation.setParams({
-				showFollowControl: this.props.canFollow || false,
+				showFollowControl: true,
 				isFollowed: false,
 				onPressFollow: this.toggleFollowModal.bind(this)
 			});
@@ -213,6 +225,7 @@ class TopicListScreen extends Component {
 	buildTopicData(topic, forumData) {
 		return {
 			id: topic.id,
+			type: 'topic',
 			unread: topic.isUnread,
 			title: topic.title,
 			replies: parseInt(topic.postCount),
@@ -229,28 +242,84 @@ class TopicListScreen extends Component {
 	}
 
 	/**
-	 * Render a topic
+	 * Build the subforum data object
 	 *
-	 * @param 	object 	item 		A topic object (already transformed by this.buildTopicData)
+	 * @param 	object 	subforums 	Subforum data
+	 * @return 	array
+	 */
+	buildSubforumData(subforums) {
+		return subforums.map(forum => ({
+			key: forum.id,
+			type: 'forum',
+			data: {
+				id: forum.id,
+				unread: forum.hasUnread,
+				title: forum.name,
+				topics: parseInt(forum.topicCount),
+				posts: parseInt(forum.postCount) + parseInt(forum.topicCount),
+				lastPostPhoto: forum.lastPostAuthor ? forum.lastPostAuthor.photo : null,
+				lastPostDate: forum.lastPostDate
+			}
+		}))
+	}
+
+	/**
+	 * Render a topic or a subforum, depending on the item type
+	 *
+	 * @param 	object 	item 		An item object for a topic or subforum
 	 * @param 	object 	forumData 	The forum data
 	 * @return 	Component
 	 */
 	renderItem(item, forumData) {
-		return (
-			<TopicRow
-				data={item}
-				isGuest={!this.props.auth.authenticated}
-				onPress={() =>
-					this.props.navigation.navigate("TopicView", {
-						id: item.id,
-						title: item.title,
-						author: item.author,
-						posts: item.replies,
-						started: item.started
-					})
-				}
-			/>
-		);
+		if(item.type == 'topic'){
+			return (
+				<TopicRow
+					data={item}
+					isGuest={!this.props.auth.authenticated}
+					onPress={() =>
+						this.props.navigation.navigate("TopicView", {
+							id: item.id,
+							title: item.title,
+							author: item.author,
+							posts: item.replies,
+							started: item.started
+						})
+					}
+				/>
+			);
+		} else {
+			return (
+				<ForumItem
+					key={item.key}
+					data={item.data}
+					onPress={() =>
+						this.props.navigation.navigate({
+							routeName: "TopicList", 
+							params: {
+								id: item.data.id,
+								title: item.data.title,
+								subtitle: Lang.pluralize( Lang.get("topics"), item.data.topics)
+							},
+							key: `forum_${item.data.id}`
+						})
+					}
+				/>
+			);
+		}
+	}
+
+	/**
+	 * Render a section header, but only if we have subforums to show
+	 *
+	 * @param 	object 	section 	The section we're rendering
+	 * @return 	Component|null
+	 */
+	renderHeader(section) {
+		if( !this.props.data.forums.forum.subforums.length ){
+			return null;
+		}
+
+		return <SectionHeader title={section.title} />;
 	}
 
 	/**
@@ -326,8 +395,26 @@ class TopicListScreen extends Component {
 			return <ErrorBox message={Lang.get("topic_view_error")} refresh={() => this.refreshAfterError()} />;
 		} else {
 			const forumData = this.props.data.forums.forum;
+			const subforums = forumData.subforums;
+			const topicData = forumData.topics.map(topic => this.buildTopicData(topic, forumData));
 			const settingsData = this.props.data.core.settings;
-			const listData = forumData.topics.map(topic => this.buildTopicData(topic, forumData));
+			const forumSections = [];
+
+			// Add subforums if we have them
+			if( forumData.subforums.length ){
+				forumSections.push({
+					title: "Subforums",
+					data: forumData.subforums.length ? this.buildSubforumData(forumData.subforums) : null
+				});
+			}
+
+			// Add topics
+			if( topicData.length ){
+				forumSections.push({
+					title: "Topics",
+					data: topicData
+				});
+			}
 
 			return (
 				<View contentContainerStyle={{ flex: 1 }} style={{ flex: 1 }}>
@@ -339,15 +426,16 @@ class TopicListScreen extends Component {
 						close={() => this.toggleFollowModal()}
 					/>
 					<View style={{ flex: 1 }}>
-						<FlatList
+						<SectionList
 							style={{ flex: 1 }}
-							keyExtractor={item => item.id}
-							ListFooterComponent={() => this.getFooterComponent()}
+							keyExtractor={item => item.type + item.id}
+							renderSectionHeader={({ section }) => this.renderHeader(section)}
 							renderItem={({ item }) => this.renderItem(item, forumData)}
-							data={listData}
+							sections={forumSections}
 							refreshing={this.props.data.networkStatus == 4}
 							onRefresh={() => this.onRefresh()}
 							onEndReached={() => this.onEndReached()}
+							ListEmptyComponent={() => <ErrorBox message={Lang.get('no_topics')} showIcon={false} />}
 						/>
 						{forumData.create.canCreate ? (
 							<Pager>
