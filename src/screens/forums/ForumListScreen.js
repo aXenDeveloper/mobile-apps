@@ -21,6 +21,8 @@ const ForumQuery = gql`
 					topicCount
 					postCount
 					hasUnread
+					passwordProtected
+					passwordRequired
 					lastPostAuthor {
 						photo
 					}
@@ -38,6 +40,28 @@ class ForumListScreen extends Component {
 
 	constructor(props) {
 		super(props);
+	}
+
+	/**
+	 * Render a forum row
+	 *
+	 * @param 	object 	item 	The forum item to render
+	 * @return 	void
+	 */
+	renderItem(item) {
+		return (
+			<ForumItem
+				key={item.key}
+				data={item.data}
+				onPress={() =>
+					this.props.navigation.navigate("TopicList", {
+						id: item.data.id,
+						title: item.data.title,
+						subtitle: Lang.pluralize( Lang.get("topics"), item.data.topics)
+					})
+				}
+			/>
+		);
 	}
 
 	render() {
@@ -66,19 +90,7 @@ class ForumListScreen extends Component {
 			return (
 				<View style={{ flexGrow: 1 }}>
 					<SectionList
-						renderItem={({ item }) => (
-							<ForumItem
-								key={item.key}
-								data={item.data}
-								onPress={() =>
-									this.props.navigation.navigate("TopicList", {
-										id: item.data.id,
-										title: item.data.title,
-										subtitle: Lang.pluralize( Lang.get("topics"), item.data.topics)
-									})
-								}
-							/>
-						)}
+						renderItem={({ item }) => this.renderItem(item)}
 						renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
 						sections={sectionData}
 					/>
