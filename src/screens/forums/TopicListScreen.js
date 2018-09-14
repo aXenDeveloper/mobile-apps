@@ -3,6 +3,7 @@ import { Text, Image, View, Button, ScrollView, SectionList } from "react-native
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
+import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
@@ -21,7 +22,7 @@ import EndOfComments from "../../atoms/EndOfComments";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 
 const TopicListQuery = gql`
-	query TopicListQuery($forum: ID!, $offset: Int, $limit: Int) {
+	query TopicListQuery($forum: ID!, $offset: Int, $limit: Int, $password: String) {
 		forums {
 			forum(id: $forum) {
 				id
@@ -38,7 +39,7 @@ const TopicListQuery = gql`
 					}
 					lastPostDate
 				}
-				topics(offset: $offset, limit: $limit) {
+				topics(offset: $offset, limit: $limit, password: $password) {
 					id
 					title
 					postCount
@@ -98,7 +99,8 @@ class TopicListScreen extends Component {
 	 * GraphQL error types
 	 */
 	static errors = {
-		NO_FORUM: "The forum does not exist."
+		NO_FORUM: "The forum does not exist.",
+		INCORRECT_PASSWORD: "The password to this forum wasn't provided"
 	};
 
 	constructor(props) {
@@ -135,17 +137,21 @@ class TopicListScreen extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps) {
-		if (!prevProps.navigation.state.params.title || !prevProps.navigation.state.params.subtitle) {
-			this.props.navigation.setParams({
-				title: this.props.data.forums.forum.name,
-				subtitle: Lang.pluralize(Lang.get("topics"), this.props.data.forums.forum.topicCount)
-			});
-		}
+		if (prevProps.data.loading && !this.props.data.loading && !this.props.data.error) {
+			if (!prevProps.navigation.state.params.title || !prevProps.navigation.state.params.subtitle) {
+				this.props.navigation.setParams({
+					title: this.props.data.forums.forum.name,
+					subtitle: Lang.pluralize(Lang.get("topics"), this.props.data.forums.forum.topicCount)
+				});
+			}
 
-		if (prevProps.data.loading && !this.props.data.loading) {
 			this.props.navigation.setParams({
 				showFollowControl: true,
 				isFollowed: this.props.data.forums.forum.follow.isFollowing
+			});
+		} else if (!prevProps.data.error && this.props.data.error) {
+			this.props.navigation.setParams({
+				showFollowControl: false
 			});
 		}
 	}
@@ -225,7 +231,7 @@ class TopicListScreen extends Component {
 	buildTopicData(topic, forumData) {
 		return {
 			id: topic.id,
-			type: 'topic',
+			type: "topic",
 			unread: topic.isUnread,
 			title: topic.title,
 			replies: parseInt(topic.postCount),
@@ -250,7 +256,7 @@ class TopicListScreen extends Component {
 	buildSubforumData(subforums) {
 		return subforums.map(forum => ({
 			key: forum.id,
-			type: 'forum',
+			type: "forum",
 			data: {
 				id: forum.id,
 				unread: forum.hasUnread,
@@ -260,7 +266,7 @@ class TopicListScreen extends Component {
 				lastPostPhoto: forum.lastPostAuthor ? forum.lastPostAuthor.photo : null,
 				lastPostDate: forum.lastPostDate
 			}
-		}))
+		}));
 	}
 
 	/**
@@ -271,7 +277,7 @@ class TopicListScreen extends Component {
 	 * @return 	Component
 	 */
 	renderItem(item, forumData) {
-		if(item.type == 'topic'){
+		if (item.type == "topic") {
 			return (
 				<TopicRow
 					data={item}
@@ -294,11 +300,11 @@ class TopicListScreen extends Component {
 					data={item.data}
 					onPress={() =>
 						this.props.navigation.navigate({
-							routeName: "TopicList", 
+							routeName: "TopicList",
 							params: {
 								id: item.data.id,
 								title: item.data.title,
-								subtitle: Lang.pluralize( Lang.get("topics"), item.data.topics)
+								subtitle: Lang.pluralize(Lang.get("topics"), item.data.topics)
 							},
 							key: `forum_${item.data.id}`
 						})
@@ -315,7 +321,7 @@ class TopicListScreen extends Component {
 	 * @return 	Component|null
 	 */
 	renderHeader(section) {
-		if( !this.props.data.forums.forum.subforums.length ){
+		if (!this.props.data.forums.forum.subforums.length) {
 			return null;
 		}
 
@@ -383,6 +389,8 @@ class TopicListScreen extends Component {
 	}
 
 	render() {
+		console.log(this.props.data);
+
 		// status 3 == fetchMore, status 4 == refreshing
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return (
@@ -392,7 +400,8 @@ class TopicListScreen extends Component {
 			);
 		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, TopicListScreen.errors);
-			return <ErrorBox message={Lang.get("topic_view_error")} refresh={() => this.refreshAfterError()} />;
+			const message = error ? error : Lang.get("topic_view_error");
+			return <ErrorBox message={message} refresh={() => this.refreshAfterError()} />;
 		} else {
 			const forumData = this.props.data.forums.forum;
 			const subforums = forumData.subforums;
@@ -401,7 +410,7 @@ class TopicListScreen extends Component {
 			const forumSections = [];
 
 			// Add subforums if we have them
-			if( forumData.subforums.length ){
+			if (forumData.subforums.length) {
 				forumSections.push({
 					title: "Subforums",
 					data: forumData.subforums.length ? this.buildSubforumData(forumData.subforums) : null
@@ -409,7 +418,7 @@ class TopicListScreen extends Component {
 			}
 
 			// Add topics
-			if( topicData.length ){
+			if (topicData.length) {
 				forumSections.push({
 					title: "Topics",
 					data: topicData
@@ -435,7 +444,7 @@ class TopicListScreen extends Component {
 							refreshing={this.props.data.networkStatus == 4}
 							onRefresh={() => this.onRefresh()}
 							onEndReached={() => this.onEndReached()}
-							ListEmptyComponent={() => <ErrorBox message={Lang.get('no_topics')} showIcon={false} />}
+							ListEmptyComponent={() => <ErrorBox message={Lang.get("no_topics")} showIcon={false} />}
 						/>
 						{forumData.create.canCreate ? (
 							<Pager>
@@ -464,18 +473,20 @@ class TopicListScreen extends Component {
 }
 
 export default compose(
+	connect(state => ({
+		auth: state.auth,
+		forums: state.forums
+	})),
 	graphql(TopicListQuery, {
 		options: props => ({
 			notifyOnNetworkStatusChange: true,
 			variables: {
 				forum: props.navigation.state.params.id,
 				offset: 0,
-				limit: Expo.Constants.manifest.extra.per_page
+				limit: Expo.Constants.manifest.extra.per_page,
+				password: props.forums[ props.navigation.state.params.id ] || null
 			}
 		})
 	}),
-	connect(state => ({
-		auth: state.auth
-	})),
 	withApollo
 )(TopicListScreen);

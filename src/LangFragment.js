@@ -44,6 +44,9 @@ const LangFragment = gql`
 		home_view_error: phrase(key: "app_home_view_error")
 		topic_view_error: phrase(key: "app_topic_view_error")
 		no_topics: phrase(key: "app_no_topics")
+		forum_requires_password: phrase(key: "app_forum_requires_password")
+		enter_password: phrase(key: "app_enter_password")
+		password: phrase(key: "app_password")
 
 		x_follow_this: phrase(key: "app_x_follow_this")
 		follow_immediate: phrase(key: "app_follow_immediate")		
