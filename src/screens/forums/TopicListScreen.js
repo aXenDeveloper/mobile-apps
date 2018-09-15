@@ -28,6 +28,8 @@ const TopicListQuery = gql`
 				id
 				name
 				topicCount
+				passwordProtected
+				passwordRequired
 				subforums {
 					id
 					name
@@ -112,7 +114,7 @@ class TopicListScreen extends Component {
 
 		if (this.props.auth.authenticated) {
 			this.props.navigation.setParams({
-				showFollowControl: true,
+				showFollowControl: false,
 				isFollowed: false,
 				onPressFollow: this.toggleFollowModal.bind(this)
 			});
@@ -145,10 +147,12 @@ class TopicListScreen extends Component {
 				});
 			}
 
-			this.props.navigation.setParams({
-				showFollowControl: true,
-				isFollowed: this.props.data.forums.forum.follow.isFollowing
-			});
+			if( !this.props.data.forums.forum.passwordProtected ){
+				this.props.navigation.setParams({
+					showFollowControl: true,
+					isFollowed: this.props.data.forums.forum.follow.isFollowing
+				});
+			}
 		} else if (!prevProps.data.error && this.props.data.error) {
 			this.props.navigation.setParams({
 				showFollowControl: false

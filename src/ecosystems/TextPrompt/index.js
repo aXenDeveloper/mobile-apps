@@ -40,18 +40,35 @@ export default class TextPrompt extends Component {
 				onBackdropPress={() => this.props.close()}
 			>
 				<View style={componentStyles.modal}>
-					<Text style={[componentStyles.text, componentStyles.title]}>{this.props.title}</Text>
-					<Text style={[componentStyles.text, styles.lightText, componentStyles.message]}>{this.props.message}</Text>
-					<TextInput
-						style={componentStyles.textInput}
-						onChangeText={value => this._onChange(value)}
-						placeholder={this.props.placeholder}
-						ref={input => (this._input = input)}
-						{...this.props.textInputProps}
-					/>
-					<TouchableHighlight style={componentStyles.button} onPress={() => this._onSubmit()}>
-						<Text>Go</Text>
-					</TouchableHighlight>
+					<View style={componentStyles.body}>
+						<Text style={[componentStyles.text, componentStyles.title]}>{this.props.title}</Text>
+						<Text style={[componentStyles.text, styles.lightText, componentStyles.message]}>{this.props.message}</Text>
+						<TextInput
+							style={componentStyles.textInput}
+							onChangeText={value => this._onChange(value)}
+							placeholder={this.props.placeholder}
+							ref={input => (this._input = input)}
+							{...this.props.textInputProps}
+						/>
+					</View>
+					<View style={componentStyles.buttonRow}>
+						<TouchableHighlight
+							activeOpacity={styleVars.touchOpacity}
+							underlayColor={styleVars.touchColor}
+							style={[componentStyles.button, componentStyles.buttonCancel]}
+							onPress={() => this.props.close()}
+						>
+							<Text style={[componentStyles.buttonText, componentStyles.buttonCancelText]}>{Lang.get('cancel')}</Text>
+						</TouchableHighlight>
+						<TouchableHighlight
+							activeOpacity={styleVars.touchOpacity}
+							underlayColor={styleVars.touchColor}
+							style={[componentStyles.button, componentStyles.buttonOK]}
+							onPress={() => this._onSubmit()}
+						>
+							<Text style={[componentStyles.buttonText, componentStyles.buttonOKText]}>{this.props.submitText}</Text>
+						</TouchableHighlight>
+					</View>
 				</View>
 			</Modal>
 		);
@@ -63,9 +80,11 @@ const componentStyles = StyleSheet.create({
 		flex: 1
 	},
 	modal: {
-		backgroundColor: "#fff",
-		padding: styleVars.spacing.wide,
+		backgroundColor: "rgba(255,255,255,0.9)",
 		borderRadius: 6
+	},
+	body: {
+		padding: styleVars.spacing.wide
 	},
 	text: {
 		textAlign: "center"
@@ -85,5 +104,29 @@ const componentStyles = StyleSheet.create({
 		paddingVertical: styleVars.spacing.tight,
 		marginTop: styleVars.spacing.wide,
 		borderRadius: 3
+	},
+	buttonRow: {
+		borderTopWidth: 1,
+		borderTopColor: styleVars.borderColors.dark,
+		display: "flex",
+		flexDirection: "row"
+	},
+	button: {
+		paddingHorizontal: styleVars.spacing.wide,
+		paddingVertical: styleVars.spacing.standard,
+		flexBasis: 0,
+		flexGrow: 1
+	},
+	buttonText: {
+		textAlign: "center",
+		color: "#0073ff",
+		fontSize: styleVars.fontSizes.large
+	},
+	buttonCancel: {
+		borderRightWidth: 1,
+		borderRightColor: styleVars.borderColors.dark
+	},
+	buttonOKText: {
+		fontWeight: "bold"
 	}
 });

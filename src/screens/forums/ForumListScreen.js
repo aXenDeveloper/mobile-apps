@@ -144,6 +144,7 @@ class ForumListScreen extends Component {
 						message={Lang.get("forum_requires_password")}
 						close={this.closePasswordDialog.bind(this)}
 						submit={this.passwordSubmit.bind(this)}
+						submitText={Lang.get('go')}
 						textInputProps={{
 							autoCapitalize: 'none',
 							autoCorrect: false,
