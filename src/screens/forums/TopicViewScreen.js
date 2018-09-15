@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, Button, ScrollView, FlatList, TouchableOpacity, TextInput } from "react-native";
 import gql from "graphql-tag";
-import { graphql, compose } from "react-apollo";
+import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
 import Modal from "react-native-modal";
 import _ from "underscore";
@@ -21,6 +21,8 @@ import UnreadIndicator from "../../atoms/UnreadIndicator";
 import LoadMoreComments from "../../atoms/LoadMoreComments";
 import EndOfComments from "../../atoms/EndOfComments";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
+import FollowButton from "../../atoms/FollowButton";
+import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 
 const TopicViewQuery = gql`
 	query TopicViewQuery($id: ID!, $offsetAdjust: Int, $offsetPosition: forums_Post_offset_position, $limit: Int, $findComment: Int) {
@@ -58,26 +60,17 @@ const TopicViewQuery = gql`
 				posts(offsetAdjust: $offsetAdjust, offsetPosition: $offsetPosition, limit: $limit, findComment: $findComment) {
 					...PostFragment
 				}
+				follow {
+					...FollowModalFragment
+				}
 			}
 		}
 	}
 	${PostFragment}
+	${FollowModalFragment}
 `;
 
 class TopicViewScreen extends Component {
-	constructor(props) {
-		super(props);
-		this._flatList = null; // Ref to the flatlist
-		this._currentOffset = 0; // The offset we're currently displaying in the view
-		this._initialOffsetDone = false; // Flag to indicate we've set our initial offset on render
-		this._aboutToScrollToEnd = false; // Flag to indicate a scrollToEnd is pending so we can avoid other autoscrolls
-		this.state = {
-			reachedEnd: false,
-			earlierPostsAvailable: null,
-			loadingEarlierPosts: false
-		};
-	}
-
 	/**
 	 * React Navigation config
 	 */
@@ -90,7 +83,10 @@ class TopicViewScreen extends Component {
 					title={navigation.state.params.title}
 					subtitle={`Started by ${navigation.state.params.author}, ${relativeTime.long(navigation.state.params.started)}`}
 				/>
-			)
+			),
+		headerRight: navigation.state.params.showFollowControl && (
+			<FollowButton followed={navigation.state.params.isFollowed} onPress={navigation.state.params.onPressFollow} />
+		)
 	});
 
 	/**
@@ -100,6 +96,43 @@ class TopicViewScreen extends Component {
 		NO_TOPIC: "The topic does not exist."
 	};
 
+	constructor(props) {
+		super(props);
+		this._flatList = null; // Ref to the flatlist
+		this._currentOffset = 0; // The offset we're currently displaying in the view
+		this._initialOffsetDone = false; // Flag to indicate we've set our initial offset on render
+		this._aboutToScrollToEnd = false; // Flag to indicate a scrollToEnd is pending so we can avoid other autoscrolls
+		this.state = {
+			reachedEnd: false,
+			earlierPostsAvailable: null,
+			loadingEarlierPosts: false
+		};
+
+		if (this.props.auth.authenticated) {
+			this.props.navigation.setParams({
+				showFollowControl: false,
+				isFollowed: false,
+				onPressFollow: this.toggleFollowModal.bind(this)
+			});
+		}
+	}
+
+	/**
+	 * Toggles between showing/hiding the follow modal
+	 *
+	 * @return 	void
+	 */
+	toggleFollowModal() {
+		this.setState({
+			followModalVisible: !this.state.followModalVisible
+		});
+	}
+
+	/**
+	 * Set the offset based on initial props
+	 *
+	 * @return 	void
+	 */
 	componentDidMount() {
 		this.setCurrentOffset(this.props.data.variables.offset || 0);
 	}
@@ -147,6 +180,20 @@ class TopicViewScreen extends Component {
 				author: this.props.data.forums.topic.author.name,
 				started: this.props.data.forums.topic.started,
 				title: this.props.data.forums.topic.title
+			});
+		}
+
+		// If we're no longer loading, toggle the follow button if needed
+		if (prevProps.data.loading && !this.props.data.loading && !this.props.data.error) {
+			if( !this.props.data.forums.topic.passwordProtected ){
+				this.props.navigation.setParams({
+					showFollowControl: true,
+					isFollowed: this.props.data.forums.topic.follow.isFollowing
+				});
+			}
+		} else if (!prevProps.data.error && this.props.data.error) {
+			this.props.navigation.setParams({
+				showFollowControl: false
 			});
 		}
 
@@ -431,6 +478,66 @@ class TopicViewScreen extends Component {
 		return returnedData;
 	}
 
+	/**
+	 * Event handler for following the forum
+	 *
+	 * @param 	object 		followData 		Object with the selected values from the modal
+	 * @return 	void
+	 */
+	async onFollow(followData) {
+		this.setState({
+			followModalVisible: false
+		});
+
+		try {
+			await this.props.client.mutate({
+				mutation: FollowMutation,
+				variables: {
+					app: "forums",
+					area: "topic",
+					id: this.props.data.forums.topic.id,
+					anonymous: followData.anonymous,
+					type: followData.option.toUpperCase()
+				}
+			});
+
+			this.props.navigation.setParams({
+				isFollowed: true
+			});
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
+	/**
+	 * Event handler for unfollowing the forum
+	 *
+	 * @return 	void
+	 */
+	async onUnfollow() {
+		this.setState({
+			followModalVisible: false
+		});
+
+		try {
+			await this.props.client.mutate({
+				mutation: UnfollowMutation,
+				variables: {
+					app: "forums",
+					area: "topic",
+					id: this.props.data.forums.topic.id,
+					followID: this.props.data.forums.topic.follow.followID
+				}
+			});
+
+			this.props.navigation.setParams({
+				isFollowed: false
+			});
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
 	render() {
 		// status 3 == fetchMore, status 4 == refreshing
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
@@ -449,6 +556,13 @@ class TopicViewScreen extends Component {
 			return (
 				<View style={{ flex: 1 }}>
 					<View style={{ flex: 1, flexGrow: 1 }}>
+						<FollowModal
+							isVisible={this.state.followModalVisible}
+							followData={topicData.follow}
+							onFollow={followData => this.onFollow(followData)}
+							onUnfollow={() => this.onUnfollow()}
+							close={() => this.toggleFollowModal()}
+						/>
 						<FlatList
 							style={{ flex: 1 }}
 							ref={flatList => (this._flatList = flatList)}
@@ -518,5 +632,6 @@ export default compose(
 	connect(state => ({
 		auth: state.auth,
 		site: state.site
-	}))
+	})),
+	withApollo
 )(TopicViewScreen);
