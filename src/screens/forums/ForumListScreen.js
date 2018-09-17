@@ -27,6 +27,11 @@ const ForumQuery = gql`
 					hasUnread
 					passwordProtected
 					passwordRequired
+					isRedirectForum
+					redirectHits
+					url {
+						full
+					}
 					lastPostAuthor {
 						photo
 					}
@@ -74,8 +79,16 @@ class ForumListScreen extends Component {
 			});
 		};
 
+		const redirectNavigate = () => {
+			this.props.navigation.navigate("WebView", {
+				url: item.data.url.full
+			});
+		};
+
 		let handler;
-		if( !item.data.passwordRequired || ( item.data.passwordRequired && !_.isUndefined( this.props.forums[ item.data.id ] ) ) ){
+		if( item.data.isRedirectForum ) {
+			handler = redirectNavigate;
+		} else if( !item.data.passwordRequired || ( item.data.passwordRequired && !_.isUndefined( this.props.forums[ item.data.id ] ) ) ){
 			handler = regularNavigate;
 		} else {
 			handler = passwordPrompt;
@@ -86,6 +99,12 @@ class ForumListScreen extends Component {
 		);
 	}
 
+	/**
+	 * Handle the submit event in the password modal
+	 *
+	 * @param 	string 	password 	The entered password
+	 * @return 	void
+	 */
 	passwordSubmit(password) {
 		const params = this.state.textPromptParams;
 
@@ -98,6 +117,11 @@ class ForumListScreen extends Component {
 		this.props.navigation.navigate("TopicList", params);
 	}
 
+	/**
+	 * Handle closing the password modal
+	 *
+	 * @return 	void
+	 */
 	closePasswordDialog() {
 		this.setState({ 
 			textPromptVisible: false,
@@ -124,7 +148,10 @@ class ForumListScreen extends Component {
 							lastPostPhoto: forum.lastPostAuthor ? forum.lastPostAuthor.photo : null,
 							lastPostDate: forum.lastPostDate,
 							passwordProtected: forum.passwordProtected,
-							passwordRequired: forum.passwordRequired
+							passwordRequired: forum.passwordRequired,
+							isRedirectForum: forum.isRedirectForum,
+							redirectHits: forum.redirectHits,
+							url: forum.url
 						}
 					}))
 				};
