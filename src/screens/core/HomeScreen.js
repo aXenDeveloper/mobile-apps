@@ -5,7 +5,8 @@ import {
 	ScrollView,
 	View,
 	StyleSheet,
-	FlatList
+	FlatList,
+	TouchableOpacity
 } from "react-native";
 import gql from "graphql-tag";
 import { graphql, withApollo } from "react-apollo";
@@ -131,12 +132,85 @@ class HomeScreen extends Component {
 		this.startHomeQuery();
 	}
 
+	getNavConfig() {
+		return [			
+			{
+				key: 'forums_all',
+				title: 'All Topics',
+				icon: require('../../../resources/browse/forums_all.png'),
+				handler: () => {
+					console.log('all topics');
+				}
+			},
+			{
+				key: 'forums_browse',
+				title: 'Forums',
+				icon: require('../../../resources/browse/forums_browse.png'),
+				handler: () => {
+					console.log('navigate!');
+					this.props.navigation.navigate('ForumIndex');
+				}
+			},
+			{
+				key: 'gallery_all',
+				title: 'All Images',
+				icon: require('../../../resources/browse/gallery_all.png'),
+				handler: () => {
+					console.log('albums');
+				}
+			},
+			{
+				key: 'gallery_browse',
+				title: 'Browse By Category',
+				icon: require('../../../resources/browse/gallery_browse.png'),
+				handler: () => {
+					console.log('albums');
+				}
+			},
+			{
+				key: 'downloads_all',
+				title: 'All Files',
+				icon: require('../../../resources/browse/gallery_all.png'),
+				handler: () => {
+					console.log('albums');
+				}
+			},
+			{
+				key: 'downloads_browse',
+				title: 'Browse By Category',
+				icon: require('../../../resources/browse/gallery_browse.png'),
+				handler: () => {
+					console.log('albums');
+				}
+			}
+		];
+	}
+
+	renderNavItem(item) {
+		return (
+			<TouchableOpacity style={componentStyles.navItem} onPress={() => item.handler()}>
+				<React.Fragment>
+					<Image source={item.icon} resizeMode='contain' style={componentStyles.navItemIcon} />
+					<Text style={componentStyles.navItemText}>{item.title}</Text>
+				</React.Fragment>
+			</TouchableOpacity>
+		);
+	}
+
 	render() {
 		if (this.state.error) {
 			return <ErrorBox message={Lang.get('home_view_error')} refresh={() => this.refreshAfterError()} />;
 		} else {
 			return (
 				<React.Fragment>
+					<FlatList
+						renderItem={({ item }) => this.renderNavItem(item)}
+						data={this.getNavConfig()}
+						keyExtractor={item => item.key}
+						horizontal
+						style={componentStyles.navigator}
+						showsHorizontalScrollIndicator={false}
+					/>
 					{this.getLoginRegPrompt()}
 					<ScrollView style={componentStyles.browseWrapper}>
 						{HomeSectionsToShow.map(section => {
@@ -171,4 +245,34 @@ export default connect(state => ({
 	auth: state.auth
 }))(withApollo(HomeScreen));
 
-const componentStyles = StyleSheet.create({});
+const componentStyles = StyleSheet.create({
+	navigator: {
+		backgroundColor: '#fff',
+		borderBottomWidth: 1,
+		borderBottomColor: 'rgba(0,0,0,0.1)',
+		paddingHorizontal: styleVars.spacing.wide,
+		paddingVertical: styleVars.spacing.standard,
+	},
+	navItem: {
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginRight: styleVars.spacing.standard,
+		backgroundColor: '#F5F5F5',
+		paddingHorizontal: styleVars.spacing.wide,
+		paddingVertical: styleVars.spacing.standard,
+		borderRadius: 30
+	},
+	navItemText: {
+		fontSize: styleVars.fontSizes.small,
+		fontWeight: '500',
+		lineHeight: 13,
+		color: styleVars.tabActive
+	},
+	navItemIcon: {
+		width: 18,
+		height: 18,
+		marginRight: styleVars.spacing.standard,
+		tintColor: styleVars.tabActive
+	}
+});

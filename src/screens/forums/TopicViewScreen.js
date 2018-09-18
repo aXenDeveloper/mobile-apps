@@ -174,17 +174,18 @@ class TopicViewScreen extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps, prevState) {
-		// If we mounted without the info we need to set the screen title, then set them now
-		if (!this.props.navigation.state.params.author) {
-			this.props.navigation.setParams({
-				author: this.props.data.forums.topic.author.name,
-				started: this.props.data.forums.topic.started,
-				title: this.props.data.forums.topic.title
-			});
-		}
-
 		// If we're no longer loading, toggle the follow button if needed
 		if (prevProps.data.loading && !this.props.data.loading && !this.props.data.error) {
+			
+			// If we mounted without the info we need to set the screen title, then set them now
+			if (!this.props.navigation.state.params.author) {
+				this.props.navigation.setParams({
+					author: this.props.data.forums.topic.author.name,
+					started: this.props.data.forums.topic.started,
+					title: this.props.data.forums.topic.title
+				});
+			}
+
 			if( !this.props.data.forums.topic.passwordProtected ){
 				this.props.navigation.setParams({
 					showFollowControl: true,

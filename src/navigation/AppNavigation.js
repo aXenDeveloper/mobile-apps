@@ -37,7 +37,7 @@ class AppNavigation extends Component {
 	constructor(props) {
 		super(props);
 
-		this._HomeTabBar = this._getHomeTabBar();
+		//this._HomeTabBar = this._getHomeTabBar();
 		this._ForumTabBar = this._getForumTabBar();
 		this._CommunityStack = this._getMainStack();
 		this._StreamStack = this._getMainStack({}, 'StreamView');
@@ -52,7 +52,7 @@ class AppNavigation extends Component {
 		return createStackNavigator(
 			{
 				HomeScreen: { 
-					screen: this._HomeTabBar,
+					screen: HomeScreen,
 					navigationOptions: {
 						title: this.props.site.board_name
 					}
@@ -343,7 +343,7 @@ class AppNavigation extends Component {
 	 *
 	 * @return object
 	 */
-	_getHomeTabBar() {
+	/*_getHomeTabBar() {
 		return createMaterialTopTabNavigator(
 			{
 				All: {
@@ -367,7 +367,7 @@ class AppNavigation extends Component {
 				})
 			}
 		);
-	}
+	}*/
 
 	/**
 	 * Return a URL for the user tab bar icon. Photo if it's a member, icon if it's a guest

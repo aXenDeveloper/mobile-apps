@@ -5,7 +5,7 @@ export const styleVars = {
 	text: '#000000',
 	lightText: '#657686',
 	veryLightText: '#9ba3ab',
-	appBackground: '#eeeff1',
+	appBackground: '#EBEDF0',
 	tabActive: '#37454B',
 	tabInactive: '#6e797e',
 	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`,

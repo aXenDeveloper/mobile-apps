@@ -25,8 +25,8 @@ export default class LoginRegisterPrompt extends Component {
 	 */
 	async componentDidMount() {
 		try {
-			const lastClosed = await AsyncStorage.getItem("@settingStore:loginPopupShown");
-
+			//const lastClosed = await AsyncStorage.getItem("@settingStore:loginPopupShown");
+			const lastClosed = null;
 			// If the time we last closed it is more than a day ago...
 			if( lastClosed == null || ( JSON.parse( lastClosed ) + 86400 ) < ( Date.now() / 1000 ) ){
 				this.setState({
