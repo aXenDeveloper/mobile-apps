@@ -353,7 +353,7 @@ class AppNavigation extends Component {
 					}
 				},
 				Followed: {
-					screen: ForumListScreen,
+					screen: BrowseCommunityScreen,
 					navigationOptions: {
 						tabBarLabel: Lang.get('browse').toUpperCase()
 					}
