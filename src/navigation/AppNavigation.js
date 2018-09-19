@@ -22,6 +22,7 @@ import CommentViewSettingsScreen from "../screens/core/AccountSettings/CommentVi
 // ----
 // Forums screens
 import ForumListScreen from "../screens/forums/ForumListScreen";
+import FluidForumScreen from "../screens/forums/FluidForumScreen";
 import ForumFollowedScreen from "../screens/forums/ForumFollowedScreen";
 import TopicListScreen from "../screens/forums/TopicListScreen";
 import TopicViewScreen from "../screens/forums/TopicViewScreen";
@@ -58,6 +59,12 @@ class AppNavigation extends Component {
 					}
 				},
 				ForumIndex: { screen: ForumListScreen },
+				FluidForum: { 
+					screen: FluidForumScreen,
+					navigationOptions: {
+						title: "All Topics"
+					}
+				},
 				TopicList: { screen: TopicListScreen },
 				TopicView: { screen: TopicViewScreen },
 				Profile: { screen: ProfileScreen },

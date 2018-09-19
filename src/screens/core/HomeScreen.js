@@ -140,6 +140,7 @@ class HomeScreen extends Component {
 				icon: require('../../../resources/browse/forums_all.png'),
 				handler: () => {
 					console.log('all topics');
+					this.props.navigation.navigate('FluidForum');
 				}
 			},
 			{
