@@ -24,7 +24,7 @@ const ContentRow = props => {
 			style={props.withSpace ? stylesheet.outerContentRowWithSpace : stylesheet.outerContentRow}
 			onPress={props.onPress || null}
 		>
-			<View style={[stylesheet.innerContentRow, rowClass]}>
+			<View style={[stylesheet.innerContentRow, rowClass, props.style]}>
 				{props.children}
 			</View>
 		</TouchableHighlight>

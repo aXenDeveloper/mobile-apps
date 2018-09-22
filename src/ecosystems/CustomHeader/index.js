@@ -24,13 +24,21 @@ export default class CustomHeader extends Component {
 	};
 
 	render() {
+		let content;
+
+		if( this.props.content ){
+			content = this.props.content;
+		} else {
+			content = <Header {...this.props} style={styles.header} />;
+		}
+
 		if (this.props.transparent) {
 			return <Header {...this.props} style={[styles.header, styles.transparentHeader]} />;
 		} else {
 			return (
 				<LinearGradient start={[0, 0]} end={[1, 0]} colors={["#3370AA", "#009BA2"]} style={styles.headerWrap}>
 					<StatusBar barStyle="light-content" translucent />
-					<Header {...this.props} style={styles.header} />
+					{content}
 				</LinearGradient>
 			);
 		}

@@ -43,6 +43,7 @@ class AppNavigation extends Component {
 		this._CommunityStack = this._getMainStack();
 		this._StreamStack = this._getMainStack({}, 'StreamView');
 		this._NotificationStack = this._getMainStack({}, 'NotificationsStack');
+		this._SearchStack = this._getMainStack({}, 'SearchStack');
 
 		this.state = {
 			MasterNavigation: this._getMasterNavigation()
@@ -68,6 +69,7 @@ class AppNavigation extends Component {
 				TopicList: { screen: TopicListScreen },
 				TopicView: { screen: TopicViewScreen },
 				Profile: { screen: ProfileScreen },
+				SearchStack: { screen: SearchScreen },
 				NotificationsStack: { screen: NotificationsScreen },
 				NotificationsSettings: { screen: NotificationsSettingsScreen },
 				AccountSettings: { 
@@ -218,7 +220,7 @@ class AppNavigation extends Component {
 			}
 		};
 		const Search = {
-			screen: SearchScreen,
+			screen: this._SearchStack,
 			navigationOptions: {
 				tabBarLabel: "Search",
 				tabBarIcon: ({ focused, tintColor }) => (
