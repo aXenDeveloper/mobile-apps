@@ -49,6 +49,8 @@ const LangFragment = gql`
 		password: phrase(key: "app_password")
 		go: phrase(key: "app_go")
 		search_site: phrase(key: "app_search_site")
+		loading: phrase(key: "app_loading")
+		no_recent_searches: phrase(key: "app_no_recent_searches")
 
 		x_follow_this: phrase(key: "app_x_follow_this")
 		follow_immediate: phrase(key: "app_follow_immediate")		
