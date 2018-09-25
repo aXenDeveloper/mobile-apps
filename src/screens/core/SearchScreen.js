@@ -23,9 +23,11 @@ import Lang from "../../utils/Lang";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import SectionHeader from "../../atoms/SectionHeader";
 import MemberRow from "../../atoms/MemberRow";
+import ErrorBox from "../../atoms/ErrorBox";
 import StreamCard from "../../ecosystems/StreamCard";
 import StreamCardFragment from "../../ecosystems/StreamCard/StreamCardFragment";
 import ContentRow from "../../ecosystems/ContentRow";
+import SearchResultPanel from "../../ecosystems/SearchResultPanel";
 import styles, { styleVars } from "../../styles";
 
 const OverviewSearchQuery = gql`
@@ -40,7 +42,7 @@ const OverviewSearchQuery = gql`
 			content: search(term: $term, limit: 3) {
 				count
 				results {
-					...on core_ContentSearchResult {
+					... on core_ContentSearchResult {
 						...StreamCardFragment
 					}
 				}
@@ -48,37 +50,13 @@ const OverviewSearchQuery = gql`
 			members: search(term: $term, type: core_members, limit: 3) {
 				count
 				results {
-					...on core_Member {
+					... on core_Member {
 						id
 						photo
 						name
 						group {
 							name
 						}
-					}
-				}
-			}
-		}
-	}
-	${StreamCardFragment}
-`;
-
-const SearchQuery = gql`
-	query OverviewSearchQuery($term: String, $type: core_search_types_input) {
-		core {
-			search(term: $term, type: $type) {
-				count
-				results {
-					...on core_Member {
-						id
-						photo
-						name
-						group {
-							name
-						}
-					}
-					...on core_ContentSearchResult {
-						...StreamCardFragment
 					}
 				}
 			}
@@ -97,13 +75,13 @@ class SearchScreen extends Component {
 		this._textInput = null;
 		this.state = {
 			// main search stuff
-			searchTerm: '',
+			searchTerm: "",
 			loadingSearchResults: false,
-			currentTab: '',
+			currentTab: "",
 			overviewSearchResults: {},
+			noResults: false,
 			searchTabs: [],
 			searchSections: {},
-			searchResults: [],
 			showingResults: false,
 			textInputActive: false,
 
@@ -120,24 +98,31 @@ class SearchScreen extends Component {
 	 * @return 	void
 	 */
 	async componentDidMount() {
-		const recentSearchData = await AsyncStorage.getItem('@recentSearches');
+		const recentSearchData = await AsyncStorage.getItem("@recentSearches");
+		const recentSearches = this.transformRecentSearchData(recentSearchData);
+
+		this.setState({
+			recentSearches,
+			loadingRecentSearches: false
+		});
+	}
+
+	transformRecentSearchData(recentSearchData) {
 		const recentSearches = [];
 
-		if (recentSearchData !== null && _.isArray(recentSearchData)) {
+		if (recentSearchData !== null ){
+			const searchData = JSON.parse(recentSearchData);
 			const timeNow = Date.now() / 1000;
 			const cutoff = timeNow - 5184000; // 3 months
 
-			recentSearchData.forEach(result => {
+			searchData.forEach(result => {
 				if (result.time >= cutoff) {
 					recentSearches.push(result.term);
 				}
 			});
 		}
 
-		this.setState({
-			recentSearches,
-			loadingRecentSearches: false
-		});
+		return recentSearches;
 	}
 
 	/**
@@ -147,9 +132,9 @@ class SearchScreen extends Component {
 	 */
 	goBack() {
 		//this.props.navigation.goBack();
-		this._textInput.clear();
 		this._textInput.blur();
 		this.setState({
+			searchTerm: "",
 			textInputActive: false,
 			showingResults: false
 		});
@@ -162,7 +147,8 @@ class SearchScreen extends Component {
 	 */
 	onFocusTextInput() {
 		this.setState({
-			textInputActive: true
+			textInputActive: true,
+			showingResults: false
 		});
 	}
 
@@ -187,17 +173,20 @@ class SearchScreen extends Component {
 			loadingSearchResults: true
 		});
 
+		console.log("searching for " + this.state.searchTerm );
+
 		try {
 			const { data } = await this.props.client.query({
 				query: OverviewSearchQuery,
 				variables: {
 					term: this.state.searchTerm
-				}
+				},
+				fetchPolicy: 'no-cache'
 			});
 
 			const searchSections = {};
-			data.core.search.types.forEach( type => {
-				searchSections[ type.key ] = {
+			data.core.search.types.forEach(type => {
+				searchSections[type.key] = {
 					key: type.key,
 					lang: type.lang,
 					status: null,
@@ -205,23 +194,73 @@ class SearchScreen extends Component {
 				};
 			});
 
+			const recentSearches = await this.addToRecentSearches(
+				this.state.searchTerm
+			);
+
 			this.setState({
-				currentTab: 'overview',
+				currentTab: "overview",
+				noResults:
+					!data.core.content.results.length &&
+					!data.core.members.results.length,
 				overviewSearchResults: {
 					content: data.core.content,
 					members: data.core.members
 				},
 				showingResults: true,
 				searchTabs: data.core.search.types,
-				searchSections
+				searchSections,
+				recentSearches
 			});
 		} catch (err) {
-			console.log( err );
+			console.log(err);
 		}
 
 		this.setState({
-			loadingSearchResults: false			
+			loadingSearchResults: false
 		});
+	}
+
+	/**
+	 * Add a new term to the recent searches list, tidying it up and removing dupes too
+	 *
+	 * @param 	string 		term 	The term to add to the recent search list
+	 * @return 	void
+	 */
+	async addToRecentSearches(term) {
+		let recentSearchData = await AsyncStorage.getItem("@recentSearches");
+
+		if (recentSearchData === null) {
+			recentSearchData = [];
+		} else {
+			recentSearchData = JSON.parse(recentSearchData);
+		}
+
+		// First, add our new search to the top of the list
+		recentSearchData.unshift({
+			term: term,
+			time: Date.now()
+		});
+
+		// Now remove any dupes
+		recentSearchData = _.uniq(recentSearchData, false, data => data.term);
+
+		// Now check the length
+		if (recentSearchData.length > 5) {
+			recentSearchData = recentSearchData.slice(0, 4);
+		}
+
+		// AsyncStorage requires a string
+		recentSearchData = JSON.stringify(recentSearchData);
+
+		// Store it back in storage
+		await AsyncStorage.setItem(
+			"@recentSearches",
+			recentSearchData
+		);
+
+		// Now transform it and return
+		return this.transformRecentSearchData(recentSearchData);
 	}
 
 	/**
@@ -235,7 +274,7 @@ class SearchScreen extends Component {
 				title: "Recent Searches",
 				key: "recent",
 				data: this.state.recentSearches
-			},
+			}
 			/*{
 				title: "Trending Searches",
 				key: "trending",
@@ -275,19 +314,25 @@ class SearchScreen extends Component {
 			return null;
 		}
 
-		let text = `${Lang.get('loading')}...`;
+		let text = `${Lang.get("loading")}...`;
 
-		if( section.key === 'recent' && !this.state.loadingRecentSearches ){
-			text = Lang.get('no_recent_searches');
-		} else if( section.key === 'trending' && !this.state.loadingTrendingSearches ){
-			text = Lang.get('no_trending_searches');
+		if (section.key === "recent" && !this.state.loadingRecentSearches) {
+			text = Lang.get("no_recent_searches");
+		} else if (
+			section.key === "trending" &&
+			!this.state.loadingTrendingSearches
+		) {
+			text = Lang.get("no_trending_searches");
 		}
 
 		return (
-			<ContentRow style={componentStyles.recentSearchRow}>
+			<ContentRow style={componentStyles.leftAlign}>
 				<Text
 					numberOfLines={1}
-					style={[componentStyles.recentSearchRowText, styles.veryLightText]}
+					style={[
+						componentStyles.leftAlignText,
+						styles.veryLightText
+					]}
 				>
 					{text}
 				</Text>
@@ -298,10 +343,17 @@ class SearchScreen extends Component {
 	/**
 	 * Event handler for tapping on a search shortcut row
 	 *
+	 * @param 	string 		term 	The search term tapped
 	 * @return 	void
 	 */
-	recentSearchClick() {
-		console.log("click search row");
+	recentSearchClick(term) {
+		// Since search relies on the searchterm being in state, we need to
+		// run the search as a callback in setState
+		this.setState({
+			searchTerm: term
+		}, () => {
+			this.onSubmitTextInput();
+		});
 	}
 
 	/**
@@ -313,18 +365,15 @@ class SearchScreen extends Component {
 	renderShortcutItem(item) {
 		return (
 			<ContentRow
-				style={componentStyles.recentSearchRow}
-				onPress={this.recentSearchClick.bind(this)}
+				style={componentStyles.leftAlign}
+				onPress={() => this.recentSearchClick(item)}
 			>
-				<Text
-					numberOfLines={1}
-					style={componentStyles.recentSearchRowText}
-				>
+				<Text numberOfLines={1} style={componentStyles.leftAlignText}>
 					{item}
 				</Text>
 				<Image
 					source={require("../../../resources/search.png")}
-					style={componentStyles.recentSearchRowIcon}
+					style={componentStyles.leftAlignIcon}
 					resizeMode="contain"
 				/>
 			</ContentRow>
@@ -337,18 +386,25 @@ class SearchScreen extends Component {
 	 * @return 	Component
 	 */
 	renderOverviewTab() {
-		const overviewData = [
-			{
-				title: 'Top Content',
-				count: this.state.overviewSearchResults.content.count, 
+		const overviewData = [];
+
+		if (this.state.overviewSearchResults.content.results.length) {
+			overviewData.push({
+				title: "Top Content",
+				key: "content",
+				count: this.state.overviewSearchResults.content.count,
 				data: this.state.overviewSearchResults.content.results
-			},
-			{
-				title: 'Top Members',
+			});
+		}
+
+		if (this.state.overviewSearchResults.members.results.length) {
+			overviewData.push({
+				title: "Top Members",
+				key: "members",
 				count: this.state.overviewSearchResults.members.count,
 				data: this.state.overviewSearchResults.members.results
-			}
-		];
+			});
+		}
 
 		return (
 			<SectionList
@@ -356,33 +412,63 @@ class SearchScreen extends Component {
 				renderSectionFooter={({ section }) =>
 					this.renderOverviewSectionFooter(section)
 				}
-				renderSectionHeader={({ section }) => (
-					<SectionHeader title={section.title} />
-				)}
+				renderSectionHeader={({ section }) =>
+					section.data.length && (
+						<SectionHeader title={section.title} />
+					)
+				}
 				sections={overviewData}
 				stickySectionHeadersEnabled={false}
-				keyExtractor={item => item['__typename'] == 'core_Member' ? 'm' + item.id : 'c' + item.indexID}
+				keyExtractor={item =>
+					item["__typename"] == "core_Member"
+						? "m" + item.id
+						: "c" + item.indexID
+				}
+				ListEmptyComponent={() => (
+					<ErrorBox
+						message={Lang.get("no_results")}
+						showIcon={false}
+					/>
+				)}
 			/>
 		);
 	}
 
+	/**
+	 * Render a row on the Overview search screen - either a member or a stream card
+	 *
+	 * @param 	object 		item 		Object of item data from search
+	 * @return 	Component
+	 */
 	renderOverviewItem(item) {
-		if( item['__typename'] == 'core_Member' ){
-			return <MemberRow data={item} onPress={() => {
-				this.props.navigation.navigate("Profile", {
-					id: item.id,
-					name: item.name,
-					photo: item.photo
-				});
-			}} />;
+		if (item["__typename"] == "core_Member") {
+			return (
+				<MemberRow
+					data={item}
+					onPress={() => {
+						this.props.navigation.navigate("Profile", {
+							id: item.id,
+							name: item.name,
+							photo: item.photo
+						});
+					}}
+				/>
+			);
 		} else {
 			return <StreamCard data={item} isSupported={true} />;
 		}
 	}
 
+	/**
+	 * Render a footer for the overview search screen sections. Shows a See All link
+	 * if there are additional results
+	 *
+	 * @param 	object 		section 	Object containing section data
+	 * @return 	Component|null
+	 */
 	renderOverviewSectionFooter(section) {
-		if( section.data.length ){
-			if( section.count > section.data.length ){
+		if (section.data.length) {
+			if (section.count > section.data.length) {
 				return (
 					<ContentRow
 						style={componentStyles.seeAllRow}
@@ -392,16 +478,14 @@ class SearchScreen extends Component {
 							numberOfLines={1}
 							style={componentStyles.seeAllRowText}
 						>
-							See All ({section.count})
+							{Lang.get('see_all')} ({section.count})
 						</Text>
 					</ContentRow>
 				);
-			} 
-			
-			return null;
+			}
 		}
 
-		return <Text>Footer</Text>;
+		return null;
 	}
 
 	/**
@@ -414,11 +498,19 @@ class SearchScreen extends Component {
 		const tabIndex = tab.i;
 
 		// index 0 is the overview tab so we don't need to do anything
-		if( tabIndex == 0 ){
+		if (tabIndex == 0) {
+			this.setState({
+				currentTab: "overview"
+			});
 			return;
 		}
 
-		const selectedTab = this.state.searchTabs[ tabIndex - 1 ];
+		const tabData = this.state.searchTabs[tabIndex - 1];
+		const currentTab = tabData.key;
+
+		this.setState({
+			currentTab
+		});
 	}
 
 	/**
@@ -435,16 +527,25 @@ class SearchScreen extends Component {
 				tabBarUnderlineStyle={componentStyles.activeTabUnderline}
 				renderTabBar={() => <ScrollableTabBar />}
 				initialPage={0}
-				onChangeTab={(tab) => this.onChangeTab(tab)}
+				onChangeTab={tab => this.onChangeTab(tab)}
 			>
 				<View style={componentStyles.tab} tabLabel="OVERVIEW">
 					{this.renderOverviewTab()}
 				</View>
-				{this.state.searchTabs.map( (type) => (
-					<View style={componentStyles.tab} key={type.key} tabLabel={type.lang.toUpperCase()}>
-						{this.getTabContents(type.key)}
-					</View>
-				))}
+				{!this.state.noResults &&
+					this.state.searchTabs.map(type => (
+						<View
+							style={componentStyles.tab}
+							key={type.key}
+							tabLabel={type.lang.toUpperCase()}
+						>
+							<SearchResultPanel
+								type={type.key}
+								term={this.state.searchTerm}
+								showResults={this.state.currentTab === type.key}
+							/>
+						</View>
+					))}
 			</ScrollableTabView>
 		);
 	}
@@ -455,12 +556,26 @@ class SearchScreen extends Component {
 	 * @return 	Component
 	 */
 	getTabContents(tab) {
-		const tabData = this.state.searchSections[ tab ];
+		const tabData = this.state.searchSections[tab];
 
-		if( tabData.status === null || tabData.status === 'loading' ){
-			return <View style={componentStyles.tabNoContent}><ActivityIndicator size='large' /></View>;
+		if (tabData.status === null || tabData.status === "loading") {
+			return (
+				<View style={componentStyles.tabNoContent}>
+					<ActivityIndicator size="large" />
+				</View>
+			);
 		} else {
-
+			return (
+				<FlatList
+					data={tabData.results}
+					renderItem={({ item }) => this.renderShortcutItem(item)}
+					keyExtractor={item =>
+						item["__typename"] == "core_Member"
+							? "m" + item.id
+							: "c" + item.indexID
+					}
+				/>
+			);
 		}
 	}
 
@@ -482,7 +597,7 @@ class SearchScreen extends Component {
 					/>
 					<TextInput
 						autoFocus
-						autoCapitalize='none'
+						autoCapitalize="none"
 						autoCorrect={false}
 						style={componentStyles.textInput}
 						placeholderTextColor="rgba(255,255,255,0.6)"
@@ -492,9 +607,12 @@ class SearchScreen extends Component {
 						returnKeyType="search"
 						onFocus={() => this.onFocusTextInput()}
 						onBlur={() => this.onBlurTextInput()}
-						onChangeText={(searchTerm) => this.setState({searchTerm})}
+						onChangeText={searchTerm =>
+							this.setState({ searchTerm })
+						}
 						onSubmitEditing={() => this.onSubmitTextInput()}
 						ref={ref => (this._textInput = ref)}
+						value={this.state.searchTerm}
 					/>
 				</View>
 				{(this.state.textInputActive || this.state.showingResults) && (
@@ -578,10 +696,10 @@ const componentStyles = StyleSheet.create({
 	},
 	tabNoContent: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center'
+		justifyContent: "center",
+		alignItems: "center"
 	},
-	recentSearchRow: {
+	leftAlign: {
 		paddingVertical: styleVars.spacing.standard,
 		paddingHorizontal: styleVars.spacing.wide,
 		flex: 1,
@@ -589,10 +707,10 @@ const componentStyles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "center"
 	},
-	recentSearchRowText: {
+	leftAlignText: {
 		fontSize: styleVars.fontSizes.content
 	},
-	recentSearchRowIcon: {
+	leftAlignIcon: {
 		tintColor: "rgba(0,0,0,0.6)",
 		width: 15,
 		height: 15
@@ -602,9 +720,9 @@ const componentStyles = StyleSheet.create({
 		paddingHorizontal: styleVars.spacing.wide
 	},
 	seeAllRowText: {
-		textAlign: 'center',
+		textAlign: "center",
 		color: styleVars.primaryButton.mainColor,
 		fontSize: styleVars.fontSizes.content,
-		fontWeight: '500'
+		fontWeight: "500"
 	}
 });
