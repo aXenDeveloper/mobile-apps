@@ -28,7 +28,7 @@ import ErrorBox from "../../atoms/ErrorBox";
 import StreamCard from "../../ecosystems/StreamCard";
 import StreamCardFragment from "../../ecosystems/StreamCard/StreamCardFragment";
 import ContentRow from "../../ecosystems/ContentRow";
-import SearchResultPanel from "../../ecosystems/SearchResultPanel";
+import { SearchContentPanel, SearchMemberPanel } from "../../ecosystems/SearchResultPanel";
 import styles, { styleVars } from "../../styles";
 
 const OverviewSearchQuery = gql`
@@ -474,7 +474,7 @@ class SearchScreen extends Component {
 						style={componentStyles.seeAllRow}
 						onPress={() => {
 							this.setState({
-								goToTab: 2
+								goToTab: 1
 							});
 						}}
 					>
@@ -539,19 +539,24 @@ class SearchScreen extends Component {
 					{this.renderOverviewTab()}
 				</View>
 				{!this.state.noResults &&
-					this.state.searchTabs.map(type => (
-						<View
-							style={componentStyles.tab}
-							key={type.key}
-							tabLabel={type.lang.toUpperCase()}
-						>
-							<SearchResultPanel
-								type={type.key}
-								term={this.state.searchTerm}
-								showResults={this.state.currentTab === type.key}
-							/>
-						</View>
-					))}
+					this.state.searchTabs.map(type => {
+						const PanelComponent = type.key === 'core_members' ? SearchMemberPanel : SearchContentPanel;
+
+						return (
+							<View
+								style={componentStyles.tab}
+								key={type.key}
+								tabLabel={type.lang.toUpperCase()}
+							>
+									<PanelComponent
+										type={type.key}
+										typeName={type.lang}
+										term={this.state.searchTerm}
+										showResults={this.state.currentTab === type.key}
+									/>
+							</View>
+						);
+					})}
 			</ScrollableTabView>
 		);
 	}
@@ -699,7 +704,7 @@ const componentStyles = StyleSheet.create({
 		alignItems: "center"
 	},
 	searchBoxActive: {
-		backgroundColor: "rgba(0,0,0,0.3)"
+		backgroundColor: "rgba(0,0,0,0.2)"
 	},
 	textInput: {
 		color: "#fff",
