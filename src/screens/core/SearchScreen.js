@@ -21,6 +21,7 @@ import { graphql, compose, withApollo } from "react-apollo";
 
 import Lang from "../../utils/Lang";
 import CustomHeader from "../../ecosystems/CustomHeader";
+import { PlaceholderElement, PlaceholderContainer, PlaceholderRepeater } from '../../ecosystems/Placeholder';
 import SectionHeader from "../../atoms/SectionHeader";
 import MemberRow from "../../atoms/MemberRow";
 import ErrorBox from "../../atoms/ErrorBox";
@@ -84,6 +85,7 @@ class SearchScreen extends Component {
 			searchSections: {},
 			showingResults: false,
 			textInputActive: false,
+			goToTab: null,
 
 			// initial screen
 			recentSearches: [],
@@ -172,8 +174,6 @@ class SearchScreen extends Component {
 		this.setState({
 			loadingSearchResults: true
 		});
-
-		console.log("searching for " + this.state.searchTerm );
 
 		try {
 			const { data } = await this.props.client.query({
@@ -472,7 +472,11 @@ class SearchScreen extends Component {
 				return (
 					<ContentRow
 						style={componentStyles.seeAllRow}
-						onPress={null}
+						onPress={() => {
+							this.setState({
+								goToTab: 2
+							});
+						}}
 					>
 						<Text
 							numberOfLines={1}
@@ -498,9 +502,10 @@ class SearchScreen extends Component {
 		const tabIndex = tab.i;
 
 		// index 0 is the overview tab so we don't need to do anything
-		if (tabIndex == 0) {
+		if (tabIndex == 0 || tabIndex == null) {
 			this.setState({
-				currentTab: "overview"
+				currentTab: "overview",
+				goToTab: tabIndex
 			});
 			return;
 		}
@@ -509,7 +514,8 @@ class SearchScreen extends Component {
 		const currentTab = tabData.key;
 
 		this.setState({
-			currentTab
+			currentTab,
+			goToTab: tabIndex
 		});
 	}
 
@@ -526,7 +532,7 @@ class SearchScreen extends Component {
 				tabBarActiveTextColor="#2080A7"
 				tabBarUnderlineStyle={componentStyles.activeTabUnderline}
 				renderTabBar={() => <ScrollableTabBar />}
-				initialPage={0}
+				page={this.state.goToTab || null}
 				onChangeTab={tab => this.onChangeTab(tab)}
 			>
 				<View style={componentStyles.tab} tabLabel="OVERVIEW">
@@ -579,6 +585,28 @@ class SearchScreen extends Component {
 		}
 	}
 
+	getResultsPlaceholder() {
+		return (
+			<View style={{ flex: 1 }}>
+				<PlaceholderContainer height={48} style={componentStyles.loadingTabBar}>
+					<PlaceholderElement width={70} height={14} top={17} left={13} />
+					<PlaceholderElement width={80} height={14} top={17} left={113} />
+					<PlaceholderElement width={90} height={14} top={17} left={225} />
+					<PlaceholderElement width={70} height={14} top={17} left={345} />
+				</PlaceholderContainer>
+				<PlaceholderRepeater repeat={6}>
+					<ContentRow>
+						<PlaceholderContainer height={60} style={componentStyles.loadingRow}>
+							<PlaceholderElement circle radius={36} top={11} left={styleVars.spacing.standard} />
+							<PlaceholderElement width={200} height={15} top={13} left={60} />
+							<PlaceholderElement width={120} height={12} top={32} left={60} />
+						</PlaceholderContainer>
+					</ContentRow>
+				</PlaceholderRepeater>
+			</View>
+		);
+	}
+
 	render() {
 		const searchBox = (
 			<View style={componentStyles.searchWrap}>
@@ -628,12 +656,19 @@ class SearchScreen extends Component {
 			</View>
 		);
 
+		let content;
+		if( this.state.loadingSearchResults ){
+			content = this.getResultsPlaceholder();
+		} else if( this.state.showingResults ){
+			content = this.getResultsViews();
+		} else {
+			content = this.getSearchHomeScreen();
+		}
+
 		return (
 			<View style={{ flex: 1 }}>
 				<CustomHeader content={searchBox} />
-				{this.state.showingResults
-					? this.getResultsViews()
-					: this.getSearchHomeScreen()}
+				{content}
 			</View>
 		);
 	}
@@ -724,5 +759,13 @@ const componentStyles = StyleSheet.create({
 		color: styleVars.primaryButton.mainColor,
 		fontSize: styleVars.fontSizes.content,
 		fontWeight: "500"
+	},
+	loadingTabBar: {
+		backgroundColor: '#fff',
+		borderBottomWidth: 1,
+		borderBottomColor: '#cccccc'
+	},
+	loadingRow: {
+		backgroundColor: '#fff'
 	}
 });
