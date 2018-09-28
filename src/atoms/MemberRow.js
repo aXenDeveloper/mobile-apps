@@ -23,7 +23,7 @@ const componentStyles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'row',
 		paddingVertical: styleVars.spacing.standard,
-		paddingHorizontal: styleVars.spacing.standard
+		paddingHorizontal: styleVars.spacing.wide
 	},
 	container: {
 		marginLeft: styleVars.spacing.standard

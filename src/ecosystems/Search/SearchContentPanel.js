@@ -14,8 +14,8 @@ import Lang from "../../utils/Lang";
 import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import ErrorBox from "../../atoms/ErrorBox";
 import MemberRow from "../../atoms/MemberRow";
-import StreamCard from "../../ecosystems/StreamCard";
-import StreamCardFragment from "../../ecosystems/StreamCard/StreamCardFragment";
+import SearchResult from "./SearchResult";
+import SearchResultFragment from "../../ecosystems/Search/SearchResultFragment";
 
 const SearchQuery = gql`
 	query OverviewSearchQuery($term: String, $type: core_search_types_input) {
@@ -32,13 +32,13 @@ const SearchQuery = gql`
 						}
 					}
 					... on core_ContentSearchResult {
-						...StreamCardFragment
+						...SearchResultFragment
 					}
 				}
 			}
 		}
 	}
-	${StreamCardFragment}
+	${SearchResultFragment}
 `;
 
 class ContentPanel extends Component {
@@ -131,10 +131,10 @@ class ContentPanel extends Component {
 		}
 
 		return (
-			<StreamCard
+			<SearchResult
 				data={item}
-				isSupported={!!isSupported}
 				onPress={onPress}
+				term={this.props.term}
 			/>
 		);
 	}

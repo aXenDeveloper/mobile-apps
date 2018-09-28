@@ -21,14 +21,21 @@ import { graphql, compose, withApollo } from "react-apollo";
 
 import Lang from "../../utils/Lang";
 import CustomHeader from "../../ecosystems/CustomHeader";
-import { PlaceholderElement, PlaceholderContainer, PlaceholderRepeater } from '../../ecosystems/Placeholder';
+import {
+	PlaceholderElement,
+	PlaceholderContainer,
+	PlaceholderRepeater
+} from "../../ecosystems/Placeholder";
 import SectionHeader from "../../atoms/SectionHeader";
 import MemberRow from "../../atoms/MemberRow";
 import ErrorBox from "../../atoms/ErrorBox";
-import StreamCard from "../../ecosystems/StreamCard";
-import StreamCardFragment from "../../ecosystems/StreamCard/StreamCardFragment";
 import ContentRow from "../../ecosystems/ContentRow";
-import { SearchContentPanel, SearchMemberPanel } from "../../ecosystems/SearchResultPanel";
+import {
+	SearchContentPanel,
+	SearchMemberPanel,
+	SearchResultFragment,
+	SearchResult
+} from "../../ecosystems/Search";
 import styles, { styleVars } from "../../styles";
 
 const OverviewSearchQuery = gql`
@@ -44,7 +51,7 @@ const OverviewSearchQuery = gql`
 				count
 				results {
 					... on core_ContentSearchResult {
-						...StreamCardFragment
+						...SearchResultFragment
 					}
 				}
 			}
@@ -63,7 +70,7 @@ const OverviewSearchQuery = gql`
 			}
 		}
 	}
-	${StreamCardFragment}
+	${SearchResultFragment}
 `;
 
 class SearchScreen extends Component {
@@ -112,7 +119,7 @@ class SearchScreen extends Component {
 	transformRecentSearchData(recentSearchData) {
 		const recentSearches = [];
 
-		if (recentSearchData !== null ){
+		if (recentSearchData !== null) {
 			const searchData = JSON.parse(recentSearchData);
 			const timeNow = Date.now() / 1000;
 			const cutoff = timeNow - 5184000; // 3 months
@@ -181,7 +188,7 @@ class SearchScreen extends Component {
 				variables: {
 					term: this.state.searchTerm
 				},
-				fetchPolicy: 'no-cache'
+				fetchPolicy: "no-cache"
 			});
 
 			const searchSections = {};
@@ -254,10 +261,7 @@ class SearchScreen extends Component {
 		recentSearchData = JSON.stringify(recentSearchData);
 
 		// Store it back in storage
-		await AsyncStorage.setItem(
-			"@recentSearches",
-			recentSearchData
-		);
+		await AsyncStorage.setItem("@recentSearches", recentSearchData);
 
 		// Now transform it and return
 		return this.transformRecentSearchData(recentSearchData);
@@ -349,11 +353,14 @@ class SearchScreen extends Component {
 	recentSearchClick(term) {
 		// Since search relies on the searchterm being in state, we need to
 		// run the search as a callback in setState
-		this.setState({
-			searchTerm: term
-		}, () => {
-			this.onSubmitTextInput();
-		});
+		this.setState(
+			{
+				searchTerm: term
+			},
+			() => {
+				this.onSubmitTextInput();
+			}
+		);
 	}
 
 	/**
@@ -455,7 +462,7 @@ class SearchScreen extends Component {
 				/>
 			);
 		} else {
-			return <StreamCard data={item} isSupported={true} />;
+			return <SearchResult data={item} term={this.state.searchTerm} />;
 		}
 	}
 
@@ -482,7 +489,7 @@ class SearchScreen extends Component {
 							numberOfLines={1}
 							style={componentStyles.seeAllRowText}
 						>
-							{Lang.get('see_all')} ({section.count})
+							{Lang.get("see_all")} ({section.count})
 						</Text>
 					</ContentRow>
 				);
@@ -540,7 +547,10 @@ class SearchScreen extends Component {
 				</View>
 				{!this.state.noResults &&
 					this.state.searchTabs.map(type => {
-						const PanelComponent = type.key === 'core_members' ? SearchMemberPanel : SearchContentPanel;
+						const PanelComponent =
+							type.key === "core_members"
+								? SearchMemberPanel
+								: SearchContentPanel;
 
 						return (
 							<View
@@ -548,12 +558,14 @@ class SearchScreen extends Component {
 								key={type.key}
 								tabLabel={type.lang.toUpperCase()}
 							>
-									<PanelComponent
-										type={type.key}
-										typeName={type.lang}
-										term={this.state.searchTerm}
-										showResults={this.state.currentTab === type.key}
-									/>
+								<PanelComponent
+									type={type.key}
+									typeName={type.lang}
+									term={this.state.searchTerm}
+									showResults={
+										this.state.currentTab === type.key
+									}
+								/>
 							</View>
 						);
 					})}
@@ -593,18 +605,59 @@ class SearchScreen extends Component {
 	getResultsPlaceholder() {
 		return (
 			<View style={{ flex: 1 }}>
-				<PlaceholderContainer height={48} style={componentStyles.loadingTabBar}>
-					<PlaceholderElement width={70} height={14} top={17} left={13} />
-					<PlaceholderElement width={80} height={14} top={17} left={113} />
-					<PlaceholderElement width={90} height={14} top={17} left={225} />
-					<PlaceholderElement width={70} height={14} top={17} left={345} />
+				<PlaceholderContainer
+					height={48}
+					style={componentStyles.loadingTabBar}
+				>
+					<PlaceholderElement
+						width={70}
+						height={14}
+						top={17}
+						left={13}
+					/>
+					<PlaceholderElement
+						width={80}
+						height={14}
+						top={17}
+						left={113}
+					/>
+					<PlaceholderElement
+						width={90}
+						height={14}
+						top={17}
+						left={225}
+					/>
+					<PlaceholderElement
+						width={70}
+						height={14}
+						top={17}
+						left={345}
+					/>
 				</PlaceholderContainer>
 				<PlaceholderRepeater repeat={6}>
 					<ContentRow>
-						<PlaceholderContainer height={60} style={componentStyles.loadingRow}>
-							<PlaceholderElement circle radius={36} top={11} left={styleVars.spacing.standard} />
-							<PlaceholderElement width={200} height={15} top={13} left={60} />
-							<PlaceholderElement width={120} height={12} top={32} left={60} />
+						<PlaceholderContainer
+							height={60}
+							style={componentStyles.loadingRow}
+						>
+							<PlaceholderElement
+								circle
+								radius={36}
+								top={11}
+								left={styleVars.spacing.standard}
+							/>
+							<PlaceholderElement
+								width={200}
+								height={15}
+								top={13}
+								left={60}
+							/>
+							<PlaceholderElement
+								width={120}
+								height={12}
+								top={32}
+								left={60}
+							/>
 						</PlaceholderContainer>
 					</ContentRow>
 				</PlaceholderRepeater>
@@ -662,9 +715,9 @@ class SearchScreen extends Component {
 		);
 
 		let content;
-		if( this.state.loadingSearchResults ){
+		if (this.state.loadingSearchResults) {
 			content = this.getResultsPlaceholder();
-		} else if( this.state.showingResults ){
+		} else if (this.state.showingResults) {
 			content = this.getResultsViews();
 		} else {
 			content = this.getSearchHomeScreen();
@@ -688,7 +741,12 @@ export default compose(
 
 const componentStyles = StyleSheet.create({
 	searchWrap: {
-		paddingTop: 32,
+		paddingHorizontal: styleVars.spacing.tight,
+		paddingBottom: styleVars.spacing.tight,
+		position: 'absolute',
+		left: 0,
+		right: 0,
+		bottom: 0,
 		paddingHorizontal: styleVars.spacing.tight,
 		display: "flex",
 		flexDirection: "row",
@@ -766,11 +824,11 @@ const componentStyles = StyleSheet.create({
 		fontWeight: "500"
 	},
 	loadingTabBar: {
-		backgroundColor: '#fff',
+		backgroundColor: "#fff",
 		borderBottomWidth: 1,
-		borderBottomColor: '#cccccc'
+		borderBottomColor: "#cccccc"
 	},
 	loadingRow: {
-		backgroundColor: '#fff'
+		backgroundColor: "#fff"
 	}
 });

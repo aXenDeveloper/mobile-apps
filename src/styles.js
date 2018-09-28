@@ -49,7 +49,9 @@ export const styleVars = {
 		medium: '#e1e7eb',
 		light: '#f5f5f5',
 	},
-	checkmarkColor: '#3370AA'
+	checkmarkColor: '#3370AA',
+	searchHighlight: '#fff4d4',
+	searchHighlightText: '#000'
 };
 
 /* REUSABLE STYLE CLASSES */
