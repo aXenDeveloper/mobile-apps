@@ -1,5 +1,7 @@
 import { StyleSheet } from "react-native";
 
+import { isIphoneX } from "./utils/isIphoneX";
+
 /* VARIABLES USED THROUGHOUT THE APP */
 export const styleVars = {
 	text: '#000000',
@@ -93,7 +95,9 @@ const styles = StyleSheet.create({
 	primaryTabBar: {
 		/*backgroundColor: '#37454B',*/
 		//backgroundColor: "#252D31"
-		backgroundColor: '#fff'
+		backgroundColor: '#fff',
+		paddingBottom: isIphoneX() ? 15 : 0,
+		height: isIphoneX() ? 65 : 50
 	},
 	markSwipeItem: {
 		backgroundColor: "#009BA2"
