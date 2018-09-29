@@ -56,6 +56,7 @@ const LangFragment = gql`
 		no_results_in_x: phrase(key: "app_no_results_in_x")
 		see_all: phrase(key: "app_see_all")
 		name_replied: phrase(key: "app_name_replied")
+		item_in_container: phrase(key: "app_item_in_container")
 
 		x_follow_this: phrase(key: "app_x_follow_this")
 		follow_immediate: phrase(key: "app_follow_immediate")		

@@ -17,14 +17,14 @@ const SearchResultComment = props => (
 				<Text style={[styles.lightText]}>{relativeTime.short(props.data.updated)}</Text>
 			</View>
 			<Text style={[styles.lightText, componentStyles.commentItemMeta]}>
-				{Lang.pluralize(Lang.get("replies"), props.data.replies)} &middot; {props.data.articleLang.definiteUC} in{" "}
-				{props.data.containerTitle}
+				{Lang.pluralize(Lang.get("replies"), props.data.replies)} &middot;{" "}
+				{Lang.get("item_in_container", { item: props.data.articleLang.definiteUC, container: props.data.containerTitle })}
 			</Text>
 		</View>
 		<View style={[componentStyles.commentReplyWrap, styles.mtTight]}>
 			<View style={[componentStyles.commentUserInfo]}>
 				<UserPhoto size={18} url={props.data.author.photo} />
-				<Text style={[styles.standardText, styles.mlVeryTight]}>{Lang.get('name_replied', { name: props.data.author.name })}</Text>
+				<Text style={[styles.standardText, styles.mlVeryTight]}>{Lang.get("name_replied", { name: props.data.author.name })}</Text>
 			</View>
 			<Text style={[styles.standardText, styles.mtTight]} numberOfLines={2}>
 				{highlightTerms(props.data.content.trim(), props.term, styles.highlightedText)}

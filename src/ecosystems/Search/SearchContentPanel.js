@@ -18,19 +18,11 @@ import SearchResult from "./SearchResult";
 import SearchResultFragment from "../../ecosystems/Search/SearchResultFragment";
 
 const SearchQuery = gql`
-	query OverviewSearchQuery($term: String, $type: core_search_types_input) {
+	query OverviewSearchQuery($term: String, $type: core_search_types_input, $offset: Int, $limit: Int) {
 		core {
-			search(term: $term, type: $type) {
+			search(term: $term, type: $type, offset: $offset, limit: $limit) {
 				count
 				results {
-					... on core_Member {
-						id
-						photo
-						name
-						group {
-							name
-						}
-					}
 					... on core_ContentSearchResult {
 						...SearchResultFragment
 					}
@@ -41,6 +33,8 @@ const SearchQuery = gql`
 	${SearchResultFragment}
 `;
 
+const LIMIT = 25;
+
 class ContentPanel extends Component {
 	constructor(props) {
 		super(props);
@@ -48,7 +42,9 @@ class ContentPanel extends Component {
 			loading: false,
 			error: false,
 			lastTerm: "",
-			results: null
+			results: null,
+			reachedEnd: false,
+			offset: 0
 		};
 	}
 
@@ -87,14 +83,21 @@ class ContentPanel extends Component {
 				query: SearchQuery,
 				variables: {
 					term: this.props.term,
-					type: this.props.type
+					type: this.props.type,
+					offset: this.state.offset,
+					limit: LIMIT
 				},
 				fetchPolicy: "no-cache" // important, so that each search fetches new results
 			});
 
+			const currentResults = this.state.results == null ? [] : this.state.results;
+			const updatedResults = [...currentResults, ...data.core.search.results];
+
 			this.setState({
-				results: data.core.search.results || [],
-				loading: false
+				results: updatedResults,
+				reachedEnd: !data.core.search.results.length || data.core.search.results.length < LIMIT,
+				loading: false,
+				offset: updatedResults.length
 			});
 		} catch (err) {
 			this.setState({
@@ -139,6 +142,12 @@ class ContentPanel extends Component {
 		);
 	}
 
+	onEndReached() {
+		if( !this.state.loading && !this.state.reachedEnd ){
+			this.fetchResults();
+		}
+	}
+
 	render() {
 		if (this.state.loading || this.state.results === null) {
 			return (
@@ -165,6 +174,7 @@ class ContentPanel extends Component {
 					data={this.state.results}
 					keyExtractor={item => item.indexID}
 					renderItem={({ item }) => this.renderItem(item)}
+					onEndReached={() => this.onEndReached()}
 					ListEmptyComponent={() => (
 						<ErrorBox
 							message={Lang.get("no_results_in_x", {
