@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 const SearchResultFragment = gql`
 	fragment SearchResultFragment on core_ContentSearchResult {
 		indexID
+		objectID
 		itemID
 		url {
 			full

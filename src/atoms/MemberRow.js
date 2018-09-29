@@ -10,8 +10,8 @@ const MemberRow = (props) => (
 	<ContentRow style={componentStyles.row} onPress={props.onPress}>
 		<UserPhoto url={props.data.photo} size={36} />
 		<View style={componentStyles.container}>
-			<Text style={componentStyles.username}>{props.data.name}</Text>
-			<Text style={styles.lightText}>{props.data.group.name}</Text>
+			<Text style={styles.itemTitle}>{props.data.name}</Text>
+			<Text style={[styles.lightText, styles.standardText]}>{props.data.group.name}</Text>
 		</View>
 	</ContentRow>
 );
@@ -27,10 +27,5 @@ const componentStyles = StyleSheet.create({
 	},
 	container: {
 		marginLeft: styleVars.spacing.standard
-	},
-	username: {
-		fontSize: styleVars.fontSizes.large,
-		fontWeight: '500',
-		color: '#000'
 	}
 });

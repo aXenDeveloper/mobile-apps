@@ -39,6 +39,7 @@ export const styleVars = {
 		content: 15,
 		large: 17
 	},
+	fontFamily: 'System',
 	lineHeight: {
 		standard: 18
 	},
@@ -166,15 +167,6 @@ const styles = StyleSheet.create({
 	readBackground: {
 		backgroundColor: '#ffffff', //'#f5f5f7'
 	},
-	smallText: {
-		fontSize: 13
-	},
-	lightText: {
-		color: styleVars.lightText
-	},
-	veryLightText: {
-		color: styleVars.veryLightText
-	},
 	text: {
 		color: '#000'
 	},
@@ -189,6 +181,46 @@ const styles = StyleSheet.create({
 	},
 	hidden: {
 		display: 'none'
+	},
+	flexReset: { 
+		flexBasis: 0, 
+		flexGrow: 1 
+	},
+
+	/* Typography */
+	itemTitle: {
+		fontSize: styleVars.fontSizes.large,
+		fontWeight: 'bold',
+		color: '#171717',
+		fontFamily: styleVars.fontFamily
+	},
+	smallItemTitle: {
+		fontSize: styleVars.fontSizes.content,
+		fontWeight: 'bold',
+		color: '#171717',
+		fontFamily: styleVars.fontFamily
+	},
+	highlightedText: {
+		backgroundColor: styleVars.searchHighlight,
+		color: styleVars.searchHighlightText
+	},
+	smallText: {
+		fontSize: styleVars.fontSizes.small
+	},
+	standardText: {
+		fontSize: styleVars.fontSizes.standard
+	},
+	contentText: {
+		fontSize: styleVars.fontSizes.content
+	},
+	largeText: {
+		fontSize: styleVars.fontSizes.large
+	},
+	lightText: {
+		color: styleVars.lightText
+	},
+	veryLightText: {
+		color: styleVars.veryLightText
 	},
 
 	/* Spacing styles */
