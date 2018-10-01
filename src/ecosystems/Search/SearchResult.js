@@ -7,6 +7,7 @@ import { withNavigation } from "react-navigation";
 import Lang from "../../utils/Lang";
 import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import ContentRow from "../../ecosystems/ContentRow";
+import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import relativeTime from "../../utils/RelativeTime";
 import SearchResultItem from "./SearchResultItem";
 import SearchResultComment from "./SearchResultComment";
@@ -14,6 +15,24 @@ import styles, { styleVars } from "../../styles";
 
 class SearchResult extends Component {
 	render() {
+
+		if( this.props.loading ){
+			return (
+				<ContentRow style={componentStyles.result}>
+					<PlaceholderContainer height={115}>
+						<PlaceholderElement circle radius={22} left={styleVars.spacing.wide} top={0} />
+						<PlaceholderElement width={40} height={15} top={3} right={styleVars.spacing.wide} />
+						<PlaceholderElement width={100} height={15} top={3} left={50} />
+						<PlaceholderElement width='80%' height={15} top={35} left={styleVars.spacing.wide} />
+						<PlaceholderElement width='70%' height={12} top={56} left={styleVars.spacing.wide} />
+						<PlaceholderElement width='70%' height={12} top={72} left={styleVars.spacing.wide} />
+						<PlaceholderElement width={60} height={12} bottom={0} left={styleVars.spacing.wide} />
+						<PlaceholderElement width={160} height={12} bottom={0} left={styleVars.spacing.wide + 70} />
+					</PlaceholderContainer>
+				</ContentRow>
+			);
+		}
+
 		let onPress;
 		const isSupported = isSupportedUrl([this.props.data.url.app, this.props.data.url.module, this.props.data.url.controller]);
 

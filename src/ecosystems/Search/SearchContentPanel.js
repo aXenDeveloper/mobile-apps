@@ -14,11 +14,12 @@ import Lang from "../../utils/Lang";
 import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import ErrorBox from "../../atoms/ErrorBox";
 import MemberRow from "../../atoms/MemberRow";
+import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SearchResult from "./SearchResult";
 import SearchResultFragment from "../../ecosystems/Search/SearchResultFragment";
 
 const SearchQuery = gql`
-	query OverviewSearchQuery($term: String, $type: core_search_types_input, $offset: Int, $limit: Int) {
+	query SearchQuery($term: String, $type: core_search_types_input, $offset: Int, $limit: Int) {
 		core {
 			search(term: $term, type: $type, offset: $offset, limit: $limit) {
 				count
@@ -74,21 +75,36 @@ class ContentPanel extends Component {
 	 * @return 	void
 	 */
 	async fetchResults() {
+		if( this.state.loading || this.state.reachedEnd ){
+			return;
+		}
+
 		this.setState({
 			loading: true
 		});
 
 		try {
+			console.log('running query: offset ' + this.state.offset);
+			console.log( this.props.type );
+
+			const variables = {
+				term: this.props.term,
+				offset: this.state.offset,
+				limit: LIMIT
+			};
+
+			// Type is optional, so only add it if we aren't showing all
+			if( this.props.type !== 'all' ){
+				variables['type'] = this.props.type;
+			}
+
 			const { data } = await this.props.client.query({
 				query: SearchQuery,
-				variables: {
-					term: this.props.term,
-					type: this.props.type,
-					offset: this.state.offset,
-					limit: LIMIT
-				},
+				variables,
 				fetchPolicy: "no-cache" // important, so that each search fetches new results
 			});
+
+			console.log('got results');
 
 			const currentResults = this.state.results == null ? [] : this.state.results;
 			const updatedResults = [...currentResults, ...data.core.search.results];
@@ -100,6 +116,9 @@ class ContentPanel extends Component {
 				offset: updatedResults.length
 			});
 		} catch (err) {
+
+			console.log( err );
+
 			this.setState({
 				error: true,
 				loading: false
@@ -148,17 +167,25 @@ class ContentPanel extends Component {
 		}
 	}
 
-	render() {
-		if (this.state.loading || this.state.results === null) {
+	getFooterComponent() {
+		if( this.state.loading && !this.state.reachedEnd ){
 			return (
-				<View
-					style={[
-						componentStyles.panel,
-						componentStyles.panelLoading
-					]}
-				>
-					{this.state.loading && <ActivityIndicator size="large" />}
-				</View>
+				<PlaceholderRepeater repeat={this.state.offset > 0 ? 1 : 6}>
+					<SearchResult loading={true} />
+				</PlaceholderRepeater>
+			);
+		}
+
+		return null;
+	}
+
+	render() {
+		console.log('search panel');
+		if (this.state.loading && this.state.results == null) {
+			return (
+				<PlaceholderRepeater repeat={6}>
+					<SearchResult loading={true} />
+				</PlaceholderRepeater>
 			);
 		} else if (this.state.error) {
 			return (
@@ -175,6 +202,7 @@ class ContentPanel extends Component {
 					keyExtractor={item => item.indexID}
 					renderItem={({ item }) => this.renderItem(item)}
 					onEndReached={() => this.onEndReached()}
+					ListFooterComponent={() => this.getFooterComponent()}
 					ListEmptyComponent={() => (
 						<ErrorBox
 							message={Lang.get("no_results_in_x", {

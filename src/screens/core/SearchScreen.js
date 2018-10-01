@@ -1,41 +1,19 @@
 import React, { Component } from "react";
-import {
-	Text,
-	View,
-	ScrollView,
-	StyleSheet,
-	TextInput,
-	Image,
-	SectionList,
-	AsyncStorage,
-	ActivityIndicator,
-	TouchableOpacity
-} from "react-native";
+import { Text, View, ScrollView, StyleSheet, TextInput, Image, SectionList, AsyncStorage, ActivityIndicator, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import _ from "underscore";
-import ScrollableTabView, {
-	ScrollableTabBar
-} from "react-native-scrollable-tab-view";
+import ScrollableTabView, { ScrollableTabBar } from "react-native-scrollable-tab-view";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 
 import Lang from "../../utils/Lang";
 import CustomHeader from "../../ecosystems/CustomHeader";
-import {
-	PlaceholderElement,
-	PlaceholderContainer,
-	PlaceholderRepeater
-} from "../../ecosystems/Placeholder";
+import { PlaceholderElement, PlaceholderContainer, PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SectionHeader from "../../atoms/SectionHeader";
 import MemberRow from "../../atoms/MemberRow";
 import ErrorBox from "../../atoms/ErrorBox";
 import ContentRow from "../../ecosystems/ContentRow";
-import {
-	SearchContentPanel,
-	SearchMemberPanel,
-	SearchResultFragment,
-	SearchResult
-} from "../../ecosystems/Search";
+import { SearchContentPanel, SearchMemberPanel, SearchResultFragment, SearchResult } from "../../ecosystems/Search";
 import styles, { styleVars } from "../../styles";
 
 const OverviewSearchQuery = gql`
@@ -191,7 +169,15 @@ class SearchScreen extends Component {
 				fetchPolicy: "no-cache"
 			});
 
-			const searchSections = {};
+			const searchSections = {
+				'all': {
+					key: 'all',
+					lang: 'Content',
+					status: null,
+					data: []
+				}
+			};
+			
 			data.core.search.types.forEach(type => {
 				searchSections[type.key] = {
 					key: type.key,
@@ -201,21 +187,24 @@ class SearchScreen extends Component {
 				};
 			});
 
-			const recentSearches = await this.addToRecentSearches(
-				this.state.searchTerm
-			);
+			const recentSearches = await this.addToRecentSearches(this.state.searchTerm);
+			const searchTabs = [
+				{
+					key: 'all',
+					lang: 'Content',
+				},
+				...data.core.search.types
+			];
 
 			this.setState({
 				currentTab: "overview",
-				noResults:
-					!data.core.content.results.length &&
-					!data.core.members.results.length,
+				noResults: !data.core.content.results.length && !data.core.members.results.length,
 				overviewSearchResults: {
 					content: data.core.content,
 					members: data.core.members
 				},
 				showingResults: true,
-				searchTabs: data.core.search.types,
+				searchTabs,
 				searchSections,
 				recentSearches
 			});
@@ -294,12 +283,8 @@ class SearchScreen extends Component {
 		return (
 			<SectionList
 				renderItem={({ item }) => this.renderShortcutItem(item)}
-				renderSectionFooter={({ section }) =>
-					this.renderShortcutFooter(section)
-				}
-				renderSectionHeader={({ section }) => (
-					<SectionHeader title={section.title} />
-				)}
+				renderSectionFooter={({ section }) => this.renderShortcutFooter(section)}
+				renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
 				sections={sectionData}
 				keyExtractor={item => item}
 			/>
@@ -322,22 +307,13 @@ class SearchScreen extends Component {
 
 		if (section.key === "recent" && !this.state.loadingRecentSearches) {
 			text = Lang.get("no_recent_searches");
-		} else if (
-			section.key === "trending" &&
-			!this.state.loadingTrendingSearches
-		) {
+		} else if (section.key === "trending" && !this.state.loadingTrendingSearches) {
 			text = Lang.get("no_trending_searches");
 		}
 
 		return (
 			<ContentRow style={componentStyles.leftAlign}>
-				<Text
-					numberOfLines={1}
-					style={[
-						componentStyles.leftAlignText,
-						styles.veryLightText
-					]}
-				>
+				<Text numberOfLines={1} style={[componentStyles.leftAlignText, styles.veryLightText]}>
 					{text}
 				</Text>
 			</ContentRow>
@@ -371,18 +347,11 @@ class SearchScreen extends Component {
 	 */
 	renderShortcutItem(item) {
 		return (
-			<ContentRow
-				style={componentStyles.leftAlign}
-				onPress={() => this.recentSearchClick(item)}
-			>
+			<ContentRow style={componentStyles.leftAlign} onPress={() => this.recentSearchClick(item)}>
 				<Text numberOfLines={1} style={componentStyles.leftAlignText}>
 					{item}
 				</Text>
-				<Image
-					source={require("../../../resources/search.png")}
-					style={componentStyles.leftAlignIcon}
-					resizeMode="contain"
-				/>
+				<Image source={require("../../../resources/search.png")} style={componentStyles.leftAlignIcon} resizeMode="contain" />
 			</ContentRow>
 		);
 	}
@@ -416,27 +385,12 @@ class SearchScreen extends Component {
 		return (
 			<SectionList
 				renderItem={({ item }) => this.renderOverviewItem(item)}
-				renderSectionFooter={({ section }) =>
-					this.renderOverviewSectionFooter(section)
-				}
-				renderSectionHeader={({ section }) =>
-					section.data.length && (
-						<SectionHeader title={section.title} />
-					)
-				}
+				renderSectionFooter={({ section }) => this.renderOverviewSectionFooter(section)}
+				renderSectionHeader={({ section }) => section.data.length && <SectionHeader title={section.title} />}
 				sections={overviewData}
 				stickySectionHeadersEnabled={false}
-				keyExtractor={item =>
-					item["__typename"] == "core_Member"
-						? "m" + item.id
-						: "c" + item.indexID
-				}
-				ListEmptyComponent={() => (
-					<ErrorBox
-						message={Lang.get("no_results")}
-						showIcon={false}
-					/>
-				)}
+				keyExtractor={item => (item["__typename"] == "core_Member" ? "m" + item.id : "c" + item.indexID)}
+				ListEmptyComponent={() => <ErrorBox message={Lang.get("no_results")} showIcon={false} />}
 			/>
 		);
 	}
@@ -485,10 +439,7 @@ class SearchScreen extends Component {
 							});
 						}}
 					>
-						<Text
-							numberOfLines={1}
-							style={componentStyles.seeAllRowText}
-						>
+						<Text numberOfLines={1} style={componentStyles.seeAllRowText}>
 							{Lang.get("see_all")} ({section.count})
 						</Text>
 					</ContentRow>
@@ -547,24 +498,15 @@ class SearchScreen extends Component {
 				</View>
 				{!this.state.noResults &&
 					this.state.searchTabs.map(type => {
-						const PanelComponent =
-							type.key === "core_members"
-								? SearchMemberPanel
-								: SearchContentPanel;
+						const PanelComponent = type.key === "core_members" ? SearchMemberPanel : SearchContentPanel;
 
 						return (
-							<View
-								style={componentStyles.tab}
-								key={type.key}
-								tabLabel={type.lang.toUpperCase()}
-							>
+							<View style={componentStyles.tab} key={type.key} tabLabel={type.lang.toUpperCase()}>
 								<PanelComponent
 									type={type.key}
 									typeName={type.lang}
 									term={this.state.searchTerm}
-									showResults={
-										this.state.currentTab === type.key
-									}
+									showResults={this.state.currentTab === type.key}
 								/>
 							</View>
 						);
@@ -572,6 +514,16 @@ class SearchScreen extends Component {
 			</ScrollableTabView>
 		);
 	}
+
+	/*
+	<View style={componentStyles.tab} key='all' tabLabel='All Content'>
+					<SearchContentPanel
+						type='all'
+						typeName='Content'
+						term={this.state.searchTerm}
+						showResults={this.state.currentTab === 'all'}
+					/>
+				</View>*/
 
 	/**
 	 * build the contents of the specified tab, based on whatever we have in state for that key
@@ -592,11 +544,7 @@ class SearchScreen extends Component {
 				<FlatList
 					data={tabData.results}
 					renderItem={({ item }) => this.renderShortcutItem(item)}
-					keyExtractor={item =>
-						item["__typename"] == "core_Member"
-							? "m" + item.id
-							: "c" + item.indexID
-					}
+					keyExtractor={item => (item["__typename"] == "core_Member" ? "m" + item.id : "c" + item.indexID)}
 				/>
 			);
 		}
@@ -605,59 +553,21 @@ class SearchScreen extends Component {
 	getResultsPlaceholder() {
 		return (
 			<View style={{ flex: 1 }}>
-				<PlaceholderContainer
-					height={48}
-					style={componentStyles.loadingTabBar}
-				>
-					<PlaceholderElement
-						width={70}
-						height={14}
-						top={17}
-						left={13}
-					/>
-					<PlaceholderElement
-						width={80}
-						height={14}
-						top={17}
-						left={113}
-					/>
-					<PlaceholderElement
-						width={90}
-						height={14}
-						top={17}
-						left={225}
-					/>
-					<PlaceholderElement
-						width={70}
-						height={14}
-						top={17}
-						left={345}
-					/>
+				<PlaceholderContainer height={48} style={componentStyles.loadingTabBar}>
+					<PlaceholderElement width={70} height={14} top={17} left={13} />
+					<PlaceholderElement width={80} height={14} top={17} left={113} />
+					<PlaceholderElement width={90} height={14} top={17} left={225} />
+					<PlaceholderElement width={70} height={14} top={17} left={345} />
 				</PlaceholderContainer>
-				<PlaceholderRepeater repeat={6}>
+				<PlaceholderRepeater repeat={2}>
+					<SearchResult loading={true} />
+				</PlaceholderRepeater>
+				<PlaceholderRepeater repeat={3}>
 					<ContentRow>
-						<PlaceholderContainer
-							height={60}
-							style={componentStyles.loadingRow}
-						>
-							<PlaceholderElement
-								circle
-								radius={36}
-								top={11}
-								left={styleVars.spacing.standard}
-							/>
-							<PlaceholderElement
-								width={200}
-								height={15}
-								top={13}
-								left={60}
-							/>
-							<PlaceholderElement
-								width={120}
-								height={12}
-								top={32}
-								left={60}
-							/>
+						<PlaceholderContainer height={60} style={componentStyles.loadingRow}>
+							<PlaceholderElement circle radius={36} top={11} left={styleVars.spacing.standard} />
+							<PlaceholderElement width={200} height={15} top={13} left={60} />
+							<PlaceholderElement width={120} height={12} top={32} left={60} />
 						</PlaceholderContainer>
 					</ContentRow>
 				</PlaceholderRepeater>
@@ -668,19 +578,8 @@ class SearchScreen extends Component {
 	render() {
 		const searchBox = (
 			<View style={componentStyles.searchWrap}>
-				<View
-					style={[
-						componentStyles.searchBox,
-						this.state.textInputActive
-							? componentStyles.searchBoxActive
-							: null
-					]}
-				>
-					<Image
-						source={require("../../../resources/search.png")}
-						style={componentStyles.searchIcon}
-						resizeMode="contain"
-					/>
+				<View style={[componentStyles.searchBox, this.state.textInputActive ? componentStyles.searchBoxActive : null]}>
+					<Image source={require("../../../resources/search.png")} style={componentStyles.searchIcon} resizeMode="contain" />
 					<TextInput
 						autoFocus
 						autoCapitalize="none"
@@ -693,22 +592,15 @@ class SearchScreen extends Component {
 						returnKeyType="search"
 						onFocus={() => this.onFocusTextInput()}
 						onBlur={() => this.onBlurTextInput()}
-						onChangeText={searchTerm =>
-							this.setState({ searchTerm })
-						}
+						onChangeText={searchTerm => this.setState({ searchTerm })}
 						onSubmitEditing={() => this.onSubmitTextInput()}
 						ref={ref => (this._textInput = ref)}
 						value={this.state.searchTerm}
 					/>
 				</View>
 				{(this.state.textInputActive || this.state.showingResults) && (
-					<TouchableOpacity
-						style={componentStyles.cancelLink}
-						onPress={() => this.goBack()}
-					>
-						<Text style={componentStyles.cancelLinkText}>
-							{Lang.get("cancel")}
-						</Text>
+					<TouchableOpacity style={componentStyles.cancelLink} onPress={() => this.goBack()}>
+						<Text style={componentStyles.cancelLinkText}>{Lang.get("cancel")}</Text>
 					</TouchableOpacity>
 				)}
 			</View>
@@ -743,7 +635,7 @@ const componentStyles = StyleSheet.create({
 	searchWrap: {
 		paddingHorizontal: styleVars.spacing.tight,
 		paddingBottom: styleVars.spacing.tight,
-		position: 'absolute',
+		position: "absolute",
 		left: 0,
 		right: 0,
 		bottom: 0,
