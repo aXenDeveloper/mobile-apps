@@ -19,9 +19,9 @@ import SearchResult from "./SearchResult";
 import SearchResultFragment from "../../ecosystems/Search/SearchResultFragment";
 
 const SearchQuery = gql`
-	query SearchQuery($term: String, $type: core_search_types_input, $offset: Int, $limit: Int) {
+	query SearchQuery($term: String, $type: core_search_types_input, $offset: Int, $limit: Int, $orderBy: core_search_order_by) {
 		core {
-			search(term: $term, type: $type, offset: $offset, limit: $limit) {
+			search(term: $term, type: $type, offset: $offset, limit: $limit, orderBy: $orderBy) {
 				count
 				results {
 					... on core_ContentSearchResult {
@@ -84,13 +84,11 @@ class ContentPanel extends Component {
 		});
 
 		try {
-			console.log('running query: offset ' + this.state.offset);
-			console.log( this.props.type );
-
 			const variables = {
 				term: this.props.term,
 				offset: this.state.offset,
-				limit: LIMIT
+				limit: LIMIT,
+				orderBy: 'relevancy'
 			};
 
 			// Type is optional, so only add it if we aren't showing all
@@ -103,8 +101,6 @@ class ContentPanel extends Component {
 				variables,
 				fetchPolicy: "no-cache" // important, so that each search fetches new results
 			});
-
-			console.log('got results');
 
 			const currentResults = this.state.results == null ? [] : this.state.results;
 			const updatedResults = [...currentResults, ...data.core.search.results];

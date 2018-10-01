@@ -66,7 +66,6 @@ class SearchScreen extends Component {
 			currentTab: "",
 			overviewSearchResults: {},
 			noResults: false,
-			searchTabs: [],
 			searchSections: {},
 			showingResults: false,
 			textInputActive: false,
@@ -169,32 +168,22 @@ class SearchScreen extends Component {
 				fetchPolicy: "no-cache"
 			});
 
-			const searchSections = {
-				'all': {
-					key: 'all',
-					lang: 'Content',
-					status: null,
-					data: []
-				}
-			};
-			
-			data.core.search.types.forEach(type => {
-				searchSections[type.key] = {
-					key: type.key,
-					lang: type.lang,
-					status: null,
-					data: []
-				};
+			const searchSections = data.core.search.types.map( (type) => ({
+				key: type.key,
+				lang: type.lang,
+				status: null,
+				data: []
+			}));
+
+			// Add the All Content tab to the start
+			searchSections.unshift({
+				key: 'all',
+				lang: Lang.get('content'),
+				status: null,
+				data: []
 			});
 
 			const recentSearches = await this.addToRecentSearches(this.state.searchTerm);
-			const searchTabs = [
-				{
-					key: 'all',
-					lang: 'Content',
-				},
-				...data.core.search.types
-			];
 
 			this.setState({
 				currentTab: "overview",
@@ -204,7 +193,6 @@ class SearchScreen extends Component {
 					members: data.core.members
 				},
 				showingResults: true,
-				searchTabs,
 				searchSections,
 				recentSearches
 			});
@@ -264,7 +252,7 @@ class SearchScreen extends Component {
 	getSearchHomeScreen() {
 		const sectionData = [
 			{
-				title: "Recent Searches",
+				title: Lang.get('recent_searches'),
 				key: "recent",
 				data: this.state.recentSearches
 			}
@@ -366,7 +354,7 @@ class SearchScreen extends Component {
 
 		if (this.state.overviewSearchResults.content.results.length) {
 			overviewData.push({
-				title: "Top Content",
+				title: Lang.get('top_content'),
 				key: "content",
 				count: this.state.overviewSearchResults.content.count,
 				data: this.state.overviewSearchResults.content.results
@@ -375,7 +363,7 @@ class SearchScreen extends Component {
 
 		if (this.state.overviewSearchResults.members.results.length) {
 			overviewData.push({
-				title: "Top Members",
+				title: Lang.get('top_members'),
 				key: "members",
 				count: this.state.overviewSearchResults.members.count,
 				data: this.state.overviewSearchResults.members.results
@@ -435,7 +423,7 @@ class SearchScreen extends Component {
 						style={componentStyles.seeAllRow}
 						onPress={() => {
 							this.setState({
-								goToTab: 1
+								goToTab: section.key == 'content' ? 1 : 2
 							});
 						}}
 					>
@@ -468,7 +456,7 @@ class SearchScreen extends Component {
 			return;
 		}
 
-		const tabData = this.state.searchTabs[tabIndex - 1];
+		const tabData = this.state.searchSections[tabIndex - 1];
 		const currentTab = tabData.key;
 
 		this.setState({
@@ -493,20 +481,20 @@ class SearchScreen extends Component {
 				page={this.state.goToTab || null}
 				onChangeTab={tab => this.onChangeTab(tab)}
 			>
-				<View style={componentStyles.tab} tabLabel="OVERVIEW">
+				<View style={componentStyles.tab} tabLabel={Lang.get('overview').toUpperCase()}>
 					{this.renderOverviewTab()}
 				</View>
 				{!this.state.noResults &&
-					this.state.searchTabs.map(type => {
-						const PanelComponent = type.key === "core_members" ? SearchMemberPanel : SearchContentPanel;
+					this.state.searchSections.map(section => {
+						const PanelComponent = section.key === "core_members" ? SearchMemberPanel : SearchContentPanel;
 
 						return (
-							<View style={componentStyles.tab} key={type.key} tabLabel={type.lang.toUpperCase()}>
+							<View style={componentStyles.tab} key={section.key} tabLabel={section.lang.toUpperCase()}>
 								<PanelComponent
-									type={type.key}
-									typeName={type.lang}
+									type={section.key}
+									typeName={section.lang}
 									term={this.state.searchTerm}
-									showResults={this.state.currentTab === type.key}
+									showResults={this.state.currentTab === section.key}
 								/>
 							</View>
 						);
@@ -515,23 +503,13 @@ class SearchScreen extends Component {
 		);
 	}
 
-	/*
-	<View style={componentStyles.tab} key='all' tabLabel='All Content'>
-					<SearchContentPanel
-						type='all'
-						typeName='Content'
-						term={this.state.searchTerm}
-						showResults={this.state.currentTab === 'all'}
-					/>
-				</View>*/
-
 	/**
 	 * build the contents of the specified tab, based on whatever we have in state for that key
 	 *
 	 * @return 	Component
 	 */
 	getTabContents(tab) {
-		const tabData = this.state.searchSections[tab];
+		const tabData = _.find(this.state.searchSections, (type) => type.key == tab);
 
 		if (tabData.status === null || tabData.status === "loading") {
 			return (
