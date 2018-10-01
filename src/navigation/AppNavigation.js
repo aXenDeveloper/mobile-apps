@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { createBottomTabNavigator, createMaterialTopTabNavigator, createDrawerNavigator, createStackNavigator, TabView, TabBarTop, NavigationActions } from "react-navigation";
+import { createBottomTabNavigator, createMaterialTopTabNavigator, createDrawerNavigator, createStackNavigator, NavigationActions } from "react-navigation";
+import { BottomTabBar } from "react-navigation-tabs";
 import { Image } from "react-native";
 import { connect } from "react-redux";
 import { LinearGradient } from "expo";
@@ -307,8 +308,15 @@ class AppNavigation extends Component {
 			};
 		}
 
+		const TabBarComponent = (props) => (<BottomTabBar {...props} />);
+
 		return createBottomTabNavigator(tabConfig, {
 			lazy: true,
+			tabBarComponent: props =>
+				<TabBarComponent
+				{...props}
+				style={{ borderTopColor: '#605F60' }}
+			/>,
 			tabBarPosition: "bottom",
 			tabBarOptions: {
 				showLabel: false,
