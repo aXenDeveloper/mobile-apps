@@ -17,7 +17,7 @@ const SearchResultComment = props => (
 				<Text style={[styles.lightText]}>{relativeTime.short(props.data.updated)}</Text>
 			</View>
 			<Text style={[styles.lightText, componentStyles.commentItemMeta]}>
-				{Lang.pluralize(Lang.get("replies"), props.data.replies)} &middot;{" "}
+				{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), props.data.replies)} - `}
 				{Lang.get("item_in_container", { item: props.data.articleLang.definiteUC, container: props.data.containerTitle })}
 			</Text>
 		</View>

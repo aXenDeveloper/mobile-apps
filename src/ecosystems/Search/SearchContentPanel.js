@@ -157,12 +157,23 @@ class ContentPanel extends Component {
 		);
 	}
 
+	/**
+	 * Event handler for scrolling to the bottom of the list
+	 * Initiates a load to get more results
+	 *
+	 * @return 	void
+	 */
 	onEndReached() {
 		if( !this.state.loading && !this.state.reachedEnd ){
 			this.fetchResults();
 		}
 	}
 
+	/**
+	 * Shows placeholder loading elements if we're loading new items
+	 *
+	 * @return 	Component|null
+	 */
 	getFooterComponent() {
 		if( this.state.loading && !this.state.reachedEnd ){
 			return (
@@ -176,7 +187,6 @@ class ContentPanel extends Component {
 	}
 
 	render() {
-		console.log('search panel');
 		if (this.state.loading && this.state.results == null) {
 			return (
 				<PlaceholderRepeater repeat={6}>
