@@ -1,15 +1,5 @@
 import React, { Component } from "react";
-import {
-	Text,
-	Alert,
-	View,
-	Image,
-	TouchableHighlight,
-	StyleSheet,
-	ActivityIndicator,
-	AsyncStorage,
-	StatusBar
-} from "react-native";
+import { Text, Alert, View, Image, TouchableHighlight, StyleSheet, ActivityIndicator, AsyncStorage, StatusBar } from "react-native";
 import { ApolloProvider } from "react-apollo";
 import { ApolloClient } from "apollo-client";
 import { HttpLink } from "apollo-link-http";
@@ -19,8 +9,8 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { connect } from "react-redux";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
-import { IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
-import introspectionQueryResultData from '../fragmentTypes.json';
+import { IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
+import introspectionQueryResultData from "../fragmentTypes.json";
 import _ from "underscore";
 
 import LoginScreen from "./core/LoginScreen";
@@ -79,7 +69,7 @@ class RootScreen extends Component {
 		};
 
 		// In order for Apollo to use fragments with union types, as we do for generic core_Content
-		// queries, we need to pass it the schema definition in advance. 
+		// queries, we need to pass it the schema definition in advance.
 		// See https://www.apollographql.com/docs/react/advanced/fragments.html#fragment-matcher
 		const fragmentMatcher = new IntrospectionFragmentMatcher({
 			introspectionQueryResultData
@@ -92,9 +82,7 @@ class RootScreen extends Component {
 				credentials: "same-origin",
 				headers: {
 					...context.headers,
-					Authorization: this.props.auth.access_token
-						? `Bearer ${this.props.auth.access_token}`
-						: `Basic ${Expo.Constants.manifest.extra.api_key}`
+					Authorization: this.props.auth.access_token ? `Bearer ${this.props.auth.access_token}` : `Basic ${Expo.Constants.manifest.extra.api_key}`
 				}
 			}));
 			return next(operation);
@@ -180,18 +168,11 @@ class RootScreen extends Component {
 	 */
 	componentDidUpdate(prevProps, prevState) {
 		// If we're done checking authentication, run our boot query to get initial data
-		if (
-			(prevProps.auth.checkAuthProcessing &&
-				!this.props.auth.checkAuthProcessing) ||
-			prevProps.user.isGuest !== this.props.user.isGuest
-		) {
+		if ((prevProps.auth.checkAuthProcessing && !this.props.auth.checkAuthProcessing) || prevProps.user.isGuest !== this.props.user.isGuest) {
 			this.runBootQuery();
 		}
 
-		if (
-			!this.props.site.site_online &&
-			this.props.user.group.canAccessOffline
-		) {
+		if (!this.props.site.site_online && this.props.user.group.canAccessOffline) {
 			if (!this._alerts.offline) {
 				this.showOfflineMessage();
 				this._alerts.offline = true;
@@ -214,10 +195,7 @@ class RootScreen extends Component {
 			});
 
 			// Send out our user info
-			if (
-				this.props.auth.authenticated &&
-				data.core.me.group.groupType !== "GUEST"
-			) {
+			if (this.props.auth.authenticated && data.core.me.group.groupType !== "GUEST") {
 				dispatch(userLoaded({ ...data.core.me }));
 			} else {
 				dispatch(guestLoaded({ ...data.core.me }));
@@ -251,9 +229,7 @@ class RootScreen extends Component {
 	showOfflineMessage(siteName) {
 		Alert.alert(
 			"Community Offline",
-			`${
-				this.props.site.board_name
-			} is currently offline, but your permissions allow you to access it.`,
+			`${this.props.site.board_name} is currently offline, but your permissions allow you to access it.`,
 			[
 				{
 					text: "OK"
@@ -305,27 +281,17 @@ class RootScreen extends Component {
 			appContent = (
 				<View style={styles.wrapper}>
 					<StatusBar barStyle="light-content" />
-					<TouchableHighlight
-						style={styles.tryAgain}
-						onPress={() => this.tryAfterNetworkError()}
-					>
+					<TouchableHighlight style={styles.tryAgain} onPress={() => this.tryAfterNetworkError()}>
 						<Text style={styles.tryAgainText}>Try Again</Text>
 					</TouchableHighlight>
 				</View>
 			);
-		} else if (
-			!this.props.site.site_online &&
-			!this.props.user.group.canAccessOffline
-		) {
+		} else if (!this.props.site.site_online && !this.props.user.group.canAccessOffline) {
 			// Site is offline and this user cannot access it
 			appContent = (
 				<View style={[styles.wrapper, styles.offlineWrapper]}>
 					<StatusBar barStyle="light-content" />
-					<Image
-						source={require("../../resources/offline.png")}
-						resizeMode="contain"
-						style={styles.icon}
-					/>
+					<Image source={require("../../resources/offline.png")} resizeMode="contain" style={styles.icon} />
 					<Text style={styles.title}>
 						{Lang.get("offline", {
 							siteName: this.props.site.board_name
@@ -337,10 +303,7 @@ class RootScreen extends Component {
 						</RichTextContent>
 					)}
 					{!this.props.auth.authenticated && (
-						<TouchableHighlight
-							style={styles.tryAgain}
-							onPress={() => this.tryAfterNetworkError()}
-						>
+						<TouchableHighlight style={styles.tryAgain} onPress={() => this.tryAfterNetworkError()}>
 							<Text style={styles.tryAgainText}>Sign In Now</Text>
 						</TouchableHighlight>
 					)}
@@ -352,16 +315,9 @@ class RootScreen extends Component {
 				appContent = (
 					<View style={styles.wrapper}>
 						<StatusBar barStyle="light-content" />
-						<Image
-							source={require("../../resources/banned.png")}
-							resizeMode="contain"
-							style={styles.icon}
-						/>
+						<Image source={require("../../resources/banned.png")} resizeMode="contain" style={styles.icon} />
 						<Text style={styles.title}>You are banned</Text>
-						<Text style={styles.offlineMessage}>
-							Sorry, you do not have permission to access{" "}
-							{this.props.site.board_name}.
-						</Text>
+						<Text style={styles.offlineMessage}>Sorry, you do not have permission to access {this.props.site.board_name}.</Text>
 					</View>
 				);
 			} else {
@@ -372,9 +328,7 @@ class RootScreen extends Component {
 			appContent = <AppNavigation />;
 		}
 
-		return (
-			<ApolloProvider client={this._client}>{appContent}</ApolloProvider>
-		);
+		return <ApolloProvider client={this._client}>{appContent}</ApolloProvider>;
 	}
 }
 
