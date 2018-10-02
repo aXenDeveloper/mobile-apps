@@ -25,7 +25,7 @@ const OverviewSearchQuery = gql`
 					lang
 				}
 			}
-			content: search(term: $term, limit: 3) {
+			content: search(term: $term, limit: 3, orderBy: relevancy) {
 				count
 				results {
 					... on core_ContentSearchResult {
@@ -93,6 +93,11 @@ class SearchScreen extends Component {
 		});
 	}
 
+	/**
+	 * Takes raw recent search data  (e.g. from AsyncStorage) and returns a simple list of terms
+	 *
+	 * @return 	array
+	 */
 	transformRecentSearchData(recentSearchData) {
 		const recentSearches = [];
 
@@ -528,6 +533,11 @@ class SearchScreen extends Component {
 		}
 	}
 
+	/**
+	 * Returns the placeholder elements for the overview screen
+	 *
+	 * @return 	Component
+	 */
 	getResultsPlaceholder() {
 		return (
 			<View style={{ flex: 1 }}>
@@ -541,13 +551,7 @@ class SearchScreen extends Component {
 					<SearchResult loading={true} />
 				</PlaceholderRepeater>
 				<PlaceholderRepeater repeat={3}>
-					<ContentRow>
-						<PlaceholderContainer height={60} style={componentStyles.loadingRow}>
-							<PlaceholderElement circle radius={36} top={11} left={styleVars.spacing.standard} />
-							<PlaceholderElement width={200} height={15} top={13} left={60} />
-							<PlaceholderElement width={120} height={12} top={32} left={60} />
-						</PlaceholderContainer>
-					</ContentRow>
+					<MemberRow loading={true} />
 				</PlaceholderRepeater>
 			</View>
 		);
@@ -697,8 +701,5 @@ const componentStyles = StyleSheet.create({
 		backgroundColor: "#fff",
 		borderBottomWidth: 1,
 		borderBottomColor: "#cccccc"
-	},
-	loadingRow: {
-		backgroundColor: "#fff"
 	}
 });
