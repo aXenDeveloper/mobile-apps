@@ -1,17 +1,12 @@
 import React, { Component } from "react";
-import {
-	Text,
-	View,
-	FlatList,
-	StyleSheet,
-	ActivityIndicator
-} from "react-native";
+import { Text, View, FlatList, StyleSheet, ActivityIndicator } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { withNavigation } from "react-navigation";
 
 import Lang from "../../utils/Lang";
 import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
+import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import ErrorBox from "../../atoms/ErrorBox";
 import MemberRow from "../../atoms/MemberRow";
 
@@ -35,6 +30,8 @@ const SearchQuery = gql`
 	}
 `;
 
+const LIMIT = 25;
+
 class ContentPanel extends Component {
 	constructor(props) {
 		super(props);
@@ -42,7 +39,9 @@ class ContentPanel extends Component {
 			loading: false,
 			error: false,
 			lastTerm: "",
-			results: null
+			results: null,
+			reachedEnd: false,
+			offset: 0
 		};
 	}
 
@@ -57,10 +56,7 @@ class ContentPanel extends Component {
 		// so they can be displayed when loaded
 		if (!prevProps.showResults && this.props.showResults) {
 			// If the term hasn't changed, then just rebuild the results from what we already had
-			if (
-				prevProps.term !== this.props.term ||
-				(this.state.results === null && !this.state.loading)
-			) {
+			if (prevProps.term !== this.props.term || (this.state.results === null && !this.state.loading)) {
 				this.fetchResults();
 			}
 		}
@@ -72,6 +68,11 @@ class ContentPanel extends Component {
 	 * @return 	void
 	 */
 	async fetchResults() {
+
+		if( this.state.loading || this.state.reachedEnd ){
+			return;
+		}
+
 		this.setState({
 			loading: true
 		});
@@ -80,21 +81,60 @@ class ContentPanel extends Component {
 			const { data } = await this.props.client.query({
 				query: SearchQuery,
 				variables: {
-					term: this.props.term
+					term: this.props.term,
+					offset: this.state.offset,
+					limit: LIMIT,
 				},
 				fetchPolicy: "no-cache"
 			});
 
+			const currentResults = this.state.results == null ? [] : this.state.results;
+			const updatedResults = [...currentResults, ...data.core.search.results];
+
 			this.setState({
-				results: data.core.search.results || [],
-				loading: false
+				results: updatedResults,
+				reachedEnd: !data.core.search.results.length || data.core.search.results.length < LIMIT,
+				loading: false,
+				offset: updatedResults.length
 			});
 		} catch (err) {
+
+			console.log( err );
+			
 			this.setState({
 				error: true,
 				loading: false
 			});
 		}
+	}
+
+	/**
+	 * Event handler for scrolling to the bottom of the list
+	 * Initiates a load to get more results
+	 *
+	 * @return 	void
+	 */
+	onEndReached() {
+		if( !this.state.loading && !this.state.reachedEnd ){
+			this.fetchResults();
+		}
+	}
+
+	/**
+	 * Shows placeholder loading elements if we're loading new items
+	 *
+	 * @return 	Component|null
+	 */
+	getFooterComponent() {
+		if( this.state.loading && !this.state.reachedEnd ){
+			return (
+				<PlaceholderRepeater repeat={this.state.offset > 0 ? 1 : 6}>
+					<MemberRow loading={true} />
+				</PlaceholderRepeater>
+			);
+		}
+
+		return null;
 	}
 
 	/**
@@ -116,16 +156,11 @@ class ContentPanel extends Component {
 
 	render() {
 		if (this.state.loading || this.state.results === null) {
-			return (
-				<View
-					style={[
-						componentStyles.panel,
-						componentStyles.panelLoading
-					]}
-				>
-					{this.state.loading && <ActivityIndicator size="large" />}
-				</View>
-			);
+			return <View style={[componentStyles.panel]}>
+				<PlaceholderRepeater repeat={6}>
+					<MemberRow loading={true} />
+				</PlaceholderRepeater>
+			</View>;
 		} else if (this.state.error) {
 			return (
 				<View style={componentStyles.panel}>
@@ -140,12 +175,9 @@ class ContentPanel extends Component {
 					data={this.state.results}
 					keyExtractor={item => item.id}
 					renderItem={({ item }) => this.renderItem(item)}
-					ListEmptyComponent={() => (
-						<ErrorBox
-							message={Lang.get("no_results_in_x", { type: this.props.typeName.toLowerCase() })}
-							showIcon={false}
-						/>
-					)}
+					onEndReached={() => this.onEndReached()}
+					ListFooterComponent={() => this.getFooterComponent()}
+					ListEmptyComponent={() => <ErrorBox message={Lang.get("no_results_in_x", { type: this.props.typeName.toLowerCase() })} showIcon={false} />}
 				/>
 			</View>
 		);
