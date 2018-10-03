@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
 import { PlaceholderElement, PlaceholderContainer } from '../ecosystems/Placeholder';
+import styles from '../styles';
 
 export default class TwoLineHeader extends Component {	
 	constructor(props) {
@@ -26,19 +27,3 @@ export default class TwoLineHeader extends Component {
 		}
 	}
 }
-
-const styles = StyleSheet.create({
-	headerTitle: {
-		color: 'white',
-		fontSize: 17,
-		fontWeight: "500",
-		textAlign: 'center'
-	},	
-	headerSubtitle: {
-		color: 'white',
-		fontSize: 12,
-		textAlign: 'center',
-		fontWeight: "300",
-		opacity: 0.9
-	}	
-});

@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import { Button, Image, Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from 'react-native';
 
 import { PlaceholderElement, PlaceholderContainer } from '../../ecosystems/Placeholder';
-import ExpandedContentItem from './ExpandedContentItem';
-import CondensedContentItem from './CondensedContentItem';
-import ExpandedComment from './ExpandedComment';
-import CondensedComment from './CondensedComment';
+import StreamItem from './StreamItem';
+import StreamComment from './StreamComment';
 import ShadowedArea from '../../atoms/ShadowedArea';
 import UserPhoto from '../../atoms/UserPhoto';
 import RichTextContent from '../../atoms/RichTextContent';
@@ -78,24 +76,12 @@ export default class StreamCard extends Component {
 				</View> );
 	}
 
-	getCardComponent() {
-		let Component;
-
-		if( !this.props.data.isComment && !this.props.data.isReview ){
-			Component = this.props.view !== 'condensed' ? ExpandedContentItem : CondensedContentItem;
-		} else {
-			Component = this.props.view !== 'condensed' ? ExpandedComment : CondensedComment;
-		}
-
-		return Component;
-	}
-
 	render() {
 		if( this.props.loading ){
 			return this.loadingComponent();
 		}
 
-		const Component = this.getCardComponent();
+		const Component = !this.props.data.isComment && !this.props.data.isReview ? StreamItem : StreamComment;
 
 		return (
 			<TouchableHighlight style={componentStyles.postWrapper} onPress={this.props.onPress}>

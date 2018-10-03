@@ -13,3 +13,11 @@ export const guestLoaded = data => ({
 		...data
 	}
 });
+
+export const SET_USER_STREAMS = "SET_USER_STREAMS";
+export const setUserStreams = data => ({
+	type: SET_USER_STREAMS,
+	payload: {
+		...data
+	}
+});

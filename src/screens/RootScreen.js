@@ -17,7 +17,7 @@ import LoginScreen from "./core/LoginScreen";
 import RichTextContent from "../atoms/RichTextContent";
 import Lang from "../utils/Lang";
 import { refreshAuth } from "../redux/actions/auth";
-import { userLoaded, guestLoaded } from "../redux/actions/user";
+import { userLoaded, guestLoaded, setUserStreams } from "../redux/actions/user";
 import { setSiteSettings } from "../redux/actions/site";
 import AppNavigation from "../navigation/AppNavigation";
 import ToFormData from "../utils/ToFormData";
@@ -46,6 +46,11 @@ const BootQuery = gql`
 			}
 			language {
 				...LangFragment
+			}
+			streams {
+				id
+				title
+				isDefault
 			}
 		}
 	}
@@ -210,6 +215,16 @@ class RootScreen extends Component {
 
 			// Set our system settings
 			dispatch(setSiteSettings(data.core.settings));
+
+			// Store our streams
+			dispatch(setUserStreams([
+				{
+					id: 'all',
+					title: 'All Activity',
+					isDefault: true
+				},
+				...data.core.streams
+			]));
 
 			// We can now proceed to show the home screen
 			this.setState({

@@ -302,6 +302,21 @@ const styles = StyleSheet.create({
 	mrExtraWide: {
 		marginRight: styleVars.spacing.extraWide
 	},
+
+	/* HEADER STYLES */
+	headerTitle: {
+		color: 'white',
+		fontSize: 17,
+		fontWeight: "500",
+		textAlign: 'center'
+	},
+	headerSubtitle: {
+		color: 'white',
+		fontSize: 12,
+		textAlign: 'center',
+		fontWeight: "300",
+		opacity: 0.9
+	}
 });
 
 export default styles;

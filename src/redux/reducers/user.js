@@ -1,4 +1,4 @@
-import { USER_LOADED, GUEST_LOADED } from "../actions/user";
+import { USER_LOADED, GUEST_LOADED, SET_USER_STREAMS } from "../actions/user";
 
 const initialState = {
 	isGuest: true,
@@ -9,7 +9,8 @@ const initialState = {
 		canAccessSite: false,
 		canAccessOffline: false,
 		groupType: 'GUEST'
-	}
+	},
+	streams: []
 };
 
 export default function user(state = initialState, { type, payload }) {
@@ -25,6 +26,11 @@ export default function user(state = initialState, { type, payload }) {
 				...state,
 				...payload,
 				isGuest: false
+			}
+		case SET_USER_STREAMS:
+			return {
+				...state,
+				streams: Object.values(payload)
 			}
 		default:
 			return { ...state };
