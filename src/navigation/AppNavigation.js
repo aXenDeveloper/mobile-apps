@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { createBottomTabNavigator, createMaterialTopTabNavigator, createDrawerNavigator, createStackNavigator, NavigationActions } from "react-navigation";
 import { BottomTabBar } from "react-navigation-tabs";
-import { Image } from "react-native";
+import { View } from "react-native";
+import Image from "react-native-remote-svg";
 import { connect } from "react-redux";
 import { LinearGradient } from "expo";
 
@@ -263,12 +264,7 @@ class AppNavigation extends Component {
 			screen: UserScreen,
 			navigationOptions: navigation => ({
 				tabBarLabel: "My Account",
-				tabBarIcon: ({ focused, tintColor }) => (
-					<Image
-						style={[styles.tabIcon, this._getUserPhotoStyle(tintColor)]}
-						source={this._getUserPhoto(focused)}
-					/>
-				),
+				tabBarIcon: ({ focused, tintColor }) => this._getUserPhoto(focused, tintColor),
 				tabBarOnPress: (tab, jumpToIndex) => {
 					navigation.navigation.openDrawer();
 					//navigation.navigation.navigate("UserScreen");
@@ -391,24 +387,23 @@ class AppNavigation extends Component {
 	 *
 	 * @return object|file resource
 	 */
-	_getUserPhoto(focused) {		
+	_getUserPhoto(focused, tintColor) {		
 		if( !this.props.user.isGuest && this.props.user.photo ){
-			return { uri: this.props.user.photo };
+			return (
+				<View style={{ borderRadius: 24, overflow: 'hidden' }}>
+					<Image
+						style={[styles.tabIcon, styles.userTabIcon]}
+						source={{ uri: unescape( this.props.user.photo ) }}
+					/>
+				</View>
+			);
 		} else {
-			return focused ? require("../../resources/login_active.png") : require("../../resources/login.png")
-		}
-	}
-
-	/**
-	 * Returns the tint color style
-	 *
-	 * @return object|null
-	 */
-	_getUserPhotoStyle(tintColor) {
-		if( !this.props.user.isGuest && this.props.user.photo ){
-			return styles.userTabIcon;
-		} else {
-			return { tintColor };
+			return (
+				<Image
+					style={[styles.tabIcon, { tintColor }]}
+					source={focused ? require("../../resources/login_active.png") : require("../../resources/login.png")}
+				/>
+			);
 		}
 	}
 
