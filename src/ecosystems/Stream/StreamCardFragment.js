@@ -4,6 +4,7 @@ const StreamCardFragment = gql`
 	fragment StreamCardFragment on core_ContentSearchResult {
 		indexID
 		itemID
+		objectID
 		url {
 			full
 			app
@@ -21,7 +22,19 @@ const StreamCardFragment = gql`
 		created
 		isComment
 		isReview
+		unread
+		replies
+		reactions {
+			id
+			image
+			count
+		}
 		relativeTimeKey
+		articleLang {
+			indefinite
+			definite
+			definiteUC
+		}
 		itemAuthor {
 			id
 			name

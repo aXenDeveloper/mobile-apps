@@ -1,12 +1,13 @@
 import { StyleSheet } from 'react-native';
+import styles, { styleVars } from "../../styles";
 
 const componentStyles = StyleSheet.create({
 	streamHeader: {
 		flex: 1,
 		flexDirection: 'column',
 		alignItems: 'flex-start',
-		paddingHorizontal: 12,
-		paddingTop: 12,
+		paddingHorizontal: styleVars.spacing.wide,
+		paddingTop: styleVars.spacing.standard
 	},
 	streamHeaderInner: {
 		flex: 1
@@ -17,9 +18,8 @@ const componentStyles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		borderBottomWidth: 1,
-		borderBottomColor: '#F2F4F7',
-		paddingBottom: 9,
-		marginBottom: 9
+		borderBottomColor: styleVars.borderColors.medium,
+		paddingBottom: styleVars.spacing.standard,
 	},
 	streamMetaInner: {
 		display: 'flex',
@@ -28,7 +28,7 @@ const componentStyles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	streamMetaText: {
-		fontSize: 14,
+		fontSize: styleVars.fontSizes.standard,
 	},
 	streamMetaTime: {
 		color: '#8F8F8F'
@@ -39,9 +39,6 @@ const componentStyles = StyleSheet.create({
 	streamItemInfo: {
 		flex: 1,
 		flexDirection: 'row',
-	},
-	streamItemInfoInnerWithPhoto: {
-		marginLeft: 9
 	},
 	streamItemTitle: {
 		fontSize: 17,
@@ -54,23 +51,34 @@ const componentStyles = StyleSheet.create({
 	streamItemContainer: {
 		color: '#8F8F8F',
 	},
-	streamFooter: {
-		paddingHorizontal: 12,
-		paddingBottom: 12
+	streamContent: {
+		marginTop: styleVars.spacing.wide,
+		paddingHorizontal: styleVars.spacing.wide,
+		paddingBottom: styleVars.spacing.wide
 	},
-	streamFooterIndented: {
+	streamContentIndented: {
 		borderLeftWidth: 3,
-		borderLeftColor: '#f0f0f0',
-		paddingLeft: 12,
+		borderLeftColor: styleVars.borderColors.dark,
+		paddingLeft: styleVars.spacing.standard,
 		paddingBottom: 0,
-		marginBottom: 12,
-		marginLeft: 12
+		marginBottom: styleVars.spacing.wide,
+		marginLeft: styleVars.spacing.wide
 	},
 	snippetWrapper: {
 		marginTop: 9
 	},
 	snippetText: {
 		fontSize: 15
+	},
+	streamFooter: {
+		marginTop: styleVars.spacing.standard,
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'flex-start'
+	},
+	reactionOverview: {
+		marginLeft: styleVars.spacing.wide
 	},
 	blob: {
 		backgroundColor: '#888',
@@ -84,7 +92,6 @@ const componentStyles = StyleSheet.create({
 	imageContainer: {
 		height: 150,
 		width: '100%',
-		marginBottom: 12,
 		marginTop: 12
 	},
 	image: {

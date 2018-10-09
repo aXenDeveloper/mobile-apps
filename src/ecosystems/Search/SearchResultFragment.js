@@ -24,6 +24,7 @@ const SearchResultFragment = gql`
 		isComment
 		isReview
 		relativeTimeKey
+		firstCommentRequired
 		itemAuthor {
 			id
 			name
@@ -35,6 +36,8 @@ const SearchResultFragment = gql`
 			photo
 		}
 		articleLang {
+			indefinite
+			definite
 			definiteUC
 		}
 	}

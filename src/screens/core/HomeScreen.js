@@ -17,7 +17,7 @@ import Lang from "../../utils/Lang";
 import { Post } from "../../ecosystems/Post";
 import LargeTitle from "../../atoms/LargeTitle";
 import ErrorBox from "../../atoms/ErrorBox";
-import StreamCard from "../../ecosystems/StreamCard";
+import StreamCard from "../../ecosystems/Stream";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import ContentCard from "../../ecosystems/ContentCard";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";

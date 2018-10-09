@@ -64,6 +64,13 @@ const LangFragment = gql`
 		recent_searches: phrase(key: "app_recent_searches")
 		content: phrase(key: "app_content")
 
+		switch_stream: phrase(key: "app_switch_stream")
+		past_hour: phrase(key: "app_past_hour")
+		yesterday: phrase(key: "app_yesterday")
+		today: phrase(key: "app_today")
+		last_week: phrase(key: "app_last_week")
+		earlier: phrase(key: "app_earlier")
+
 		x_follow_this: phrase(key: "app_x_follow_this")
 		follow_immediate: phrase(key: "app_follow_immediate")		
 		follow_weekly: phrase(key: "app_follow_weekly")

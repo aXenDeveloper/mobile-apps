@@ -7,7 +7,7 @@ export const styleVars = {
 	text: '#000000',
 	lightText: '#657686',
 	veryLightText: '#9ba3ab',
-	appBackground: '#EBEDF0',
+	appBackground: '#d8dce3',
 	tabActive: '#37454B',
 	tabInactive: '#6e797e',
 	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`,
@@ -148,18 +148,44 @@ const styles = StyleSheet.create({
 		backgroundColor: '#f3f3f3',
 		borderRadius: 5
 	},
+	modalInner: {
+		backgroundColor: "#fff",
+		borderRadius: 6,
+		paddingBottom: isIphoneX() ? 40 : 0
+	},
 	modalHorizontalPadding: {
 		paddingHorizontal: 16
 	},
 	modalHeader: {
-		marginTop: 16,
-		marginBottom: 16
+		paddingVertical: styleVars.spacing.wide,
+		backgroundColor: '#f5f5f5',
+		borderTopLeftRadius: 6,
+		borderTopRightRadius: 6,
 	},
 	modalTitle: {
 		textAlign: 'center',
-		fontWeight: 'bold',
+		fontWeight: '500',
 		color: '#000',
-		fontSize: 17
+		fontSize: styleVars.fontSizes.large,
+		marginHorizontal: 40
+	},
+	modalHandle: {
+		width: 40,
+		height: 5,
+		borderRadius: 5,
+		backgroundColor: '#e0e0e0',
+		position: 'absolute',
+		top: -10,
+		left: '50%',
+		marginLeft: -20
+	},
+	modalClose: {
+		width: 20,
+		height: 20,
+		position: 'absolute',
+		top: 15,
+		right: styleVars.spacing.standard,
+		tintColor: styleVars.lightText
 	},
 
 

@@ -209,7 +209,7 @@ class FollowModal extends Component {
 		return (
 			<Modal style={componentStyles.modal} swipeDirection="down" onSwipe={this.props.close} isVisible={this.props.isVisible}>
 				<View style={componentStyles.modalInner}>
-					<View style={componentStyles.handle}></View>
+					<View style={styles.modalHandle}></View>
 					<SectionList
 						sections={this.getSectionData()}
 						renderItem={item => this.renderItem(item)}
@@ -232,16 +232,6 @@ const componentStyles = StyleSheet.create({
 	modalInner: {
 		backgroundColor: "#fff",
 		borderRadius: 6,
-	},
-	handle: {
-		width: 40,
-		height: 5,
-		borderRadius: 5,
-		backgroundColor: '#e0e0e0',
-		position: 'absolute',
-		top: -10,
-		left: '50%',
-		marginLeft: -20
 	},
 	followerWrap: {
 		backgroundColor: "#f5f5f5",
