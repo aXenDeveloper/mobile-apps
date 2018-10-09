@@ -75,9 +75,9 @@ export default class TopicRow extends Component {
 					<View style={componentStyles.topicMeta}>
 						{this.props.data.hot && <TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="hot" />}
 						{this.props.data.pinned && <TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="pinned" />}
-						<Image source={require('../../../resources/reply.png')} resizeMode='contain' style={componentStyles.repliesIcon} /> 
+						
 						<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText, componentStyles.lastPostTime]}>{relativeTime.short(this.props.data.lastPostDate)}</Text>
-						<Image source={require('../../../resources/comment.png')} resizeMode='contain' style={componentStyles.repliesIcon} /> 
+						
 						<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText]}>{Lang.pluralize(Lang.get('replies'), this.props.data.replies)}</Text>
 					</View>
 				</View>
