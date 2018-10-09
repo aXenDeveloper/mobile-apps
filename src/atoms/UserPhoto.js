@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import _ from "underscore";
+import Image from "react-native-remote-svg";
 
 import { styleVars } from "../styles";
 
@@ -14,25 +15,29 @@ export default class UserPhoto extends Component {
 
 		const photoSize = {
 			width: size,
-			height: size,
-			borderRadius: size / 2
+			height: size
+		};
+
+		const wrap = {
+			borderRadius: size / 2,
+			overflow: 'hidden'
 		};
 
 		return (
 			<View style={this.props.style || null}>
-				<Image
-					source={{ uri: this.props.url }}
-					style={[photoSize, componentStyles.photo, !_.isUndefined( this.props.anon ) && this.props.anon ? componentStyles.anonymous : null]}
-					resizeMode="cover"
-				/>
+				<View style={wrap}>
+					<Image
+						source={{ uri: unescape( this.props.url ) }}
+						style={[photoSize, componentStyles.photo, !_.isUndefined(this.props.anon) && this.props.anon ? componentStyles.anonymous : null]}
+						resizeMode="cover"
+					/>
+				</View>
 				{_.isBoolean(this.props.online) && (
 					<View
 						style={[
 							componentStyles.onlineBubble,
 							{
-								backgroundColor: this.props.online
-									? styleVars.positive
-									: styleVars.negative
+								backgroundColor: this.props.online ? styleVars.positive : styleVars.negative
 							}
 						]}
 					/>
