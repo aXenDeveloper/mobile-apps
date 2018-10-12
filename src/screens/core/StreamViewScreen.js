@@ -5,7 +5,7 @@ import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
 import _ from "underscore";
 import Modal from "react-native-modal";
-import * as Animatable from 'react-native-animatable';
+import * as Animatable from "react-native-animatable";
 
 import Lang from "../../utils/Lang";
 import { Post } from "../../ecosystems/Post";
@@ -19,11 +19,11 @@ import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import styles from "../../styles";
 
 const StreamViewQuery = gql`
-	query StreamViewQuery($id: ID) {
+	query StreamViewQuery($id: ID, $offset: Int, $limit: Int) {
 		core {
 			stream(id: $id) {
 				title
-				items {
+				items(offset: $offset, limit: $limit) {
 					...StreamCardFragment
 				}
 			}
@@ -31,6 +31,8 @@ const StreamViewQuery = gql`
 	}
 	${StreamCardFragment}
 `;
+
+const LIMIT = 25;
 
 const headerStyles = StyleSheet.create({
 	row: {
@@ -72,17 +74,30 @@ class StreamViewScreen extends Component {
 		)
 	});
 
-	getViewRef = ref => this._mainView = ref;
+	sectionTitles = {
+		past_hour: Lang.get("past_hour"),
+		yesterday: Lang.get("yesterday"),
+		today: Lang.get("today"),
+		last_week: Lang.get("last_week"),
+		earlier: Lang.get("earlier")
+	};
+
+	getViewRef = ref => (this._mainView = ref);
 
 	constructor(props) {
 		super(props);
 		this._refreshTimeout = null;
+		this._list = null;
+		this._mainView = null;
 		this.state = {
-			viewingStream: null,
-			results: [],
-			loading: true,
-			error: null,
-			streamListVisible: false
+			viewingStream: null, 		// Currently active stream
+			results: [],				// Simple array of results from GraphQL
+			sectionData: [],			// The formatted sections resdy for Sectionlist
+			loading: false,				// Are we loading data?
+			error: null,				// Was there an error?
+			streamListVisible: false,	// Is the stream list modal visible?
+			reachedEnd: false,			// Have we reached the end of the results list?
+			offset: 0					// What offset are we loading from?
 		};
 	}
 
@@ -91,9 +106,14 @@ class StreamViewScreen extends Component {
 	}
 
 	componentWillUnmount() {
-		clearTimeout( this._refreshTimeout );
+		clearTimeout(this._refreshTimeout);
 	}
 
+	/**
+	 * DidUpdate, check whether the active stream has changed
+	 *
+	 * @return 	void
+	 */
 	componentDidUpdate(prevProps, prevState) {
 		// If we've changed the stream we're viewing, then we need to update the title
 		// and get the results
@@ -108,11 +128,17 @@ class StreamViewScreen extends Component {
 		}
 	}
 
+	/**
+	 * Called when component mounted, sets the nav params to show the
+	 * current stream, and let the user tap to see the stream list
+	 *
+	 * @return 	void
+	 */
 	async setNavParams() {
 		if (this.props.user.streams.length > 1) {
 			this.props.navigation.setParams({
 				moreAvailable: true,
-				onPressTitle: () => this.showStreamList()
+				onPressTitle: () => this.showStreamModal()
 			});
 
 			// Get the user's default
@@ -122,25 +148,35 @@ class StreamViewScreen extends Component {
 			this.setState({
 				viewingStream: _.isUndefined(defaultExists) ? "all" : defaultExists,
 				offset: 0,
-				results: []
+				sectionData: []
 			});
 		} else {
 			this.setState({
 				viewingStream: "all",
 				offset: 0,
-				results: []
+				sectionData: []
 			});
 		}
 	}
 
+	/**
+	 * Load new stream results into the component
+	 *
+	 * @return 	void
+	 */
 	async fetchStream() {
+		if (this.state.loading || this.state.reachedEnd) {
+			return;
+		}
+
 		this.setState({
 			loading: true
 		});
 
 		try {
 			const variables = {
-				offset: this.state.offset
+				offset: this.state.offset,
+				limit: LIMIT
 			};
 
 			if (this.state.viewingStream !== "all") {
@@ -154,9 +190,12 @@ class StreamViewScreen extends Component {
 			});
 
 			const results = [...this.state.results, ...data.core.stream.items];
+			const sectionData = this.buildSectionData(results);
 
 			this.setState({
 				results,
+				sectionData,
+				reachedEnd: !data.core.stream.items.length || data.core.stream.items.length < LIMIT,
 				offset: results.length,
 				loading: false
 			});
@@ -169,11 +208,27 @@ class StreamViewScreen extends Component {
 		}
 	}
 
-	showStreamList() {
+	/**
+	 * Toggle the stream modal
+	 *
+	 * @return 	void
+	 */
+	showStreamModal = () => {
 		this.setState({
 			streamListVisible: true
 		});
-	}
+	};
+
+	/**
+	 * Hide the stream modal
+	 *
+	 * @return 	void
+	 */
+	closeStreamModal = () => {
+		this.setState({
+			streamListVisible: false
+		});
+	};
 
 	/**
 	 * Build the section data we need for SectionList
@@ -184,14 +239,14 @@ class StreamViewScreen extends Component {
 	 * @param 	object 	streamData 	The stream data
 	 * @return 	object
 	 */
-	buildSectionData() {
+	buildSectionData(items) {
 		const sections = {};
 
-		if (!this.state.results.length) {
+		if (!items.length) {
 			return [];
 		}
 
-		this.state.results.forEach(item => {
+		items.forEach(item => {
 			if (_.isUndefined(sections[item.relativeTimeKey])) {
 				sections[item.relativeTimeKey] = {
 					title: item.relativeTimeKey,
@@ -206,58 +261,12 @@ class StreamViewScreen extends Component {
 	}
 
 	/**
-	 * Render an individual stream item
-	 * We also build an onPress handler here, based on whether we are able to view the content
-	 * inside the app. If not, we navigate to our webview screen.
+	 * Build the list of streams the user can choose from
 	 *
-	 * @param 	object 	item 	Item data
 	 * @return 	Component
 	 */
-	renderItem(item) {
-		let onPress;
-		const isSupported = isSupportedUrl([item.url.app, item.url.module, item.url.controller]);
-
-		if (isSupported) {
-			onPress = () =>
-				this.props.navigation.navigate(isSupported, {
-					id: item.itemID
-				});
-		} else {
-			onPress = () =>
-				this.props.navigation.navigate("WebView", {
-					url: item.url.full
-				});
-		}
-
-		return <StreamCard data={item} isSupported={!!isSupported} onPress={onPress} />;
-	}
-
-	/**
-	 * Render a stream section
-	 *
-	 * @param 	object 	section 	Section data
-	 * @return 	Component
-	 */
-	renderHeader(section) {
-		const words = {
-			past_hour: Lang.get('past_hour'),
-			yesterday: Lang.get('yesterday'),
-			today: Lang.get('today'),
-			last_week: Lang.get('last_week'),
-			earlier: Lang.get('earlier')
-		};
-
-		return <StreamHeader title={words[section.title]} style={componentStyles.header} />;
-	}
-
-	closeStreamModal = () => {
-		this.setState({
-			streamListVisible: false
-		});
-	}
-
 	buildStreamList() {
-		const data = this.props.user.streams.map( (stream) => ({
+		const data = this.props.user.streams.map(stream => ({
 			id: stream.id,
 			key: stream.id,
 			title: stream.title,
@@ -268,9 +277,9 @@ class StreamViewScreen extends Component {
 			<View style={styles.modalInner}>
 				<View style={styles.modalHandle} />
 				<View style={styles.modalHeader}>
-					<Text style={styles.modalTitle}>{Lang.get('switch_stream')}</Text>
+					<Text style={styles.modalTitle}>{Lang.get("switch_stream")}</Text>
 					<TouchableOpacity onPress={this.closeStreamModal}>
-						<Image source={require('../../../resources/close_circle.png')} resizeMode='contain' style={styles.modalClose} />
+						<Image source={require("../../../resources/close_circle.png")} resizeMode="contain" style={styles.modalClose} />
 					</TouchableOpacity>
 				</View>
 				<CheckList data={data} onPress={this.switchStream} />
@@ -278,49 +287,92 @@ class StreamViewScreen extends Component {
 		);
 	}
 
-	switchStream = (item) => {
+	/**
+	 * Event handler to handle toggling a different stream
+	 *
+	 * @return 	void
+	 */
+	switchStream = item => {
 		this.setState({
 			streamListVisible: false
 		});
 
-		if( this.state.viewingStream == item.id ){
+		if (this.state.viewingStream == item.id) {
 			return;
 		}
-		
+
+		// To make this transition a bit nicer, fade out the existing results,
+		// then after a timeout do our state change to init loading new results while we
+		// fade back in (placeholders will be showing at that point)
+
 		this._mainView.fadeOut(400);
 
-		this._refreshTimeout = setTimeout( () => {
-			this.setState({
-				viewingStream: item.id,
-				results: [],
-				offset: 0
-			});
-		}, 450 );
-	}
+		this._refreshTimeout = setTimeout(() => {
+			this.setState(
+				{
+					viewingStream: item.id,
+					sectionData: [],
+					offset: 0,
+					reachedEnd: false
+				},
+				() => {
+					this._mainView.fadeIn(100);
+				}
+			);
+		}, 450);
+	};
 
-	renderStreamListItem(item) {
-		console.log( item );
-		return <Text>{item.title}</Text>;
-	}
+	/**
+	 * Handles infinite loading when user scrolls to end
+	 *
+	 * @return 	void
+	 */
+	onEndReached = () => {
+		if (!this.state.loading && !this.state.reachedEnd) {
+			this.fetchStream();
+		}
+	};
 
-	render() {
-		if (this.state.loading) {
-			return (
-				<React.Fragment>
+	/**
+	 * Returns placeholder components if our state indicates we need them
+	 *
+	 * @return 	Component|null
+	 */
+	getFooterComponent = () => {
+		if (this.state.loading && !this.state.reachedEnd) {
+			return this.getPlaceholder();
+		}
+
+		return null;
+	};
+
+	/**
+	 * Build placeholder components
+	 *
+	 * @return 	Component
+	 */
+	getPlaceholder() {
+		return (
+			<React.Fragment>
+				{this.state.offset == 0 && (
 					<PlaceholderContainer height={40}>
 						<PlaceholderElement width={100} height={30} top={7} left={7} />
 					</PlaceholderContainer>
-					<PlaceholderRepeater repeat={4} style={{ marginTop: 7 }}>
-						<Post loading={true} />
-					</PlaceholderRepeater>
-				</React.Fragment>
-			);
+				)}
+				<PlaceholderRepeater repeat={this.state.offset > 0 ? 1 : 4} style={{ marginTop: 7 }}>
+					<Post loading={true} />
+				</PlaceholderRepeater>
+			</React.Fragment>
+		);
+	}
+
+	render() {
+		if (this.state.loading && this.state.sectionData === []) {
+			return this.getPlaceholder();
 		} else if (this.state.error) {
 			const error = getErrorMessage(this.state.error, {});
 			return <Text>{error}</Text>;
 		} else {
-			const sectionData = this.buildSectionData();
-
 			return (
 				<React.Fragment>
 					<Modal style={componentStyles.modal} swipeDirection="down" onSwipe={this.closeStreamModal} isVisible={this.state.streamListVisible}>
@@ -330,11 +382,16 @@ class StreamViewScreen extends Component {
 						<View style={componentStyles.timeline} />
 						<SectionList
 							style={componentStyles.feed}
-							sections={sectionData}
+							sections={this.state.sectionData}
+							ref={list => (this._list = list)}
 							keyExtractor={item => item.indexID}
-							renderItem={({ item }) => this.renderItem(item)}
-							renderSectionHeader={({ section }) => this.renderHeader(section)}
+							renderItem={({ item }) => <StreamCard data={item} />}
+							renderSectionHeader={({ section }) => (
+								<StreamHeader title={this.sectionTitles[section.title]} style={componentStyles.header} />
+							)}
 							stickySectionHeadersEnabled={true}
+							onEndReached={this.onEndReached}
+							ListFooterComponent={this.getFooterComponent}
 						/>
 					</Animatable.View>
 				</React.Fragment>

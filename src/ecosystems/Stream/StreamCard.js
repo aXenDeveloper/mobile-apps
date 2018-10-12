@@ -1,6 +1,8 @@
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
 import { Button, Image, Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
-import FadeIn from 'react-native-fade-in-image';
+import FadeIn from "react-native-fade-in-image";
+import { withNavigation } from "react-navigation";
+import { graphql, compose, withApollo } from "react-apollo";
 
 import Lang from "../../utils/Lang";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
@@ -12,15 +14,19 @@ import RichTextContent from "../../atoms/RichTextContent";
 import relativeTime from "../../utils/RelativeTime";
 import getSuitableImage from "../../utils/getSuitableImage";
 import componentStyles from "./styles";
+import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import styles, { styleVars } from "../../styles";
 
-export default class StreamCard extends Component {
+class StreamCard extends PureComponent {
 	constructor(props) {
 		super(props);
 	}
 
-	//====================================================================
-	// LOADING
+	/**
+	 * Build the placeholder representation of a stream card
+	 *
+	 * @return 	Component
+	 */
 	loadingComponent() {
 		return (
 			<ShadowedArea style={[styles.post, styles.postWrapper]}>
@@ -39,16 +45,21 @@ export default class StreamCard extends Component {
 		);
 	}
 
+	/**
+	 * Return an image for the stream item, if one is available
+	 *
+	 * @return 	Component|null
+	 */
 	getContentImage() {
 		// No images in this content
 		if (!this.props.data.contentImages || !this.props.data.contentImages.length) {
-			return;
+			return null;
 		}
 
 		// Fetch an image to show
 		const imageToUse = getSuitableImage(this.props.data.contentImages);
 		if (!imageToUse) {
-			return;
+			return null;
 		}
 
 		return (
@@ -58,15 +69,40 @@ export default class StreamCard extends Component {
 		);
 	}
 
+	/**
+	 * onPress handler for this stream item. Redirects to appropriate screen if supported,
+	 * or webview screen if not.
+	 *
+	 * @return 	void
+	 */
+	onPress = () => {
+		let onPress;
+		const isSupported = isSupportedUrl([this.props.data.url.app, this.props.data.url.module, this.props.data.url.controller]);
+
+		if (isSupported) {
+			onPress = () =>
+				this.props.navigation.navigate(isSupported, {
+					id: this.props.data.itemID
+				});
+		} else {
+			onPress = () =>
+				this.props.navigation.navigate("WebView", {
+					url: this.props.data.url.full
+				});
+		}
+	}
+
 	render() {
 		if (this.props.loading) {
 			return this.loadingComponent();
 		}
 
+		console.log("render #" + this.props.data.indexID);
+
 		const Component = !this.props.data.isComment && !this.props.data.isReview ? StreamItem : StreamComment;
 
 		return (
-			<TouchableHighlight style={componentStyles.postWrapper} onPress={this.props.onPress}>
+			<TouchableHighlight style={componentStyles.postWrapper} onPress={this.onPress}>
 				<ShadowedArea style={componentStyles.post}>
 					<View style={componentStyles.blob} />
 					<Component
@@ -85,3 +121,5 @@ export default class StreamCard extends Component {
 		);
 	}
 }
+
+export default compose(withNavigation)(StreamCard);
