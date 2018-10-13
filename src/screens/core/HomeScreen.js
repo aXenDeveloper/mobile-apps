@@ -48,7 +48,8 @@ class HomeScreen extends Component {
 		this.state = {
 			loading: true,
 			error: false,
-			data: null
+			data: null,
+			navConfig: []
 		};
 	}
 
@@ -88,9 +89,12 @@ class HomeScreen extends Component {
 				variables: {}
 			});
 
+			const navConfig = this.getNavConfig();
+
 			this.setState({
 				loading: false,
-				data
+				data,
+				navConfig
 			});
 		} catch (err) {
 			this.setState({
@@ -189,7 +193,7 @@ class HomeScreen extends Component {
 
 	renderNavItem(item) {
 		return (
-			<TouchableOpacity style={componentStyles.navItem} onPress={() => item.handler()}>
+			<TouchableOpacity style={componentStyles.navItem} onPress={item.handler}>
 				<React.Fragment>
 					<Image source={item.icon} resizeMode='contain' style={componentStyles.navItemIcon} />
 					<Text style={componentStyles.navItemText}>{item.title}</Text>
@@ -206,7 +210,7 @@ class HomeScreen extends Component {
 				<React.Fragment>
 					<FlatList
 						renderItem={({ item }) => this.renderNavItem(item)}
-						data={this.getNavConfig()}
+						data={this.state.navConfig}
 						keyExtractor={item => item.key}
 						horizontal
 						style={componentStyles.navigator}
