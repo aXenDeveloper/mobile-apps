@@ -14,14 +14,20 @@ import styles, { styleVars } from '../../styles';
 class OurPicks extends Component {	
 	constructor(props) {
 		super(props);
+		this.pressHandlers = {};
 	}
 
 	getDummyData() {
 		return _.range(5).map(idx => ({ key: idx.toString() }));
 	}
 
+	/**
+	 * Build and return the card component for the given data
+	 *
+	 * @param 	object 		data 		The item data
+	 * @return 	Component
+	 */
 	getItemCard(data) {
-
 		if( this.props.loading ){
 			return (
 				<ContentCard
@@ -71,13 +77,34 @@ class OurPicks extends Component {
 					width: this.props.cardWidth,
 					marginLeft: styleVars.spacing.wide
 				}}
-				onPress={() => this.onPressItem(data)}
+				onPress={this.getPressHandler(data.id, data)}
 				image={cardPieces.image}
 				content={cardPieces.content}
 			/>
 		);
 	}
 
+	/**
+	 * Memoization function that returns a press handler for an item
+	 *
+	 * @param 	int 	id 		ID of item to be fetched
+	 * @param 	object	data 	Card data to be passed into handler
+	 * @return 	function
+	 */
+	getPressHandler(id, data) {
+		if( _.isUndefined( this.pressHandlers[ id ] ) ){
+			this.pressHandlers[ id ] = () => this.onPressItem(data);
+		}
+
+		return this.pressHandlers[ id ];
+	}
+
+	/**
+	 * Press event handoer
+	 *
+	 * @param 	object 		The item data
+	 * @return 	void
+	 */
 	onPressItem(data) {
 		const isSupported = isSupportedUrl([ data.url.app, data.url.module, data.url.controller ]);
 
