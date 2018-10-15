@@ -3,8 +3,9 @@ import { Button, Image, Alert, Text, View, StyleSheet, TouchableHighlight, Touch
 import Modal from "react-native-modal";
 import ActionSheet from "react-native-actionsheet";
 import gql from "graphql-tag";
-import { graphql } from "react-apollo";
+import { graphql, compose } from "react-apollo";
 import * as Animatable from 'react-native-animatable';
+import { withNavigation } from "react-navigation";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
@@ -35,6 +36,7 @@ const PostReactionMutation = gql`
 class Post extends Component {
 	constructor(props) {
 		super(props);
+		this._actionSheetOptions = [Lang.get('cancel'), Lang.get('share'), Lang.get('report')];
 		this.state = {
 			reactionModalVisible: false
 		};
@@ -44,11 +46,16 @@ class Post extends Component {
 	 * GraphQL error types
 	 */
 	static errors = {
-		NO_POST: "The post does not exist."
+		NO_POST: Lang.get('no_post')
 	};
 
 	//====================================================================
 	// LOADING
+	/**
+	 * Return the loading placeholder
+	 *
+	 * @return 	Component
+	 */
 	loadingComponent() {
 		return (
 			<ShadowedArea style={[styles.post, styles.postWrapper]}>
@@ -78,13 +85,14 @@ class Post extends Component {
 	actionSheetPress(i) {
 		console.log("action sheet");
 	}
+
 	/**
 	 * Return the options to be shown in the action sheet
 	 *
 	 * @return 	array
 	 */
 	actionSheetOptions() {
-		return [Lang.get('cancel'), Lang.get('share'), Lang.get('report')];
+		return this._actionSheetOptions;
 	}
 	/**
 	 * Return the index of the 'cancel' option
@@ -102,9 +110,9 @@ class Post extends Component {
 	 * @param 	number 		reactionID 		ID of tapped reaction
 	 * @return 	void
 	 */
-	reactionOnPress(reactionID) {
+	onPressReaction = (reactionID) => {
 		if (this.props.data.reputation.canViewReps) {
-			console.log("press reaction");
+			console.log("press reaction"); // @todo show follow list
 		}
 	}
 
@@ -125,7 +133,7 @@ class Post extends Component {
 	 *
 	 * @return 	void
 	 */
-	hideReactionModal() {
+	hideReactionModal = () => {
 		this.setState({
 			reactionModalVisible: false
 		});
@@ -141,35 +149,46 @@ class Post extends Component {
 			return null;
 		}
 
-		// Only respond to longPress if we aren't using Like Mode
-		const onLongPress = () => {
-			if (this.props.data.reputation.isLikeMode) {
-				return null;
-			}
-
-			return this.showReactionModal();
-		};
-
-		const onPress = () => {
-			if( this.props.data.reputation.hasReacted ){
-				this.removeReaction();
-			} else {
-				this.onReactionPress( this.props.data.reputation.defaultReaction.id );
-			}
-		};
-
 		if (this.props.data.reputation.hasReacted) {
 			return (
 				<PostControl
 					image={this.props.data.reputation.givenReaction.image}
 					label={this.props.data.reputation.givenReaction.name}
 					selected
-					onPress={onPress}
-					onLongPress={onLongPress}
+					onPress={this.onPressReputation}
+					onLongPress={this.onLongPressReputation}
 				/>
 			);
 		} else {
-			return <PostControl label={this.props.data.reputation.defaultReaction.name} onPress={onPress} onLongPress={onLongPress} />;
+			return <PostControl label={this.props.data.reputation.defaultReaction.name} onPress={this.onPressReputation} onLongPress={this.onLongPressReputation} />;
+		}
+	}
+
+	/**
+	 * Handle long press on rep button. Only do something if we aren't using
+	 * like mode
+	 *
+	 * @return 	void
+	 */
+	onLongPressReputation = () => {
+		if (this.props.data.reputation.isLikeMode) {
+			return null;
+		}
+
+		return this.showReactionModal();
+	}
+
+	/**
+	 * Handle regular press on reputation. Apply our default rep if not already reacted,
+	 * otherwise remove current rep
+	 *
+	 * @return 	void
+	 */
+	onPressReputation = () => {
+		if( this.props.data.reputation.hasReacted ){
+			this.removeReaction();
+		} else {
+			this.onReactionPress( this.props.data.reputation.defaultReaction.id );
 		}
 	}
 
@@ -204,6 +223,7 @@ class Post extends Component {
 				}
 			});
 		} catch (err) {
+			// @todo abstract/improve error
 			const errorMessage = getErrorMessage(err, Post.errors);
 			Alert.alert("Error", "Sorry, there was an error removing the reaction from this post." + err, [{ text: "OK" }], { cancelable: false });
 		}
@@ -216,7 +236,7 @@ class Post extends Component {
 	 * @param 	number 		reaction 		ID of selected reaction
 	 * @return 	void
 	 */
-	async onReactionPress(reaction) {
+	onReactionPress = async (reaction) => {
 		// Get the reaction object from available reactions
 		const givenReaction = _.find(this.props.data.reputation.availableReactions, function(type) {
 			return type.id === reaction;
@@ -251,17 +271,57 @@ class Post extends Component {
 				}
 			});
 		} catch (err) {
+			// @todo abstract/improve errors
 			const errorMessage = getErrorMessage(err, Post.errors);
 			Alert.alert("Error", "Sorry, there was an error reacting to this post." + errorMessage, [{ text: "OK" }], { cancelable: false });
 		}
 	}
 
+	/**
+	 * On update, check whether our reaction count has changed. If so, animate the reaction wrap in
+	 *
+	 * @return 	void
+	 */
 	componentDidUpdate(prevProps) {
 		if( !this.props.loading ){
 			if( prevProps.data.reputation.reactions.length == 0 && this.props.data.reputation.reactions.length !== 0 ){
 				this._reactionWrap.fadeInRight(200);
 			}
 		}
+	}
+
+	/**
+	 * Handler for tapping the author to go to profile
+	 *
+	 * @return 	void
+	 */
+	onPressProfile = () => {
+		this.props.navigation.navigate("Profile", {
+			id: this.props.data.author.id,
+			name: this.props.data.author.name,
+			photo: this.props.data.author.photo
+		});
+	}
+
+	/**
+	 * Handler for tapping the Reply button
+	 *
+	 * @return 	void
+	 */
+	onPressReply = () => {
+		this.props.navigation.navigate("ReplyTopic", {
+			topicID: this.props.topic.id,
+			quotedPost: this.props.data
+		});
+	}
+
+	/**
+	 * Handler for tapping ... in a post for more options
+	 *
+	 * @return 	void
+	 */
+	onPressPostDots = () => {
+		this._actionSheet.show();
 	}
 
 	render() {
@@ -275,7 +335,7 @@ class Post extends Component {
 			<TouchableHighlight style={styles.postWrapper}>
 				<ShadowedArea style={styles.post}>
 					<View style={styles.postHeader}>
-						<TouchableOpacity style={styles.postInfo} onPress={this.props.profileHandler}>
+						<TouchableOpacity style={styles.postInfo} onPress={this.onPressProfile}>
 							<View style={styles.postInfo}>
 								<UserPhoto url={this.props.data.author.photo} online={this.props.data.author.isOnline || null} size={36} />
 								<View style={styles.meta}>
@@ -284,7 +344,7 @@ class Post extends Component {
 								</View>
 							</View>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.postInfoButton} onPress={() => this._actionSheet.show()}>
+						<TouchableOpacity style={styles.postInfoButton} onPress={this.onPressPostDots}>
 							<Image style={styles.postMenu} resizeMode="contain" source={require("../../../resources/dots.png")} />
 						</TouchableOpacity>
 					</View>
@@ -301,7 +361,7 @@ class Post extends Component {
 												id={reaction.id}
 												image={reaction.image}
 												count={reaction.count}
-												onPress={() => this.reactionOnPress(reaction.id)}
+												onPress={this.onPressReaction}
 											/>
 										);
 									})}
@@ -311,7 +371,7 @@ class Post extends Component {
 					</View>
 					{(repButton || this.props.canReply) &&
 						<PostControls>
-							{this.props.canReply && <PostControl label={Lang.get('quote')} onPress={this.props.onPressReply} />}
+							{this.props.canReply && <PostControl label={Lang.get('quote')} onPress={this.onPressReply} />}
 							{repButton}
 						</PostControls>}
 					<ActionSheet
@@ -323,15 +383,20 @@ class Post extends Component {
 					/>
 					<ReactionModal
 						visible={this.state.reactionModalVisible}
-						closeModal={() => this.hideReactionModal()}
+						closeModal={this.hideReactionModal}
 						reactions={this.props.data.reputation.availableReactions}
-						onReactionPress={this.onReactionPress.bind(this)}
+						onReactionPress={this.onReactionPress}
 					/>
 				</ShadowedArea>
 			</TouchableHighlight>
 		);
 	}
 }
+
+export default compose(
+	graphql(PostReactionMutation),
+	withNavigation
+)(Post);
 
 const styles = StyleSheet.create({
 	postWrapper: {
@@ -388,5 +453,3 @@ const styles = StyleSheet.create({
 		marginLeft: 10
 	}
 });
-
-export default graphql(PostReactionMutation)(Post);

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Text, Image, View, StyleSheet, TouchableHighlight } from "react-native";
-import { graphql, compose, withApollo } from "react-apollo";
+import { compose } from "react-apollo";
 import { connect } from "react-redux";
 import { withNavigation } from "react-navigation";
 
@@ -64,11 +64,11 @@ class TopicRow extends Component {
 	 */
 	onPress = () => {
 		this.props.navigation.navigate("TopicView", {
-			id: this.props.item.id,
-			title: this.props.item.title,
-			author: this.props.item.author,
-			posts: this.props.item.replies,
-			started: this.props.item.started
+			id: this.props.data.id,
+			title: this.props.data.title,
+			author: this.props.data.author,
+			posts: this.props.data.replies,
+			started: this.props.data.started
 		});
 	};
 

@@ -112,7 +112,7 @@ class TopicViewScreen extends Component {
 			this.props.navigation.setParams({
 				showFollowControl: false,
 				isFollowed: false,
-				onPressFollow: this.toggleFollowModal.bind(this)
+				onPressFollow: this.toggleFollowModal
 			});
 		}
 	}
@@ -122,11 +122,11 @@ class TopicViewScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	toggleFollowModal() {
+	toggleFollowModal = () => {
 		this.setState({
 			followModalVisible: !this.state.followModalVisible
 		});
-	}
+	};
 
 	/**
 	 * Set the offset based on initial props
@@ -176,7 +176,6 @@ class TopicViewScreen extends Component {
 	componentDidUpdate(prevProps, prevState) {
 		// If we're no longer loading, toggle the follow button if needed
 		if (prevProps.data.loading && !this.props.data.loading && !this.props.data.error) {
-			
 			// If we mounted without the info we need to set the screen title, then set them now
 			if (!this.props.navigation.state.params.author) {
 				this.props.navigation.setParams({
@@ -186,7 +185,7 @@ class TopicViewScreen extends Component {
 				});
 			}
 
-			if( !this.props.data.forums.topic.passwordProtected ){
+			if (!this.props.data.forums.topic.passwordProtected) {
 				this.props.navigation.setParams({
 					showFollowControl: true,
 					isFollowed: this.props.data.forums.topic.follow.isFollowing
@@ -246,15 +245,14 @@ class TopicViewScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	onEndReached() {
+	onEndReached = () => {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
-
 			const offsetAdjust = this._currentOffset + this.props.data.forums.topic.posts.length;
 
 			// Don't try loading more if we're already showing everything in the topic
-			if( offsetAdjust >= this.props.data.forums.topic.commentCount ){
+			if (offsetAdjust >= this.props.data.forums.topic.commentCount) {
 				return;
-			}			
+			}
 
 			this.props.data.fetchMore({
 				variables: {
@@ -287,7 +285,7 @@ class TopicViewScreen extends Component {
 				}
 			});
 		}
-	}
+	};
 
 	/**
 	 * Loads earlier posts on demand
@@ -350,13 +348,13 @@ class TopicViewScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	onRefresh() {
+	onRefresh = () => {
 		this.setState({
 			reachedEnd: false
 		});
 
 		this.props.data.refetch();
-	}
+	};
 
 	/**
 	 * Return the footer component. Show a spacer by default, but a loading post
@@ -411,37 +409,27 @@ class TopicViewScreen extends Component {
 	 */
 	renderItem(item, topicData) {
 		// If this is the unread bar, just return it
-		if (item.id === 'unread') {
+		if (item.id === "unread") {
 			return <UnreadIndicator label={Lang.get("unread_posts")} />;
-		} else if( item.id === 'loginPrompt' ){
-			return <LoginRegisterPrompt
-				style={{ marginBottom: 7 }}
-				register={this.props.site.allow_reg !== "DISABLED"}
-				registerUrl={this.props.site.allow_reg_target || null}
-				navigation={this.props.navigation}
-				message={Lang.get( this.props.site.allow_reg !== "DISABLED" ? 'login_register_prompt_comment' : 'login_prompt_comment', {
-					siteName: this.props.site.board_name
-				})}
-			/>;
+		} else if (item.id === "loginPrompt") {
+			return (
+				<LoginRegisterPrompt
+					style={{ marginBottom: 7 }}
+					register={this.props.site.allow_reg !== "DISABLED"}
+					registerUrl={this.props.site.allow_reg_target || null}
+					navigation={this.props.navigation}
+					message={Lang.get(this.props.site.allow_reg !== "DISABLED" ? "login_register_prompt_comment" : "login_prompt_comment", {
+						siteName: this.props.site.board_name
+					})}
+				/>
+			);
 		}
 
 		return (
 			<Post
 				data={item}
 				canReply={topicData.itemPermissions.canComment}
-				profileHandler={() =>
-					this.props.navigation.navigate("Profile", {
-						id: item.author.id,
-						name: item.author.name,
-						photo: item.author.photo
-					})
-				}
-				onPressReply={() =>
-					this.props.navigation.navigate("ReplyTopic", {
-						topicID: topicData.id,
-						quotedPost: item
-					})
-				}
+				topic={topicData}
 			/>
 		);
 	}
@@ -458,7 +446,7 @@ class TopicViewScreen extends Component {
 
 		// If they're a guest, insert an item so that a login prompt will show
 		// Only if we're at the start of the topic
-		if( !this.props.auth.authenticated && topicData.posts[0].isFirstPost && topicData.itemPermissions.canCommentIfSignedIn ){
+		if (!this.props.auth.authenticated && topicData.posts[0].isFirstPost && topicData.itemPermissions.canCommentIfSignedIn) {
 			returnedData.splice(1, 0, {
 				id: "loginPrompt"
 			});
@@ -471,7 +459,7 @@ class TopicViewScreen extends Component {
 
 			if (firstUnread !== -1) {
 				returnedData.splice(firstUnread, 0, {
-					id: "unread", // We need a dummy id for keyExtractor to read
+					id: "unread" // We need a dummy id for keyExtractor to read
 				});
 			}
 		}
@@ -485,7 +473,7 @@ class TopicViewScreen extends Component {
 	 * @param 	object 		followData 		Object with the selected values from the modal
 	 * @return 	void
 	 */
-	async onFollow(followData) {
+	onFollow = async followData => {
 		this.setState({
 			followModalVisible: false
 		});
@@ -506,16 +494,16 @@ class TopicViewScreen extends Component {
 				isFollowed: true
 			});
 		} catch (err) {
-			console.log(err);
+			console.log(err); // @todo show proper error
 		}
-	}
+	};
 
 	/**
 	 * Event handler for unfollowing the forum
 	 *
 	 * @return 	void
 	 */
-	async onUnfollow() {
+	onUnfollow = async () => {
 		this.setState({
 			followModalVisible: false
 		});
@@ -535,9 +523,15 @@ class TopicViewScreen extends Component {
 				isFollowed: false
 			});
 		} catch (err) {
-			console.log(err);
+			console.log(err); // @todo show proper error
 		}
-	}
+	};
+
+	addReply = () => {
+		this.props.navigation.navigate("ReplyTopic", {
+			topicID: this.props.data.forums.topic.id
+		});
+	};
 
 	render() {
 		// status 3 == fetchMore, status 4 == refreshing
@@ -549,10 +543,10 @@ class TopicViewScreen extends Component {
 			);
 		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, TopicViewScreen.errors);
-			return <Text>Error: {error}</Text>;
+			return <Text>Error: {error}</Text>; // @todo show proper error
 		} else {
 			const topicData = this.props.data.forums.topic;
-			const listData = this.getListData(); 
+			const listData = this.getListData();
 
 			return (
 				<View style={{ flex: 1 }}>
@@ -560,9 +554,9 @@ class TopicViewScreen extends Component {
 						<FollowModal
 							isVisible={this.state.followModalVisible}
 							followData={topicData.follow}
-							onFollow={followData => this.onFollow(followData)}
-							onUnfollow={() => this.onUnfollow()}
-							close={() => this.toggleFollowModal()}
+							onFollow={this.onFollow}
+							onUnfollow={this.onUnfollow}
+							close={this.toggleFollowModal}
 						/>
 						<FlatList
 							style={{ flex: 1 }}
@@ -573,19 +567,12 @@ class TopicViewScreen extends Component {
 							renderItem={({ item }) => this.renderItem(item, topicData)}
 							data={listData}
 							refreshing={this.props.data.networkStatus == 4}
-							onRefresh={() => this.onRefresh()}
-							onEndReached={() => this.onEndReached()}
+							onRefresh={this.onRefresh}
+							onEndReached={this.onEndReached}
 						/>
 						{this.props.data.forums.topic.itemPermissions.canComment && (
 							<Pager light>
-								<DummyTextInput
-									onPress={() => {
-										this.props.navigation.navigate("ReplyTopic", {
-											topicID: topicData.id
-										});
-									}}
-									placeholder={Lang.get("write_reply")}
-								/>
+								<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
 							</Pager>
 						)}
 					</View>

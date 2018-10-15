@@ -6,9 +6,18 @@ export default class Reaction extends Component {
 		super(props);
 	}
 
+	/**
+	 * Event handler for tapping this reaction
+	 *
+	 * @return 	void
+	 */
+	onPress = () => {
+		this.props.onPress(this.props.id);
+	}
+
 	render() {
 		return (
-			<TouchableHighlight onPress={this.props.onPress} key={this.props.id} style={[this.props.style, styles.reactionWrapper]}>
+			<TouchableHighlight onPress={this.props.onPress ? this.onPress : null} key={this.props.id} style={[this.props.style, styles.reactionWrapper]}>
 				<View style={styles.reaction}>
 					<Image source={{ uri: this.props.image }} style={styles.reactionImage} resizeMode='cover' />
 					<Text style={styles.reactionCount}>{this.props.count}</Text>
