@@ -1,19 +1,40 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableHighlight } from 'react-native';
 import Swipeable from 'react-native-swipeable';
+import { graphql, compose, withApollo } from "react-apollo";
+import { connect } from "react-redux";
+import { withNavigation } from "react-navigation";
 
 import Lang from "../../utils/Lang";
 import ForumIcon from '../../atoms/ForumIcon';
 import LastPostInfo from '../../ecosystems/LastPostInfo';
 import styles from '../../styles';
 
-export default class ForumItem extends Component {	
+class ForumItem extends Component {	
 	constructor(props) {
 		super(props);
 	}
 
+	/**
+	 * Event handler for tappig a forum row
+	 *
+	 * @param 	object 	section 	The section we're rendering
+	 * @return 	Component|null
+	 */
+	onPress = () => {
+		this.props.navigation.navigate({
+			routeName: "TopicList",
+			params: {
+				id: this.props.data.id,
+				title: this.props.data.title,
+				subtitle: Lang.pluralize(Lang.get("topics"), this.props.data.topics)
+			},
+			key: `forum_${this.props.data.id}`
+		});
+	}
+
 	render() {
-		const rightButtons = [
+		const rightButtons = [ // @todo handle this event
 			<TouchableHighlight style={[styles.rightSwipeItem, styles.markSwipeItem]}>
 				<Text style={styles.swipeItemText}>Read</Text>
 			</TouchableHighlight>
@@ -21,7 +42,7 @@ export default class ForumItem extends Component {
 
 		return (
 			<Swipeable rightButtons={rightButtons}>
-				<TouchableHighlight onPress={this.props.onPress}>
+				<TouchableHighlight onPress={this.props.onPress || this.onPress}>
 					<View style={componentStyles.forumItem}>
 						<View style={componentStyles.iconAndInfo}>
 							<ForumIcon style={componentStyles.forumIcon} unread={this.props.data.unread} />
@@ -41,6 +62,10 @@ export default class ForumItem extends Component {
 		);
 	}
 }
+
+export default compose(
+	withNavigation
+)(ForumItem);
 
 const componentStyles = StyleSheet.create({
 	forumItem: {

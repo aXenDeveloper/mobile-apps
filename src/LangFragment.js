@@ -64,6 +64,12 @@ const LangFragment = gql`
 		recent_searches: phrase(key: "app_recent_searches")
 		content: phrase(key: "app_content")
 
+		create_new_topic: phrase(key: "app_create_new_topic")
+		topics_title: phrase(key: "app_topics_title")
+		subforums_title: phrase(key: "app_subforums_title")
+		no_forum: phrase(key: "app_no_forum")
+		incorrect_forum_password: phrase(key: "app_incorrect_forum_password")
+
 		switch_stream: phrase(key: "app_switch_stream")
 		past_hour: phrase(key: "app_past_hour")
 		yesterday: phrase(key: "app_yesterday")

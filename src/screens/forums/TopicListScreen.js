@@ -101,8 +101,8 @@ class TopicListScreen extends Component {
 	 * GraphQL error types
 	 */
 	static errors = {
-		NO_FORUM: "The forum does not exist.",
-		INCORRECT_PASSWORD: "The password to this forum wasn't provided"
+		NO_FORUM: Lang.get("no_forum"),
+		INCORRECT_PASSWORD: Lang.get("incorrect_forum_password")
 	};
 
 	constructor(props) {
@@ -116,7 +116,7 @@ class TopicListScreen extends Component {
 			this.props.navigation.setParams({
 				showFollowControl: false,
 				isFollowed: false,
-				onPressFollow: this.toggleFollowModal.bind(this)
+				onPressFollow: this.toggleFollowModal
 			});
 		}
 	}
@@ -126,11 +126,11 @@ class TopicListScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	toggleFollowModal() {
+	toggleFollowModal = () => {
 		this.setState({
 			followModalVisible: !this.state.followModalVisible
 		});
-	}
+	};
 
 	/**
 	 * Update the navigation params to set the title if we came direct, e.g. from search
@@ -147,7 +147,7 @@ class TopicListScreen extends Component {
 				});
 			}
 
-			if( !this.props.data.forums.forum.passwordProtected ){
+			if (!this.props.data.forums.forum.passwordProtected) {
 				this.props.navigation.setParams({
 					showFollowControl: true,
 					isFollowed: this.props.data.forums.forum.follow.isFollowing
@@ -165,7 +165,7 @@ class TopicListScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	onEndReached() {
+	onEndReached = () => {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
 			this.props.data.fetchMore({
 				variables: {
@@ -195,20 +195,20 @@ class TopicListScreen extends Component {
 				}
 			});
 		}
-	}
+	};
 
 	/**
 	 * Handle refreshing the view
 	 *
 	 * @return 	void
 	 */
-	onRefresh() {
+	onRefresh = () => {
 		this.setState({
 			reachedEnd: false
 		});
 
 		this.props.data.refetch();
-	}
+	};
 
 	/**
 	 * Return the footer component. Show a spacer by default, but a loading post
@@ -282,39 +282,9 @@ class TopicListScreen extends Component {
 	 */
 	renderItem(item, forumData) {
 		if (item.type == "topic") {
-			return (
-				<TopicRow
-					data={item}
-					isGuest={!this.props.auth.authenticated}
-					onPress={() =>
-						this.props.navigation.navigate("TopicView", {
-							id: item.id,
-							title: item.title,
-							author: item.author,
-							posts: item.replies,
-							started: item.started
-						})
-					}
-				/>
-			);
+			return <TopicRow data={item} />;
 		} else {
-			return (
-				<ForumItem
-					key={item.key}
-					data={item.data}
-					onPress={() =>
-						this.props.navigation.navigate({
-							routeName: "TopicList",
-							params: {
-								id: item.data.id,
-								title: item.data.title,
-								subtitle: Lang.pluralize(Lang.get("topics"), item.data.topics)
-							},
-							key: `forum_${item.data.id}`
-						})
-					}
-				/>
-			);
+			return <ForumItem key={item.key} data={item.data} />;
 		}
 	}
 
@@ -338,7 +308,7 @@ class TopicListScreen extends Component {
 	 * @param 	object 		followData 		Object with the selected values from the modal
 	 * @return 	void
 	 */
-	async onFollow(followData) {
+	onFollow = async followData => {
 		this.setState({
 			followModalVisible: false
 		});
@@ -359,16 +329,16 @@ class TopicListScreen extends Component {
 				isFollowed: true
 			});
 		} catch (err) {
-			console.log(err);
+			console.log(err); // @todo show proper error
 		}
-	}
+	};
 
 	/**
 	 * Event handler for unfollowing the forum
 	 *
 	 * @return 	void
 	 */
-	async onUnfollow() {
+	onUnfollow = async () => {
 		this.setState({
 			followModalVisible: false
 		});
@@ -388,13 +358,31 @@ class TopicListScreen extends Component {
 				isFollowed: false
 			});
 		} catch (err) {
-			console.log(err);
+			console.log(err); // @todo show proper error
 		}
-	}
+	};
+
+	/**
+	 * Event handler for tapping Create New Topic
+	 *
+	 * @return 	void
+	 */
+	createTopic = () => {
+		const forumData = this.props.data.forums.forum;
+		const settingsData = this.props.data.core.settings;
+
+		this.props.navigation.navigate("CreateTopic", {
+			forumID: this.props.navigation.state.params.id,
+			tagsEnabled: forumData.create.tags.enabled,
+			definedTags: forumData.create.tags.definedTags,
+			tags_min: settingsData.tags_min,
+			tags_len_min: settingsData.tags_len_min,
+			tags_max: settingsData.tags_max,
+			tags_len_max: settingsData.tags_len_max
+		});
+	};
 
 	render() {
-		console.log(this.props.data);
-
 		// status 3 == fetchMore, status 4 == refreshing
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return (
@@ -412,11 +400,12 @@ class TopicListScreen extends Component {
 			const topicData = forumData.topics.map(topic => this.buildTopicData(topic, forumData));
 			const settingsData = this.props.data.core.settings;
 			const forumSections = [];
+			const ListEmptyComponent = <ErrorBox message={Lang.get("no_topics")} showIcon={false} />;
 
 			// Add subforums if we have them
 			if (forumData.subforums.length) {
 				forumSections.push({
-					title: "Subforums",
+					title: Lang.get("subforums_title"),
 					data: forumData.subforums.length ? this.buildSubforumData(forumData.subforums) : null
 				});
 			}
@@ -424,7 +413,7 @@ class TopicListScreen extends Component {
 			// Add topics
 			if (topicData.length) {
 				forumSections.push({
-					title: "Topics",
+					title: Lang.get("topics_title"),
 					data: topicData
 				});
 			}
@@ -434,9 +423,9 @@ class TopicListScreen extends Component {
 					<FollowModal
 						isVisible={this.state.followModalVisible}
 						followData={forumData.follow}
-						onFollow={followData => this.onFollow(followData)}
-						onUnfollow={() => this.onUnfollow()}
-						close={() => this.toggleFollowModal()}
+						onFollow={this.onFollow}
+						onUnfollow={this.onUnfollow}
+						close={this.toggleFollowModal}
 					/>
 					<View style={{ flex: 1 }}>
 						<SectionList
@@ -446,29 +435,15 @@ class TopicListScreen extends Component {
 							renderItem={({ item }) => this.renderItem(item, forumData)}
 							sections={forumSections}
 							refreshing={this.props.data.networkStatus == 4}
-							onRefresh={() => this.onRefresh()}
-							onEndReached={() => this.onEndReached()}
-							ListEmptyComponent={() => <ErrorBox message={Lang.get("no_topics")} showIcon={false} />}
+							onRefresh={this.onRefresh}
+							onEndReached={this.onEndReached}
+							ListEmptyComponent={ListEmptyComponent}
 						/>
-						{forumData.create.canCreate ? (
+						{forumData.create.canCreate && (
 							<Pager>
-								<AddButton
-									icon={require("../../../resources/compose.png")}
-									title="Create New Topic"
-									onPress={() =>
-										this.props.navigation.navigate("CreateTopic", {
-											forumID: this.props.navigation.state.params.id,
-											tagsEnabled: forumData.create.tags.enabled,
-											definedTags: forumData.create.tags.definedTags,
-											tags_min: settingsData.tags_min,
-											tags_len_min: settingsData.tags_len_min,
-											tags_max: settingsData.tags_max,
-											tags_len_max: settingsData.tags_len_max
-										})
-									}
-								/>
+								<AddButton icon={require("../../../resources/compose.png")} title={Lang.get("create_new_topic")} onPress={this.createTopic} />
 							</Pager>
-						) : null}
+						)}
 					</View>
 				</View>
 			);
@@ -488,7 +463,7 @@ export default compose(
 				forum: props.navigation.state.params.id,
 				offset: 0,
 				limit: Expo.Constants.manifest.extra.per_page,
-				password: props.forums[ props.navigation.state.params.id ] || null
+				password: props.forums[props.navigation.state.params.id] || null
 			}
 		})
 	}),
