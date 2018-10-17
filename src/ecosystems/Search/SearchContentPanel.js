@@ -13,7 +13,6 @@ import { withNavigation } from "react-navigation";
 import Lang from "../../utils/Lang";
 import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import ErrorBox from "../../atoms/ErrorBox";
-import MemberRow from "../../atoms/MemberRow";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SearchResult from "./SearchResult";
 import SearchResultFragment from "../../ecosystems/Search/SearchResultFragment";
@@ -112,7 +111,6 @@ class ContentPanel extends Component {
 				offset: updatedResults.length
 			});
 		} catch (err) {
-
 			console.log( err );
 
 			this.setState({
@@ -129,29 +127,9 @@ class ContentPanel extends Component {
 	 * @return 	Component
 	 */
 	renderItem(item) {
-		let onPress;
-		const isSupported = isSupportedUrl([
-			item.url.app,
-			item.url.module,
-			item.url.controller
-		]);
-
-		if (isSupported) {
-			onPress = () =>
-				this.props.navigation.navigate(isSupported, {
-					id: item.itemID
-				});
-		} else {
-			onPress = () =>
-				this.props.navigation.navigate("WebView", {
-					url: item.url.full
-				});
-		}
-
 		return (
 			<SearchResult
 				data={item}
-				onPress={onPress}
 				term={this.props.term}
 			/>
 		);
@@ -163,7 +141,7 @@ class ContentPanel extends Component {
 	 *
 	 * @return 	void
 	 */
-	onEndReached() {
+	onEndReached = () => {
 		if( !this.state.loading && !this.state.reachedEnd ){
 			this.fetchResults();
 		}
@@ -174,7 +152,7 @@ class ContentPanel extends Component {
 	 *
 	 * @return 	Component|null
 	 */
-	getFooterComponent() {
+	getFooterComponent = () => {
 		if( this.state.loading && !this.state.reachedEnd ){
 			return (
 				<PlaceholderRepeater repeat={this.state.offset > 0 ? 1 : 6}>
@@ -184,6 +162,22 @@ class ContentPanel extends Component {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Return the list empty component
+	 *
+	 * @return 	Component
+	 */
+	getListEmptyComponent = () => {
+		return (
+			<ErrorBox
+				message={Lang.get("no_results_in_x", {
+					type: this.props.typeName.toLowerCase()
+				})}
+				showIcon={false}
+			/>
+		);
 	}
 
 	render() {
@@ -207,16 +201,9 @@ class ContentPanel extends Component {
 					data={this.state.results}
 					keyExtractor={item => item.indexID}
 					renderItem={({ item }) => this.renderItem(item)}
-					onEndReached={() => this.onEndReached()}
-					ListFooterComponent={() => this.getFooterComponent()}
-					ListEmptyComponent={() => (
-						<ErrorBox
-							message={Lang.get("no_results_in_x", {
-								type: this.props.typeName.toLowerCase()
-							})}
-							showIcon={false}
-						/>
-					)}
+					onEndReached={this.onEndReached}
+					ListFooterComponent={this.getFooterComponent}
+					ListEmptyComponent={this.getListEmptyComponent}
 				/>
 			</View>
 		);

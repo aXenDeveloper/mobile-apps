@@ -10,7 +10,7 @@ import Lang from "../../utils/Lang";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import { PlaceholderElement, PlaceholderContainer, PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SectionHeader from "../../atoms/SectionHeader";
-import MemberRow from "../../atoms/MemberRow";
+import MemberRow from "../../ecosystems/MemberRow";
 import ErrorBox from "../../atoms/ErrorBox";
 import ContentRow from "../../ecosystems/ContentRow";
 import { SearchContentPanel, SearchMemberPanel, SearchResultFragment, SearchResult } from "../../ecosystems/Search";
@@ -121,7 +121,7 @@ class SearchScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	goBack() {
+	goBack = () => {
 		//this.props.navigation.goBack();
 		this._textInput.blur();
 		this.setState({
@@ -129,37 +129,37 @@ class SearchScreen extends Component {
 			textInputActive: false,
 			showingResults: false
 		});
-	}
+	};
 
 	/**
 	 * onFocus event handler
 	 *
 	 * @return 	void
 	 */
-	onFocusTextInput() {
+	onFocusTextInput = () => {
 		this.setState({
 			textInputActive: true,
 			showingResults: false
 		});
-	}
+	};
 
 	/**
 	 * onBlur event handler
 	 *
 	 * @return 	void
 	 */
-	onBlurTextInput() {
+	onBlurTextInput = () => {
 		this.setState({
 			textInputActive: false
 		});
-	}
+	};
 
 	/**
 	 * Event handler for submitting the search field. Sends the overview query.
 	 *
 	 * @return 	void
 	 */
-	async onSubmitTextInput() {
+	onSubmitTextInput = async () => {
 		this.setState({
 			loadingSearchResults: true
 		});
@@ -173,7 +173,7 @@ class SearchScreen extends Component {
 				fetchPolicy: "no-cache"
 			});
 
-			const searchSections = data.core.search.types.map( (type) => ({
+			const searchSections = data.core.search.types.map(type => ({
 				key: type.key,
 				lang: type.lang,
 				status: null,
@@ -182,8 +182,8 @@ class SearchScreen extends Component {
 
 			// Add the All Content tab to the start
 			searchSections.unshift({
-				key: 'all',
-				lang: Lang.get('content'),
+				key: "all",
+				lang: Lang.get("content"),
 				status: null,
 				data: []
 			});
@@ -208,7 +208,7 @@ class SearchScreen extends Component {
 		this.setState({
 			loadingSearchResults: false
 		});
-	}
+	};
 
 	/**
 	 * Add a new term to the recent searches list, tidying it up and removing dupes too
@@ -257,7 +257,7 @@ class SearchScreen extends Component {
 	getSearchHomeScreen() {
 		const sectionData = [
 			{
-				title: Lang.get('recent_searches'),
+				title: Lang.get("recent_searches"),
 				key: "recent",
 				data: this.state.recentSearches
 			}
@@ -359,7 +359,7 @@ class SearchScreen extends Component {
 
 		if (this.state.overviewSearchResults.content.results.length) {
 			overviewData.push({
-				title: Lang.get('top_content'),
+				title: Lang.get("top_content"),
 				key: "content",
 				count: this.state.overviewSearchResults.content.count,
 				data: this.state.overviewSearchResults.content.results
@@ -368,7 +368,7 @@ class SearchScreen extends Component {
 
 		if (this.state.overviewSearchResults.members.results.length) {
 			overviewData.push({
-				title: Lang.get('top_members'),
+				title: Lang.get("top_members"),
 				key: "members",
 				count: this.state.overviewSearchResults.members.count,
 				data: this.state.overviewSearchResults.members.results
@@ -396,18 +396,7 @@ class SearchScreen extends Component {
 	 */
 	renderOverviewItem(item) {
 		if (item["__typename"] == "core_Member") {
-			return (
-				<MemberRow
-					data={item}
-					onPress={() => {
-						this.props.navigation.navigate("Profile", {
-							id: item.id,
-							name: item.name,
-							photo: item.photo
-						});
-					}}
-				/>
-			);
+			return <MemberRow id={item.id} name={item.name} photo={item.photo} groupName={item.group.name} />;
 		} else {
 			return <SearchResult data={item} term={this.state.searchTerm} />;
 		}
@@ -428,7 +417,7 @@ class SearchScreen extends Component {
 						style={componentStyles.seeAllRow}
 						onPress={() => {
 							this.setState({
-								goToTab: section.key == 'content' ? 1 : 2
+								goToTab: section.key == "content" ? 1 : 2
 							});
 						}}
 					>
@@ -448,7 +437,7 @@ class SearchScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	onChangeTab(tab) {
+	onChangeTab = tab => {
 		// Get tab
 		const tabIndex = tab.i;
 
@@ -468,7 +457,7 @@ class SearchScreen extends Component {
 			currentTab,
 			goToTab: tabIndex
 		});
-	}
+	};
 
 	/**
 	 * Build the tab panels for our results screen
@@ -480,13 +469,13 @@ class SearchScreen extends Component {
 			<ScrollableTabView
 				tabBarTextStyle={componentStyles.tabBarText}
 				tabBarBackgroundColor="#fff"
-				tabBarActiveTextColor="#2080A7"
+				tabBarActiveTextColor="#2080A7" // @todo abstract these colors
 				tabBarUnderlineStyle={componentStyles.activeTabUnderline}
 				renderTabBar={() => <ScrollableTabBar />}
 				page={this.state.goToTab || null}
-				onChangeTab={tab => this.onChangeTab(tab)}
+				onChangeTab={this.onChangeTab}
 			>
-				<View style={componentStyles.tab} tabLabel={Lang.get('overview').toUpperCase()}>
+				<View style={componentStyles.tab} tabLabel={Lang.get("overview").toUpperCase()}>
 					{this.renderOverviewTab()}
 				</View>
 				{!this.state.noResults &&
@@ -514,7 +503,7 @@ class SearchScreen extends Component {
 	 * @return 	Component
 	 */
 	getTabContents(tab) {
-		const tabData = _.find(this.state.searchSections, (type) => type.key == tab);
+		const tabData = _.find(this.state.searchSections, type => type.key == tab);
 
 		if (tabData.status === null || tabData.status === "loading") {
 			return (
@@ -572,16 +561,16 @@ class SearchScreen extends Component {
 							siteName: this.props.site.board_name
 						})}
 						returnKeyType="search"
-						onFocus={() => this.onFocusTextInput()}
-						onBlur={() => this.onBlurTextInput()}
+						onFocus={this.onFocusTextInput}
+						onBlur={this.onBlurTextInput}
 						onChangeText={searchTerm => this.setState({ searchTerm })}
-						onSubmitEditing={() => this.onSubmitTextInput()}
+						onSubmitEditing={this.onSubmitTextInput}
 						ref={ref => (this._textInput = ref)}
 						value={this.state.searchTerm}
 					/>
 				</View>
 				{(this.state.textInputActive || this.state.showingResults) && (
-					<TouchableOpacity style={componentStyles.cancelLink} onPress={() => this.goBack()}>
+					<TouchableOpacity style={componentStyles.cancelLink} onPress={this.goBack}>
 						<Text style={componentStyles.cancelLinkText}>{Lang.get("cancel")}</Text>
 					</TouchableOpacity>
 				)}

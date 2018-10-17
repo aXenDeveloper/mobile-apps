@@ -8,7 +8,7 @@ import Lang from "../../utils/Lang";
 import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import ErrorBox from "../../atoms/ErrorBox";
-import MemberRow from "../../atoms/MemberRow";
+import MemberRow from "../../ecosystems/MemberRow";
 
 const SearchQuery = gql`
 	query MemberSearchQuery($term: String) {
@@ -68,8 +68,7 @@ class ContentPanel extends Component {
 	 * @return 	void
 	 */
 	async fetchResults() {
-
-		if( this.state.loading || this.state.reachedEnd ){
+		if (this.state.loading || this.state.reachedEnd) {
 			return;
 		}
 
@@ -83,7 +82,7 @@ class ContentPanel extends Component {
 				variables: {
 					term: this.props.term,
 					offset: this.state.offset,
-					limit: LIMIT,
+					limit: LIMIT
 				},
 				fetchPolicy: "no-cache"
 			});
@@ -98,9 +97,8 @@ class ContentPanel extends Component {
 				offset: updatedResults.length
 			});
 		} catch (err) {
+			console.log(err);
 
-			console.log( err );
-			
 			this.setState({
 				error: true,
 				loading: false
@@ -114,19 +112,19 @@ class ContentPanel extends Component {
 	 *
 	 * @return 	void
 	 */
-	onEndReached() {
-		if( !this.state.loading && !this.state.reachedEnd ){
+	onEndReached = () => {
+		if (!this.state.loading && !this.state.reachedEnd) {
 			this.fetchResults();
 		}
-	}
+	};
 
 	/**
 	 * Shows placeholder loading elements if we're loading new items
 	 *
 	 * @return 	Component|null
 	 */
-	getFooterComponent() {
-		if( this.state.loading && !this.state.reachedEnd ){
+	getFooterComponent = () => {
+		if (this.state.loading && !this.state.reachedEnd) {
 			return (
 				<PlaceholderRepeater repeat={this.state.offset > 0 ? 1 : 6}>
 					<MemberRow loading={true} />
@@ -135,7 +133,16 @@ class ContentPanel extends Component {
 		}
 
 		return null;
-	}
+	};
+
+	/**
+	 * Return the list empty component
+	 *
+	 * @return 	Component
+	 */
+	getListEmptyComponent = () => {
+		return <ErrorBox message={Lang.get("no_results_in_x", { type: this.props.typeName.toLowerCase() })} showIcon={false} />;
+	};
 
 	/**
 	 * Render a member row
@@ -144,23 +151,18 @@ class ContentPanel extends Component {
 	 * @return 	Component
 	 */
 	renderItem(item) {
-		const onPress = () =>
-			this.props.navigation.navigate("Profile", {
-				id: item.id,
-				name: item.name,
-				photo: item.photo
-			});
-
-		return <MemberRow data={item} onPress={onPress} />;
+		return <MemberRow id={item.id} name={item.name} photo={item.photo} groupName={item.group.name} />;
 	}
 
 	render() {
 		if (this.state.loading || this.state.results === null) {
-			return <View style={[componentStyles.panel]}>
-				<PlaceholderRepeater repeat={6}>
-					<MemberRow loading={true} />
-				</PlaceholderRepeater>
-			</View>;
+			return (
+				<View style={[componentStyles.panel]}>
+					<PlaceholderRepeater repeat={6}>
+						<MemberRow loading={true} />
+					</PlaceholderRepeater>
+				</View>
+			);
 		} else if (this.state.error) {
 			return (
 				<View style={componentStyles.panel}>
@@ -175,9 +177,9 @@ class ContentPanel extends Component {
 					data={this.state.results}
 					keyExtractor={item => item.id}
 					renderItem={({ item }) => this.renderItem(item)}
-					onEndReached={() => this.onEndReached()}
-					ListFooterComponent={() => this.getFooterComponent()}
-					ListEmptyComponent={() => <ErrorBox message={Lang.get("no_results_in_x", { type: this.props.typeName.toLowerCase() })} showIcon={false} />}
+					onEndReached={this.onEndReached}
+					ListFooterComponent={this.getFooterComponent}
+					ListEmptyComponent={this.getListEmptyComponent}
 				/>
 			</View>
 		);
