@@ -61,10 +61,10 @@ class OurPicks extends Component {
 							{data.description}
 						</Text>
 					</View>
-					{(data.reputation.reactions.length || data.dataCount.count) &&
+					{(data.reputation.reactions.length || ( data.dataCount && data.dataCount.count ) ) &&
 						<View style={componentStyles.infoFooter}>
 							{data.reputation.reactions.length && <ReactionOverview style={[styles.mtTight, componentStyles.reactionOverview]} reactions={data.reputation.reactions} />}
-							{data.dataCount.count && <Text style={[componentStyles.dataCount, styles.lightText]}>{data.dataCount.words}</Text>}
+							{data.dataCount && data.dataCount.count && <Text style={[componentStyles.dataCount, styles.lightText]}>{data.dataCount.words}</Text>}
 						</View>
 					}
 				</React.Fragment>
@@ -106,16 +106,35 @@ class OurPicks extends Component {
 	 * @return 	void
 	 */
 	onPressItem(data) {
-		const isSupported = isSupportedUrl([ data.url.app, data.url.module, data.url.controller ]);
+		let isSupported;
+		let navigateParams = {
+			url: data.url.full
+		};
 
-		if( isSupported ){
-			this.props.navigation.navigate( isSupported, {
-				id: 1 // @todo get the proper id
-			});
+		// Figure out if we support this type of view, based on the itemType
+		if( data.itemType == 'COMMENT' ){
+			isSupported = isSupportedUrl([ data.item.item.url.app, data.item.item.url.module, data.item.item.url.controller ]);
+			navigateParams = {
+				id: data.item.item.id,
+				findComment: parseInt( data.item.id )
+			};
+		} else if( data.itemType == 'ITEM' ){
+			isSupported = isSupportedUrl([ data.item.url.app, data.item.url.module, data.item.url.controller ]);
+			navigateParams = {
+				id: data.item.id
+			};
 		} else {
-			this.props.navigation.navigate("WebView", {
-				url: data.url.full
-			});
+			isSupported = isSupportedUrl([ data.item.url.app, data.item.url.module, data.item.url.controller ]);
+			navigateParams = {
+				id: data.item.id
+			};
+		}
+		
+		// Now redirect to it
+		if( isSupported ){
+			this.props.navigation.navigate( isSupported, navigateParams);
+		} else {
+			this.props.navigation.navigate("WebView", navigateParams);
 		}
 	}
 

@@ -8,6 +8,39 @@ const OurPicksFragment = `
 			addedBy {
 				name
 			}
+			item {
+				...on core_Comment {
+					id
+					item {
+						id
+						url {
+							full
+							app
+							controller
+							module
+						}
+					}
+				}
+				...on core_Item {
+					id
+					url {
+						full
+						app
+						controller
+						module
+					}
+				}
+				...on core_Node {
+					id
+					url {
+						full
+						app
+						controller
+						module
+					}
+				}
+			}
+			itemType			
 			url {
 				full
 				app
