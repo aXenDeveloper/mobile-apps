@@ -190,7 +190,8 @@ const componentStyles = StyleSheet.create({
 		color: "#8F8F8F"
 	},
 	snippetWrapper: {
-		marginTop: 9
+		marginTop: 9,
+		flexGrow: 1
 	},
 	snippetText: {
 		fontSize: styleVars.fontSizes.standard,

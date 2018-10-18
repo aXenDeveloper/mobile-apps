@@ -66,7 +66,8 @@ const componentStyles = StyleSheet.create({
 		borderRadius: 5,
 		overflow: "hidden",
 		display: "flex",
-		justifyContent: "flex-start"
+		justifyContent: "flex-start",
+		flexGrow: 1
 	},
 	streamHeader: {
 		paddingHorizontal: 12,
@@ -87,6 +88,7 @@ const componentStyles = StyleSheet.create({
 	},
 	streamFooter: {
 		paddingHorizontal: 12,
-		paddingVertical: 12
+		paddingVertical: 12,
+		flexGrow: 1,
 	}
 });
