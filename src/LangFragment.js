@@ -68,6 +68,7 @@ const LangFragment = gql`
 		topics_title: phrase(key: "app_topics_title")
 		subforums_title: phrase(key: "app_subforums_title")
 		no_forum: phrase(key: "app_no_forum")
+		no_topic: phrase(key: "app_no_topic")
 		incorrect_forum_password: phrase(key: "app_incorrect_forum_password")
 		no_post: phrase(key: "app_no_post")
 

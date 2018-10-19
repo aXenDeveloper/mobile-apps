@@ -93,7 +93,7 @@ class TopicViewScreen extends Component {
 	 * GraphQL error types
 	 */
 	static errors = {
-		NO_TOPIC: "The topic does not exist."
+		NO_TOPIC: Lang.get('no_topic')
 	};
 
 	constructor(props) {
@@ -543,7 +543,8 @@ class TopicViewScreen extends Component {
 			);
 		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, TopicViewScreen.errors);
-			return <Text>Error: {error}</Text>; // @todo show proper error
+			const message = error ? error : Lang.get("topic_view_error");
+			return <ErrorBox message={message} />;
 		} else {
 			const topicData = this.props.data.forums.topic;
 			const listData = this.getListData();

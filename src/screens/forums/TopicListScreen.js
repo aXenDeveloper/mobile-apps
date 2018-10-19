@@ -384,7 +384,7 @@ class TopicListScreen extends Component {
 
 	render() {
 		// status 3 == fetchMore, status 4 == refreshing
-		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
+		if ( ( this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4 ) ) {
 			return (
 				<PlaceholderRepeater repeat={7}>
 					<TopicRow loading={true} />
@@ -393,7 +393,7 @@ class TopicListScreen extends Component {
 		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, TopicListScreen.errors);
 			const message = error ? error : Lang.get("topic_view_error");
-			return <ErrorBox message={message} refresh={() => this.refreshAfterError()} />;
+			return <ErrorBox message={message} />;
 		} else {
 			const forumData = this.props.data.forums.forum;
 			const subforums = forumData.subforums;
