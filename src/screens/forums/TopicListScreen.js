@@ -329,7 +329,12 @@ class TopicListScreen extends Component {
 				isFollowed: true
 			});
 		} catch (err) {
-			console.log(err); // @todo show proper error
+			Alert.alert(
+				Lang.get('error'), 
+				Lang.get('error_following'),
+				[{ text: Lang.get('ok') }], 
+				{ cancelable: false }
+			);
 		}
 	};
 
@@ -358,7 +363,12 @@ class TopicListScreen extends Component {
 				isFollowed: false
 			});
 		} catch (err) {
-			console.log(err); // @todo show proper error
+			Alert.alert(
+				Lang.get('error'), 
+				Lang.get('error_unfollowing'),
+				[{ text: Lang.get('ok') }], 
+				{ cancelable: false }
+			);
 		}
 	};
 

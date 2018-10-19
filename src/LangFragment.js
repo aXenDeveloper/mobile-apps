@@ -51,6 +51,8 @@ const LangFragment = gql`
 		error: phrase(key: "app_error")
 		error_remove_reaction: phrase(key: "app_error_remove_reaction")
 		error_reacting: phrase(key: "app_error_reacting")
+		error_following: phrase(key: "app_error_following")
+		error_unfollowing: phrase(key: "app_error_unfollowing")
 		ok: phrase(key: "app_ok")
 		
 		search_site: phrase(key: "app_search_site")
