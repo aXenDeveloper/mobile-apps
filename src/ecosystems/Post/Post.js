@@ -223,9 +223,13 @@ class Post extends Component {
 				}
 			});
 		} catch (err) {
-			// @todo abstract/improve error
 			const errorMessage = getErrorMessage(err, Post.errors);
-			Alert.alert("Error", "Sorry, there was an error removing the reaction from this post." + err, [{ text: "OK" }], { cancelable: false });
+			Alert.alert(
+				Lang.get('error'), 
+				Lang.get('error_remove_reaction'), 
+				[{ text: Lang.get('ok') }], 
+				{ cancelable: false }
+			);
 		}
 	}
 
@@ -273,7 +277,12 @@ class Post extends Component {
 		} catch (err) {
 			// @todo abstract/improve errors
 			const errorMessage = getErrorMessage(err, Post.errors);
-			Alert.alert("Error", "Sorry, there was an error reacting to this post." + errorMessage, [{ text: "OK" }], { cancelable: false });
+			Alert.alert(
+				Lang.get('error'), 
+				Lang.get('error_reacting'),
+				[{ text: Lang.get('ok') }], 
+				{ cancelable: false }
+			);
 		}
 	}
 

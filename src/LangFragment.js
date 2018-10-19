@@ -48,6 +48,10 @@ const LangFragment = gql`
 		enter_password: phrase(key: "app_enter_password")
 		password: phrase(key: "app_password")
 		go: phrase(key: "app_go")
+		error: phrase(key: "app_error")
+		error_remove_reaction: phrase(key: "app_error_remove_reaction")
+		error_reacting: phrase(key: "app_error_reacting")
+		ok: phrase(key: "app_ok")
 		
 		search_site: phrase(key: "app_search_site")
 		loading: phrase(key: "app_loading")
