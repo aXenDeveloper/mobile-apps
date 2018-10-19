@@ -80,7 +80,8 @@ class StreamCard extends PureComponent {
 
 		if (isSupported) {
 			this.props.navigation.navigate(isSupported, {
-				id: this.props.data.itemID
+				id: this.props.data.itemID,
+				...(this.props.data.isComment && { findComment: this.props.data.objectID })
 			});
 		} else {
 			this.props.navigation.navigate("WebView", {
