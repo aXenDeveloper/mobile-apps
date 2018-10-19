@@ -14,6 +14,7 @@ import TwoLineHeader from "../../atoms/TwoLineHeader";
 import { Post, PostFragment } from "../../ecosystems/Post";
 import Tag from "../../atoms/Tag";
 import TagList from "../../atoms/TagList";
+import ErrorBox from "../../atoms/ErrorBox";
 import Pager from "../../atoms/Pager";
 import PagerButton from "../../atoms/PagerButton";
 import DummyTextInput from "../../atoms/DummyTextInput";
