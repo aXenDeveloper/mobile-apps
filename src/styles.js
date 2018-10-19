@@ -96,7 +96,9 @@ const styles = StyleSheet.create({
 		/*backgroundColor: '#37454B',*/
 		//backgroundColor: "#252D31"
 		backgroundColor: '#fff',
-		height: isIphoneX() ? 40 : 50
+		height: isIphoneX() ? 60 : 55,
+		paddingBottom: styleVars.spacing.veryTight,
+		paddingTop: styleVars.spacing.tight
 	},
 	markSwipeItem: {
 		backgroundColor: "#009BA2"

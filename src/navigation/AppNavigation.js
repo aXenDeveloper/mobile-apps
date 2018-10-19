@@ -263,7 +263,7 @@ class AppNavigation extends Component {
 		const User = {
 			screen: UserScreen,
 			navigationOptions: navigation => ({
-				tabBarLabel: "My Account",
+				tabBarLabel: "You",
 				tabBarIcon: ({ focused, tintColor }) => this._getUserPhoto(focused, tintColor),
 				tabBarOnPress: (tab, jumpToIndex) => {
 					navigation.navigation.openDrawer();
@@ -305,17 +305,18 @@ class AppNavigation extends Component {
 		}
 
 		const TabBarComponent = (props) => (<BottomTabBar {...props} />);
-
-		return createBottomTabNavigator(tabConfig, {
-			lazy: true,
-			tabBarComponent: props =>
+		/*
+		tabBarComponent: props =>
 				<TabBarComponent
 				{...props}
 				style={{ borderTopColor: '#605F60' }}
-			/>,
+			/>,*/
+
+		return createBottomTabNavigator(tabConfig, {
+			lazy: true,			
 			tabBarPosition: "bottom",
 			tabBarOptions: {
-				showLabel: false,
+				showLabel: true,
 				inactiveTintColor: styleVars.tabInactive,
 				activeTintColor: styleVars.tabActive,
 				style: styles.primaryTabBar
