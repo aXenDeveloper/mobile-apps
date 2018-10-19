@@ -396,7 +396,7 @@ class SearchScreen extends Component {
 	 */
 	renderOverviewItem(item) {
 		if (item["__typename"] == "core_Member") {
-			return <MemberRow id={item.id} name={item.name} photo={item.photo} groupName={item.group.name} />;
+			return <MemberRow id={parseInt(item.id)} name={item.name} photo={item.photo} groupName={item.group.name} />;
 		} else {
 			return <SearchResult data={item} term={this.state.searchTerm} />;
 		}

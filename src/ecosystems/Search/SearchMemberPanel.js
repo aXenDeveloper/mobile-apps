@@ -151,7 +151,7 @@ class ContentPanel extends Component {
 	 * @return 	Component
 	 */
 	renderItem(item) {
-		return <MemberRow id={item.id} name={item.name} photo={item.photo} groupName={item.group.name} />;
+		return <MemberRow id={parseInt(item.id)} name={item.name} photo={item.photo} groupName={item.group.name} />;
 	}
 
 	render() {
