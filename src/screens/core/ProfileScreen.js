@@ -4,12 +4,15 @@ import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import HeaderBackButton from 'react-navigation';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
+import { Header } from "react-navigation";
+import FadeIn from "react-native-fade-in-image";
 
 import ListItem from '../../atoms/ListItem';
 import SectionHeader from '../../atoms/SectionHeader';
 import relativeTime from '../../utils/RelativeTime';
 import UserPhoto from '../../atoms/UserPhoto';
 import CustomHeader from '../../ecosystems/CustomHeader';
+import styles, { styleVars } from '../../styles';
 
 const ProfileQuery = gql`
 	query ProfileQuery($member: ID!) {
@@ -47,9 +50,10 @@ const ProfileQuery = gql`
 
 class ProfileScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
+		headerTransparent: true,
 		header: (props) => {
 			return (
-				<CustomHeader transparent {...props} />
+				<Header {...props} />
 			)
 		},
 	});
@@ -98,35 +102,43 @@ class ProfileScreen extends Component {
 			}
 
 			return (
-				<ScrollView style={{flex: 1}}>
+				<ScrollView style={{flex: 1}} bouncesZoom={true}>
 					<StatusBar barStyle="light-content" translucent />
-					<View style={styles.profileHeader}>
+					<View style={componentStyles.profileHeader}>
 						{this.props.data.core.member.coverPhoto.image ?
-							<Image source={{ uri: this.props.data.core.member.coverPhoto.image }} style={styles.coverPhoto} resizeMode='cover' />
+							<FadeIn style={componentStyles.coverPhotoContainer} placeholderStye={{ backgroundColor: '#333' }}>
+								<Image source={{ uri: this.props.data.core.member.coverPhoto.image }} style={componentStyles.coverPhoto} resizeMode='cover' />
+							</FadeIn>
 						: null}
-						<View style={styles.profileHeaderInner}>
+						<View style={componentStyles.profileHeaderInner}>
 							<UserPhoto url={this.props.data.core.member.photo} size={80} />
-							<Text style={styles.usernameText}>{this.props.data.core.member.name}</Text>
-							<Text style={styles.groupText}>{this.props.data.core.member.group.name}</Text>
+							<Text style={componentStyles.usernameText}>{this.props.data.core.member.name}</Text>
+							<Text style={componentStyles.groupText}>{this.props.data.core.member.group.name}</Text>
+							<View style={componentStyles.profileStats}>
+								<View style={[componentStyles.profileStatSection, componentStyles.profileStatSectionBorder]}>
+									<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.contentCount}</Text>
+									<Text style={componentStyles.profileStatTitle}>Content Count</Text>
+								</View>
+								<View style={[componentStyles.profileStatSection, componentStyles.profileStatSectionBorder]}>
+									<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.reputationCount}</Text>
+									<Text style={componentStyles.profileStatTitle}>Reputation</Text>
+								</View>
+								<View style={componentStyles.profileStatSection}>
+									<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.followerCount}</Text>
+									<Text style={componentStyles.profileStatTitle}>Followers</Text>
+								</View>
+							</View>
 						</View>
 					</View>
-					<View style={styles.profileStats}>
-						<View style={[styles.profileStatSection, styles.profileStatSectionBorder]}>
-							<Text style={styles.profileStatCount}>{this.props.data.core.member.contentCount}</Text>
-							<Text style={styles.profileStatTitle}>Content Count</Text>
-						</View>
-						<View style={[styles.profileStatSection, styles.profileStatSectionBorder]}>
-							<Text style={styles.profileStatCount}>{this.props.data.core.member.reputationCount}</Text>
-							<Text style={styles.profileStatTitle}>Reputation</Text>
-						</View>
-						<View style={styles.profileStatSection}>
-							<Text style={styles.profileStatCount}>{this.props.data.core.member.followerCount}</Text>
-							<Text style={styles.profileStatTitle}>Followers</Text>
-						</View>
-					</View>
-					<View style={styles.profileTabBar}>
-						<ScrollableTabView tabBarTextStyle={styles.tabBarText} tabBarBackgroundColor='#fff' tabBarActiveTextColor='#2080A7' tabBarUnderlineStyle={styles.activeTabUnderline} renderTabBar={() => <ScrollableTabBar />}>
+					<View style={componentStyles.profileTabBar}>
+						<ScrollableTabView tabBarTextStyle={componentStyles.tabBarText} tabBarBackgroundColor='#fff' tabBarActiveTextColor='#2080A7' tabBarUnderlineStyle={componentStyles.activeTabUnderline} renderTabBar={() => <ScrollableTabBar />}>
 							<View tabLabel='PROFILE'>
+								<View style={{
+									height: 300,
+									backgroundColor: 'blue'
+								}}>
+									<Text>Spacer</Text>
+								</View>
 								<SectionList 
 									renderItem={({item}) => <ListItem key={item.key} data={item.data} />} 
 									renderSectionHeader={({section}) => <SectionHeader title={section.title} />}
@@ -150,17 +162,11 @@ class ProfileScreen extends Component {
 	}
 }
 
-const styles = StyleSheet.create({
+const componentStyles = StyleSheet.create({
 	profileHeader: {
-		height: 230
+		backgroundColor: '#333'
 	},
 	profileHeaderInner: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
-		height: 230,
 		paddingTop: 40,
 		backgroundColor: 'rgba(49,68,83,0.2)',
 		display: 'flex',
@@ -168,33 +174,39 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center'
 	},
+	coverPhotoContainer: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+	},
 	coverPhoto: {
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		height: 230,
-		backgroundColor: '#f0f0f0'
 	},
 	usernameText: {
 		color: '#fff',
 		fontSize: 22,
 		fontWeight: 'bold',
 		marginTop: 7,
-		textShadowColor: 'rgba(0,0,0,0.4)',
+		textShadowColor: 'rgba(0,0,0,0.8)',
 		textShadowOffset: { width: 1, height: 1 }
 	},
 	groupText: {
 		color: '#fff',
 		fontSize: 15,
-		textShadowColor: 'rgba(0,0,0,0.4)',
+		textShadowColor: 'rgba(0,0,0,0.8)',
 		textShadowOffset: { width: 1, height: 1 }
 	},
 	profileStats: {
-		backgroundColor: '#171717',
-		paddingTop: 10,
-		paddingBottom: 10,
+		backgroundColor: 'rgba(20,20,20,0.8)',
+		marginTop: styleVars.spacing.wide,
+		paddingTop: styleVars.spacing.standard,
+		paddingBottom: styleVars.spacing.standard,
 		display: 'flex',
 		flexDirection: 'row'
 	},
