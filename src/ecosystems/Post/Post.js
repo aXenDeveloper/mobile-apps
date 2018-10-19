@@ -335,7 +335,7 @@ class Post extends Component {
 			<TouchableHighlight style={styles.postWrapper}>
 				<ShadowedArea style={styles.post}>
 					<View style={styles.postHeader}>
-						<TouchableOpacity style={styles.postInfo} onPress={this.onPressProfile}>
+						<TouchableOpacity style={styles.postInfo} onPress={this.props.data.author.id ? this.onPressProfile : null}>
 							<View style={styles.postInfo}>
 								<UserPhoto url={this.props.data.author.photo} online={this.props.data.author.isOnline || null} size={36} />
 								<View style={styles.meta}>
