@@ -54,7 +54,15 @@ export const styleVars = {
 	},
 	checkmarkColor: '#3370AA',
 	searchHighlight: '#fff4d4',
-	searchHighlightText: '#000'
+	searchHighlightText: '#000',
+	tabBar: {
+		active: '#3370AA',
+		inactive: '#657686',
+		underline: { 
+			height: 2, 
+			backgroundColor: '#3370AA'
+		}
+	}
 };
 
 /* REUSABLE STYLE CLASSES */
