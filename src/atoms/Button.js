@@ -1,24 +1,30 @@
-import React, { Component } from 'react';
-import { StyleSheet, Image, TouchableOpacity, Text, ViewPropTypes } from 'react-native';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { StyleSheet, Image, TouchableOpacity, Text, ViewPropTypes } from "react-native";
+import PropTypes from "prop-types";
 
-import styles, { styleVars } from '../styles';
+import styles, { styleVars } from "../styles";
 
-export default class Button extends Component {	
+export default class Button extends Component {
 	constructor(props) {
 		super(props);
 	}
 
 	render() {
-		const buttonStyle = this.props.filled ? 'Filled' : 'Outlined';
+		const buttonStyle = this.props.filled ? "Filled" : "Outlined";
 		const buttonType = this.props.type + buttonStyle;
-		const textType = buttonType + 'Text';
-		const textSize = this.props.size + 'Text';
+		const textType = buttonType + "Text";
+		const textSize = this.props.size + "Text";
+		const rounded = this.props.rounded ? componentStyles.rounded : null;
 
 		return (
-			<TouchableOpacity style={[componentStyles.button, componentStyles[buttonType], componentStyles[this.props.size], this.props.style]} onPress={this.props.onPress}>
+			<TouchableOpacity
+				style={[componentStyles.button, componentStyles[buttonType], componentStyles[this.props.size], rounded, this.props.style]}
+				onPress={this.props.onPress}
+			>
 				<React.Fragment>
-					<Text style={[componentStyles[textType], componentStyles.text, componentStyles[textSize] ]} numberOfLines={1}>{this.props.title}</Text>
+					<Text style={[componentStyles[textType], componentStyles.text, componentStyles[textSize]]} numberOfLines={1}>
+						{this.props.title}
+					</Text>
 				</React.Fragment>
 			</TouchableOpacity>
 		);
@@ -29,11 +35,14 @@ export default class Button extends Component {
 
 const componentStyles = StyleSheet.create({
 	button: {
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
-		borderRadius: 5,
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		borderRadius: 5
+	},
+	rounded: {
+		borderRadius: 50
 	},
 	icon: {
 		width: 16,
@@ -54,26 +63,26 @@ const componentStyles = StyleSheet.create({
 	},
 
 	// Text styles
-	text: {		
-		fontWeight: '500'
+	text: {
+		fontWeight: "500"
 	},
 	smallText: {
-		fontSize: styleVars.fontSizes.small,
+		fontSize: styleVars.fontSizes.small
 	},
 	mediumText: {
 		fontSize: styleVars.fontSizes.content
 	},
 	largeText: {
-		fontSize: styleVars.fontSizes.content,
+		fontSize: styleVars.fontSizes.content
 	},
 
 	// Primary button
 	primaryOutlined: {
 		borderWidth: 1,
-		borderColor: styleVars.primaryButton.mainColor,
+		borderColor: styleVars.primaryButton.mainColor
 	},
 	primaryOutlinedText: {
-		color: styleVars.primaryButton.mainColor	
+		color: styleVars.primaryButton.mainColor
 	},
 	primaryFilled: {
 		backgroundColor: styleVars.primaryButton.mainColor
@@ -85,10 +94,10 @@ const componentStyles = StyleSheet.create({
 	// Light button
 	lightOutlined: {
 		borderWidth: 1,
-		borderColor: styleVars.lightButton.mainColor,
+		borderColor: styleVars.lightButton.mainColor
 	},
 	lightOutlinedText: {
-		color: styleVars.lightButton.mainColor	
+		color: styleVars.lightButton.mainColor
 	},
 	lightFilled: {
 		backgroundColor: styleVars.lightButton.mainColor
@@ -115,15 +124,15 @@ const componentStyles = StyleSheet.create({
 
 Button.defaultProps = {
 	filled: false,
-	size: 'medium',
-	type: 'primary',
+	size: "medium",
+	type: "primary",
 	onPress: null
 };
 
 Button.propTypes = {
 	title: PropTypes.string.isRequired,
-	size: PropTypes.oneOf(['small', 'medium', 'large']),
-	type: PropTypes.oneOf(['primary', 'light', 'warning']),
+	size: PropTypes.oneOf(["small", "medium", "large"]),
+	type: PropTypes.oneOf(["primary", "light", "warning"]),
 	onPress: PropTypes.func,
 	filled: PropTypes.bool,
 	style: ViewPropTypes.style

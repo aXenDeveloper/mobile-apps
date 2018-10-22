@@ -9,6 +9,8 @@ import { Header } from "react-navigation";
 import FadeIn from "react-native-fade-in-image";
 
 import CustomTab from "../../atoms/CustomTab";
+import FollowButton from "../../atoms/FollowButton";
+import Button from "../../atoms/Button";
 import ListItem from "../../atoms/ListItem";
 import SectionHeader from "../../atoms/SectionHeader";
 import relativeTime from "../../utils/RelativeTime";
@@ -51,11 +53,6 @@ const ProfileQuery = gql`
 	}
 `;
 
-const IMAGE_HEIGHT = 250;
-const HEADER_HEIGHT = Platform.OS === "ios" ? 80 : 50;
-const SCROLL_HEIGHT = IMAGE_HEIGHT - HEADER_HEIGHT;
-const IMAGE_SCROLL_HEIGHT = HEADER_HEIGHT - IMAGE_HEIGHT;
-
 class ProfileScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
 		headerTransparent: true,
@@ -67,30 +64,47 @@ class ProfileScreen extends Component {
 	// Animation scroll values
 	nScroll = new Animated.Value(0);
 	scroll = new Animated.Value(0);
-
-	// Interpolate methods for animations
-	userOpacity = this.scroll.interpolate({
-		inputRange: [0, SCROLL_HEIGHT / 2, SCROLL_HEIGHT],
-		outputRange: [1, 0.1, 0]
-	});
-	tabY = this.nScroll.interpolate({
-		inputRange: [0, SCROLL_HEIGHT, SCROLL_HEIGHT + 1],
-		outputRange: [0, 0, 1]
-	});
-	fixedHeaderOpacity = this.scroll.interpolate({
-		inputRange: [0, SCROLL_HEIGHT],
-		outputRange: [0, 1]
-	});
-
 	heights = [500];
 
 	constructor(props) {
 		super(props);
 		this.state = {
 			tabHeight: 500,
-			activeTab: 0
+			activeTab: 0,
+			headerHeight: 250
 		};
 		this.nScroll.addListener(Animated.event([{ value: this.scroll }], { useNativeDriver: false }));
+		this.buildAnimations();
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if (prevState.headerHeight !== this.state.headerHeight) {
+			this.buildAnimations();
+		}
+	}
+
+	buildAnimations() {
+		const HEADER_HEIGHT = Platform.OS === "ios" ? 76 : 50;
+		const SCROLL_HEIGHT = this.state.headerHeight - HEADER_HEIGHT;
+
+		// Interpolate methods for animations
+		this.userOpacity = this.scroll.interpolate({
+			inputRange: [0, SCROLL_HEIGHT / 2, SCROLL_HEIGHT],
+			outputRange: [1, 0.1, 0]
+		});
+		this.tabY = this.nScroll.interpolate({
+			inputRange: [0, SCROLL_HEIGHT, SCROLL_HEIGHT + 1],
+			outputRange: [0, 0, 1]
+		});
+		this.imgScale = this.nScroll.interpolate({
+			inputRange: [-75, 0, 50],
+			outputRange: [1.7, 1, 1.2],
+			extrapolateLeft: "clamp"
+		});
+		this.fixedHeaderOpacity = this.scroll.interpolate({
+			inputRange: [0, SCROLL_HEIGHT],
+			outputRange: [0, 1]
+		});
 	}
 
 	tabContent(x, i) {
@@ -165,7 +179,7 @@ class ProfileScreen extends Component {
 						<CustomHeader
 							content={
 								<View style={{ paddingTop: 26 }}>
-									<TwoLineHeader title='testadmin' subtitle='Administrators' />
+									<TwoLineHeader title={this.props.data.core.member.name} subtitle={this.props.data.core.member.group.name} />
 								</View>
 							}
 						/>
@@ -176,21 +190,36 @@ class ProfileScreen extends Component {
 						style={{ zIndex: 0 }}
 						onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: this.nScroll } } }], { useNativeDriver: true })}
 					>
-						<Animated.View style={componentStyles.profileHeader}>
-							{this.props.data.core.member.coverPhoto.image ? (
-								<FadeIn style={componentStyles.coverPhotoContainer} placeholderStye={{ backgroundColor: "#333" }}>
-									<Image
-										source={{ uri: this.props.data.core.member.coverPhoto.image }}
-										style={componentStyles.coverPhoto}
-										resizeMode="cover"
-									/>
-								</FadeIn>
-							) : null}
+						<Animated.View
+							onLayout={({
+								nativeEvent: {
+									layout: { height }
+								}
+							}) => {
+								this.setState({ headerHeight: height });
+							}}
+							style={componentStyles.profileHeader}
+						>
+							{this.props.data.core.member.coverPhoto.image && (
+								<Animated.View style={[StyleSheet.absoluteFill, { transform: [{ scale: this.imgScale }] }]}>
+									<FadeIn style={StyleSheet.absoluteFill} placeholderStyle={{ backgroundColor: "#333" }}>
+										<Image
+											source={{ uri: this.props.data.core.member.coverPhoto.image }}
+											style={StyleSheet.absoluteFill}
+											resizeMode="cover"
+										/>
+									</FadeIn>
+								</Animated.View>
+							)}
 							<Animated.View style={[componentStyles.profileHeaderInner, { opacity: this.userOpacity }]}>
 								<UserPhoto url={this.props.data.core.member.photo} size={80} />
 								<Text style={componentStyles.usernameText}>{this.props.data.core.member.name}</Text>
 								<Text style={componentStyles.groupText}>{this.props.data.core.member.group.name}</Text>
-								<View style={componentStyles.profileStats}>
+								<View style={[styles.mtWide, componentStyles.buttonBar]}>
+									<Button filled rounded type="light" size="medium" title="Follow" style={componentStyles.button} />
+									<Button filled rounded type="light" size="medium" title="Message" style={componentStyles.button} />
+								</View>
+								<View style={[styles.mtWide, componentStyles.profileStats]}>
 									<View style={[componentStyles.profileStatSection, componentStyles.profileStatSectionBorder]}>
 										<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.contentCount}</Text>
 										<Text style={componentStyles.profileStatTitle}>Content Count</Text>
@@ -216,7 +245,7 @@ class ProfileScreen extends Component {
 												this.setState({ height: this.heights[i], activeTab: i });
 											}}
 											renderTab={(name, page, active, onPress, onLayout) => (
-												<CustomTab name={name} page={page} active={active} onPress={onPress} onLayout={onLayout} />
+												<CustomTab key={name} name={name} page={page} active={active} onPress={onPress} onLayout={onLayout} />
 											)}
 										/>
 									</Animated.View>
@@ -249,7 +278,6 @@ const componentStyles = StyleSheet.create({
 		top: 0,
 		left: 0,
 		right: 0,
-		height: HEADER_HEIGHT,
 		zIndex: 100
 	},
 	profileHeader: {
@@ -257,25 +285,11 @@ const componentStyles = StyleSheet.create({
 	},
 	profileHeaderInner: {
 		paddingTop: 40,
-		backgroundColor: "rgba(49,68,83,0.2)",
+		backgroundColor: "rgba(49,68,83,0.4)",
 		display: "flex",
 		flexDirection: "column",
 		justifyContent: "center",
 		alignItems: "center"
-	},
-	coverPhotoContainer: {
-		position: "absolute",
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0
-	},
-	coverPhoto: {
-		position: "absolute",
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0
 	},
 	usernameText: {
 		color: "#fff",
@@ -293,7 +307,6 @@ const componentStyles = StyleSheet.create({
 	},
 	profileStats: {
 		backgroundColor: "rgba(20,20,20,0.8)",
-		marginTop: styleVars.spacing.wide,
 		paddingTop: styleVars.spacing.standard,
 		paddingBottom: styleVars.spacing.standard,
 		display: "flex",
@@ -317,13 +330,15 @@ const componentStyles = StyleSheet.create({
 		fontSize: 11,
 		textAlign: "center"
 	},
-	tabBarText: {
-		fontWeight: "bold",
-		fontSize: 13
+	buttonBar: {
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center"
 	},
-	activeTabUnderline: {
-		backgroundColor: "#2080A7",
-		height: 2
+	button: {
+		width: "100%",
+		maxWidth: 130,
+		marginHorizontal: styleVars.spacing.tight
 	}
 });
 
