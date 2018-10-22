@@ -3,6 +3,7 @@ import { Text, View, FlatList, StyleSheet, ActivityIndicator } from "react-nativ
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { withNavigation } from "react-navigation";
+import PropTypes from "prop-types";
 
 import Lang from "../../utils/Lang";
 import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
@@ -32,7 +33,7 @@ const SearchQuery = gql`
 
 const LIMIT = 25;
 
-class ContentPanel extends Component {
+class SearchMemberPanel extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -45,6 +46,13 @@ class ContentPanel extends Component {
 		};
 	}
 
+	componentDidMount() {
+		// If showResults is true on first mount, kick off the request immediately
+		if( this.props.showResults ){
+			this.fetchResults();
+		}
+	}
+
 	/**
 	 * On update, figure out if we need to fetch our results
 	 *
@@ -52,6 +60,8 @@ class ContentPanel extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps) {
+		console.log('componentDidUpdate');
+
 		// If we were not previously showing results but now we are, then start fetching them
 		// so they can be displayed when loaded
 		if (!prevProps.showResults && this.props.showResults) {
@@ -186,7 +196,11 @@ class ContentPanel extends Component {
 	}
 }
 
-export default compose(withApollo, withNavigation)(ContentPanel);
+export default compose(withApollo, withNavigation)(SearchMemberPanel);
+
+SearchMemberPanel.defaultProps = {
+	showResults: false
+};
 
 const componentStyles = StyleSheet.create({
 	panel: {

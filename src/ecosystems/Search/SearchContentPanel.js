@@ -35,7 +35,7 @@ const SearchQuery = gql`
 
 const LIMIT = 25;
 
-class ContentPanel extends Component {
+class SearchContentPanel extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -46,6 +46,13 @@ class ContentPanel extends Component {
 			reachedEnd: false,
 			offset: 0
 		};
+	}
+
+	componentDidMount() {
+		// If showResults is true on first mount, kick off the request immediately
+		if( this.props.showResults ){
+			this.fetchResults();
+		}
 	}
 
 	/**
@@ -210,7 +217,7 @@ class ContentPanel extends Component {
 	}
 }
 
-export default compose(withApollo, withNavigation)(ContentPanel);
+export default compose(withApollo, withNavigation)(SearchContentPanel);
 
 const componentStyles = StyleSheet.create({
 	panel: {

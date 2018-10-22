@@ -5,6 +5,7 @@ import _ from "underscore";
 import ScrollableTabView, { ScrollableTabBar } from "react-native-scrollable-tab-view";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
+import { ScrollableTab, Tab, TabHeading, Tabs } from "native-base";
 
 import Lang from "../../utils/Lang";
 import CustomHeader from "../../ecosystems/CustomHeader";
@@ -13,6 +14,7 @@ import SectionHeader from "../../atoms/SectionHeader";
 import MemberRow from "../../ecosystems/MemberRow";
 import ErrorBox from "../../atoms/ErrorBox";
 import ContentRow from "../../ecosystems/ContentRow";
+import CustomTab from "../../atoms/CustomTab";
 import { SearchContentPanel, SearchMemberPanel, SearchResultFragment, SearchResult } from "../../ecosystems/Search";
 import styles, { styleVars } from "../../styles";
 
@@ -69,7 +71,6 @@ class SearchScreen extends Component {
 			searchSections: {},
 			showingResults: false,
 			textInputActive: false,
-			goToTab: null,
 
 			// initial screen
 			recentSearches: [],
@@ -173,20 +174,27 @@ class SearchScreen extends Component {
 				fetchPolicy: "no-cache"
 			});
 
-			const searchSections = data.core.search.types.map(type => ({
-				key: type.key,
-				lang: type.lang,
-				status: null,
-				data: []
-			}));
-
 			// Add the All Content tab to the start
-			searchSections.unshift({
-				key: "all",
-				lang: Lang.get("content"),
-				status: null,
-				data: []
-			});
+			const searchSections = [
+				{
+					key: "overview",
+					index: 0,
+					lang: Lang.get("overview"),
+					data: []
+				},
+				{
+					key: "all",
+					index: 1,
+					lang: Lang.get("content"),
+					data: []
+				},
+				...data.core.search.types.map((type, index) => ({
+					key: type.key,
+					index: index + 2, // we hardcoded the first two items, hence 2 here
+					lang: type.lang,
+					data: []
+				}))
+			];
 
 			const recentSearches = await this.addToRecentSearches(this.state.searchTerm);
 
@@ -360,7 +368,7 @@ class SearchScreen extends Component {
 		if (this.state.overviewSearchResults.content.results.length) {
 			overviewData.push({
 				title: Lang.get("top_content"),
-				key: "content",
+				key: "all",
 				count: this.state.overviewSearchResults.content.count,
 				data: this.state.overviewSearchResults.content.results
 			});
@@ -369,7 +377,7 @@ class SearchScreen extends Component {
 		if (this.state.overviewSearchResults.members.results.length) {
 			overviewData.push({
 				title: Lang.get("top_members"),
-				key: "members",
+				key: "core_members",
 				count: this.state.overviewSearchResults.members.count,
 				data: this.state.overviewSearchResults.members.results
 			});
@@ -416,9 +424,7 @@ class SearchScreen extends Component {
 					<ContentRow
 						style={componentStyles.seeAllRow}
 						onPress={() => {
-							this.setState({
-								goToTab: section.key == "content" ? 1 : 2
-							});
+							this.onChangeTab({ i: _.find( this.state.searchSections, (s) => s.key == section.key )['index'] });
 						}}
 					>
 						<Text numberOfLines={1} style={componentStyles.seeAllRowText}>
@@ -437,25 +443,17 @@ class SearchScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	onChangeTab = tab => {
-		// Get tab
-		const tabIndex = tab.i;
-
+	onChangeTab = ({ i }) => {
 		// index 0 is the overview tab so we don't need to do anything
-		if (tabIndex == 0 || tabIndex == null) {
+		if (i == 0 || i == null) {
 			this.setState({
 				currentTab: "overview",
-				goToTab: tabIndex
 			});
 			return;
 		}
 
-		const tabData = this.state.searchSections[tabIndex - 1];
-		const currentTab = tabData.key;
-
 		this.setState({
-			currentTab,
-			goToTab: tabIndex
+			currentTab: this.state.searchSections[i].key
 		});
 	};
 
@@ -465,61 +463,53 @@ class SearchScreen extends Component {
 	 * @return 	Component
 	 */
 	getResultsViews() {
-		return (
-			<ScrollableTabView
-				tabBarTextStyle={componentStyles.tabBarText}
-				tabBarBackgroundColor="#fff"
-				tabBarActiveTextColor="#2080A7" // @todo abstract these colors
-				tabBarUnderlineStyle={componentStyles.activeTabUnderline}
-				renderTabBar={() => <ScrollableTabBar />}
-				page={this.state.goToTab || null}
-				onChangeTab={this.onChangeTab}
-			>
-				<View style={componentStyles.tab} tabLabel={Lang.get("overview").toUpperCase()}>
-					{this.renderOverviewTab()}
-				</View>
-				{!this.state.noResults &&
-					this.state.searchSections.map(section => {
-						const PanelComponent = section.key === "core_members" ? SearchMemberPanel : SearchContentPanel;
+		let currentTab = null;
 
-						return (
-							<View style={componentStyles.tab} key={section.key} tabLabel={section.lang.toUpperCase()}>
-								<PanelComponent
-									type={section.key}
-									typeName={section.lang}
-									term={this.state.searchTerm}
-									showResults={this.state.currentTab === section.key}
-								/>
-							</View>
-						);
-					})}
-			</ScrollableTabView>
-		);
-	}
-
-	/**
-	 * build the contents of the specified tab, based on whatever we have in state for that key
-	 *
-	 * @return 	Component
-	 */
-	getTabContents(tab) {
-		const tabData = _.find(this.state.searchSections, type => type.key == tab);
-
-		if (tabData.status === null || tabData.status === "loading") {
-			return (
-				<View style={componentStyles.tabNoContent}>
-					<ActivityIndicator size="large" />
-				</View>
-			);
-		} else {
-			return (
-				<FlatList
-					data={tabData.results}
-					renderItem={({ item }) => this.renderShortcutItem(item)}
-					keyExtractor={item => (item["__typename"] == "core_Member" ? "m" + item.id : "c" + item.indexID)}
-				/>
-			);
+		if( this.state.currentTab ){
+			currentTab = _.find( this.state.searchSections, (s) => s.key == this.state.currentTab )['index'];
 		}
+
+		return (
+			<React.Fragment>
+				<Tabs
+					renderTabBar={props => (
+						<ScrollableTab
+							{...props}
+							renderTab={(name, page, active, onPress, onLayout) => (
+								<CustomTab key={name} name={name} page={page} active={active} onPress={onPress} onLayout={onLayout} />
+							)}
+						/>
+					)}
+					page={currentTab}
+					tabBarUnderlineStyle={styleVars.tabBar.underline}
+					onChangeTab={this.onChangeTab}
+				>
+					{this.state.searchSections.map(section => {
+						if( section.key == 'overview' ){
+							return (
+								<Tab style={componentStyles.tab} key='overview' heading={Lang.get("overview")}>
+									{this.renderOverviewTab()}
+								</Tab>
+							);
+						} else if( !this.state.noResults ) {
+							const PanelComponent = section.key === "core_members" ? SearchMemberPanel : SearchContentPanel;
+							const showResults = this.state.currentTab == section.key;
+
+							return (
+								<Tab style={componentStyles.tab} key={section.key} heading={section.lang}>
+									<PanelComponent
+										type={section.key}
+										typeName={section.lang}
+										term={this.state.searchTerm}
+										showResults={showResults}
+									/>
+								</Tab>
+							);
+						}
+					})}
+				</Tabs>
+			</React.Fragment>
+		);
 	}
 
 	/**
@@ -653,7 +643,8 @@ const componentStyles = StyleSheet.create({
 		height: 2
 	},
 	tab: {
-		flex: 1
+		flex: 1,
+		backgroundColor: styleVars.appBackground
 	},
 	tabNoContent: {
 		flex: 1,
