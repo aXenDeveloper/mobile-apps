@@ -146,10 +146,10 @@ class FollowModal extends Component {
 	 */
 	getSectionData() {
 		return [
-			{
-				title: Lang.get("follow_freq"),
-				data: ["followChoices"]
-			},
+			...(this.props.followData.followOptions.length > 1 && [{
+					title: Lang.get("follow_freq"),
+					data: ["followChoices"]
+			}]),
 			{
 				title: Lang.get("follow_privacy"),
 				data: ["anonToggle"]

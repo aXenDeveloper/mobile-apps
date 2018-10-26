@@ -198,6 +198,11 @@ const styles = StyleSheet.create({
 		tintColor: styleVars.lightText
 	},
 
+	/* Toast */
+	toastText: { 
+		textAlign: 'center', 
+		color: 'white' 
+	},
 
 	/* General purpose styles */
 	unreadBackground: {
