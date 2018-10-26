@@ -82,7 +82,7 @@ class TopicViewScreen extends Component {
 			) : (
 				<TwoLineHeader
 					title={navigation.state.params.title}
-					subtitle={`Started by ${navigation.state.params.author}, ${relativeTime.long(navigation.state.params.started)}`}
+					subtitle={`Started by ${navigation.state.params.author}, ${relativeTime.long(navigation.state.params.started)}`} //@todo lang abstraction
 				/>
 			),
 		headerRight: navigation.state.params.showFollowControl && (
