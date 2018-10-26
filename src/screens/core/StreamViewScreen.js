@@ -312,6 +312,7 @@ class StreamViewScreen extends Component {
 				{
 					viewingStream: item.id,
 					sectionData: [],
+					results: [],
 					offset: 0,
 					reachedEnd: false
 				},
