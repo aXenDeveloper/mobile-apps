@@ -21,7 +21,7 @@ import UserPhoto from "../../atoms/UserPhoto";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import RichTextContent from "../../atoms/RichTextContent";
-import { ProfileContent, ProfileTab } from "../../ecosystems/Profile";
+import { ProfileContent, ProfileTab, ProfileFollowers } from "../../ecosystems/Profile";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 import styles, { styleVars } from "../../styles";
 
@@ -35,7 +35,6 @@ const ProfileQuery = gql`
 				photo
 				contentCount
 				reputationCount
-				followerCount
 				joined
 				allowFollow
 				group {
@@ -147,7 +146,8 @@ class ProfileScreen extends Component {
 								isFollowing: true
 							}
 						}
-					}
+					},
+					refetchQueries: ['ProfileFollowersQuery']
 				});
 
 				this.refs.toast.show(Lang.get('followed_member', { name: this.props.data.core.member.name }), DURATION.LENGTH_LONG);
@@ -188,7 +188,8 @@ class ProfileScreen extends Component {
 								isFollowing: false
 							}
 						}
-					}
+					},
+					refetchQueries: ['ProfileFollowersQuery']
 				});
 
 				this.refs.toast.show(Lang.get('unfollowed_member', { name: this.props.data.core.member.name }), DURATION.LENGTH_LONG);
@@ -459,7 +460,7 @@ class ProfileScreen extends Component {
 											rounded
 											type="light"
 											size="medium"
-											title={this.props.data.core.member.follow.isFollowing ? `${Lang.get('unfollow')}...` : `${Lang.get('follow')}...`}
+											title={this.props.data.core.member.follow.isFollowing ? Lang.get('unfollow') : Lang.get('follow')}
 											onPress={this.toggleFollowModal}
 											style={componentStyles.button}
 										/>
@@ -475,7 +476,7 @@ class ProfileScreen extends Component {
 										<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_reputation')}</Text>
 									</View>
 									<View style={componentStyles.profileStatSection}>
-										<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.followerCount}</Text>
+										<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.follow.followCount}</Text>
 										<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_followers')}</Text>
 									</View>
 								</View>
@@ -493,7 +494,6 @@ class ProfileScreen extends Component {
 						>
 							<ProfileTab
 								tabIndex={0}
-								style={{ backgroundColor: "red" }}
 								heading={Lang.get('profile_overview')}
 								active={this.state.activeTab == 0}
 								minHeight={this.state.minHeight}
@@ -507,7 +507,6 @@ class ProfileScreen extends Component {
 							</ProfileTab>
 							<ProfileTab
 								tabIndex={1}
-								style={{ backgroundColor: "blue" }}
 								heading={Lang.get('profile_content')}
 								active={this.state.activeTab == 1}
 								minHeight={this.state.minHeight}
@@ -525,6 +524,17 @@ class ProfileScreen extends Component {
 									<RichTextContent style={componentStyles.editorField}>{tab.content}</RichTextContent>
 								</ProfileTab>
 							))}
+							{this.props.data.core.member.allowFollow && (
+								<ProfileTab
+									key='followers'
+									tabIndex={additionalTabs.length + 2}
+									heading='Followers'
+									active={this.state.activeTab == (additionalTabs.length + 2)}
+									minHeight={this.state.minHeight}
+								>
+									<ProfileFollowers id={this.props.data.core.member.id} />
+								</ProfileTab>
+							)}
 						</Tabs>
 					</Animated.ScrollView>
 				</View>

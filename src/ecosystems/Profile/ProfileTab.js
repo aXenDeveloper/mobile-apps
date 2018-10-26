@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { Tab } from "native-base";
 
+import { styleVars } from "../../styles";
+
 class ProfileTab extends Component {
 	constructor(props){ 
 		super(props);
@@ -49,7 +51,7 @@ class ProfileTab extends Component {
 		}*/
 
 		return (
-			<Tab heading={this.props.heading}>
+			<Tab heading={this.props.heading} style={{ backgroundColor: styleVars.appBackground }}>
 				<View>
 					{this.props.active && this.props.children}
 				</View>

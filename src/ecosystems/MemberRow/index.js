@@ -16,10 +16,14 @@ class MemberRow extends Component {
 	}
 
 	onPress = () => {
-		this.props.navigation.navigate("Profile", {
-			id: this.props.id,
-			name: this.props.name,
-			photo: this.props.photo
+		this.props.navigation.navigate({
+			routeName: "Profile",
+			params: {
+				id: this.props.id,
+				name: this.props.name,
+				photo: this.props.photo
+			},
+			key: this.props.id
 		});
 	}
 

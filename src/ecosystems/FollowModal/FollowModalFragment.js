@@ -12,7 +12,7 @@ const FollowModalFragment = gql`
 			selected
 		}
 		followCount
-		followers {
+		followers (offset: 0, limit: 10) {
 			id
 			name
 			photo
