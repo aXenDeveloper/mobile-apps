@@ -21,7 +21,7 @@ import UserPhoto from "../../atoms/UserPhoto";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import RichTextContent from "../../atoms/RichTextContent";
-import { ProfileContent, ProfileTab, ProfileFollowers } from "../../ecosystems/Profile";
+import { ProfileContent, ProfileTab, ProfileFollowers, ProfilePlaceholder } from "../../ecosystems/Profile";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 import styles, { styleVars } from "../../styles";
 
@@ -354,6 +354,7 @@ class ProfileScreen extends Component {
 			<Animated.View style={{ transform: [{ translateY: this.tabY }], zIndex: 1 }}>
 				<ScrollableTab
 					{...props}
+					prerenderingSiblingsNumber={3}
 					renderTab={(name, page, active, onPress, onLayout) => (
 						<CustomTab key={name} name={name} page={page} active={active} onPress={onPress} onLayout={onLayout} />
 					)}
@@ -379,11 +380,10 @@ class ProfileScreen extends Component {
 	}*/
 
 	render() {
+
 		if (this.props.data.loading) {
 			return (
-				<View repeat={7}>
-					<Text>Loading</Text>
-				</View>
+				<ProfilePlaceholder />
 			);
 		} else {
 			// Follow button
@@ -616,6 +616,7 @@ const componentStyles = StyleSheet.create({
 		marginHorizontal: styleVars.spacing.tight
 	},
 	editorField: {
+		backgroundColor: '#fff',
 		padding: styleVars.spacing.wide
 	}
 });

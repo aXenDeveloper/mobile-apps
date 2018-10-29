@@ -53,7 +53,7 @@ class ProfileTab extends Component {
 		return (
 			<Tab heading={this.props.heading} style={{ backgroundColor: styleVars.appBackground }}>
 				<View>
-					{this.props.active && this.props.children}
+					{this.props.children}
 				</View>
 			</Tab>
 		);

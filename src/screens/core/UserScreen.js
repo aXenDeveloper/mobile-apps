@@ -72,8 +72,12 @@ class UserScreen extends Component {
 	}
 
 	goToProfile() {
-		this.props.navigation.navigate("Profile", {
-			id: this.props.data.core.me.id
+		this.props.navigation.navigate({
+			routeName: "Profile",
+			params: {
+				id: this.props.data.core.me.id
+			},
+			key: this.props.data.core.me.id
 		});
 	}
 

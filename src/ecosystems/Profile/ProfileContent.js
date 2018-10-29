@@ -3,9 +3,11 @@ import { Text, View, ScrollView, FlatList, StyleSheet, Image, StatusBar, Animate
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 
+import Lang from "../../utils/Lang";
 import { StreamCard, StreamCardFragment } from "../../ecosystems/Stream";
 import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import ErrorBox from "../../atoms/ErrorBox";
+import EndOfComments from "../../atoms/EndOfComments";
 
 const MemberContentQuery = gql`
 	query MemberContentQuery($id: ID!, $offset: Int, $limit: Int) {
@@ -42,7 +44,7 @@ class ProfileContent extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		if( prevProps.showResults !== this.props.showResults ){
+		if( !prevProps.showResults && prevProps.showResults !== this.props.showResults ){
 			this.fetchResults();
 		}
 	}
@@ -104,7 +106,7 @@ class ProfileContent extends Component {
 			return this.getPlaceholder();
 		}
 
-		return null;
+		return <EndOfComments label={Lang.get("end_of_profile_content")} />;
 	};
 
 	/**

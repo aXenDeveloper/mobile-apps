@@ -108,14 +108,15 @@ const componentStyles = StyleSheet.create({
 		fontSize: 13,
 	},
 	
-	
+	placeholder: {
+		padding: styleVars.spacing.standard
+	},
 	postWrapper: {
 		marginBottom: 7
 	},
 	post: {
 		paddingBottom: 0
-	},
-	
+	},	
 	postInfo: {
 		flexDirection: 'row',
 		alignItems: 'flex-start',

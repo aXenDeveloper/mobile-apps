@@ -55,8 +55,8 @@ const LangFragment = gql`
 		error_unfollowing: phrase(key: "app_error_unfollowing")
 		ok: phrase(key: "app_ok")
 
-		followedMember: phrase(key: "app_followed_member")
-		unfollowedMember: phrase(key: "app_unfollowed_member")
+		followed_member: phrase(key: "app_followed_member")
+		unfollowed_member: phrase(key: "app_unfollowed_member")
 		profile_content_count: phrase(key: "app_profile_content_count")
 		profile_reputation: phrase(key: "app_profile_reputation")
 		profile_followers: phrase(key: "app_profile_followers")
@@ -65,6 +65,7 @@ const LangFragment = gql`
 		basic_information: phrase(key: "app_basic_information")
 		joined: phrase(key: "app_joined")
 		email_address: phrase(key: "app_email_address")
+		end_of_profile_content: phrase(key: "app_end_of_profile_content")
 		
 		search_site: phrase(key: "app_search_site")
 		loading: phrase(key: "app_loading")

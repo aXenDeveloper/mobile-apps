@@ -30,16 +30,18 @@ class StreamCard extends PureComponent {
 	loadingComponent() {
 		return (
 			<ShadowedArea style={[styles.post, styles.postWrapper]}>
-				<PlaceholderContainer height={40}>
-					<PlaceholderElement circle radius={40} left={0} top={0} />
-					<PlaceholderElement width={160} height={15} top={0} left={50} />
-					<PlaceholderElement width={70} height={14} top={23} left={50} />
-				</PlaceholderContainer>
-				<PlaceholderContainer height={100} style={styles.postContentContainer}>
-					<PlaceholderElement width="100%" height={12} />
-					<PlaceholderElement width="70%" height={12} top={20} />
-					<PlaceholderElement width="82%" height={12} top={40} />
-					<PlaceholderElement width="97%" height={12} top={60} />
+				<PlaceholderContainer height={140} style={{ padding: styleVars.spacing.standard }}>
+					<PlaceholderContainer height={40} style={{ marginBottom: styleVars.spacing.standard }}>
+						<PlaceholderElement circle radius={40} left={0} top={0} />
+						<PlaceholderElement width={160} height={15} top={0} left={50} />
+						<PlaceholderElement width={70} height={14} top={23} left={50} />
+					</PlaceholderContainer>
+					<PlaceholderContainer height={100} style={styles.postContentContainer}>
+						<PlaceholderElement width="100%" height={12} />
+						<PlaceholderElement width="70%" height={12} top={20} />
+						<PlaceholderElement width="82%" height={12} top={40} />
+						<PlaceholderElement width="97%" height={12} top={60} />
+					</PlaceholderContainer>
 				</PlaceholderContainer>
 			</ShadowedArea>
 		);
