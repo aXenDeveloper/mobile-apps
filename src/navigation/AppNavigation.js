@@ -58,7 +58,7 @@ class AppNavigation extends Component {
 				HomeScreen: { 
 					screen: HomeScreen,
 					navigationOptions: {
-						title: this.props.site.board_name
+						title: this.props.site.settings.board_name
 					}
 				},
 				ForumIndex: { screen: ForumListScreen },

@@ -548,7 +548,7 @@ class SearchScreen extends Component {
 						style={componentStyles.textInput}
 						placeholderTextColor="rgba(255,255,255,0.6)"
 						placeholder={Lang.get("search_site", {
-							siteName: this.props.site.board_name
+							siteName: this.props.site.settings.board_name
 						})}
 						returnKeyType="search"
 						onFocus={this.onFocusTextInput}

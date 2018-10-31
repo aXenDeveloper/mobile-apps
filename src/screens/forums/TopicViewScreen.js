@@ -416,11 +416,11 @@ class TopicViewScreen extends Component {
 			return (
 				<LoginRegisterPrompt
 					style={{ marginBottom: 7 }}
-					register={this.props.site.allow_reg !== "DISABLED"}
-					registerUrl={this.props.site.allow_reg_target || null}
+					register={this.props.site.settings.allow_reg !== "DISABLED"}
+					registerUrl={this.props.site.settings.allow_reg_target || null}
 					navigation={this.props.navigation}
-					message={Lang.get(this.props.site.allow_reg !== "DISABLED" ? "login_register_prompt_comment" : "login_prompt_comment", {
-						siteName: this.props.site.board_name
+					message={Lang.get(this.props.site.settings.allow_reg !== "DISABLED" ? "login_register_prompt_comment" : "login_prompt_comment", {
+						siteName: this.props.site.settings.board_name
 					})}
 				/>
 			);
