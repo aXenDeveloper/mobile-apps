@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Image, TouchableOpacity, Text, ViewPropTypes } from "react-native";
+import { View, StyleSheet, Image, TouchableOpacity, Text, ViewPropTypes } from "react-native";
 import PropTypes from "prop-types";
 
 import styles, { styleVars } from "../styles";
@@ -15,23 +15,26 @@ export default class Button extends Component {
 		const textType = buttonType + "Text";
 		const textSize = this.props.size + "Text";
 		const rounded = this.props.rounded ? componentStyles.rounded : null;
+		const imageType = buttonType + "Image";
+		const colorStyle = this.props.color ? { backgroundColor: this.props.color } : null;
 
 		return (
 			<TouchableOpacity
-				style={[componentStyles.button, componentStyles[buttonType], componentStyles[this.props.size], rounded, this.props.style]}
+				style={[componentStyles.button, componentStyles[buttonType], componentStyles[this.props.size], rounded, colorStyle, this.props.style]}
 				onPress={this.props.onPress}
 			>
-				<React.Fragment>
+				{this.props.icon &&	<Image style={[componentStyles.icon, componentStyles[imageType]]} resizeMode='stretch' source={this.props.icon} />}
+				<View style={componentStyles.textWrapper}>
 					<Text style={[componentStyles[textType], componentStyles.text, componentStyles[textSize]]} numberOfLines={1}>
 						{this.props.title}
 					</Text>
-				</React.Fragment>
+				</View>
 			</TouchableOpacity>
 		);
 	}
 }
 
-// {this.props.icon &&	<Image style={componentStyles.icon} resizeMode='stretch' source={this.props.icon} />}
+// 
 
 const componentStyles = StyleSheet.create({
 	button: {
@@ -45,9 +48,15 @@ const componentStyles = StyleSheet.create({
 		borderRadius: 50
 	},
 	icon: {
-		width: 16,
-		height: 16
+		width: 18,
+		height: 18,
+		marginLeft: 0,
+		marginRight: styleVars.spacing.tight
 	},
+	textWrapper: {
+		flexGrow: 1,
+	},
+
 	// Sizes
 	small: {
 		paddingHorizontal: styleVars.spacing.standard,
@@ -64,7 +73,8 @@ const componentStyles = StyleSheet.create({
 
 	// Text styles
 	text: {
-		fontWeight: "500"
+		fontWeight: "500",
+		textAlign: 'center'
 	},
 	smallText: {
 		fontSize: styleVars.fontSizes.small
@@ -84,11 +94,17 @@ const componentStyles = StyleSheet.create({
 	primaryOutlinedText: {
 		color: styleVars.primaryButton.mainColor
 	},
+	primaryOutlinedImage: {
+		tintColor: styleVars.primaryButton.mainColor
+	},
 	primaryFilled: {
 		backgroundColor: styleVars.primaryButton.mainColor
 	},
 	primaryFilledText: {
 		color: styleVars.primaryButton.inverseColor
+	},
+	primaryFilledImage: {
+		tintColor: styleVars.primaryButton.inverseColor
 	},
 
 	// Light button
@@ -99,11 +115,38 @@ const componentStyles = StyleSheet.create({
 	lightOutlinedText: {
 		color: styleVars.lightButton.mainColor
 	},
+	lightOutlinedImage: {
+		tintColor: styleVars.lightButton.mainColor
+	},
 	lightFilled: {
 		backgroundColor: styleVars.lightButton.mainColor
 	},
 	lightFilledText: {
 		color: styleVars.lightButton.inverseColor
+	},
+	lightFilledImage: {
+		tintColor: styleVars.lightButton.inverseColor
+	},
+
+	// Dark button
+	darkOutlined: {
+		borderWidth: 1,
+		borderColor: styleVars.darkButton.mainColor
+	},
+	darkOutlinedText: {
+		color: styleVars.darkButton.mainColor
+	},
+	darkOutlinedImage: {
+		tintColor: styleVars.darkButton.mainColor
+	},
+	darkFilled: {
+		backgroundColor: styleVars.darkButton.mainColor
+	},
+	darkFilledText: {
+		color: styleVars.darkButton.inverseColor,
+	},
+	darkFilledImage: {
+		tintColor: styleVars.darkButton.inverseColor
 	},
 
 	// Warning button
@@ -114,11 +157,17 @@ const componentStyles = StyleSheet.create({
 	warningOutlinedText: {
 		color: styleVars.warningButton.mainColor
 	},
+	warningOutlinedImage: {
+		tintColor: styleVars.warningButton.mainColor
+	},
 	warningFilled: {
 		backgroundColor: styleVars.warningButton.mainColor
 	},
 	warningFilledText: {
 		color: styleVars.warningButton.inverseColor
+	},
+	warningFilledText: {
+		tintColor: styleVars.warningButton.inverseColor
 	}
 });
 
@@ -131,8 +180,9 @@ Button.defaultProps = {
 
 Button.propTypes = {
 	title: PropTypes.string.isRequired,
+	icon: PropTypes.any,
 	size: PropTypes.oneOf(["small", "medium", "large"]),
-	type: PropTypes.oneOf(["primary", "light", "warning"]),
+	type: PropTypes.oneOf(["primary", "light", "warning", "dark"]),
 	onPress: PropTypes.func,
 	filled: PropTypes.bool,
 	style: ViewPropTypes.style

@@ -23,6 +23,10 @@ export const styleVars = {
 		mainColor: '#ecf0f3',
 		inverseColor: '#262b2f'
 	},
+	darkButton: {
+		mainColor: '#1d2e3c',
+		inverseColor: '#fff'
+	},
 	warningButton: {
 		mainColor: '#cc1e3a',
 		inverseColor: '#fff'
