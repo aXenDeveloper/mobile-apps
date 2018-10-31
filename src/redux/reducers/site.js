@@ -1,9 +1,12 @@
-import { SET_SITE_SETTINGS } from "../actions/site";
+import { SET_SITE_SETTINGS, SET_LOGIN_HANDLERS } from "../actions/site";
 
 const initialState = {
-	site_online: true,
-	site_offline_message: '',
-	board_name: 'Invision Community'
+	settings: {
+		site_online: true,
+		site_offline_message: '',
+		board_name: 'Invision Community'
+	},
+	loginHandlers: []
 };
 
 export default function site(state = initialState, { type, payload }) {
@@ -11,7 +14,16 @@ export default function site(state = initialState, { type, payload }) {
 		case SET_SITE_SETTINGS:
 			return {
 				...state,
-				...payload
+				settings: {
+					...payload
+				}
+			};
+		case SET_LOGIN_HANDLERS:
+			return {
+				...state,
+				loginHandlers: [
+					...( Object.values(payload) )
+				]
 			};
 		default:
 			return { ...state };

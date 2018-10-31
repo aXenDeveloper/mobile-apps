@@ -13,12 +13,12 @@ import { IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
 import introspectionQueryResultData from "../fragmentTypes.json";
 import _ from "underscore";
 
-import LoginScreen from "./core/LoginScreen";
+import LoginScreen from "./core/LoginRegister/LoginScreen";
 import RichTextContent from "../atoms/RichTextContent";
 import Lang from "../utils/Lang";
 import { refreshAuth } from "../redux/actions/auth";
 import { userLoaded, guestLoaded, setUserStreams } from "../redux/actions/user";
-import { setSiteSettings } from "../redux/actions/site";
+import { setSiteSettings, setLoginHandlers } from "../redux/actions/site";
 import AppNavigation from "../navigation/AppNavigation";
 import ToFormData from "../utils/ToFormData";
 import LangFragment from "../LangFragment";
@@ -38,11 +38,19 @@ const BootQuery = gql`
 				}
 			}
 			settings {
+				base_url
 				site_online
 				site_offline_message
 				board_name
 				allow_reg
 				allow_reg_target
+			}
+			loginHandlers {
+				id
+				title
+				icon
+				text
+				color
 			}
 			language {
 				...LangFragment
@@ -177,7 +185,7 @@ class RootScreen extends Component {
 			this.runBootQuery();
 		}
 
-		if (!this.props.site.site_online && this.props.user.group.canAccessOffline) {
+		if (!this.props.site.settings.site_online && this.props.user.group.canAccessOffline) {
 			if (!this._alerts.offline) {
 				this.showOfflineMessage();
 				this._alerts.offline = true;
@@ -215,6 +223,7 @@ class RootScreen extends Component {
 
 			// Set our system settings
 			dispatch(setSiteSettings(data.core.settings));
+			dispatch(setLoginHandlers(data.core.loginHandlers));
 
 			// Store our streams
 			dispatch(setUserStreams([
@@ -244,7 +253,7 @@ class RootScreen extends Component {
 	showOfflineMessage(siteName) {
 		Alert.alert(
 			"Community Offline",
-			`${this.props.site.board_name} is currently offline, but your permissions allow you to access it.`,
+			`${this.props.site.settings.board_name} is currently offline, but your permissions allow you to access it.`,
 			[
 				{
 					text: "OK"
@@ -301,7 +310,7 @@ class RootScreen extends Component {
 					</TouchableHighlight>
 				</View>
 			);
-		} else if (!this.props.site.site_online && !this.props.user.group.canAccessOffline) {
+		} else if (!this.props.site.settings.site_online && !this.props.user.group.canAccessOffline) {
 			// Site is offline and this user cannot access it
 			appContent = (
 				<View style={[styles.wrapper, styles.offlineWrapper]}>
@@ -309,12 +318,12 @@ class RootScreen extends Component {
 					<Image source={require("../../resources/offline.png")} resizeMode="contain" style={styles.icon} />
 					<Text style={styles.title}>
 						{Lang.get("offline", {
-							siteName: this.props.site.board_name
+							siteName: this.props.site.settings.board_name
 						})}
 					</Text>
-					{this.props.site.site_offline_message && (
+					{this.props.site.settings.site_offline_message && (
 						<RichTextContent dark style={styles.offlineMessage}>
-							{this.props.site.site_offline_message}
+							{this.props.site.settings.site_offline_message}
 						</RichTextContent>
 					)}
 					{!this.props.auth.authenticated && (
@@ -332,12 +341,12 @@ class RootScreen extends Component {
 						<StatusBar barStyle="light-content" />
 						<Image source={require("../../resources/banned.png")} resizeMode="contain" style={styles.icon} />
 						<Text style={styles.title}>You are banned</Text>
-						<Text style={styles.offlineMessage}>Sorry, you do not have permission to access {this.props.site.board_name}.</Text>
+						<Text style={styles.offlineMessage}>Sorry, you do not have permission to access {this.props.site.settings.board_name}.</Text>
 					</View>
 				);
 			} else {
 				// User is a guest, so site requires a login to view anything
-				appContent = <LoginScreen />;
+				appContent = <LoginScreen hideClose />;
 			}
 		} else {
 			appContent = <AppNavigation />;
