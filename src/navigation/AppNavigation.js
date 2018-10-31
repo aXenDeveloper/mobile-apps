@@ -17,7 +17,8 @@ import NotificationsScreen from "../screens/core/NotificationsScreen";
 import NotificationsSettingsScreen from "../screens/core/NotificationsSettingsScreen";
 import ProfileScreen from "../screens/core/ProfileScreen";
 import UserScreen from "../screens/core/UserScreen";
-import LoginScreen from "../screens/core/LoginScreen";
+import LoginScreen from "../screens/core/LoginRegister/LoginScreen";
+import RegisterScreen from "../screens/core/LoginRegister/RegisterScreen";
 import WebViewScreen from "../screens/core/WebViewScreen";
 import AccountSettingsScreen from "../screens/core/AccountSettings/AccountSettingsScreen";
 import CommentViewSettingsScreen from "../screens/core/AccountSettings/CommentViewSettingsScreen";
@@ -274,7 +275,7 @@ class AppNavigation extends Component {
 		const Login = {
 			screen: UserScreen,
 			navigationOptions: navigation => ({
-				tabBarLabel: "Login",
+				tabBarLabel: "Sign In/Up",
 				tabBarIcon: ({ focused, tintColor }) => (
 					<Image
 						style={[styles.tabIcon, { tintColor: tintColor }]}

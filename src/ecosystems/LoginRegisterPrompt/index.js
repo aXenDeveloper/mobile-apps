@@ -147,8 +147,8 @@ export default class LoginRegisterPrompt extends Component {
 								</TouchableOpacity>}
 						</View>
 						<View style={componentStyles.buttonBar}>
-							<Button type='primary' filled size='medium' title={Lang.get('register')} onPress={() => this.onRegisterPress()} style={[componentStyles.button, styles.mrTight]} /> 
-							<Button type='primary' filled size='medium' title={Lang.get('sign_in')} onPress={() => this.onLoginPress()} style={[componentStyles.button, this.props.register ? styles.mlTight : null]} />
+							<Button type='primary' filled rounded size='medium' title={Lang.get('register')} onPress={() => this.onRegisterPress()} style={[componentStyles.button, styles.mrTight]} /> 
+							<Button type='primary' filled rounded size='medium' title={Lang.get('sign_in')} onPress={() => this.onLoginPress()} style={[componentStyles.button, this.props.register ? styles.mlTight : null]} />
 						</View>
 					</View>
 				</Animated.View>
