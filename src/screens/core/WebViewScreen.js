@@ -13,7 +13,7 @@ export default class WebViewScreen extends Component {
 	render() {
 		return (
 			<View style={{ flex: 1 }}>
-				<WebView source={{uri: this.props.navigation.state.params.url}} style={{ flex: 1 }} />
+				<WebView source={{uri: this.props.navigation.state.params.url, headers: { 'x-ips-app': 'true' } }} style={{ flex: 1 }} />
 			</View>
 		);
 	}
