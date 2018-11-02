@@ -7,6 +7,7 @@ export const styleVars = {
 	text: '#000000',
 	lightText: '#657686',
 	veryLightText: '#9ba3ab',
+	reverseText: '#fff',
 	appBackground: '#e6e8eb',
 	tabActive: '#37454B',
 	tabInactive: '#6e797e',
@@ -15,6 +16,9 @@ export const styleVars = {
 	touchColor: 'rgba(0,0,0,0.05)',
 	touchOpacity: 0.7,
 	toggleTint: '#1888a7',
+	toggleTintInverse: '#a8dae8',
+	primaryBrand: ['#3370AA', '#009BA2'],
+	headerText: '#fff',
 	primaryButton: {
 		mainColor: '#3370AA',
 		inverseColor: '#fff'
@@ -269,6 +273,12 @@ const styles = StyleSheet.create({
 	},
 	veryLightText: {
 		color: styleVars.veryLightText
+	},
+	reverseText: {
+		color: styleVars.reverseText
+	},
+	centerText: {
+		textAlign: 'center'
 	},
 
 	/* Spacing styles */
