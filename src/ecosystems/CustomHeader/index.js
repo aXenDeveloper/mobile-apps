@@ -4,6 +4,7 @@ import { Header } from "react-navigation";
 import { LinearGradient } from "expo";
 
 import { isIphoneX } from "../../utils/isIphoneX";
+import { styleVars } from "../../styles";
 
 export default class CustomHeader extends Component {
 	constructor(props) {
@@ -38,7 +39,7 @@ export default class CustomHeader extends Component {
 			return <Header {...this.props} style={[styles.header, styles.transparentHeader]} />;
 		} else {
 			return (
-				<LinearGradient start={[0, 0]} end={[1, 0]} colors={["#3370AA", "#009BA2"]} style={styles.headerWrap}>
+				<LinearGradient start={[0, 0]} end={[1, 0]} colors={styleVars.primaryBrand} style={styles.headerWrap}>
 					<StatusBar barStyle="light-content" translucent />
 					{content}
 				</LinearGradient>
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
 		height: 36
 	},
 	title: {
-		color: "white",
+		color: styleVars.headerText,
 		fontSize: 17,
 		backgroundColor: "transparent",
 		textAlign: "center",

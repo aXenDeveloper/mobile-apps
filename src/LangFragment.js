@@ -66,6 +66,12 @@ const LangFragment = gql`
 		joined: phrase(key: "app_joined")
 		email_address: phrase(key: "app_email_address")
 		end_of_profile_content: phrase(key: "app_end_of_profile_content")
+
+		username: phrase(key: "app_username")
+		password: phrase(key: "app_password")
+		forgot_password: phrase(key: "app_forgot_password")
+		sign_in_anon: phrase(key: "app_sign_in_anon")
+		sign_in_with_social: phrase(key: "app_sign_in_with_social")
 		
 		search_site: phrase(key: "app_search_site")
 		loading: phrase(key: "app_loading")

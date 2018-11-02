@@ -11,7 +11,7 @@ import LoginButton from "../../../atoms/LoginButton";
 import ToFormData from "../../../utils/ToFormData";
 import styles, { styleVars } from "../../../styles";
 
-class RegisterScreen extends Component {
+export default class RegisterScreen extends Component {
 	static navigationOptions = {
 		title: "Register",
 		headerMode: "none"

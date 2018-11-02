@@ -16,6 +16,7 @@ import _ from "underscore";
 import LoginScreen from "./core/LoginRegister/LoginScreen";
 import RichTextContent from "../atoms/RichTextContent";
 import Lang from "../utils/Lang";
+import URL from "../utils/URL";
 import { refreshAuth } from "../redux/actions/auth";
 import { userLoaded, guestLoaded, setUserStreams } from "../redux/actions/user";
 import { setSiteSettings, setLoginHandlers } from "../redux/actions/site";
@@ -44,6 +45,7 @@ const BootQuery = gql`
 				board_name
 				allow_reg
 				allow_reg_target
+				disable_anonymous
 			}
 			loginHandlers {
 				id
@@ -51,6 +53,7 @@ const BootQuery = gql`
 				icon
 				text
 				color
+				url
 			}
 			language {
 				...LangFragment
@@ -224,6 +227,7 @@ class RootScreen extends Component {
 			// Set our system settings
 			dispatch(setSiteSettings(data.core.settings));
 			dispatch(setLoginHandlers(data.core.loginHandlers));
+			URL.setBaseUrl(data.core.settings.base_url);
 
 			// Store our streams
 			dispatch(setUserStreams([

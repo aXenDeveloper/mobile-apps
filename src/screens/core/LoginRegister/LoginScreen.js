@@ -1,11 +1,15 @@
 import React, { Component, Fragment } from "react";
-import { Text, Image, View, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, AsyncStorage } from "react-native";
+import { Text, Image, View, TextInput, Switch, StyleSheet, TouchableOpacity, ActivityIndicator, AsyncStorage } from "react-native";
 import { withApollo, compose } from "react-apollo";
 import { LinearGradient } from "expo";
 import { connect } from "react-redux";
 import _ from "underscore";
+import { transparentize } from "polished";
 
 import { receiveAuth, logIn } from "../../../redux/actions/auth";
+import Lang from "../../../utils/Lang";
+import URL from "../../../utils/URL";
+import { isIphoneX } from "../../../utils/isIphoneX";
 import Button from "../../../atoms/Button";
 import LoginButton from "../../../atoms/LoginButton";
 import ToFormData from "../../../utils/ToFormData";
@@ -14,14 +18,16 @@ import styles, { styleVars } from "../../../styles";
 class LoginScreen extends Component {
 	static navigationOptions = {
 		title: "Sign In",
-		headerMode: "none"
+		header: null,
+		headerMode: 'screen'
 	};
 
 	constructor(props) {
 		super(props);
 		this.state = {
 			username: "",
-			password: ""
+			password: "",
+			anonymous: false
 		};
 	}
 
@@ -37,6 +43,10 @@ class LoginScreen extends Component {
 		dispatch(logIn(this.state.username, this.state.password, this.props.client));
 	}
 
+	close = () => {
+		this.props.navigation.goBack(null);
+	}
+
 	/**
 	 * If we're now authenticated, redirect to our Root component
 	 *
@@ -49,91 +59,196 @@ class LoginScreen extends Component {
 		}
 	}
 
+	/**
+	 * Go to the registration screen
+	 * EVentually we'll support simple registration in-app, but for now all registration goes
+	 * to a webview
+	 *
+	 * @return 	void
+	 */
 	goToRegistration = () => {
 		// For simple registration, just go to the reg screen
-		if( this.props.site.settings.allow_reg == 'NORMAL' ){
-			this.props.navigation.navigate("Registration");
+		// @future
+		/*if (this.props.site.settings.allow_reg == "NORMAL") {
+			this.props.navigation.navigate("RegisterScreen");
 			return;
 		}
-
+		*/
 		// More complex registration options - full form or third-party URL
 		let url;
 
-		if( this.props.site.settings.allow_reg == 'FULL' ){
-			url = this.props.site.settings.base_url + '&app=core&module=system&controller=register';
+		if (this.props.site.settings.allow_reg !== "REDIRECT") {
+			url = URL.getInternalUrl({
+				app: 'core',
+				module: 'system',
+				controller: 'register'
+			});
 		} else {
 			url = this.props.site.settings.allow_reg_target;
 		}
 
-		this.props.navigation.navigate("WebView", { url	});
-	}
+		this.props.navigation.navigate({
+			routeName: "AuthWebView", 
+			params: { url },
+			key: 'register_full'
+		});
+	};
 
+	/**
+	 * Build the component to show the Registration link, if it's enabled
+	 *
+	 * @return 	Component|null
+	 */
 	buildRegistrationLink() {
-		return ( 
+		if( this.props.site.settings.allow_reg === "DISABLED" ){
+			return null;
+		}
+
+		return (
 			<TouchableOpacity onPress={this.goToRegistration}>
-				<Text style={[componentStyles.smallText, styles.mtStandard]}>
+				<Text style={[styles.reverseText, styles.standardText, styles.centerText, styles.mtStandard]}>
 					Don't have an account? Register now{" "}
-					<Image
-						source={require("../../../../resources/row_arrow.png")}
-						resizeMode="contain"
-						style={componentStyles.registerLinkArrow}
-					/>
+					<Image source={require("../../../../resources/row_arrow.png")} resizeMode="contain" style={componentStyles.registerLinkArrow} />
 				</Text>
 			</TouchableOpacity>
 		);
 	}
 
+	/**
+	 * Update state with Anon toggle value
+	 *
+	 * @return 	void
+	 */
+	toggleAnonymous = value => {
+		this.setState({
+			anonymous: value
+		});
+	};
+
+	/**
+	 * Handle tapping the Forgot Password link
+	 *
+	 * @return 	void
+	 */
+	forgotPasswordPress = () => {
+		this.props.navigation.navigate({
+			routeName: "AuthWebView", 
+			params: { url: URL.getInternalUrl({
+				app: 'core',
+				module: 'system',
+				controller: 'lostpass'
+			}) },
+			key: 'lost_pass'
+		});
+	}
+
+	/**
+	 * Return a memoized press handler for a social login button that navigates to our WebView
+	 *
+	 * @return 	function
+	 */
+	handlerPresses = {};
+	getLoginButtonHandler(handler) {
+		if( _.isUndefined( this.handlerPresses[ handler.id ] ) ){
+			this.handlerPresses[ handler.id ] = () => {
+				this.props.navigation.navigate({
+					routeName: "AuthWebView", 
+					params: { url: URL.getInternalUrl({}, handler.url) },
+					key: `handler_${handler.id}`
+				});
+			};
+		}
+
+		console.log( URL.getInternalUrl({}, handler.url) );
+
+		return this.handlerPresses[ handler.id ];
+	}
+
 	render() {
 		return (
 			<View style={{ flex: 1 }}>
-				<LinearGradient start={[0, 0]} end={[1, 0]} colors={["#3370AA", "#009BA2"]} style={componentStyles.background}>
+				<LinearGradient start={[0, 0]} end={[1, 0]} colors={styleVars.primaryBrand} style={componentStyles.background}>
 					{this.props.auth.loginProcessing || this.props.auth.authenticated ? (
 						<View style={componentStyles.pageWrapper}>
-							<ActivityIndicator size="large" color="#ffffff" />
+							<ActivityIndicator size="large" color={styleVars.reverseText} />
 						</View>
 					) : (
 						<React.Fragment>
-							{_.isUndefined( this.props.hideClose ) && !this.props.hideClose && (
-								<TouchableOpacity onPress={this.close} style={componentStyles.closeButton}>
-									<Image source={require("../../../../resources/close.png")} resizeMode="contain" style={componentStyles.closeButtonImage} />
-								</TouchableOpacity>
-							)}
+							{_.isUndefined(this.props.hideClose) &&
+								!this.props.hideClose && (
+									<TouchableOpacity onPress={this.close} style={componentStyles.closeButton}>
+										<Image
+											source={require("../../../../resources/close.png")}
+											resizeMode="contain"
+											style={componentStyles.closeButtonImage}
+										/>
+									</TouchableOpacity>
+								)}
 							<View style={componentStyles.pageWrapper}>
 								<View style={componentStyles.logoWrapper}>
 									<Image source={require("../../../../resources/logo_light.png")} resizeMode="contain" style={componentStyles.logo} />
 								</View>
-								<TextInput
-									style={componentStyles.textInput}
-									autoCorrect={false}
-									autoCapitalize="none"
-									placeholderTextColor="rgba(255,255,255,0.3)"
-									placeholder="Username"
-									onChangeText={username => this.setState({ username })}
-									value={this.state.username}
-								/>
 
-								<TextInput
-									style={componentStyles.textInput}
-									autoCorrect={false}
-									autoCapitalize="none"
-									placeholderTextColor="rgba(255,255,255,0.3)"
-									placeholder="Password"
-									onChangeText={password => this.setState({ password })}
-									value={this.state.password}
-									secureTextEntry={true}
-								/>
+								<View style={[componentStyles.textInputWrap, styles.mbTight]}>
+									<TextInput
+										style={componentStyles.textInput}
+										autoCorrect={false}
+										autoCapitalize="none"
+										placeholderTextColor={transparentize(0.7, styleVars.reverseText)}
+										placeholder={Lang.get('username')}
+										onChangeText={username => this.setState({ username })}
+										value={this.state.username}
+									/>
+								</View>
 
-								<Button style={styles.mtWide} onPress={() => this._login()} title="Sign In" rounded filled size="large" type="light" />
-								{this.props.site.settings.allow_reg !== 'DISABLED' && this.buildRegistrationLink()}
+								<View style={[componentStyles.textInputWrap, styles.mbTight]}>
+									<TextInput
+										style={componentStyles.textInput}
+										autoCorrect={false}
+										autoCapitalize="none"
+										placeholderTextColor={transparentize(0.7, styleVars.reverseText)}
+										placeholder={Lang.get('password')}
+										onChangeText={password => this.setState({ password })}
+										value={this.state.password}
+										secureTextEntry={true}
+									/>
+									<TouchableOpacity style={styles.mlTight} onPress={this.forgotPasswordPress}>
+										<Text style={[styles.standardText, componentStyles.forgotPassword]}>{Lang.get('forgot_password')}</Text>
+									</TouchableOpacity>
+								</View>
+
+								{!this.props.site.settings.disable_anonymous && (
+									<View style={componentStyles.anonWrap}>
+										<Switch
+											value={this.state.anonymous}
+											onTintColor={styleVars.toggleTintInverse}
+											onValueChange={this.toggleAnonymous}
+											tintColor="rgba(0,0,0,0.1)"
+											ios_backgroundColor="rgba(0,0,0,0.1)"
+											style={{ transform: [{ scale: 0.8 }, { translateX: -4 }] }}
+										/>
+										<Text style={[styles.standardText, styles.reverseText]}>{Lang.get('sign_in_anon')}</Text>
+									</View>
+								)}
+
+								<Button style={styles.mtVeryWide} onPress={() => this._login()} title={Lang.get('sign_in')} rounded filled size="large" type="light" />
+								{this.buildRegistrationLink()}
 							</View>
 							{this.props.site.loginHandlers.length && (
-								<LinearGradient start={[0.5, 0]} end={[0.5, 1]} colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.3)"]} style={componentStyles.otherButtonsWrapper}>
-									<Text style={[componentStyles.smallText, styles.mbStandard]}>Or sign in with one of these services:</Text>
+								<LinearGradient
+									start={[0.5, 0]}
+									end={[0.5, 1]}
+									colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.3)"]}
+									style={componentStyles.otherButtonsWrapper}
+								>
+									<Text style={[styles.reverseText, styles.standardText, styles.centerText, styles.mbStandard]}>
+										{Lang.get('sign_in_with_social')}
+									</Text>
 
 									<View style={componentStyles.otherButtons}>
 										{this.props.site.loginHandlers.map((handler, idx) => (
 											<View style={idx > 0 ? styles.mlTight : null} key={handler.id}>
-												<LoginButton title={handler.text} icon={handler.icon} color={handler.color} onPress={() => {}} />
+												<LoginButton title={handler.text} icon={handler.icon} color={handler.color} onPress={this.getLoginButtonHandler(handler)} />
 											</View>
 										))}
 									</View>
@@ -167,64 +282,68 @@ const componentStyles = StyleSheet.create({
 	pageWrapper: {
 		flex: 1,
 		backgroundColor: "transparent",
-		justifyContent: 'center',
+		justifyContent: "center",
 		padding: styleVars.spacing.veryWide
 	},
-	textInput: {
+	textInputWrap: {
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
 		backgroundColor: "rgba(0,0,0,0.1)",
-		color: "#fff",
-		fontSize: 16,
-		padding: 12,
-		marginBottom: 8,
+		padding: styleVars.spacing.standard,
 		borderRadius: 5
+	},
+	textInput: {
+		fontSize: 16,
+		color: styleVars.reverseText,
+		flexGrow: 1
 	},
 	closeButton: {
 		position: "absolute",
-		top: 30,
-		right: 10
+		top: isIphoneX() ? 60 : 30,
+		right: 10,
+		zIndex: 100
 	},
 	closeButtonImage: {
 		width: 30,
 		height: 30,
-		tintColor: "#fff"
+		tintColor: styleVars.reverseText
 	},
 	smallText: {
-		fontSize: styleVars.fontSizes.standard,
-		color: "#fff",
 		textAlign: "center"
 	},
 	registerLinkArrow: {
 		width: 12,
 		height: 14,
 		marginTop: -2,
-		tintColor: "#fff"
-	},
-	button: {
-		backgroundColor: "white",
-		padding: 12,
-		borderRadius: 5,
-		marginTop: 15
-	},
-	buttonText: {
-		fontSize: 16,
-		textAlign: "center"
+		tintColor: styleVars.reverseText
 	},
 	otherButtonsWrapper: {
 		paddingHorizontal: styleVars.spacing.veryWide,
-		paddingVertical: styleVars.spacing.veryWide
+		paddingTop: styleVars.spacing.veryWide,
+		paddingBottom: isIphoneX() ? ( styleVars.spacing.extraWide * 2 ) : styleVars.spacing.veryWide,
 	},
 	otherButtons: {
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
-		width: '100%'
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		width: "100%"
 	},
 	logoWrapper: {
 		display: "flex",
 		alignItems: "center"
 	},
 	logo: {
-		maxWidth: '70%'
+		maxWidth: "70%"
+	},
+	forgotPassword: {
+		color: transparentize(0.3, styleVars.reverseText)
+	},
+	anonWrap: {
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-start"
 	}
 });
