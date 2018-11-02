@@ -47,6 +47,7 @@ class AppNavigation extends Component {
 		this._StreamStack = this._getMainStack({}, 'StreamView');
 		this._NotificationStack = this._getMainStack({}, 'NotificationsStack');
 		this._SearchStack = this._getMainStack({}, 'SearchStack');
+		this._LoginRegisterStack = this._getLoginRegisterStack();
 
 		this.state = {
 			MasterNavigation: this._getMasterNavigation()
@@ -117,6 +118,29 @@ class AppNavigation extends Component {
 		);
 	}
 
+	_getLoginRegisterStack() {
+		return createStackNavigator(
+		{
+			LoginScreen: { screen: LoginScreen },
+			RegisterScreen: { screen: RegisterScreen },
+			AuthWebView: { screen: WebViewScreen }
+		},
+		{
+			initialRouteName: 'LoginScreen',
+			cardStyle: styles.stackCardStyle,
+			navigationOptions: {
+				header: props => {
+					return <CustomHeader {...props} />;
+				},
+				headerTitleStyle: styles.headerTitle,
+				headerStyle: styles.header,
+				headerBackTitleStyle: styles.headerBack,
+				headerTintColor: "white",
+				headerBackTitle: null
+			}
+		});
+	}
+
 	/*_getStreamStack(options, initialRoute) {
 		return createStackNavigator(
 			{
@@ -169,7 +193,7 @@ class AppNavigation extends Component {
 					}
 				},
 				LoginModal: {
-					screen: LoginScreen,
+					screen: this._LoginRegisterStack,
 					navigationOptions: {
 						header: null,
 						headerMode: 'none'
@@ -273,7 +297,7 @@ class AppNavigation extends Component {
 			})
 		};
 		const Login = {
-			screen: UserScreen,
+			screen: this._LoginRegisterStack,
 			navigationOptions: navigation => ({
 				tabBarLabel: "Sign In/Up",
 				tabBarIcon: ({ focused, tintColor }) => (
