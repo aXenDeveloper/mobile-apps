@@ -319,7 +319,7 @@ class AppNavigation extends Component {
 			Login
 		};
 
-		if (this.props.auth.authenticated) {
+		if (this.props.auth.authenticated && !this.props.user.isGuest) {
 			tabConfig = {
 				Home,
 				Search,
@@ -436,11 +436,11 @@ class AppNavigation extends Component {
 	/**
 	 * Called after component updates with new props
 	 *
-	 * Update master navigation component depending on auth status
+	 * Update master navigation component depending on guest status
 	 * We use this to show appropriate tabs to guests vs. members
 	 */
 	componentDidUpdate(prevProps) {
-		if (this.props.auth.authenticated !== prevProps.auth.authenticated) {
+		if (this.props.user.isGuest !== prevProps.user.isGuest) {
 			this.setState({
 				MasterNavigation: this._getMasterNavigation()
 			});

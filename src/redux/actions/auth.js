@@ -234,11 +234,9 @@ export const logIn = (username, password, apolloClient) => {
 			refresh_token: data.refresh_token
 		};
 
-		await AsyncStorage.setItem("@authStore:auth", JSON.stringify(authData));
-
-		dispatch(loginSuccess(authData));
-
 		apolloClient.resetStore();
+		await AsyncStorage.setItem("@authStore:auth", JSON.stringify(authData));
+		dispatch(loginSuccess(authData));
 	};
 };
 
@@ -251,8 +249,9 @@ export const logIn = (username, password, apolloClient) => {
  */
 export const logOut = apolloClient => {
 	return async dispatch => {
+		apolloClient.resetStore();
 		await AsyncStorage.removeItem("@authStore:auth");
 		dispatch(logOutSuccess());
-		apolloClient.resetStore();
+		
 	};
 };

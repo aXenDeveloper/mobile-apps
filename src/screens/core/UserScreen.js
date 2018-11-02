@@ -65,12 +65,6 @@ class UserScreen extends Component {
 		);
 	}
 
-	componentWillUpdate(nextProps, nextState) {
-		if (this.props.auth.authenticated && !nextProps.auth.authenticated) {
-			this.props.navigation.navigate("Root");
-		}
-	}
-
 	goToProfile() {
 		this.props.navigation.navigate({
 			routeName: "Profile",
@@ -127,6 +121,8 @@ class UserScreen extends Component {
 					<Text>Loading</Text>
 				</View>
 			);
+		} else if ( this.props.data.error ) {
+			console.log( this.props.data.error );
 		} else {
 			return (
 				<View style={componentStyles.container}>

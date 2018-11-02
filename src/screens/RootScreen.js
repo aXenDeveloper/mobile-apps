@@ -184,7 +184,11 @@ class RootScreen extends Component {
 	 */
 	componentDidUpdate(prevProps, prevState) {
 		// If we're done checking authentication, run our boot query to get initial data
-		if ((prevProps.auth.checkAuthProcessing && !this.props.auth.checkAuthProcessing) || prevProps.user.isGuest !== this.props.user.isGuest) {
+		if (
+			prevProps.auth.authenticated !== this.props.auth.authenticated ||
+			(prevProps.auth.checkAuthProcessing && !this.props.auth.checkAuthProcessing) ||
+			prevProps.user.isGuest !== this.props.user.isGuest
+		) {
 			this.runBootQuery();
 		}
 
@@ -203,6 +207,10 @@ class RootScreen extends Component {
 	 */
 	async runBootQuery() {
 		const { dispatch } = this.props;
+
+		this.setState({
+			loading: true
+		});
 
 		try {
 			const { data } = await this._client.query({
@@ -230,14 +238,16 @@ class RootScreen extends Component {
 			URL.setBaseUrl(data.core.settings.base_url);
 
 			// Store our streams
-			dispatch(setUserStreams([
-				{
-					id: 'all',
-					title: 'All Activity',
-					isDefault: true
-				},
-				...data.core.streams
-			]));
+			dispatch(
+				setUserStreams([
+					{
+						id: "all",
+						title: "All Activity",
+						isDefault: true
+					},
+					...data.core.streams
+				])
+			);
 
 			// We can now proceed to show the home screen
 			this.setState({

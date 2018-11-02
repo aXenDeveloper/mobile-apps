@@ -159,8 +159,6 @@ class LoginScreen extends Component {
 			};
 		}
 
-		console.log( URL.getInternalUrl({}, handler.url) );
-
 		return this.handlerPresses[ handler.id ];
 	}
 
