@@ -208,14 +208,16 @@ class HomeScreen extends Component {
 		} else {
 			return (
 				<React.Fragment>
-					<FlatList
-						renderItem={({ item }) => this.renderNavItem(item)}
-						data={this.state.navConfig}
-						keyExtractor={item => item.key}
-						horizontal
-						style={componentStyles.navigator}
-						showsHorizontalScrollIndicator={false}
-					/>
+					<View style={componentStyles.navigator}>
+						<FlatList
+							renderItem={({ item }) => this.renderNavItem(item)}
+							data={this.state.navConfig}
+							keyExtractor={item => item.key}
+							horizontal
+							style={styles.mrStandard}
+							showsHorizontalScrollIndicator={false}
+						/>
+					</View>
 					{this.getLoginRegPrompt()}
 					<ScrollView style={componentStyles.browseWrapper}>
 						{HomeSectionsToShow.map(section => {
@@ -255,14 +257,13 @@ const componentStyles = StyleSheet.create({
 		backgroundColor: '#fff',
 		borderBottomWidth: 1,
 		borderBottomColor: 'rgba(0,0,0,0.1)',
-		paddingHorizontal: styleVars.spacing.wide,
 		paddingVertical: styleVars.spacing.standard,
 	},
 	navItem: {
 		display: 'flex',
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginRight: styleVars.spacing.standard,
+		marginLeft: styleVars.spacing.standard,
 		backgroundColor: '#F5F5F5',
 		paddingHorizontal: styleVars.spacing.wide,
 		paddingVertical: styleVars.spacing.standard,
