@@ -185,8 +185,11 @@ class RootScreen extends Component {
 	componentDidUpdate(prevProps, prevState) {
 		// If we're done checking authentication, run our boot query to get initial data
 		if (
+			// If prev auth state doesn't match current auth state...
 			prevProps.auth.authenticated !== this.props.auth.authenticated ||
-			(prevProps.auth.checkAuthProcessing && !this.props.auth.checkAuthProcessing) ||
+			// or we've finished processing auth - but only if we aren't auehenticated (i.e. don't run if we're just refreshing the token)
+			(prevProps.auth.checkAuthProcessing && !this.props.auth.checkAuthProcessing && !this.props.auth.authenticated) ||
+			// or if our user is now a guest, or vice-versa
 			prevProps.user.isGuest !== this.props.user.isGuest
 		) {
 			this.runBootQuery();
