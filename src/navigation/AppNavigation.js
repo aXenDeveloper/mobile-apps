@@ -32,6 +32,7 @@ import TopicViewScreen from "../screens/forums/TopicViewScreen";
 import CreateTopicScreen from "../screens/forums/CreateTopicScreen";
 import ReplyTopicScreen from "../screens/forums/ReplyTopicScreen";
 
+import TabBarIcon from "../atoms/TabBarIcon";
 import CustomHeader from "../ecosystems/CustomHeader";
 import styles, { styleVars, tabStyles } from "../styles";
 import Lang from '../utils/Lang';
@@ -238,11 +239,8 @@ class AppNavigation extends Component {
 			screen: this._CommunityStack,
 			navigationOptions: {
 				tabBarLabel: "Home",
-				tabBarIcon: ({ focused, tintColor }) => (
-					<Image
-						style={[styles.tabIcon, { tintColor: tintColor }]}
-						source={focused ? require("../../resources/home_active.png") : require("../../resources/home.png")}
-					/>
+				tabBarIcon: (props) => (
+					<TabBarIcon {...props} active={require("../../resources/home_active.png")} inactive={require("../../resources/home.png")} />
 				)
 			}
 		};
@@ -250,11 +248,8 @@ class AppNavigation extends Component {
 			screen: this._SearchStack,
 			navigationOptions: {
 				tabBarLabel: "Search",
-				tabBarIcon: ({ focused, tintColor }) => (
-					<Image
-						style={[styles.tabIcon, { tintColor: tintColor }]}
-						source={focused ? require("../../resources/search_active.png") : require("../../resources/search.png")}
-					/>
+				tabBarIcon: (props) => (
+					<TabBarIcon {...props} active={require("../../resources/search_active.png")} inactive={require("../../resources/search.png")} />
 				)
 			}
 		};
@@ -265,11 +260,8 @@ class AppNavigation extends Component {
 				header: props => {
 					return <CustomHeader {...props} title="Forums" />;
 				},
-				tabBarIcon: ({ focused, tintColor }) => (
-					<Image
-						style={[styles.tabIcon, { tintColor: tintColor }]}
-						source={focused ? require("../../resources/activity_active.png") : require("../../resources/activity.png")}
-					/>
+				tabBarIcon: (props) => (
+					<TabBarIcon {...props} active={require("../../resources/activity_active.png")} inactive={require("../../resources/activity.png")} />
 				)
 			}
 		};
@@ -277,11 +269,8 @@ class AppNavigation extends Component {
 			screen: this._NotificationStack,
 			navigationOptions: navigation => ({
 				tabBarLabel: "Notifications",
-				tabBarIcon: ({ focused, tintColor }) => (
-					<Image
-						style={[styles.tabIcon, { tintColor: tintColor }]}
-						source={focused ? require("../../resources/notification_active.png") : require("../../resources/notification.png")}
-					/>
+				tabBarIcon: (props) => (
+					<TabBarIcon {...props} active={require("../../resources/notification_active.png")} inactive={require("../../resources/notification.png")} />
 				)
 			})
 		};
@@ -300,11 +289,8 @@ class AppNavigation extends Component {
 			screen: this._LoginRegisterStack,
 			navigationOptions: navigation => ({
 				tabBarLabel: "Sign In/Up",
-				tabBarIcon: ({ focused, tintColor }) => (
-					<Image
-						style={[styles.tabIcon, { tintColor: tintColor }]}
-						source={focused ? require("../../resources/login_active.png") : require("../../resources/login.png")}
-					/>
+				tabBarIcon: (props) => (
+					<TabBarIcon {...props} active={require("../../resources/login_active.png")} inactive={require("../../resources/login.png")} />
 				),
 				tabBarOnPress: (tab, jumpToIndex) => {
 					navigation.navigation.navigate("LoginModal");
@@ -425,10 +411,7 @@ class AppNavigation extends Component {
 			);
 		} else {
 			return (
-				<Image
-					style={[styles.tabIcon, { tintColor }]}
-					source={focused ? require("../../resources/login_active.png") : require("../../resources/login.png")}
-				/>
+				<TabBarIcon focused={focused} tintColor={tintColor} active={require("../../resources/login_active.png")} inactive={require("../../resources/login.png")} />
 			);
 		}
 	}

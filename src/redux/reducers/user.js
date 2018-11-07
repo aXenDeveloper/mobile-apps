@@ -5,6 +5,7 @@ const initialState = {
 	id: 0,
 	name: 'Guest',
 	photo: '',
+	notificationCount: 4,
 	group: {
 		canAccessSite: false,
 		canAccessOffline: false,

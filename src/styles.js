@@ -70,7 +70,9 @@ export const styleVars = {
 			height: 2, 
 			backgroundColor: '#3370AA'
 		}
-	}
+	},
+	badgeBackground: '#ff3b2f',
+	badgeText: '#fff'
 };
 
 /* REUSABLE STYLE CLASSES */
