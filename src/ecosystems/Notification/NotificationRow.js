@@ -16,7 +16,7 @@ const NotificationRow = (props) => (
 			</View>
 			<View style={componentStyles.content}>
 				<View style={componentStyles.metaInfo}>
-					<Text style={[styles.smallItemTitle, componentStyles.title, props.data.unread ? styles.title : styles.titleRead]}>{props.data.title}</Text>
+					<Text style={[styles.smallItemTitle, componentStyles.title, props.data.readDate == null ? styles.title : styles.titleRead]}>{props.data.title}</Text>
 					<Text style={[styles.smallText, styles.lightText]}>{relativeTime.short(props.data.updatedDate)}</Text>
 				</View>
 				{props.data.content && (

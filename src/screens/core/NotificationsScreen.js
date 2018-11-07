@@ -135,7 +135,7 @@ class NotificationsScreen extends Component {
 	getSectionData() {
 		const sectionData = [];
 		const notifications = this.props.data.core.me.notifications;
-		const readStart = notifications.findIndex( (notification) => notification.unread === false );
+		const readStart = notifications.findIndex( (notification) => notification.readDate !== null );
 		let unread = [];
 		let read = [];
 
