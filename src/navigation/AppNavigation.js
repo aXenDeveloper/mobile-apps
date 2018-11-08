@@ -32,7 +32,7 @@ import TopicViewScreen from "../screens/forums/TopicViewScreen";
 import CreateTopicScreen from "../screens/forums/CreateTopicScreen";
 import ReplyTopicScreen from "../screens/forums/ReplyTopicScreen";
 
-import TabBarIcon from "../atoms/TabBarIcon";
+import { NavigationTabIcon, NavigationTabNotification } from "../ecosystems/Navigation";
 import CustomHeader from "../ecosystems/CustomHeader";
 import styles, { styleVars, tabStyles } from "../styles";
 import Lang from '../utils/Lang';
@@ -42,7 +42,6 @@ class AppNavigation extends Component {
 	constructor(props) {
 		super(props);
 
-		//this._HomeTabBar = this._getHomeTabBar();
 		this._ForumTabBar = this._getForumTabBar();
 		this._CommunityStack = this._getMainStack();
 		this._StreamStack = this._getMainStack({}, 'StreamView');
@@ -240,7 +239,7 @@ class AppNavigation extends Component {
 			navigationOptions: {
 				tabBarLabel: "Home",
 				tabBarIcon: (props) => (
-					<TabBarIcon {...props} active={require("../../resources/home_active.png")} inactive={require("../../resources/home.png")} />
+					<NavigationTabIcon {...props} active={require("../../resources/home_active.png")} inactive={require("../../resources/home.png")} />
 				)
 			}
 		};
@@ -249,7 +248,7 @@ class AppNavigation extends Component {
 			navigationOptions: {
 				tabBarLabel: "Search",
 				tabBarIcon: (props) => (
-					<TabBarIcon {...props} active={require("../../resources/search_active.png")} inactive={require("../../resources/search.png")} />
+					<NavigationTabIcon {...props} active={require("../../resources/search_active.png")} inactive={require("../../resources/search.png")} />
 				)
 			}
 		};
@@ -261,7 +260,7 @@ class AppNavigation extends Component {
 					return <CustomHeader {...props} title="Forums" />;
 				},
 				tabBarIcon: (props) => (
-					<TabBarIcon {...props} active={require("../../resources/activity_active.png")} inactive={require("../../resources/activity.png")} />
+					<NavigationTabIcon {...props} active={require("../../resources/activity_active.png")} inactive={require("../../resources/activity.png")} />
 				)
 			}
 		};
@@ -270,7 +269,7 @@ class AppNavigation extends Component {
 			navigationOptions: navigation => ({
 				tabBarLabel: "Notifications",
 				tabBarIcon: (props) => (
-					<TabBarIcon {...props} active={require("../../resources/notification_active.png")} inactive={require("../../resources/notification.png")} />
+					<NavigationTabNotification {...props} active={require("../../resources/notification_active.png")} inactive={require("../../resources/notification.png")} />
 				)
 			})
 		};
@@ -290,7 +289,7 @@ class AppNavigation extends Component {
 			navigationOptions: navigation => ({
 				tabBarLabel: "Sign In/Up",
 				tabBarIcon: (props) => (
-					<TabBarIcon {...props} active={require("../../resources/login_active.png")} inactive={require("../../resources/login.png")} />
+					<NavigationTabIcon {...props} active={require("../../resources/login_active.png")} inactive={require("../../resources/login.png")} />
 				),
 				tabBarOnPress: (tab, jumpToIndex) => {
 					navigation.navigation.navigate("LoginModal");
@@ -364,37 +363,6 @@ class AppNavigation extends Component {
 	}
 
 	/**
-	 * Return the tab bar for forum view
-	 *
-	 * @return object
-	 */
-	/*_getHomeTabBar() {
-		return createMaterialTopTabNavigator(
-			{
-				All: {
-					screen: HomeScreen,
-					navigationOptions: {
-						tabBarLabel: Lang.get('home').toUpperCase(),
-					}
-				},
-				Followed: {
-					screen: BrowseCommunityScreen,
-					navigationOptions: {
-						tabBarLabel: Lang.get('browse').toUpperCase()
-					}
-				}
-			},
-			{
-				swipeEnabled: false,
-				tabBarPosition: 'bottom',
-				tabBarOptions: Object.assign({}, tabStyles, {
-					tabBarPosition: 'bottom'
-				})
-			}
-		);
-	}*/
-
-	/**
 	 * Return a URL for the user tab bar icon. Photo if it's a member, icon if it's a guest
 	 *
 	 * @return object|file resource
@@ -411,7 +379,7 @@ class AppNavigation extends Component {
 			);
 		} else {
 			return (
-				<TabBarIcon focused={focused} tintColor={tintColor} active={require("../../resources/login_active.png")} inactive={require("../../resources/login.png")} />
+				<NavigationTabIcon focused={focused} tintColor={tintColor} active={require("../../resources/login_active.png")} inactive={require("../../resources/login.png")} />
 			);
 		}
 	}

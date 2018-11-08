@@ -1,11 +1,11 @@
-import { USER_LOADED, GUEST_LOADED, SET_USER_STREAMS } from "../actions/user";
+import { USER_LOADED, GUEST_LOADED, SET_USER_STREAMS, UPDATE_NOTIFICATION_COUNT } from "../actions/user";
 
 const initialState = {
 	isGuest: true,
 	id: 0,
 	name: 'Guest',
 	photo: '',
-	notificationCount: 4,
+	notificationCount: 0,
 	group: {
 		canAccessSite: false,
 		canAccessOffline: false,
@@ -32,6 +32,11 @@ export default function user(state = initialState, { type, payload }) {
 			return {
 				...state,
 				streams: Object.values(payload)
+			}
+		case UPDATE_NOTIFICATION_COUNT:
+			return {
+				...state,
+				notificationCount: payload
 			}
 		default:
 			return { ...state };

@@ -21,3 +21,9 @@ export const setUserStreams = data => ({
 		...data
 	}
 });
+
+export const UPDATE_NOTIFICATION_COUNT = "UPDATE_NOTIFICATION_COUNT";
+export const updateNotificationCount = data => ({
+	type: UPDATE_NOTIFICATION_COUNT,
+	payload: data
+});

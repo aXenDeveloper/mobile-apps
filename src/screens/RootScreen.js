@@ -18,12 +18,14 @@ import RichTextContent from "../atoms/RichTextContent";
 import Lang from "../utils/Lang";
 import URL from "../utils/URL";
 import { refreshAuth } from "../redux/actions/auth";
-import { userLoaded, guestLoaded, setUserStreams } from "../redux/actions/user";
+import { userLoaded, guestLoaded, setUserStreams, updateNotificationCount } from "../redux/actions/user";
 import { setSiteSettings, setLoginHandlers } from "../redux/actions/site";
 import AppNavigation from "../navigation/AppNavigation";
 import ToFormData from "../utils/ToFormData";
 import LangFragment from "../LangFragment";
 import { styleVars } from "../styles";
+
+const NOTIFICATION_TIMEOUT = 30000;
 
 const BootQuery = gql`
 	query BootQuery {
@@ -32,6 +34,7 @@ const BootQuery = gql`
 				id
 				name
 				photo
+				notificationCount
 				group {
 					canAccessSite
 					canAccessOffline
@@ -68,6 +71,17 @@ const BootQuery = gql`
 	${LangFragment}
 `;
 
+const NotificationQuery = gql`
+	query NotificationQuery {
+		core {
+			me {
+				id
+				notificationCount
+			}
+		}
+	}
+`;
+
 class RootScreen extends Component {
 	constructor(props) {
 		super(props);
@@ -83,6 +97,8 @@ class RootScreen extends Component {
 			canAccess: false,
 			showOfflineBanner: false
 		};
+
+		this._notificationTimeout = null;
 
 		// In order for Apollo to use fragments with union types, as we do for generic core_Content
 		// queries, we need to pass it the schema definition in advance.
@@ -136,6 +152,10 @@ class RootScreen extends Component {
 	componentWillUnmount() {
 		if (this._refreshTimer) {
 			clearInterval(this._refreshTimer);
+		}
+
+		if (this._notificationTimeout) {
+			clearInterval(this._notificationTimeout);
 		}
 	}
 
@@ -195,6 +215,12 @@ class RootScreen extends Component {
 			this.runBootQuery();
 		}
 
+		// If we're no longer logged in, stop checking notifications
+		if ((!prevProps.user.isGuest && this.props.user.isGuest) || !this.props.auth.authenticated) {
+			clearInterval(this._notificationTimeout);
+		}
+
+		// If the site isn't online, but we can access the site, let the user know
 		if (!this.props.site.settings.site_online && this.props.user.group.canAccessOffline) {
 			if (!this._alerts.offline) {
 				this.showOfflineMessage();
@@ -224,6 +250,8 @@ class RootScreen extends Component {
 			// Send out our user info
 			if (this.props.auth.authenticated && data.core.me.group.groupType !== "GUEST") {
 				dispatch(userLoaded({ ...data.core.me }));
+				clearInterval(this._notificationTimeout);
+				this._notificationTimeout = setInterval(() => this.runNotificationQuery(), NOTIFICATION_TIMEOUT);
 			} else {
 				dispatch(guestLoaded({ ...data.core.me }));
 			}
@@ -259,6 +287,28 @@ class RootScreen extends Component {
 		} catch (err) {
 			console.log(err);
 			return this.showLoadError();
+		}
+	}
+
+	async runNotificationQuery() {
+		const { dispatch } = this.props;
+
+		try {
+			const { data } = await this._client.query({
+				query: NotificationQuery,
+				fetchPolicy: 'network-only'
+			});
+
+			console.log( data );
+
+			if( parseInt( data.core.me.notificationCount ) !== parseInt( this.props.user.notificationCount ) ){
+				dispatch(updateNotificationCount(data.core.me.notificationCount));
+			}
+		} catch (err) {
+			console.log(err);
+
+			// If this failed for some reason, stop checking from now on
+			clearInterval(this._notificationTimeout);
 		}
 	}
 
