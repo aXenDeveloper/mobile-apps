@@ -285,7 +285,7 @@ class RootScreen extends Component {
 				loading: false
 			});
 		} catch (err) {
-			console.log(err);
+			console.error(err);
 			return this.showLoadError();
 		}
 	}
@@ -299,13 +299,13 @@ class RootScreen extends Component {
 				fetchPolicy: 'network-only'
 			});
 
-			console.log( data );
+			console.log(`Ran notification update, got count ${data.core.me.notificationCount}`);
 
 			if( parseInt( data.core.me.notificationCount ) !== parseInt( this.props.user.notificationCount ) ){
 				dispatch(updateNotificationCount(data.core.me.notificationCount));
 			}
 		} catch (err) {
-			console.log(err);
+			console.error(`Error running notification update: ${err}`);
 
 			// If this failed for some reason, stop checking from now on
 			clearInterval(this._notificationTimeout);
