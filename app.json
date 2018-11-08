@@ -4,7 +4,7 @@
     "orientation": "portrait",
     "extra": {
 		"oauth_client_id": "e9a2ba72438fe656c678f41095a360ea",
-		"api_url": "http://192.168.1.33/ipsdev/graphql-api/",
+		"api_url": "http://192.168.180.228/ipsdev/graphql-api/",
 		"api_key": "NGVmNjdkZjA0OGExYTE1MzM5MjVmYmIxNWEyN2MwMjc=",
 		"refresh_token_advance": 300000,
 		"message_prefix": "__IPS__",

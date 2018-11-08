@@ -96,6 +96,11 @@ const LangFragment = gql`
 		incorrect_forum_password: phrase(key: "app_incorrect_forum_password")
 		no_post: phrase(key: "app_no_post")
 
+		no_more_notifications: phrase(key: "app_no_more_notifications")
+		notifications_unread: phrase(key: "app_notifications_unread")
+		notifications_read: phrase(key: "app_notifications_read")
+		no_notifications: phrase(key: "app_no_notifications")
+
 		switch_stream: phrase(key: "app_switch_stream")
 		past_hour: phrase(key: "app_past_hour")
 		yesterday: phrase(key: "app_yesterday")
