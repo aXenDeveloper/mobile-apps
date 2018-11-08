@@ -1,29 +1,15 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-export default class FollowButton extends Component {	
-	constructor(props) {
-		super(props);
-	}
+import HeaderButton from "./HeaderButton";
+import { styleVars } from '../styles';
 
-	render() {
-		let imageToUse = this.props.followed ? require('../../resources/bookmark_active.png') : require('../../resources/bookmark.png');
+const FollowButton = (props) => {
+	let imageToUse = props.followed ? require('../../resources/bookmark_active.png') : require('../../resources/bookmark.png');
 
-		return (
-			<TouchableOpacity style={[componentStyles.wrapper, this.props.style]} onPress={this.props.onPress || null}>
-				<Image source={imageToUse} style={[ componentStyles.icon, { width: this.props.size || 26, height: this.props.size || 26 } ]} />
-			</TouchableOpacity>
-		);
-	}
+	return (
+		<HeaderButton icon={imageToUse} onPress={props.onPress} style={props.style} size={props.size} />
+	);
 }
 
-const componentStyles = StyleSheet.create({
-	wrapper: {
-		marginRight: 12
-	},
-	icon: {
-		tintColor: '#fff',
-		width: 26,
-		height: 26
-	}
-});
+export default FollowButton;
