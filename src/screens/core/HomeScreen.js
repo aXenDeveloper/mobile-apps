@@ -214,7 +214,6 @@ class HomeScreen extends Component {
 							data={this.state.navConfig}
 							keyExtractor={item => item.key}
 							horizontal
-							style={styles.mrStandard}
 							showsHorizontalScrollIndicator={false}
 						/>
 					</View>
