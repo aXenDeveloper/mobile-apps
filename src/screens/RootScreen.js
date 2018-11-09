@@ -305,7 +305,7 @@ class RootScreen extends Component {
 				dispatch(updateNotificationCount(data.core.me.notificationCount));
 			}
 		} catch (err) {
-			console.error(`Error running notification update: ${err}`);
+			console.log(`Error running notification update: ${err}`);
 
 			// If this failed for some reason, stop checking from now on
 			clearInterval(this._notificationTimeout);
