@@ -39,12 +39,12 @@ class ForumItem extends Component {
 		if( this.props.loading ){
 			return (
 				<ContentRow>
-					<PlaceholderContainer height={60} style={[styles.mrWide, styles.mlWide, styles.mtStandard, styles.mbStandard]}>
+					<PlaceholderContainer height={60} style={[styles.mrWide, styles.mlWide, styles.mtWide, styles.mbWide]}>
 						<PlaceholderElement circle radius={20} left={0} top={styleVars.spacing.tight} />
 						<PlaceholderElement width={250} height={17} top={styleVars.spacing.tight} left={20 + styleVars.spacing.standard} right={20 + styleVars.spacing.veryWide} />
 						<PlaceholderElement width={100} height={13} top={25 + styleVars.spacing.tight} left={20 + styleVars.spacing.standard} />
-						<PlaceholderElement circle radius={40} right={0} top={0} />
-						<PlaceholderElement width={30} height={12} top={43} right={4} />
+						<PlaceholderElement circle radius={30} right={0} top={0} />
+						<PlaceholderElement width={30} height={12} top={33} right={4} />
 					</PlaceholderContainer>
 				</ContentRow>
 			);
@@ -62,15 +62,15 @@ class ForumItem extends Component {
 					<View style={componentStyles.iconAndInfo}>
 						<ForumIcon style={componentStyles.forumIcon} unread={this.props.data.unread} />
 						<View style={componentStyles.forumInfo}>
-							<Text style={componentStyles.forumTitle} numberOfLines={1}>
+							<Text style={[styles.itemTitle, styles.mbVeryTight, componentStyles.forumTitle]} numberOfLines={1}>
 								{this.props.data.title}
 							</Text>
-							<Text style={componentStyles.forumMeta}>
+							<Text style={[styles.lightText, styles.standardText]}>
 								{Lang.pluralize( Lang.get('posts'), this.props.data.posts)}
 							</Text>
 						</View>
 					</View>
-					<LastPostInfo style={componentStyles.lastPost} photo={this.props.data.lastPostPhoto} timestamp={this.props.data.lastPostDate} />
+					<LastPostInfo style={componentStyles.lastPost} photo={this.props.data.lastPostPhoto} photoSize={30} timestamp={this.props.data.lastPostDate} />
 				</ContentRow>
 			</Swipeable>
 		);
@@ -83,21 +83,12 @@ export default compose(
 
 const componentStyles = StyleSheet.create({
 	forumItem: {
-		paddingHorizontal: 16,
-		paddingVertical: 9,
+		paddingHorizontal: styleVars.spacing.wide,
+		paddingVertical: styleVars.spacing.wide,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignContent: 'stretch',
 		alignItems: 'center',
-		minHeight: 75
-	},
-	forumTitle: {
-		fontSize: 17,
-		color: '#000',
-		fontWeight: "600",
-		lineHeight: 18,
-		marginBottom: 3,
-		letterSpacing: -0.2
 	},
 	iconAndInfo: {
 		flexDirection: 'row',
@@ -107,9 +98,7 @@ const componentStyles = StyleSheet.create({
 	forumInfo: {
 		marginLeft: 9
 	},
-	forumMeta: {
-		fontSize: 15,
-		color: '#8F8F8F',
-		letterSpacing: -0.2
+	forumTitle: {
+		lineHeight: 18
 	}
 });

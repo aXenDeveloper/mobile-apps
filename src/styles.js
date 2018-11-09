@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
 	/* Typography */
 	itemTitle: {
 		fontSize: styleVars.fontSizes.large,
-		fontWeight: 'bold',
+		fontWeight: "600",
 		color: '#171717',
 		fontFamily: styleVars.fontFamily
 	},
