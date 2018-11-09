@@ -306,6 +306,7 @@ class NotificationsScreen extends Component {
 						onEndReached={this.onEndReached}
 						ListEmptyComponent={ListEmptyComponent}
 						ListFooterComponent={() => this.getFooterComponent()}
+						stickySectionHeadersEnabled={false}
 					/>
 				</View>
 			);
