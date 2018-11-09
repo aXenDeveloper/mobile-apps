@@ -46,7 +46,14 @@ class NotificationsScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
 		title: "Notifications",
 		headerRight: (
-			<HeaderButton icon="settings" onPress={!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.onPressSettings) ? navigation.state.params.onPressSettings : null} />
+			<HeaderButton
+				icon="settings"
+				onPress={
+					!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.onPressSettings)
+						? navigation.state.params.onPressSettings
+						: null
+				}
+			/>
 		)
 	});
 
@@ -72,7 +79,7 @@ class NotificationsScreen extends Component {
 	};
 
 	/**
-	 * Function that will call the MarkReadMutation mutation to mark all of the 
+	 * Function that will call the MarkReadMutation mutation to mark all of the
 	 * user's notifications as read. Called when this screen loads and any time
 	 * we fetch fresh data.
 	 *
@@ -252,7 +259,7 @@ class NotificationsScreen extends Component {
 	async onPress(item) {
 		// If the item is unread, mark it as read now, but don't wait for completion
 		// before navigating to content screen
-		if( item.readDate == null ){
+		if (item.readDate == null) {
 			try {
 				this.props.client.mutate({
 					mutation: MarkReadMutation,
@@ -285,7 +292,7 @@ class NotificationsScreen extends Component {
 		if (this.props.data.loading) {
 			return (
 				<PlaceholderRepeater repeat={7}>
-					<Text>Loading</Text>
+					<NotificationRow loading />
 				</PlaceholderRepeater>
 			);
 		} else if (this.props.data.error) {
