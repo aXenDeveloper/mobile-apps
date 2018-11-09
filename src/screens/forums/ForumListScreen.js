@@ -7,6 +7,7 @@ import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import { setForumPassword } from "../../redux/actions/forums";
+import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SectionHeader from "../../atoms/SectionHeader";
 import ForumItem from "../../ecosystems/ForumItem";
 import TextPrompt from "../../ecosystems/TextPrompt";
@@ -130,9 +131,14 @@ class ForumListScreen extends Component {
 	}
 
 	render() {
-		if (this.props.data.loading || this.props.data.error) {
-			console.log(this.props.data.error);
-			return <View repeat={7}>{this.props.data.error ? <Text>Error</Text> : <Text>Loading</Text>}</View>;
+		if (this.props.data.loading ) {
+			return (
+				<PlaceholderRepeater repeat={7}>
+					<ForumItem loading />
+				</PlaceholderRepeater>
+			);
+		} else if ( this.props.data.error ) {
+			return <Text>Error</Text>
 		} else {
 			const sectionData = this.props.data.forums.forums.map(category => {
 				return {

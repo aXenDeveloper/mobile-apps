@@ -6,9 +6,11 @@ import { connect } from "react-redux";
 import { withNavigation } from "react-navigation";
 
 import Lang from "../../utils/Lang";
+import ContentRow from "../../ecosystems/ContentRow";
+import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import ForumIcon from '../../atoms/ForumIcon';
 import LastPostInfo from '../../ecosystems/LastPostInfo';
-import styles from '../../styles';
+import styles, { styleVars } from '../../styles';
 
 class ForumItem extends Component {	
 	constructor(props) {
@@ -34,6 +36,20 @@ class ForumItem extends Component {
 	}
 
 	render() {
+		if( this.props.loading ){
+			return (
+				<ContentRow>
+					<PlaceholderContainer height={60} style={[styles.mrWide, styles.mlWide, styles.mtStandard, styles.mbStandard]}>
+						<PlaceholderElement circle radius={20} left={0} top={styleVars.spacing.tight} />
+						<PlaceholderElement width={250} height={17} top={styleVars.spacing.tight} left={20 + styleVars.spacing.standard} right={20 + styleVars.spacing.veryWide} />
+						<PlaceholderElement width={100} height={13} top={25 + styleVars.spacing.tight} left={20 + styleVars.spacing.standard} />
+						<PlaceholderElement circle radius={40} right={0} top={0} />
+						<PlaceholderElement width={30} height={12} top={43} right={4} />
+					</PlaceholderContainer>
+				</ContentRow>
+			);
+		}
+
 		const rightButtons = [ // @todo handle this event
 			<TouchableHighlight style={[styles.rightSwipeItem, styles.markSwipeItem]}>
 				<Text style={styles.swipeItemText}>Read</Text>
@@ -42,22 +58,20 @@ class ForumItem extends Component {
 
 		return (
 			<Swipeable rightButtons={rightButtons}>
-				<TouchableHighlight onPress={this.props.onPress || this.onPress}>
-					<View style={componentStyles.forumItem}>
-						<View style={componentStyles.iconAndInfo}>
-							<ForumIcon style={componentStyles.forumIcon} unread={this.props.data.unread} />
-							<View style={componentStyles.forumInfo}>
-								<Text style={componentStyles.forumTitle} numberOfLines={1}>
-									{this.props.data.title}
-								</Text>
-								<Text style={componentStyles.forumMeta}>
-									{Lang.pluralize( Lang.get('posts'), this.props.data.posts)}
-								</Text>
-							</View>
+				<ContentRow style={componentStyles.forumItem} onPress={this.props.onPress || this.onPress}>
+					<View style={componentStyles.iconAndInfo}>
+						<ForumIcon style={componentStyles.forumIcon} unread={this.props.data.unread} />
+						<View style={componentStyles.forumInfo}>
+							<Text style={componentStyles.forumTitle} numberOfLines={1}>
+								{this.props.data.title}
+							</Text>
+							<Text style={componentStyles.forumMeta}>
+								{Lang.pluralize( Lang.get('posts'), this.props.data.posts)}
+							</Text>
 						</View>
-						<LastPostInfo style={componentStyles.lastPost} photo={this.props.data.lastPostPhoto} timestamp={this.props.data.lastPostDate} />
 					</View>
-				</TouchableHighlight>
+					<LastPostInfo style={componentStyles.lastPost} photo={this.props.data.lastPostPhoto} timestamp={this.props.data.lastPostDate} />
+				</ContentRow>
 			</Swipeable>
 		);
 	}
@@ -69,15 +83,12 @@ export default compose(
 
 const componentStyles = StyleSheet.create({
 	forumItem: {
-		backgroundColor: '#fff',
 		paddingHorizontal: 16,
 		paddingVertical: 9,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignContent: 'stretch',
 		alignItems: 'center',
-		borderBottomWidth: 1,
-		borderBottomColor: '#F2F4F7',
 		minHeight: 75
 	},
 	forumTitle: {
