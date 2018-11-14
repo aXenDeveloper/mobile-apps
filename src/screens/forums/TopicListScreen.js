@@ -15,7 +15,7 @@ import ErrorBox from "../../atoms/ErrorBox";
 import Pager from "../../atoms/Pager";
 import PagerButton from "../../atoms/PagerButton";
 import SectionHeader from "../../atoms/SectionHeader";
-import ForumItem from "../../ecosystems/ForumItem";
+import { ForumItem, ForumItemFragment } from "../../ecosystems/ForumItem";
 import TopicRow from "../../ecosystems/TopicRow";
 import AddButton from "../../atoms/AddButton";
 import EndOfComments from "../../atoms/EndOfComments";
@@ -25,22 +25,7 @@ const TopicListQuery = gql`
 	query TopicListQuery($forum: ID!, $offset: Int, $limit: Int, $password: String) {
 		forums {
 			forum(id: $forum) {
-				id
-				name
-				topicCount
-				passwordProtected
-				passwordRequired
-				subforums {
-					id
-					name
-					topicCount
-					postCount
-					hasUnread
-					lastPostAuthor {
-						photo
-					}
-					lastPostDate
-				}
+				...ForumItemFragment
 				topics(offset: $offset, limit: $limit, password: $password) {
 					id
 					title
@@ -82,6 +67,7 @@ const TopicListQuery = gql`
 		}
 	}
 	${FollowModalFragment}
+	${ForumItemFragment}
 `;
 
 class TopicListScreen extends Component {

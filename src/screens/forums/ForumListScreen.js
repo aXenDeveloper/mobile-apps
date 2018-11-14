@@ -9,38 +9,18 @@ import Lang from "../../utils/Lang";
 import { setForumPassword } from "../../redux/actions/forums";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SectionHeader from "../../atoms/SectionHeader";
-import ForumItem from "../../ecosystems/ForumItem";
+import { ForumItem, ForumItemFragment } from "../../ecosystems/ForumItem";
 import TextPrompt from "../../ecosystems/TextPrompt";
 
 const ForumQuery = gql`
 	query ForumQuery {
 		forums {
 			forums {
-				id
-				name
-				topicCount
-				postCount
-				subforums {
-					id
-					name
-					topicCount
-					postCount
-					hasUnread
-					passwordProtected
-					passwordRequired
-					isRedirectForum
-					redirectHits
-					url {
-						full
-					}
-					lastPostAuthor {
-						photo
-					}
-					lastPostDate
-				}
+				...ForumItemFragment	
 			}
 		}
 	}
+	${ForumItemFragment}
 `;
 
 class ForumListScreen extends Component {
