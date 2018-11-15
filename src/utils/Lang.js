@@ -36,6 +36,8 @@ class Lang {
 				return this.words[key];
 			}
 			return _.template(this.words[key])(replacements);
+		} else {
+			return key + Object.values(replacements).map( (val) => `(${val})` ).join(' ');
 		}
 
 		return key;
@@ -54,6 +56,12 @@ class Lang {
 
 		if (!_.isArray(params)) {
 			params = [params];
+		}
+
+		// If there's no pluralization brackets in this word, then manually append a pattern
+		// As well as being a fallback, this will help in tests
+		if( word.indexOf('{') === -1 ){
+			word = word + params.map((val, idx) => `{!# [?:(${val})]}`).join(' ');
 		}
 
 		word = word.replace(/\{(!|\d+?)?#(.*?)\}/g, function(a, b, c, d) {
