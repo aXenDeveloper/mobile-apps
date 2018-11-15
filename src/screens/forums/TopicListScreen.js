@@ -247,15 +247,7 @@ class TopicListScreen extends Component {
 		return subforums.map(forum => ({
 			key: forum.id,
 			type: "forum",
-			data: {
-				id: forum.id,
-				unread: forum.hasUnread,
-				title: forum.name,
-				topics: parseInt(forum.topicCount),
-				posts: parseInt(forum.postCount) + parseInt(forum.topicCount),
-				lastPostPhoto: forum.lastPostAuthor ? forum.lastPostAuthor.photo : null,
-				lastPostDate: forum.lastPostDate
-			}
+			data: forum
 		}));
 	}
 

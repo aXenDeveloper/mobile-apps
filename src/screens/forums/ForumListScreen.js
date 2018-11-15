@@ -118,27 +118,14 @@ class ForumListScreen extends Component {
 				</PlaceholderRepeater>
 			);
 		} else if ( this.props.data.error ) {
-			return <Text>Error</Text>
+			return <Text>Error</Text> // @todo
 		} else {
 			const sectionData = this.props.data.forums.forums.map(category => {
 				return {
 					title: category.name,
 					data: category.subforums.map(forum => ({
 						key: forum.id,
-						data: {
-							id: forum.id,
-							unread: forum.hasUnread,
-							title: forum.name,
-							topics: parseInt(forum.topicCount),
-							posts: parseInt(forum.postCount) + parseInt(forum.topicCount),
-							lastPostPhoto: forum.lastPostAuthor ? forum.lastPostAuthor.photo : null,
-							lastPostDate: forum.lastPostDate,
-							passwordProtected: forum.passwordProtected,
-							passwordRequired: forum.passwordRequired,
-							isRedirectForum: forum.isRedirectForum,
-							redirectHits: forum.redirectHits,
-							url: forum.url
-						}
+						data: forum
 					}))
 				};
 			});

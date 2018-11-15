@@ -30,6 +30,8 @@ class ForumItem extends Component {
 		super(props);
 		this._swipeable = null;
 		this._markReadTimeout = null;
+		this.onPress = this.onPress.bind(this);
+		this.markForumRead = this.markForumRead.bind(this);
 	}
 
 	componentWillUnmount() {
@@ -42,21 +44,20 @@ class ForumItem extends Component {
 	 * @param 	object 	section 	The section we're rendering
 	 * @return 	Component|null
 	 */
-	onPress = () => {
+	onPress() {
 		this.props.navigation.navigate({
 			routeName: "TopicList",
 			params: {
 				id: this.props.data.id,
-				title: this.props.data.title,
-				subtitle: Lang.pluralize(Lang.get("topics"), this.props.data.topics)
+				title: this.props.data.name,
+				subtitle: Lang.pluralize(Lang.get("topics"), this.props.data.topicCount)
 			},
 			key: `forum_${this.props.data.id}`
 		});
 	}
 
-	markForumRead = () => {
+	markForumRead() {
 		this._swipeable.recenter();
-
 		this._markReadTimeout = setTimeout( async () => {
 			try {
 				await this.props.client.mutate({
@@ -102,27 +103,35 @@ class ForumItem extends Component {
 			);
 		}
 
-		const rightButtons = [ // @todo handle this event
+		const rightButtons = [
 			<TouchableHighlight style={[styles.rightSwipeItem, styles.markSwipeItem]} onPress={this.markForumRead}>
 				<Text style={styles.swipeItemText}>Mark Read</Text>
 			</TouchableHighlight>
 		];
 
+		const postCount = parseInt(this.props.data.postCount) + parseInt(this.props.data.topicCount);
+		const lastPostInfo = {
+			photo: this.props.data.lastPostAuthor ? this.props.data.lastPostAuthor.photo : null,
+			date: this.props.data.lastPostDate
+		};
+
 		return (
 			<Swipeable rightButtons={rightButtons} onRef={(ref) => this._swipeable = ref}>
 				<ContentRow style={componentStyles.forumItem} onPress={this.props.onPress || this.onPress}>
 					<View style={componentStyles.iconAndInfo}>
-						<ForumIcon style={componentStyles.forumIcon} unread={this.props.data.unread} />
+						<ForumIcon style={componentStyles.forumIcon} unread={this.props.data.hasUnread} />
 						<View style={componentStyles.forumInfo}>
 							<Text style={[styles.itemTitle, componentStyles.forumTitle]} numberOfLines={1}>
-								{this.props.data.title}
+								{this.props.data.name}
 							</Text>
-							<Text style={[styles.lightText, styles.standardText]}>
-								{Lang.pluralize( Lang.get('posts'), this.props.data.posts)}
+							<Text testId='postCount' style={[styles.lightText, styles.standardText]}>
+								{Lang.pluralize( Lang.get('posts'), postCount)}
 							</Text>
 						</View>
 					</View>
-					<LastPostInfo style={componentStyles.lastPost} photo={this.props.data.lastPostPhoto} photoSize={30} timestamp={this.props.data.lastPostDate} />
+					{!this.props.data.isRedirectForum && (
+						<LastPostInfo style={componentStyles.lastPost} photo={lastPostInfo.photo} photoSize={30} timestamp={lastPostInfo.date} />
+					)}
 				</ContentRow>
 			</Swipeable>
 		);
@@ -133,6 +142,8 @@ export default compose(
 	withNavigation,
 	withApollo
 )(ForumItem);
+
+export { ForumItem as TestForumItem }; // For test runner only
 
 const componentStyles = StyleSheet.create({
 	forumItem: {
