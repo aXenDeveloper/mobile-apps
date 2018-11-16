@@ -40,6 +40,7 @@ class Post extends Component {
 		this.state = {
 			reactionModalVisible: false
 		};
+		this.onPressReaction = this.onPressReaction.bind(this);
 	}
 
 	/**
@@ -110,10 +111,9 @@ class Post extends Component {
 	 * @param 	number 		reactionID 		ID of tapped reaction
 	 * @return 	void
 	 */
-	onPressReaction = (reactionID) => {
-		if (this.props.data.reputation.canViewReps) {
-			console.log("press reaction"); // @todo show follow list
-		}
+	onPressReaction(reactionID) {
+		// @todo show follow list
+		//console.log("press reaction"); 
 	}
 
 	/**
@@ -152,6 +152,7 @@ class Post extends Component {
 		if (this.props.data.reputation.hasReacted) {
 			return (
 				<PostControl
+					testId='repButton'
 					image={this.props.data.reputation.givenReaction.image}
 					label={this.props.data.reputation.givenReaction.name}
 					selected
@@ -160,7 +161,7 @@ class Post extends Component {
 				/>
 			);
 		} else {
-			return <PostControl label={this.props.data.reputation.defaultReaction.name} onPress={this.onPressReputation} onLongPress={this.onLongPressReputation} />;
+			return <PostControl testId='repButton' label={this.props.data.reputation.defaultReaction.name} onPress={this.onPressReputation} onLongPress={this.onLongPressReputation} />;
 		}
 	}
 
@@ -361,7 +362,7 @@ class Post extends Component {
 						<RichTextContent>{this.props.data.content}</RichTextContent>
 						<Animatable.View ref={(r) => this._reactionWrap = r}>
 							{this.props.data.reputation.reactions.length && (
-								<View style={[ styles.postReactionList ]}>
+								<View style={[ styles.postReactionList ]} testId='reactionList'>
 									{this.props.data.reputation.reactions.map(reaction => {
 										return (
 											<Reaction
@@ -370,7 +371,7 @@ class Post extends Component {
 												id={reaction.id}
 												image={reaction.image}
 												count={reaction.count}
-												onPress={this.onPressReaction}
+												onPress={this.props.data.reputation.canViewReps ? this.onPressReaction : null}
 											/>
 										);
 									})}
@@ -380,7 +381,7 @@ class Post extends Component {
 					</View>
 					{(repButton || this.props.canReply) &&
 						<PostControls>
-							{this.props.canReply && <PostControl label={Lang.get('quote')} onPress={this.onPressReply} />}
+							{this.props.canReply && <PostControl testId='replyButton' label={Lang.get('quote')} onPress={this.onPressReply} />}
 							{repButton}
 						</PostControls>}
 					<ActionSheet
@@ -406,6 +407,8 @@ export default compose(
 	graphql(PostReactionMutation),
 	withNavigation
 )(Post);
+
+export { Post as TestPost }; // For test runner only
 
 const styles = StyleSheet.create({
 	postWrapper: {

@@ -9,7 +9,7 @@ export default class PostControl extends Component {
 	render() {
 		return (
 			<TouchableOpacity style={styles.control} onLongPress={this.props.onLongPress || null} onPress={this.props.onPress || null}>
-				<View style={[ styles.container, this.props.selected ? styles.selected : null ]}>
+				<View testId={this.props.testId} style={[ styles.container, this.props.selected ? styles.selected : null ]}>
 					{this.props.image && <Image source={{ uri: this.props.image }} style={styles.image} />}
 					<Text style={[ styles.text, this.props.selected ? styles.selectedText : null, this.props.textStyle ]}>{this.props.label}</Text>
 				</View>
