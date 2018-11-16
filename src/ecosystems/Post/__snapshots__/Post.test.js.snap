@@ -26,6 +26,7 @@ exports[`Post component renders with data 1`] = `
           "flexDirection": "row",
         }
       }
+      testId="postAuthor"
     >
       <TouchableOpacity
         activeOpacity={0.2}

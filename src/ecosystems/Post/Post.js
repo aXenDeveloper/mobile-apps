@@ -41,6 +41,7 @@ class Post extends Component {
 			reactionModalVisible: false
 		};
 		this.onPressReaction = this.onPressReaction.bind(this);
+		this.onPressProfile = this.onPressProfile.bind(this);
 	}
 
 	/**
@@ -305,7 +306,7 @@ class Post extends Component {
 	 *
 	 * @return 	void
 	 */
-	onPressProfile = () => {
+	onPressProfile() {
 		this.props.navigation.navigate("Profile", {
 			id: this.props.data.author.id,
 			name: this.props.data.author.name,
@@ -344,7 +345,7 @@ class Post extends Component {
 		return (
 			<TouchableHighlight style={styles.postWrapper}>
 				<ShadowedArea style={styles.post}>
-					<View style={styles.postHeader}>
+					<View style={styles.postHeader} testId='postAuthor'>
 						<TouchableOpacity style={styles.postInfo} onPress={this.props.data.author.id ? this.onPressProfile : null}>
 							<View style={styles.postInfo}>
 								<UserPhoto url={this.props.data.author.photo} online={this.props.data.author.isOnline || null} size={36} />

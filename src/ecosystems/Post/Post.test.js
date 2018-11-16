@@ -72,8 +72,6 @@ const POST_DATA = {
 };
 
 describe("Post component", () => {
-	const navigation = { navigate: jest.fn() };
-
 	it("renders with data", () => {
 		const wrapper = shallow(<TestPost data={POST_DATA} />);
 		expect(wrapper).toMatchSnapshot();
@@ -132,7 +130,6 @@ describe("Post component", () => {
 
 	it("shows who gave a reaction (when permission exists)", () => {
 		const spy = jest.spyOn(TestPost.prototype, 'onPressReaction');
-
 		const wrapper1 = shallow(<TestPost data={POST_DATA} />);
 		const reaction1 = wrapper1.find('Reaction').at(0);
 		reaction1.props().onPress();
@@ -149,5 +146,29 @@ describe("Post component", () => {
 		const wrapper2 = shallow(<TestPost data={noViewRepData} />);
 		const reaction2 = wrapper2.find('Reaction').at(0);
 		expect(reaction2.prop('onPress')).toBeNull();
+	});
+
+	it("navigates to Profile screen only when not a guest post", () => {
+		const navigation = { navigate: jest.fn() };
+		const wrapper1 = shallow(<TestPost data={POST_DATA} navigation={navigation} />);
+		const postAuthor1 = wrapper1.findWhere(n => n.prop('testId') === 'postAuthor');
+		postAuthor1.find('TouchableOpacity').first().props().onPress();
+		const navParams = navigation.navigate.mock.calls[0];
+
+		expect(navParams[0]).toBe('Profile');
+		expect(navParams[1]).toHaveProperty('id', 2);
+
+		const guestPost = {
+			...POST_DATA,
+			author: {
+				...POST_DATA.author,
+				id: 0
+			}
+		};
+
+		const wrapper2 = shallow(<TestPost data={guestPost} navigation={navigation} />);
+		const postAuthor2 = wrapper2.findWhere(n => n.prop('testId') === 'postAuthor');
+
+		expect(postAuthor2.find('TouchableOpacity').first().prop('onPress')).toBeNull();
 	});
 });
