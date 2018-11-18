@@ -54,6 +54,7 @@ const LangFragment = gql`
 		error_following: phrase(key: "app_error_following")
 		error_unfollowing: phrase(key: "app_error_unfollowing")
 		ok: phrase(key: "app_ok")
+		cant_show_reactions: phrase(key: "app_cant_show_reactions")
 
 		followed_member: phrase(key: "app_followed_member")
 		unfollowed_member: phrase(key: "app_unfollowed_member")

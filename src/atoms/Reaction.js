@@ -12,7 +12,11 @@ export default class Reaction extends Component {
 	 * @return 	void
 	 */
 	onPress = () => {
-		this.props.onPress(this.props.id);
+		this.props.onPress({
+			id: this.props.id, 
+			count: this.props.count, 
+			image: this.props.image
+		});
 	}
 
 	render() {

@@ -168,6 +168,11 @@ const styles = StyleSheet.create({
 		backgroundColor: '#f3f3f3',
 		borderRadius: 5
 	},
+	modalAlignBottom: {
+		justifyContent: "flex-end",
+		margin: 0,
+		padding: 0
+	},
 	modalInner: {
 		backgroundColor: "#fff",
 		borderRadius: 6,
@@ -203,7 +208,7 @@ const styles = StyleSheet.create({
 		width: 20,
 		height: 20,
 		position: 'absolute',
-		top: 15,
+		top: -20,
 		right: styleVars.spacing.standard,
 		tintColor: styleVars.lightText
 	},

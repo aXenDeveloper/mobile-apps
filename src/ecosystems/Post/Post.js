@@ -10,6 +10,7 @@ import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
+import { WhoReactedModal, WhoReactedFragment } from "../../ecosystems/Reaction";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import UserPhoto from "../../atoms/UserPhoto";
 import PostControls from "../../atoms/PostControls";
@@ -33,6 +34,21 @@ const PostReactionMutation = gql`
 	${PostFragment}
 `;
 
+const WhoReactedQuery = gql`
+	query WhoReactedQuery($id: ID!, $reactionID: Int) {
+		app: forums {
+			type: post(id: $id) {
+				reputation {
+					whoReacted(id: $reactionID) {
+						...WhoReactedFragment
+					}
+				}
+			}
+		}
+	}
+	${WhoReactedFragment}
+`;
+
 class Post extends Component {
 	constructor(props) {
 		super(props);
@@ -42,6 +58,7 @@ class Post extends Component {
 		};
 		this.onPressReaction = this.onPressReaction.bind(this);
 		this.onPressProfile = this.onPressProfile.bind(this);
+		this.hideWhoReactedModal = this.hideWhoReactedModal.bind(this);
 	}
 
 	/**
@@ -112,9 +129,26 @@ class Post extends Component {
 	 * @param 	number 		reactionID 		ID of tapped reaction
 	 * @return 	void
 	 */
-	onPressReaction(reactionID) {
+	onPressReaction(reaction) {
 		// @todo show follow list
 		//console.log("press reaction"); 
+		this.setState({
+			whoReactedModalVisible: true,
+			whoReactedReaction: reaction.id,
+			whoReactedCount: reaction.count || 0,
+			whoReactedImage: reaction.image
+		});
+	}
+
+	/**
+	 * Hide the Who Reacted modal
+	 *
+	 * @return 	void
+	 */
+	hideWhoReactedModal() {
+		this.setState({
+			whoReactedModalVisible: false
+		});
 	}
 
 	/**
@@ -397,6 +431,17 @@ class Post extends Component {
 						closeModal={this.hideReactionModal}
 						reactions={this.props.data.reputation.availableReactions}
 						onReactionPress={this.onReactionPress}
+					/>
+					<WhoReactedModal
+						visible={this.state.whoReactedModalVisible}
+						close={this.hideWhoReactedModal}
+						expectedCount={this.state.whoReactedCount}
+						reactionImage={this.state.whoReactedImage}
+						query={WhoReactedQuery}
+						variables={{
+							id: this.props.data.id,
+							reactionID: parseInt(this.state.whoReactedReaction)
+						}}
 					/>
 				</ShadowedArea>
 			</TouchableHighlight>
