@@ -11,7 +11,7 @@ export default class ErrorBox extends Component {
 
 	render() {
 		return (
-			<View style={[componentStyles.wrapper, this.props.style]}>
+			<View style={[componentStyles.wrapper, this.props.transparent ? componentStyles.transparent : null, this.props.style]}>
 				{this.props.showIcon !== false && <Image source={require("../../resources/error.png")} style={componentStyles.icon} />}
 				<Text style={componentStyles.message}>{this.props.message ? this.props.message : "Sorry, there was a problem loading this"}</Text>
 				{this.props.refresh && <TouchableOpacity onPress={this.props.refresh} style={componentStyles.refresh}><Text style={componentStyles.refreshText}>Try Again</Text></TouchableOpacity>}
@@ -28,6 +28,9 @@ const componentStyles = StyleSheet.create({
 		margin: styleVars.spacing.wide,
 		display: 'flex',
 		alignItems: 'center'
+	},
+	transparent: {
+		backgroundColor: 'transparent'
 	},
 	icon: {
 		width: 30,
