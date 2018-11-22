@@ -156,6 +156,39 @@ const styles = StyleSheet.create({
 		marginBottom: 5
 	},
 
+	/* Flex styles */
+	flexRow: {
+		display: 'flex',
+		flexDirection: 'row',
+	},
+	flexColumn: {
+		display: 'flex',
+	},
+	flexAlignCenter: {
+		alignItems: 'center'
+	},
+	flexJustifyStart: {
+		justifyContent: 'flex-start'
+	},
+	flexJustifyBetween: {
+		justifyContent: 'space-between'
+	},
+	flexJustifyAround: {
+		justifyContent: 'space-around'
+	},
+	flexGrow: {
+		flexGrow: 1
+	},
+	flexBasisZero: {
+		flexBasis: 0
+	},
+	flexShrinkZero: {
+		flexShrink: 0
+	},
+	flex: {
+		flex: 1
+	},
+
 	/* Rows */
 	row: {
 		backgroundColor: '#fff',
