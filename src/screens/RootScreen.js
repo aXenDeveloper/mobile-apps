@@ -24,6 +24,7 @@ import AppNavigation from "../navigation/AppNavigation";
 import ToFormData from "../utils/ToFormData";
 import LangFragment from "../LangFragment";
 import { styleVars } from "../styles";
+import icons from "../icons";
 
 const NOTIFICATION_TIMEOUT = 30000;
 
