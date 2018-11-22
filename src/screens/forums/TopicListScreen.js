@@ -57,14 +57,6 @@ const TopicListQuery = gql`
 				}
 			}
 		}
-		core {
-			settings {
-				tags_min
-				tags_len_min
-				tags_max
-				tags_len_max
-			}
-		}
 	}
 	${FollowModalFragment}
 	${ForumItemFragment}
@@ -357,16 +349,11 @@ class TopicListScreen extends Component {
 	 */
 	createTopic = () => {
 		const forumData = this.props.data.forums.forum;
-		const settingsData = this.props.data.core.settings;
 
 		this.props.navigation.navigate("CreateTopic", {
 			forumID: this.props.navigation.state.params.id,
 			tagsEnabled: forumData.create.tags.enabled,
-			definedTags: forumData.create.tags.definedTags,
-			tags_min: settingsData.tags_min,
-			tags_len_min: settingsData.tags_len_min,
-			tags_max: settingsData.tags_max,
-			tags_len_max: settingsData.tags_len_max
+			definedTags: forumData.create.tags.definedTags
 		});
 	};
 
@@ -386,7 +373,6 @@ class TopicListScreen extends Component {
 			const forumData = this.props.data.forums.forum;
 			const subforums = forumData.subforums;
 			const topicData = forumData.topics.map(topic => this.buildTopicData(topic, forumData));
-			const settingsData = this.props.data.core.settings;
 			const forumSections = [];
 			const ListEmptyComponent = <ErrorBox message={Lang.get("no_topics")} showIcon={false} />;
 

@@ -50,6 +50,12 @@ const BootQuery = gql`
 				allow_reg
 				allow_reg_target
 				disable_anonymous
+				tags_open_system
+				tags_min
+				tags_len_min
+				tags_max
+				tags_len_max
+				tags_min_req
 			}
 			loginHandlers {
 				id
