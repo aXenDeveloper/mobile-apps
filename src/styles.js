@@ -8,6 +8,7 @@ export const styleVars = {
 	lightText: '#657686',
 	veryLightText: '#9ba3ab',
 	reverseText: '#fff',
+	activeText: '#3370AA',
 	appBackground: '#e6e8eb',
 	tabActive: '#37454B',
 	tabInactive: '#6e797e',
@@ -72,7 +73,12 @@ export const styleVars = {
 		}
 	},
 	badgeBackground: '#ff3b2f',
-	badgeText: '#fff'
+	badgeText: '#fff',
+	greys: {
+		light: '#F2F4F7',
+		medium: '#f5f5f5',
+		darker: '#e0e0e0'
+	}
 };
 
 /* REUSABLE STYLE CLASSES */
@@ -216,16 +222,33 @@ const styles = StyleSheet.create({
 	},
 	modalHeader: {
 		paddingVertical: styleVars.spacing.wide,
-		backgroundColor: '#f5f5f5',
+		backgroundColor: styleVars.greys.medium,
 		borderTopLeftRadius: 6,
 		borderTopRightRadius: 6,
+		borderBottomWidth: 1,
+		borderBottomColor: styleVars.greys.darker
+	},
+	modalHeaderBar: {
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		marginHorizontal: styleVars.spacing.wide
+	},
+	modalHeaderLink: {
+		fontSize: styleVars.fontSizes.large,
+		color: styleVars.activeText
+	},
+	modalHeaderLinkDisabled: {
+		color: styleVars.lightText,
+		opacity: 0.5
 	},
 	modalTitle: {
 		textAlign: 'center',
 		fontWeight: '500',
 		color: '#000',
 		fontSize: styleVars.fontSizes.large,
-		marginHorizontal: 40
+		marginHorizontal: styleVars.spacing.wide
 	},
 	modalHandle: {
 		width: 40,
