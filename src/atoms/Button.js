@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Image, TouchableOpacity, Text, ViewPropTypes } from "react-native";
 import PropTypes from "prop-types";
+import { transparentize } from "polished";
 
 import styles, { styleVars } from "../styles";
 
@@ -17,11 +18,13 @@ export default class Button extends Component {
 		const rounded = this.props.rounded ? componentStyles.rounded : null;
 		const imageType = buttonType + "Image";
 		const colorStyle = this.props.color ? { backgroundColor: this.props.color } : null;
+		const disabledStyle = this.props.disabled ? { opacity: 0.2 } : null;
 
 		return (
 			<TouchableOpacity
-				style={[componentStyles.button, componentStyles[buttonType], componentStyles[this.props.size], rounded, colorStyle, this.props.style]}
-				onPress={this.props.onPress}
+				style={[componentStyles.button, componentStyles[buttonType], componentStyles[this.props.size], rounded, colorStyle, disabledStyle, this.props.style]}
+				onPress={!this.props.disabled ? this.props.onPress : null}
+				disabled={this.props.disabled}
 			>
 				{this.props.icon &&	<Image style={[componentStyles.icon, componentStyles[imageType]]} resizeMode='stretch' source={this.props.icon} />}
 				<View style={componentStyles.textWrapper}>
@@ -42,7 +45,7 @@ const componentStyles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
-		borderRadius: 5
+		borderRadius: 3
 	},
 	rounded: {
 		borderRadius: 50
