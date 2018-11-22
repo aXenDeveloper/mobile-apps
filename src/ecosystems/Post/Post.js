@@ -4,7 +4,7 @@ import Modal from "react-native-modal";
 import ActionSheet from "react-native-actionsheet";
 import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
-import * as Animatable from 'react-native-animatable';
+import * as Animatable from "react-native-animatable";
 import { withNavigation } from "react-navigation";
 import _ from "underscore";
 
@@ -22,6 +22,7 @@ import relativeTime from "../../utils/RelativeTime";
 import getErrorMessage from "../../utils/getErrorMessage";
 import PostFragment from "./PostFragment";
 import { styleVars } from "../../styles";
+import icons from "../../icons";
 
 const PostReactionMutation = gql`
 	mutation PostReactionMutation($postID: ID!, $reactionID: Int, $removeReaction: Boolean) {
@@ -52,7 +53,7 @@ const WhoReactedQuery = gql`
 class Post extends Component {
 	constructor(props) {
 		super(props);
-		this._actionSheetOptions = [Lang.get('cancel'), Lang.get('share'), Lang.get('report')];
+		this._actionSheetOptions = [Lang.get("cancel"), Lang.get("share"), Lang.get("report")];
 		this.state = {
 			reactionModalVisible: false
 		};
@@ -65,7 +66,7 @@ class Post extends Component {
 	 * GraphQL error types
 	 */
 	static errors = {
-		NO_POST: Lang.get('no_post')
+		NO_POST: Lang.get("no_post")
 	};
 
 	//====================================================================
@@ -131,7 +132,7 @@ class Post extends Component {
 	 */
 	onPressReaction(reaction) {
 		// @todo show follow list
-		//console.log("press reaction"); 
+		//console.log("press reaction");
 		this.setState({
 			whoReactedModalVisible: true,
 			whoReactedReaction: reaction.id,
@@ -172,7 +173,7 @@ class Post extends Component {
 		this.setState({
 			reactionModalVisible: false
 		});
-	}
+	};
 
 	/**
 	 * Render the PostControl for the reaction button
@@ -187,7 +188,7 @@ class Post extends Component {
 		if (this.props.data.reputation.hasReacted) {
 			return (
 				<PostControl
-					testId='repButton'
+					testId="repButton"
 					image={this.props.data.reputation.givenReaction.image}
 					label={this.props.data.reputation.givenReaction.name}
 					selected
@@ -196,7 +197,15 @@ class Post extends Component {
 				/>
 			);
 		} else {
-			return <PostControl testId='repButton' label={this.props.data.reputation.defaultReaction.name} onPress={this.onPressReputation} onLongPress={this.onLongPressReputation} />;
+			return (
+				<PostControl
+					testId="repButton"
+					image={icons.HEART}
+					label={this.props.data.reputation.defaultReaction.name}
+					onPress={this.onPressReputation}
+					onLongPress={this.onLongPressReputation}
+				/>
+			);
 		}
 	}
 
@@ -212,7 +221,7 @@ class Post extends Component {
 		}
 
 		return this.showReactionModal();
-	}
+	};
 
 	/**
 	 * Handle regular press on reputation. Apply our default rep if not already reacted,
@@ -221,12 +230,12 @@ class Post extends Component {
 	 * @return 	void
 	 */
 	onPressReputation = () => {
-		if( this.props.data.reputation.hasReacted ){
+		if (this.props.data.reputation.hasReacted) {
 			this.removeReaction();
 		} else {
-			this.onReactionPress( this.props.data.reputation.defaultReaction.id );
+			this.onReactionPress(this.props.data.reputation.defaultReaction.id);
 		}
-	}
+	};
 
 	/**
 	 * A callback method for removing a reaction from the post
@@ -260,12 +269,7 @@ class Post extends Component {
 			});
 		} catch (err) {
 			const errorMessage = getErrorMessage(err, Post.errors);
-			Alert.alert(
-				Lang.get('error'), 
-				Lang.get('error_remove_reaction'), 
-				[{ text: Lang.get('ok') }], 
-				{ cancelable: false }
-			);
+			Alert.alert(Lang.get("error"), Lang.get("error_remove_reaction"), [{ text: Lang.get("ok") }], { cancelable: false });
 		}
 	}
 
@@ -276,7 +280,7 @@ class Post extends Component {
 	 * @param 	number 		reaction 		ID of selected reaction
 	 * @return 	void
 	 */
-	onReactionPress = async (reaction) => {
+	onReactionPress = async reaction => {
 		// Get the reaction object from available reactions
 		const givenReaction = _.find(this.props.data.reputation.availableReactions, function(type) {
 			return type.id === reaction;
@@ -313,14 +317,9 @@ class Post extends Component {
 		} catch (err) {
 			// @todo abstract/improve errors
 			const errorMessage = getErrorMessage(err, Post.errors);
-			Alert.alert(
-				Lang.get('error'), 
-				Lang.get('error_reacting'),
-				[{ text: Lang.get('ok') }], 
-				{ cancelable: false }
-			);
+			Alert.alert(Lang.get("error"), Lang.get("error_reacting"), [{ text: Lang.get("ok") }], { cancelable: false });
 		}
-	}
+	};
 
 	/**
 	 * On update, check whether our reaction count has changed. If so, animate the reaction wrap in
@@ -328,8 +327,8 @@ class Post extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps) {
-		if( !this.props.loading ){
-			if( prevProps.data.reputation.reactions.length == 0 && this.props.data.reputation.reactions.length !== 0 ){
+		if (!this.props.loading) {
+			if (prevProps.data.reputation.reactions.length == 0 && this.props.data.reputation.reactions.length !== 0) {
 				this._reactionWrap.fadeInRight(200);
 			}
 		}
@@ -358,7 +357,7 @@ class Post extends Component {
 			topicID: this.props.topic.id,
 			quotedPost: this.props.data
 		});
-	}
+	};
 
 	/**
 	 * Handler for tapping ... in a post for more options
@@ -367,7 +366,7 @@ class Post extends Component {
 	 */
 	onPressPostDots = () => {
 		this._actionSheet.show();
-	}
+	};
 
 	render() {
 		if (this.props.loading) {
@@ -379,7 +378,7 @@ class Post extends Component {
 		return (
 			<TouchableHighlight style={styles.postWrapper}>
 				<ShadowedArea style={styles.post}>
-					<View style={styles.postHeader} testId='postAuthor'>
+					<View style={styles.postHeader} testId="postAuthor">
 						<TouchableOpacity style={styles.postInfo} onPress={this.props.data.author.id ? this.onPressProfile : null}>
 							<View style={styles.postInfo}>
 								<UserPhoto url={this.props.data.author.photo} online={this.props.data.author.isOnline || null} size={36} />
@@ -395,9 +394,9 @@ class Post extends Component {
 					</View>
 					<View style={styles.postContentContainer}>
 						<RichTextContent>{this.props.data.content}</RichTextContent>
-						<Animatable.View ref={(r) => this._reactionWrap = r}>
+						<Animatable.View ref={r => (this._reactionWrap = r)}>
 							{this.props.data.reputation.reactions.length && (
-								<View style={[ styles.postReactionList ]} testId='reactionList'>
+								<View style={[styles.postReactionList]} testId="reactionList">
 									{this.props.data.reputation.reactions.map(reaction => {
 										return (
 											<Reaction
@@ -414,14 +413,15 @@ class Post extends Component {
 							)}
 						</Animatable.View>
 					</View>
-					{(repButton || this.props.canReply) &&
+					{(repButton || this.props.canReply) && (
 						<PostControls>
-							{this.props.canReply && <PostControl testId='replyButton' label={Lang.get('quote')} onPress={this.onPressReply} />}
+							{this.props.canReply && <PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />}
 							{repButton}
-						</PostControls>}
+						</PostControls>
+					)}
 					<ActionSheet
 						ref={o => (this._actionSheet = o)}
-						title={Lang.get('post_options')}
+						title={Lang.get("post_options")}
 						options={this.actionSheetOptions()}
 						cancelButtonIndex={this.actionSheetCancelIndex()}
 						onPress={this.actionSheetPress}
@@ -449,10 +449,7 @@ class Post extends Component {
 	}
 }
 
-export default compose(
-	graphql(PostReactionMutation),
-	withNavigation
-)(Post);
+export default compose(graphql(PostReactionMutation), withNavigation)(Post);
 
 export { Post as TestPost }; // For test runner only
 
@@ -505,7 +502,7 @@ const styles = StyleSheet.create({
 		justifyContent: "flex-end",
 		flexWrap: "wrap",
 		flexDirection: "row",
-		marginTop: 15,
+		marginTop: 15
 	},
 	reactionItem: {
 		marginLeft: 10

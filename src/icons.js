@@ -6,7 +6,9 @@ const icons = {
 	SEARCH: require("../resources/search.png"),
 	TRASH: require("../resources/trash.png"),
 	CROSS: require("../resources/close.png"),
-	PENCIL: require("../resources/pencil.png")
+	PENCIL: require("../resources/pencil.png"),
+	QUOTE: require('../resources/comment_quote.png'),
+	HEART: require('../resources/comment_like.png')
 };
 
 export default icons;
