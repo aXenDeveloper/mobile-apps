@@ -1,28 +1,25 @@
-import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import React, { Component } from "react";
+import { Text, View, StyleSheet } from "react-native";
 
-export default class Tag extends Component {	
-	constructor(props) {
-		super(props);
-	}
+import styles, { styleVars } from "../styles";
 
-	render() {
-		return (
-			<Text style={styles.tag}>{this.props.children}</Text>
-		);
-	}
-}
+const Tag = props => (
+	<View style={[componentStyles.tagWrapper, styles.pvVeryTight, styles.phVeryWide, styles.mvVeryTight, styles.mrStandard]}>
+		<Text style={[componentStyles.tag, styles.smallText, props.style]}>
+			{props.children}
+		</Text>
+	</View>
+);
 
-const styles = StyleSheet.create({
-	tag: {
-		color: '#2080A7',
-		fontSize: 13,
-		borderColor: '#2080A7',
+export default Tag;
+
+const componentStyles = StyleSheet.create({
+	tagWrapper: {
+		borderColor: styleVars.activeText,
 		borderWidth: 1,
 		borderRadius: 14,
-		paddingVertical: 4,
-		paddingHorizontal: 16,
-		marginRight: 9,
-		marginBottom: 4
+	},
+	tag: {
+		color: styleVars.activeText,
 	}
 });
