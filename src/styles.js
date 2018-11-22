@@ -322,81 +322,103 @@ const styles = StyleSheet.create({
 	},
 
 	/* Spacing styles */
-	mbVeryTight: {
-		marginBottom: styleVars.spacing.veryTight
-	},
-	mbTight: {
-		marginBottom: styleVars.spacing.tight
-	},
-	mbStandard: {
-		marginBottom: styleVars.spacing.standard
-	},
-	mbWide: {
-		marginBottom: styleVars.spacing.wide
-	},
-	mbVeryWide: {
-		marginBottom: styleVars.spacing.veryWide
-	},
-	mbExtraWide: {
-		marginBottom: styleVars.spacing.extraWide
-	},
+	mVeryTight: { margin: styleVars.spacing.veryTight },
+	mTight: { margin: styleVars.spacing.tight },
+	mStandard: { margin: styleVars.spacing.standard },
+	mWide: { margin: styleVars.spacing.wide },
+	mVeryWide: { margin: styleVars.spacing.veryWide },
+	mExtraWide: { margin: styleVars.spacing.extraWide },
 	//--
-	mtVeryTight: {
-		marginTop: styleVars.spacing.veryTight
-	},
-	mtTight: {
-		marginTop: styleVars.spacing.tight
-	},
-	mtStandard: {
-		marginTop: styleVars.spacing.standard
-	},
-	mtWide: {
-		marginTop: styleVars.spacing.wide
-	},
-	mtVeryWide: {
-		marginTop: styleVars.spacing.veryWide
-	},
-	mtExtraWide: {
-		marginTop: styleVars.spacing.extraWide
-	},
+	mbVeryTight: { marginBottom: styleVars.spacing.veryTight },
+	mbTight: { marginBottom: styleVars.spacing.tight },
+	mbStandard: { marginBottom: styleVars.spacing.standard },
+	mbWide: { marginBottom: styleVars.spacing.wide },
+	mbVeryWide: { marginBottom: styleVars.spacing.veryWide },
+	mbExtraWide: { marginBottom: styleVars.spacing.extraWide },
 	//--
-	mlVeryTight: {
-		marginLeft: styleVars.spacing.veryTight
-	},
-	mlTight: {
-		marginLeft: styleVars.spacing.tight
-	},
-	mlStandard: {
-		marginLeft: styleVars.spacing.standard
-	},
-	mlWide: {
-		marginLeft: styleVars.spacing.wide
-	},
-	mlVeryWide: {
-		marginLeft: styleVars.spacing.veryWide
-	},
-	mlExtraWide: {
-		marginLeft: styleVars.spacing.extraWide
-	},
+	mtVeryTight: { marginTop: styleVars.spacing.veryTight },
+	mtTight: { marginTop: styleVars.spacing.tight },
+	mtStandard: { marginTop: styleVars.spacing.standard },
+	mtWide: { marginTop: styleVars.spacing.wide },
+	mtVeryWide: { marginTop: styleVars.spacing.veryWide },
+	mtExtraWide: { marginTop: styleVars.spacing.extraWide },
 	//--
-	mrVeryTight: {
-		marginRight: styleVars.spacing.veryTight
-	},
-	mrTight: {
-		marginRight: styleVars.spacing.tight
-	},
-	mrStandard: {
-		marginRight: styleVars.spacing.standard
-	},
-	mrWide: {
-		marginRight: styleVars.spacing.wide
-	},
-	mrVeryWide: {
-		marginRight: styleVars.spacing.veryWide
-	},
-	mrExtraWide: {
-		marginRight: styleVars.spacing.extraWide
-	},
+	mlVeryTight: { marginLeft: styleVars.spacing.veryTight },
+	mlTight: { marginLeft: styleVars.spacing.tight },
+	mlStandard: { marginLeft: styleVars.spacing.standard },
+	mlWide: { marginLeft: styleVars.spacing.wide },
+	mlVeryWide: { marginLeft: styleVars.spacing.veryWide },
+	mlExtraWide: { marginLeft: styleVars.spacing.extraWide },
+	//--
+	mrVeryTight: { marginRight: styleVars.spacing.veryTight },
+	mrTight: { marginRight: styleVars.spacing.tight },
+	mrStandard: { marginRight: styleVars.spacing.standard },
+	mrWide: { marginRight: styleVars.spacing.wide },
+	mrVeryWide: { marginRight: styleVars.spacing.veryWide },
+	mrExtraWide: { marginRight: styleVars.spacing.extraWide },
+	//--
+	mhVeryTight: { marginHorizontal: styleVars.spacing.veryTight },
+	mhTight: { marginHorizontal: styleVars.spacing.tight },
+	mhStandard: { marginHorizontal: styleVars.spacing.standard },
+	mhWide: { marginHorizontal: styleVars.spacing.wide },
+	mhVeryWide: { marginHorizontal: styleVars.spacing.veryWide },
+	mhExtraWide: { marginHorizontal: styleVars.spacing.extraWide },
+	//--
+	mvVeryTight: { marginVertical: styleVars.spacing.veryTight },
+	mvTight: { marginVertical: styleVars.spacing.tight },
+	mvStandard: { marginVertical: styleVars.spacing.standard },
+	mvWide: { marginVertical: styleVars.spacing.wide },
+	mvVeryWide: { marginVertical: styleVars.spacing.veryWide },
+	mvExtraWide: { marginVertical: styleVars.spacing.extraWide },
+	//--
+	pVeryTight: { padding: styleVars.spacing.veryTight },
+	pTight: { padding: styleVars.spacing.tight },
+	pStandard: { padding: styleVars.spacing.standard },
+	pWide: { padding: styleVars.spacing.wide },
+	pVeryWide: { padding: styleVars.spacing.veryWide },
+	pExtraWide: { padding: styleVars.spacing.extraWide },
+	//--
+	pbVeryTight: { paddingBottom: styleVars.spacing.veryTight },
+	pbTight: { paddingBottom: styleVars.spacing.tight },
+	pbStandard: { paddingBottom: styleVars.spacing.standard },
+	pbWide: { paddingBottom: styleVars.spacing.wide },
+	pbVeryWide: { paddingBottom: styleVars.spacing.veryWide },
+	pbExtraWide: { paddingBottom: styleVars.spacing.extraWide },
+	//--
+	ptVeryTight: { paddingTop: styleVars.spacing.veryTight },
+	ptTight: { paddingTop: styleVars.spacing.tight },
+	ptStandard: { paddingTop: styleVars.spacing.standard },
+	ptWide: { paddingTop: styleVars.spacing.wide },
+	ptVeryWide: { paddingTop: styleVars.spacing.veryWide },
+	ptExtraWide: { paddingTop: styleVars.spacing.extraWide },
+	//--
+	plVeryTight: { paddingLeft: styleVars.spacing.veryTight },
+	plTight: { paddingLeft: styleVars.spacing.tight },
+	plStandard: { paddingLeft: styleVars.spacing.standard },
+	plWide: { paddingLeft: styleVars.spacing.wide },
+	plVeryWide: { paddingLeft: styleVars.spacing.veryWide },
+	plExtraWide: { paddingLeft: styleVars.spacing.extraWide },
+	//--
+	prVeryTight: { paddingRight: styleVars.spacing.veryTight },
+	prTight: { paddingRight: styleVars.spacing.tight },
+	prStandard: { paddingRight: styleVars.spacing.standard },
+	prWide: { paddingRight: styleVars.spacing.wide },
+	prVeryWide: { paddingRight: styleVars.spacing.veryWide },
+	prExtraWide: { paddingRight: styleVars.spacing.extraWide },
+	//--
+	phVeryTight: { paddingHorizontal: styleVars.spacing.veryTight },
+	phTight: { paddingHorizontal: styleVars.spacing.tight },
+	phStandard: { paddingHorizontal: styleVars.spacing.standard },
+	phWide: { paddingHorizontal: styleVars.spacing.wide },
+	phVeryWide: { paddingHorizontal: styleVars.spacing.veryWide },
+	phExtraWide: { paddingHorizontal: styleVars.spacing.extraWide },
+	//--
+	pvVeryTight: { paddingVertical: styleVars.spacing.veryTight },
+	pvTight: { paddingVertical: styleVars.spacing.tight },
+	pvStandard: { paddingVertical: styleVars.spacing.standard },
+	pvWide: { paddingVertical: styleVars.spacing.wide },
+	pvVeryWide: { paddingVertical: styleVars.spacing.veryWide },
+	pvExtraWide: { paddingVertical: styleVars.spacing.extraWide },
 
 	/* HEADER STYLES */
 	headerTitle: {
