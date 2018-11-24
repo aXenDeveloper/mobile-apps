@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Text, Alert, Button, TextInput, View, KeyboardAvoidingView } from "react-native";
 import gql from "graphql-tag";
-import { graphql } from "react-apollo";
+import { graphql, compose } from "react-apollo";
+import { connect } from "react-redux";
 
 import TagEdit from "../../ecosystems/TagEdit";
 import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
@@ -173,10 +174,12 @@ class CreateTopicScreen extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<KeyboardAvoidingView style={{ flex: 1 }} enabled behavior="padding">
+				<KeyboardAvoidingView style={styles.flex} enabled behavior="padding">
 					<TextInput style={[styles.field, styles.fieldText]} placeholder="Topic Title" onChangeText={text => this.setState({ title: text })} />
-					<TagEdit definedTags={this.props.navigation.state.params.definedTags || null} />
-					<QuillEditor placeholder="Post" update={this.updateContentState.bind(this)} style={{ flex: 1 }} editorID={this.editorID} />
+					{this.props.site.settings.tags_enabled && this.props.user.group.canTag && (
+						<TagEdit definedTags={this.props.navigation.state.params.definedTags || null} />
+					)}
+					<QuillEditor placeholder="Post" update={this.updateContentState.bind(this)} style={styles.flex} editorID={this.editorID} />
 				</KeyboardAvoidingView>
 				<QuillToolbar editorID={this.editorID} />
 			</React.Fragment>
@@ -184,4 +187,10 @@ class CreateTopicScreen extends Component {
 	}
 }
 
-export default graphql(CreateTopicMutation)(CreateTopicScreen);
+export default compose(
+	graphql(CreateTopicMutation),
+	connect(state => ({
+		site: state.site,
+		user: state.user
+	}))
+)(CreateTopicScreen);

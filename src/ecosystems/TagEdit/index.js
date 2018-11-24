@@ -328,7 +328,9 @@ class TagEdit extends Component {
 		if (!this.state.storedTags.length) {
 			return (
 				<TouchableWithoutFeedback style={styles.flex} onPress={this.showModal}>
-					<Text style={[styles.fieldText, styles.fieldTextPlaceholder]}>{Lang.get('tags')}</Text>
+					<View>
+						<Text style={[styles.fieldText, styles.fieldTextPlaceholder]}>{Lang.get('tags')}</Text>
+					</View>
 				</TouchableWithoutFeedback>
 			);
 		}

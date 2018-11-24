@@ -40,6 +40,7 @@ const BootQuery = gql`
 					canAccessSite
 					canAccessOffline
 					groupType
+					canTag
 				}
 			}
 			settings {
@@ -50,6 +51,7 @@ const BootQuery = gql`
 				allow_reg
 				allow_reg_target
 				disable_anonymous
+				tags_enabled
 				tags_open_system
 				tags_min
 				tags_len_min

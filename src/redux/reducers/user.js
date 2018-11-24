@@ -9,7 +9,8 @@ const initialState = {
 	group: {
 		canAccessSite: false,
 		canAccessOffline: false,
-		groupType: 'GUEST'
+		groupType: 'GUEST',
+		canTag: false
 	},
 	streams: []
 };
