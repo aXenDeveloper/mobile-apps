@@ -70,6 +70,20 @@ export default class RichTextContent extends Component {
 		}
 	}
 
+	ignoreNodesFunction(node) {
+		if( !this.props.removeQuotes ){
+			return false;
+		}
+
+		if( node.name === 'blockquote' ){
+			if( !_.isUndefined( node.attribs.class ) && node.attribs.class.indexOf('ipsQuote') !== -1 ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	renderers() {
 		return {
 			br: () => null,
@@ -121,6 +135,7 @@ export default class RichTextContent extends Component {
 					imagesMaxWidth={parseInt(Dimensions.get("window").width) - 35}
 					staticContentMaxWidth={parseInt(Dimensions.get("window").width) - 35}
 					onLinkPress={this.props.onLinkPress || this.onLinkPress.bind(this)}
+					ignoreNodesFunction={this.ignoreNodesFunction.bind(this)}
 				/>
 				<Lightbox
 					animationIn="bounceIn"
