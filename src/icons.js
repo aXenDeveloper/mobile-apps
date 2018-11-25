@@ -8,7 +8,11 @@ const icons = {
 	CROSS: require("../resources/close.png"),
 	PENCIL: require("../resources/pencil.png"),
 	QUOTE: require('../resources/comment_quote.png'),
-	HEART: require('../resources/comment_like.png')
+	HEART: require('../resources/comment_like.png'),
+	USER_DOCUMENT: require("../resources/edit_profile.png"),
+	COG: require("../resources/settings.png"),
+	BELL: require("../resources/notification_settings.png"),
+	SIGN_OUT: require("../resources/signout.png")
 };
 
 export default icons;

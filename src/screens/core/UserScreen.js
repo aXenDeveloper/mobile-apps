@@ -21,6 +21,7 @@ import MenuItem from "../../atoms/MenuItem";
 import Lang from "../../utils/Lang";
 import UserPhoto from "../../atoms/UserPhoto";
 import styles, { styleVars } from "../../styles";
+import icons from "../../icons";
 
 const UserQuery = gql`
 	query UserQuery {
@@ -79,7 +80,7 @@ class UserScreen extends Component {
 		return [
 			{
 				key: "edit_profile",
-				icon: require("../../../resources/edit_profile.png"),
+				icon: icons.USER_DOCUMENT,
 				text: Lang.get("edit_profile"),
 				onPress: () => {
 					console.log("edit_profile");
@@ -87,7 +88,7 @@ class UserScreen extends Component {
 			},
 			{
 				key: "settings",
-				icon: require("../../../resources/settings.png"),
+				icon: icons.COG,
 				text: Lang.get("settings"),
 				onPress: () => {
 					this.props.navigation.closeDrawer();
@@ -96,7 +97,7 @@ class UserScreen extends Component {
 			},
 			{
 				key: "notifications",
-				icon: require("../../../resources/notification_settings.png"),
+				icon: icons.BELL,
 				text: Lang.get("notification_settings"),
 				onPress: () => {
 					this.props.navigation.closeDrawer();
@@ -105,7 +106,7 @@ class UserScreen extends Component {
 			},
 			{
 				key: "signout",
-				icon: require("../../../resources/signout.png"),
+				icon: icons.SIGN_OUT,
 				text: Lang.get("sign_out"),
 				onPress: () => {
 					this._logOut();
