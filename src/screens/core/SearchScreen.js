@@ -17,6 +17,7 @@ import ContentRow from "../../ecosystems/ContentRow";
 import CustomTab from "../../atoms/CustomTab";
 import { SearchContentPanel, SearchMemberPanel, SearchResultFragment, SearchResult } from "../../ecosystems/Search";
 import styles, { styleVars } from "../../styles";
+import icons from "../../icons";
 
 const OverviewSearchQuery = gql`
 	query OverviewSearchQuery($term: String) {
@@ -355,7 +356,7 @@ class SearchScreen extends Component {
 				<Text numberOfLines={1} style={componentStyles.leftAlignText}>
 					{item}
 				</Text>
-				<Image source={require("../../../resources/search.png")} style={componentStyles.leftAlignIcon} resizeMode="contain" />
+				<Image source={icons.SEARCH} style={componentStyles.leftAlignIcon} resizeMode="contain" />
 			</ContentRow>
 		);
 	}
@@ -543,7 +544,7 @@ class SearchScreen extends Component {
 		const searchBox = (
 			<View style={componentStyles.searchWrap}>
 				<View style={[componentStyles.searchBox, this.state.textInputActive ? componentStyles.searchBoxActive : null]}>
-					<Image source={require("../../../resources/search.png")} style={componentStyles.searchIcon} resizeMode="contain" />
+					<Image source={icons.SEARCH} style={componentStyles.searchIcon} resizeMode="contain" />
 					<TextInput
 						autoFocus
 						autoCapitalize="none"
