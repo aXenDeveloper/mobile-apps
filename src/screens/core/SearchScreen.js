@@ -165,6 +165,8 @@ class SearchScreen extends Component {
 			loadingSearchResults: true
 		});
 
+		this._textInput.blur();
+
 		try {
 			const { data } = await this.props.client.query({
 				query: OverviewSearchQuery,
@@ -288,6 +290,7 @@ class SearchScreen extends Component {
 				renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
 				sections={sectionData}
 				keyExtractor={item => item}
+				keyboardShouldPersistTaps='always'
 			/>
 		);
 	}
