@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { Text, ScrollView, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, TouchableHighlight, Image, StyleSheet } from "react-native";
+import { Text, ScrollView, FlatList, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, TouchableHighlight, Image, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
 import _ from "underscore";
 import { transparentize } from "polished";
+import Fuse from "fuse.js";
 
 import Lang from "../../utils/Lang";
 import Button from "../../atoms/Button";
@@ -17,8 +18,11 @@ class TagEdit extends Component {
 	constructor(props) {
 		super(props);
 		this._predefinedTagHandlers = {};
+		this._suggestedTagHandlers = {};
 		this._removeTagHandlers = {};
 		this._tagInput = null;
+		this._search = null;
+
 		this.state = {
 			modalVisible: false,
 			currentTags: [],
@@ -30,6 +34,12 @@ class TagEdit extends Component {
 		this.hideModal = this.hideModal.bind(this);
 		this.submitTags = this.submitTags.bind(this);
 		this.addTag = this.addTag.bind(this);
+
+		this._searchOptions = {
+			shouldSort: true,
+			threshold: 0.4,
+			keys: [ 'tag' ]
+		};
 	}
 
 	/**
@@ -191,18 +201,18 @@ class TagEdit extends Component {
 	 *
 	 * @return 	void
 	 */
-	addTag() {
+	addTag(tag) {
 		// Important: clone currentTags since we can't mutate the existing state
-		const newTags = [...this.state.currentTags];
-		const tag = this.state.searchText;
+		const updatedTags = [...this.state.currentTags];
+		const newTag = !_.isUndefined(tag) ? tag : this.state.searchText;
 
-		if (newTags.indexOf(tag) === -1) {
-			newTags.unshift(tag);
+		if (updatedTags.indexOf(newTag) === -1) {
+			updatedTags.unshift(newTag);
 		}
 
 		this.setState(
 			{
-				currentTags: newTags,
+				currentTags: updatedTags,
 				searchText: ""
 			},
 			() => {
@@ -266,7 +276,7 @@ class TagEdit extends Component {
 	 */
 	closedTaggingComponent() {
 		return (
-			<ScrollView style={styles.flex}>
+			<ScrollView style={styles.flex} keyboardShouldPersistTaps='always'>
 				{this.props.definedTags.map(tag => {
 					const checked = this.state.currentTags.indexOf(tag) !== -1;
 					return (
@@ -291,6 +301,29 @@ class TagEdit extends Component {
 		);
 	}
 
+	renderSuggestion(tag) {
+		return (
+			<TouchableHighlight onPress={this.getSuggestionOnPressHandler(tag)}>
+				<View style={[styles.row, styles.flexRow, styles.flexAlignCenter, styles.flexJustifyBetween, styles.pWide]}>
+					<Text style={[styles.flex, styles.contentText, styles.text, styles.italicText]}>{tag}</Text>
+					<Image source={icons.PLUS_CIRCLE} resizeMode="contain" style={[componentStyles.tagIcon, componentStyles.tagIconActive]} />
+				</View>
+			</TouchableHighlight>
+		);
+	}
+
+	getSuggestionOnPressHandler(tag) {
+		if( _.isUndefined( this._suggestedTagHandlers[tag] ) ){
+			this._suggestedTagHandlers[tag] = () => this.suggestedTagOnPress(tag);
+		}
+
+		return this._suggestedTagHandlers[tag];
+	}
+
+	suggestedTagOnPress(tag) {
+		this.addTag(tag);
+	}
+
 	/**
 	 * Return the component structure when we're using open tagging
 	 *
@@ -299,23 +332,45 @@ class TagEdit extends Component {
 	openTaggingComponent() {
 		let content;
 
-		if (this.state.searchText.length > 0) {
-			content = <Text>Suggestions</Text>;
-		} else {
-			content = this.state.currentTags.map(tag => (
-				<View key={tag} style={[styles.row, styles.flexRow, styles.flexAlignCenter, styles.flexJustifyBetween, styles.pWide]}>
-					<View style={[styles.flexRow, styles.flexAlignStart]}>
-						<Image source={icons.TAG} resizeMode="contain" style={[componentStyles.tagIcon, componentStyles.tagIconActive]} />
-						<Text style={[styles.mlTight, styles.contentText, styles.flexGrow]}>{tag}</Text>
-						<TouchableOpacity onPress={this.getRemoveTagOnPress(tag)} hitSlop={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-							<Image source={icons.CROSS} resizeMode="contain" style={[componentStyles.tagIcon, componentStyles.tagIconActive]} />
-						</TouchableOpacity>
-					</View>
-				</View>
-			));
-		}
+		if (this.state.searchText.length > 0 && this.props.definedTags.length) {
+			if( !this._search ){
+				const tags = this.props.definedTags.map( tag => ({ tag }) );
+				this._search = new Fuse(tags, this._searchOptions);
+			}
 
-		return <ScrollView style={styles.flex}>{content}</ScrollView>;
+			let results = this._search.search( this.state.searchText );
+			results = results.slice(0, 5);
+
+			if( results.length ){
+				return (
+					<ScrollView style={[styles.flex, styles.ptVeryWide]}  keyboardShouldPersistTaps='always'>
+						<Text style={[styles.lightText, styles.phWide, styles.smallText]}>{Lang.get('tag_suggestions').toUpperCase()}</Text>
+						<FlatList
+							data={results}
+							keyExtractor={item => item.tag}
+							renderItem={({item}) => this.renderSuggestion(item.tag)}
+							keyboardShouldPersistTaps='always'
+						/>
+					</ScrollView>
+				);
+			}
+		} 
+
+		return (
+			<ScrollView style={styles.flex} keyboardShouldPersistTaps='always'>
+				{this.state.currentTags.map(tag => (
+					<View key={tag} style={[styles.row, styles.flexRow, styles.flexAlignCenter, styles.flexJustifyBetween, styles.pWide]}>
+						<View style={[styles.flexRow, styles.flexAlignStart]}>
+							<Image source={icons.TAG} resizeMode="contain" style={[componentStyles.tagIcon, componentStyles.tagIconActive]} />
+							<Text style={[styles.mlTight, styles.contentText, styles.flexGrow]}>{tag}</Text>
+							<TouchableOpacity onPress={this.getRemoveTagOnPress(tag)} hitSlop={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+								<Image source={icons.CROSS} resizeMode="contain" style={[componentStyles.tagIcon, componentStyles.tagIconActive]} />
+							</TouchableOpacity>
+						</View>
+					</View>
+				))}
+			</ScrollView>
+		);
 	}
 
 	/**

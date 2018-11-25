@@ -343,6 +343,9 @@ const styles = StyleSheet.create({
 	centerText: {
 		textAlign: 'center'
 	},
+	italicText: {
+		fontStyle: 'italic'
+	},
 
 	/* Spacing styles */
 	mVeryTight: { margin: styleVars.spacing.veryTight },

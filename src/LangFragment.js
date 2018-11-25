@@ -108,6 +108,7 @@ const LangFragment = gql`
 		manage_tags: phrase(key: "app_manage_tags")
 		enter_tag: phrase(key: "app_enter_tag")
 		tags: phrase(key: "app_tags")
+		tag_suggestions: phrase(key: "app_tag_suggestions")
 
 		no_more_notifications: phrase(key: "app_no_more_notifications")
 		notifications_unread: phrase(key: "app_notifications_unread")
