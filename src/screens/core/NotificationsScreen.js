@@ -112,7 +112,10 @@ class NotificationsScreen extends Component {
 			(!prevProps.navigation.isFocused && this.props.navigation.isFocused) // Or this screen has now been focused
 		) {
 			this.props.dispatch(updateNotificationCount(0)); // We'll also update our user store to 0
-			this.markAllRead();
+			
+			if( this.props.data.core.me.notifications.length > 0 ){
+				this.markAllRead();
+			}
 		}
 
 		// If our notification count has changed, and isn't 0, refetch to load in the new notifications
@@ -137,6 +140,11 @@ class NotificationsScreen extends Component {
 	 * @return 	void
 	 */
 	onEndReached = () => {
+		// If we've finished loading but there were no notifications, don't try and fetch more
+		if( this.props.data.networkStatus >= 7 && !this.props.data.core.me.notifications.length ){
+			return;
+		}
+
 		if (!this.props.data.loading && !this.state.reachedEnd) {
 			console.log("Fetching more notifications");
 
@@ -193,6 +201,11 @@ class NotificationsScreen extends Component {
 		// If we're loading more items in
 		if (this.props.data.networkStatus == 3 && !this.state.reachedEnd) {
 			return <NotificationRow loading={true} />;
+		}
+
+		// If we've finished loading but there were no notifications, don't show any footer
+		if( this.props.data.networkStatus >= 7 && !this.props.data.core.me.notifications.length ){
+			return null;
 		}
 
 		return <EndOfComments label={Lang.get("no_more_notifications")} />;
@@ -328,7 +341,7 @@ export default compose(
 	withApollo,
 	graphql(NotificationQuery, {
 		options: {
-			//fetchPolicy: 'cache-and-network' // Needed here so that we fetch fresh notification data after e.g. reading a topic
+			fetchPolicy: 'cache-and-network' // Needed here so that we fetch fresh notification data after e.g. reading a topic
 		}
 	})
 )(NotificationsScreen);
