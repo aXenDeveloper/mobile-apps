@@ -482,13 +482,13 @@ export const richTextStyles = (dark) => ({
 			borderWidth: 1, 
 			borderStyle: 'solid', 
 			borderColor: '#f3f3f3', 
-			borderLeftWidth: 3, 
+			borderLeftWidth: 1, 
 			borderLeftColor: '#222',
 			marginBottom: 15
 		},
 		'ipsQuote_citation': {
 			backgroundColor: '#f3f3f3',
-			paddingVertical: 5,
+			paddingVertical: 7,
 			paddingHorizontal: 15
 		},
 		'ipsQuote_contents': {
