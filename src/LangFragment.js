@@ -57,6 +57,8 @@ const LangFragment = gql`
 		error_unfollowing: phrase(key: "app_error_unfollowing")
 		ok: phrase(key: "app_ok")
 		cant_show_reactions: phrase(key: "app_cant_show_reactions")
+		editor_quote_line_with_time: phrase(key: "app_editor_quote_line_with_time")
+		editor_quote_line: phrase(key: "app_editor_quote_line")
 
 		followed_member: phrase(key: "app_followed_member")
 		unfollowed_member: phrase(key: "app_unfollowed_member")
