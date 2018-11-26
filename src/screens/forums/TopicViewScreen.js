@@ -94,19 +94,20 @@ class TopicViewScreen extends Component {
 	 * GraphQL error types
 	 */
 	static errors = {
-		NO_TOPIC: Lang.get('no_topic')
+		NO_TOPIC: Lang.get("no_topic")
 	};
 
 	constructor(props) {
 		super(props);
 		this._flatList = null; // Ref to the flatlist
-		this._currentOffset = 0; // The offset we're currently displaying in the view
+		//this._currentOffset = 0; // The offset we're currently displaying in the view
 		this._initialOffsetDone = false; // Flag to indicate we've set our initial offset on render
 		this._aboutToScrollToEnd = false; // Flag to indicate a scrollToEnd is pending so we can avoid other autoscrolls
 		this.state = {
 			reachedEnd: false,
 			earlierPostsAvailable: null,
-			loadingEarlierPosts: false
+			loadingEarlierPosts: false,
+			currentOffset: this.props.data.variables.offset || 0
 		};
 
 		if (this.props.auth.authenticated) {
@@ -128,25 +129,6 @@ class TopicViewScreen extends Component {
 			followModalVisible: !this.state.followModalVisible
 		});
 	};
-
-	/**
-	 * Set the offset based on initial props
-	 *
-	 * @return 	void
-	 */
-	componentDidMount() {
-		this.setCurrentOffset(this.props.data.variables.offset || 0);
-	}
-
-	/**
-	 * Set the current offset that we're displaying
-	 *
-	 * @param 	number 		offset 		Offset to set
-	 * @return 	void
-	 */
-	setCurrentOffset(offset) {
-		this._currentOffset = offset;
-	}
 
 	/**
 	 * Scroll to the end of our listing
@@ -203,16 +185,22 @@ class TopicViewScreen extends Component {
 		if (!this._initialOffsetDone && !this.props.data.loading && !this.props.data.error) {
 			if (this.props.data.variables.offsetPosition == "ID" && this.props.data.forums.topic.findCommentPosition) {
 				// If we're starting at a specific post, then set the offset to that post's position
-				this.setCurrentOffset(this.props.data.forums.topic.findCommentPosition);
+				this.setState({
+					currentOffset: this.props.data.forums.topic.findCommentPosition
+				});
 				this._initialOffsetDone = true;
 			} else if (this.props.data.variables.offsetPosition == "UNREAD" && this.props.data.forums.topic.unreadCommentPosition) {
 				// If we're showing by unread, then the offset will be the last unread post position
-				this.setCurrentOffset(this.props.data.forums.topic.unreadCommentPosition);
+				this.setState({
+					currentOffset: this.props.data.forums.topic.unreadCommentPosition
+				});
 				this._initialOffsetDone = true;
 			} else if (this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0) {
 				// If we're showing the last post, the offset will be the total post count plus our adjustment
-				this.setCurrentOffset(this.props.data.forums.topic.commentCount + this.props.data.variables.offsetAdjust);
-				this.setState({ reachedEnd: true });
+				this.setState({ 
+					reachedEnd: true,
+					currentOffset: this.props.data.forums.topic.commentCount + this.props.data.variables.offsetAdjust
+				});
 				this.scrollToEnd();
 				this._initialOffsetDone = true;
 			}
@@ -220,10 +208,13 @@ class TopicViewScreen extends Component {
 
 		// Figure out if we need to change the state that determines whether the
 		// Load Earlier Posts button shows
-		let showEarlierPosts = this._currentOffset > 0;
+		if (
+			prevState.earlierPostsAvailable == null ||
+			prevState.currentOffset !== this.state.currentOffset
+		) {
+			//if (this.state.earlierPostsAvailable !== false) {
+				const showEarlierPosts = this.state.currentOffset > 0;
 
-		if (prevState.earlierPostsAvailable == null || prevState.earlierPostsAvailable !== this.state.earlierPostsAvailable) {
-			if (this.state.earlierPostsAvailable !== false) {
 				this.setState({
 					earlierPostsAvailable: showEarlierPosts
 				});
@@ -237,7 +228,7 @@ class TopicViewScreen extends Component {
 						});
 					}
 				}
-			}
+			//}
 		}
 	}
 
@@ -248,7 +239,7 @@ class TopicViewScreen extends Component {
 	 */
 	onEndReached = () => {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
-			const offsetAdjust = this._currentOffset + this.props.data.forums.topic.posts.length;
+			const offsetAdjust = this.state.currentOffset + this.props.data.forums.topic.posts.length;
 
 			// Don't try loading more if we're already showing everything in the topic
 			if (offsetAdjust >= this.props.data.forums.topic.commentCount) {
@@ -300,7 +291,7 @@ class TopicViewScreen extends Component {
 			});
 
 			// Ensure the offset doesn't go below 0
-			const offsetAdjust = Math.max(this._currentOffset - Expo.Constants.manifest.extra.per_page, 0);
+			const offsetAdjust = Math.max(this.state.currentOffset - Expo.Constants.manifest.extra.per_page, 0);
 
 			this.props.data.fetchMore({
 				variables: {
@@ -310,11 +301,10 @@ class TopicViewScreen extends Component {
 				updateQuery: (previousResult, { fetchMoreResult }) => {
 					// We use this state to track whether we should show the Load Earlier Posts button
 					this.setState({
-						earlierPostsAvailable: this._currentOffset - Expo.Constants.manifest.extra.per_page > 0,
-						loadingEarlierPosts: false
+						earlierPostsAvailable: this.state.currentOffset - Expo.Constants.manifest.extra.per_page > 0,
+						loadingEarlierPosts: false,
+						currentOffset: offsetAdjust
 					});
-
-					this.setCurrentOffset(offsetAdjust);
 
 					// Don't do anything if there wasn't any new items
 					if (!fetchMoreResult || fetchMoreResult.forums.topic.posts.length === 0) {
@@ -426,13 +416,7 @@ class TopicViewScreen extends Component {
 			);
 		}
 
-		return (
-			<Post
-				data={item}
-				canReply={topicData.itemPermissions.canComment}
-				topic={topicData}
-			/>
-		);
+		return <Post data={item} canReply={topicData.itemPermissions.canComment} topic={topicData} />;
 	}
 
 	/**
@@ -495,12 +479,7 @@ class TopicViewScreen extends Component {
 				isFollowed: true
 			});
 		} catch (err) {
-			Alert.alert(
-				Lang.get('error'), 
-				Lang.get('error_following'),
-				[{ text: Lang.get('ok') }], 
-				{ cancelable: false }
-			);
+			Alert.alert(Lang.get("error"), Lang.get("error_following"), [{ text: Lang.get("ok") }], { cancelable: false });
 		}
 	};
 
@@ -529,12 +508,7 @@ class TopicViewScreen extends Component {
 				isFollowed: false
 			});
 		} catch (err) {
-			Alert.alert(
-				Lang.get('error'), 
-				Lang.get('error_unfollowing'),
-				[{ text: Lang.get('ok') }], 
-				{ cancelable: false }
-			);
+			Alert.alert(Lang.get("error"), Lang.get("error_unfollowing"), [{ text: Lang.get("ok") }], { cancelable: false });
 		}
 	};
 
