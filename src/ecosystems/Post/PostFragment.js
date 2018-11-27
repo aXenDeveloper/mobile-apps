@@ -21,6 +21,7 @@ const PostFragment = gql`
 		}
 		content
 		isFirstPost
+		isIgnored
 		reputation {
 			__typename
 			canReact
