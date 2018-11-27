@@ -77,7 +77,8 @@ export const styleVars = {
 	greys: {
 		light: '#F2F4F7',
 		medium: '#f5f5f5',
-		darker: '#e0e0e0'
+		darker: '#e0e0e0',
+		placeholder: '#888888'
 	}
 };
 
@@ -181,6 +182,9 @@ const styles = StyleSheet.create({
 	},
 	flexJustifyAround: {
 		justifyContent: 'space-around'
+	},
+	flexJustifyCenter: {
+		justifyContent: 'center'
 	},
 	flexGrow: {
 		flexGrow: 1
