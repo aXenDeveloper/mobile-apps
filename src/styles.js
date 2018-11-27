@@ -125,16 +125,21 @@ const styles = StyleSheet.create({
 		paddingBottom: styleVars.spacing.veryTight,
 		paddingTop: styleVars.spacing.tight
 	},
-	markSwipeItem: {
-		backgroundColor: "#009BA2"
+	swipeItemWrap: {
+		backgroundColor: styleVars.accentColor,
 	},
-	rightSwipeItem: {
-		flex: 1,
-		justifyContent: "center",
-		paddingLeft: 20
+	swipeItem: {
+		width: 75
 	},
 	swipeItemText: {
-		color: "white"
+		color: "#fff",
+		fontSize: styleVars.fontSizes.small
+	},
+	swipeItemIcon: {
+		tintColor: '#fff',
+		width: 24,
+		height: 24,
+		marginBottom: styleVars.spacing.veryTight
 	},
 	stackCardStyle: {
 		backgroundColor: styleVars.appBackground
@@ -173,6 +178,12 @@ const styles = StyleSheet.create({
 	},
 	flexAlignCenter: {
 		alignItems: 'center'
+	},
+	flexAlignContentCenter: {
+		alignContent: 'center'
+	},
+	flexAlignStretch: {
+		alignItems: 'stretch'
 	},
 	flexJustifyStart: {
 		justifyContent: 'flex-start'

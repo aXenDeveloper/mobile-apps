@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableHighlight, Alert } from 'react-native';
-import Swipeable from 'react-native-swipeable';
+import React, { Component } from "react";
+import { Text, Image, View, StyleSheet, TouchableHighlight, Alert } from "react-native";
+import Swipeable from "react-native-swipeable";
 import { graphql, compose, withApollo } from "react-apollo";
 import gql from "graphql-tag";
 import { connect } from "react-redux";
@@ -10,9 +10,10 @@ import ForumItemFragment from "./ForumItemFragment";
 import Lang from "../../utils/Lang";
 import ContentRow from "../../ecosystems/ContentRow";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
-import ForumIcon from '../../atoms/ForumIcon';
-import LastPostInfo from '../../ecosystems/LastPostInfo';
-import styles, { styleVars } from '../../styles';
+import ForumIcon from "../../atoms/ForumIcon";
+import LastPostInfo from "../../ecosystems/LastPostInfo";
+import styles, { styleVars } from "../../styles";
+import icons from "../../icons";
 
 const MarkForumRead = gql`
 	mutation MarkForumRead($id: ID!) {
@@ -25,7 +26,7 @@ const MarkForumRead = gql`
 	${ForumItemFragment}
 `;
 
-class ForumItem extends Component {	
+class ForumItem extends Component {
 	constructor(props) {
 		super(props);
 		this._swipeable = null;
@@ -35,7 +36,7 @@ class ForumItem extends Component {
 	}
 
 	componentWillUnmount() {
-		clearTimeout( this._markReadTimeout );
+		clearTimeout(this._markReadTimeout);
 	}
 
 	/**
@@ -58,7 +59,7 @@ class ForumItem extends Component {
 
 	markForumRead() {
 		this._swipeable.recenter();
-		this._markReadTimeout = setTimeout( async () => {
+		this._markReadTimeout = setTimeout(async () => {
 			try {
 				await this.props.client.mutate({
 					mutation: MarkForumRead,
@@ -78,23 +79,24 @@ class ForumItem extends Component {
 			} catch (err) {
 				console.log(err);
 
-				Alert.alert(
-					"Couldn't mark as read", 
-					"There was an error marking this forum as read",
-					[{ text: Lang.get('ok') }], 
-					{ cancelable: false }
-				);
+				Alert.alert("Couldn't mark as read", "There was an error marking this forum as read", [{ text: Lang.get("ok") }], { cancelable: false });
 			}
-		}, 500 );
+		}, 500);
 	}
 
 	render() {
-		if( this.props.loading ){
+		if (this.props.loading) {
 			return (
 				<ContentRow>
 					<PlaceholderContainer height={60} style={[styles.mrWide, styles.mlWide, styles.mtTight, styles.mbTight]}>
 						<PlaceholderElement circle radius={20} left={0} top={styleVars.spacing.tight} />
-						<PlaceholderElement width={250} height={17} top={styleVars.spacing.tight} left={20 + styleVars.spacing.standard} right={20 + styleVars.spacing.veryWide} />
+						<PlaceholderElement
+							width={250}
+							height={17}
+							top={styleVars.spacing.tight}
+							left={20 + styleVars.spacing.standard}
+							right={20 + styleVars.spacing.veryWide}
+						/>
 						<PlaceholderElement width={100} height={13} top={25 + styleVars.spacing.tight} left={20 + styleVars.spacing.standard} />
 						<PlaceholderElement circle radius={30} right={0} top={0} />
 						<PlaceholderElement width={30} height={12} top={33} right={4} />
@@ -104,8 +106,14 @@ class ForumItem extends Component {
 		}
 
 		const rightButtons = [
-			<TouchableHighlight style={[styles.rightSwipeItem, styles.markSwipeItem]} onPress={this.markForumRead}>
-				<Text style={styles.swipeItemText}>Mark Read</Text>
+			<TouchableHighlight
+				style={[styles.flex, styles.flexJustifyCenter, styles.swipeItemWrap]}
+				onPress={this.markForumRead}
+			>
+				<View style={[styles.flexColumn, styles.flexAlignCenter, styles.swipeItem]}>
+					<Image source={icons.CHECKMARK2} style={styles.swipeItemIcon} resizeMode="contain" />
+					<Text style={styles.swipeItemText}>Read</Text>
+				</View>
 			</TouchableHighlight>
 		];
 
@@ -116,7 +124,7 @@ class ForumItem extends Component {
 		};
 
 		return (
-			<Swipeable rightButtons={rightButtons} onRef={(ref) => this._swipeable = ref}>
+			<Swipeable rightButtons={rightButtons} onRef={ref => (this._swipeable = ref)}>
 				<ContentRow style={componentStyles.forumItem} onPress={this.props.onPress || this.onPress}>
 					<View style={componentStyles.iconAndInfo}>
 						<ForumIcon style={componentStyles.forumIcon} unread={this.props.data.hasUnread} />
@@ -124,8 +132,8 @@ class ForumItem extends Component {
 							<Text style={[styles.itemTitle, componentStyles.forumTitle]} numberOfLines={1}>
 								{this.props.data.name}
 							</Text>
-							<Text testId='postCount' style={[styles.lightText, styles.standardText]}>
-								{Lang.pluralize( Lang.get('posts'), postCount)}
+							<Text testId="postCount" style={[styles.lightText, styles.standardText]}>
+								{Lang.pluralize(Lang.get("posts"), postCount)}
 							</Text>
 						</View>
 					</View>
@@ -138,10 +146,7 @@ class ForumItem extends Component {
 	}
 }
 
-export default compose(
-	withNavigation,
-	withApollo
-)(ForumItem);
+export default compose(withNavigation, withApollo)(ForumItem);
 
 export { ForumItem as TestForumItem }; // For test runner only
 
@@ -149,13 +154,13 @@ const componentStyles = StyleSheet.create({
 	forumItem: {
 		paddingHorizontal: styleVars.spacing.wide,
 		paddingVertical: styleVars.spacing.wide,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignContent: 'stretch',
-		alignItems: 'center',
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignContent: "stretch",
+		alignItems: "center"
 	},
 	iconAndInfo: {
-		flexDirection: 'row',
+		flexDirection: "row",
 		flex: 1,
 		paddingRight: 20
 	},
