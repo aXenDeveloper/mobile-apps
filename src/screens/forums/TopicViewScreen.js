@@ -423,7 +423,7 @@ class TopicViewScreen extends Component {
 			);
 		}
 
-		return <Post data={item} canReply={topicData.itemPermissions.canComment} topic={topicData} />;
+		return <Post data={item} key={item.id} canReply={topicData.itemPermissions.canComment} topic={topicData} />;
 	}
 
 	/**

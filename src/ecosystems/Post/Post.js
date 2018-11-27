@@ -55,11 +55,21 @@ class Post extends Component {
 		super(props);
 		this._actionSheetOptions = [Lang.get("cancel"), Lang.get("share"), Lang.get("report")];
 		this.state = {
-			reactionModalVisible: false
+			reactionModalVisible: false,
+			whoReactedModalVisible: false,
+			whoReactedCount: 0,
+			whoReactedReaction: 0,
+			whoReactedImage: '',
 		};
 		this.onPressReaction = this.onPressReaction.bind(this);
 		this.onPressProfile = this.onPressProfile.bind(this);
 		this.hideWhoReactedModal = this.hideWhoReactedModal.bind(this);
+		this.onPressReply = this.onPressReply.bind(this);
+		this.hideReactionModal = this.hideReactionModal.bind(this);
+		this.onLongPressReputation = this.onLongPressReputation.bind(this);
+		this.onPressReputation = this.onPressReputation.bind(this);
+		this.onReactionPress = this.onReactionPress.bind(this);
+		this.onPressPostDots = this.onPressPostDots.bind(this);
 	}
 
 	/**
@@ -169,7 +179,7 @@ class Post extends Component {
 	 *
 	 * @return 	void
 	 */
-	hideReactionModal = () => {
+	hideReactionModal() {
 		this.setState({
 			reactionModalVisible: false
 		});
@@ -215,7 +225,7 @@ class Post extends Component {
 	 *
 	 * @return 	void
 	 */
-	onLongPressReputation = () => {
+	onLongPressReputation() {
 		if (this.props.data.reputation.isLikeMode) {
 			return null;
 		}
@@ -229,7 +239,7 @@ class Post extends Component {
 	 *
 	 * @return 	void
 	 */
-	onPressReputation = () => {
+	onPressReputation() {
 		if (this.props.data.reputation.hasReacted) {
 			this.removeReaction();
 		} else {
@@ -280,7 +290,7 @@ class Post extends Component {
 	 * @param 	number 		reaction 		ID of selected reaction
 	 * @return 	void
 	 */
-	onReactionPress = async reaction => {
+	async onReactionPress(reaction) {
 		// Get the reaction object from available reactions
 		const givenReaction = _.find(this.props.data.reputation.availableReactions, function(type) {
 			return type.id === reaction;
@@ -352,7 +362,7 @@ class Post extends Component {
 	 *
 	 * @return 	void
 	 */
-	onPressReply = () => {
+	onPressReply() {
 		this.props.navigation.navigate("ReplyTopic", {
 			topicID: this.props.topic.id,
 			quotedPost: this.props.data
@@ -364,13 +374,21 @@ class Post extends Component {
 	 *
 	 * @return 	void
 	 */
-	onPressPostDots = () => {
+	onPressPostDots() {
 		this._actionSheet.show();
 	};
+
+	renderIgnoredPost() {
+		return <Text>This post is ignored!</Text>;
+	}
 
 	render() {
 		if (this.props.loading) {
 			return this.loadingComponent();
+		}
+
+		if (this.props.data.isIgnored) {
+			return this.renderIgnoredPost();
 		}
 
 		const repButton = this.getReputationButton();
@@ -415,7 +433,9 @@ class Post extends Component {
 					</View>
 					{(repButton || this.props.canReply) && (
 						<PostControls>
-							{this.props.canReply && <PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />}
+							{this.props.canReply && (
+								<PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />
+							)}
 							{repButton}
 						</PostControls>
 					)}
