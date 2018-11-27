@@ -8,7 +8,7 @@ export const styleVars = {
 	lightText: '#657686',
 	veryLightText: '#9ba3ab',
 	reverseText: '#fff',
-	activeText: '#3370AA',
+	accentColor: '#3370AA',
 	appBackground: '#e6e8eb',
 	tabActive: '#37454B',
 	tabInactive: '#6e797e',
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
 	},
 	modalHeaderLink: {
 		fontSize: styleVars.fontSizes.large,
-		color: styleVars.activeText
+		color: styleVars.accentColor
 	},
 	modalHeaderLinkDisabled: {
 		color: styleVars.lightText,

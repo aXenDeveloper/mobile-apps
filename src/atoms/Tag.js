@@ -15,11 +15,11 @@ export default Tag;
 
 const componentStyles = StyleSheet.create({
 	tagWrapper: {
-		borderColor: styleVars.activeText,
+		borderColor: styleVars.accentColor,
 		borderWidth: 1,
 		borderRadius: 14,
 	},
 	tag: {
-		color: styleVars.activeText,
+		color: styleVars.accentColor,
 	}
 });
