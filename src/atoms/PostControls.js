@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 
-import { styleVars } from '../styles';
+import styles, { styleVars } from '../styles';
 
 export default class PostControls extends Component {	
 	constructor(props) {
@@ -14,7 +14,7 @@ export default class PostControls extends Component {
 		}
 
 		return (
-			<View style={[componentStyles.postControls, this.props.style]}>
+			<View style={[styles.flexRow, styles.flexAlignStretch, styles.flexJustifyCenter, componentStyles.postControls, this.props.style]}>
 				{this.props.children}
 			</View>
 		);
@@ -24,9 +24,6 @@ export default class PostControls extends Component {
 const componentStyles = StyleSheet.create({
 	postControls: {
 		borderTopWidth: 1,
-		borderTopColor: styleVars.borderColors.dark,
-		flexDirection: 'row',
-		alignItems: 'stretch',
-		justifyContent: 'center',
+		borderTopColor: styleVars.borderColors.medium,
 	}
 });
