@@ -25,6 +25,8 @@ import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import FollowButton from "../../atoms/FollowButton";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 
+import styles from "../../styles";
+
 const TopicViewQuery = gql`
 	query TopicViewQuery($id: ID!, $offsetAdjust: Int, $offsetPosition: forums_Post_offset_position, $limit: Int, $findComment: Int) {
 		forums {
@@ -117,6 +119,14 @@ class TopicViewScreen extends Component {
 				onPressFollow: this.toggleFollowModal
 			});
 		}
+
+		this.loadEarlierComments = this.loadEarlierComments.bind(this);
+		this.toggleFollowModal = this.toggleFollowModal.bind(this);
+		this.onEndReached = this.onEndReached.bind(this);
+		this.onRefresh = this.onRefresh.bind(this);
+		this.onFollow = this.onFollow.bind(this);
+		this.onUnfollow = this.onUnfollow.bind(this);
+		this.addReply = this.addReply.bind(this);
 	}
 
 	/**
@@ -124,11 +134,11 @@ class TopicViewScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	toggleFollowModal = () => {
+	toggleFollowModal() {
 		this.setState({
 			followModalVisible: !this.state.followModalVisible
 		});
-	};
+	}
 
 	/**
 	 * Scroll to the end of our listing
@@ -197,7 +207,7 @@ class TopicViewScreen extends Component {
 				this._initialOffsetDone = true;
 			} else if (this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0) {
 				// If we're showing the last post, the offset will be the total post count plus our adjustment
-				this.setState({ 
+				this.setState({
 					reachedEnd: true,
 					currentOffset: this.props.data.forums.topic.commentCount + this.props.data.variables.offsetAdjust
 				});
@@ -208,26 +218,23 @@ class TopicViewScreen extends Component {
 
 		// Figure out if we need to change the state that determines whether the
 		// Load Earlier Posts button shows
-		if (
-			prevState.earlierPostsAvailable == null ||
-			prevState.currentOffset !== this.state.currentOffset
-		) {
+		if (prevState.earlierPostsAvailable == null || prevState.currentOffset !== this.state.currentOffset) {
 			//if (this.state.earlierPostsAvailable !== false) {
-				const showEarlierPosts = this.state.currentOffset > 0;
+			const showEarlierPosts = this.state.currentOffset > 0;
 
-				this.setState({
-					earlierPostsAvailable: showEarlierPosts
-				});
+			this.setState({
+				earlierPostsAvailable: showEarlierPosts
+			});
 
-				// Figure out if we need to scroll to hide the Load Earlier Posts button
-				if (!this.props.data.loading && !this.props.data.error) {
-					if (showEarlierPosts && !this._aboutToScrollToEnd) {
-						this._flatList.scrollToOffset({
-							offset: 40,
-							animated: false
-						});
-					}
+			// Figure out if we need to scroll to hide the Load Earlier Posts button
+			if (!this.props.data.loading && !this.props.data.error) {
+				if (showEarlierPosts && !this._aboutToScrollToEnd) {
+					this._flatList.scrollToOffset({
+						offset: 40,
+						animated: false
+					});
 				}
+			}
 			//}
 		}
 	}
@@ -237,7 +244,7 @@ class TopicViewScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	onEndReached = () => {
+	onEndReached() {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
 			const offsetAdjust = this.state.currentOffset + this.props.data.forums.topic.posts.length;
 
@@ -277,7 +284,7 @@ class TopicViewScreen extends Component {
 				}
 			});
 		}
-	};
+	}
 
 	/**
 	 * Loads earlier posts on demand
@@ -339,13 +346,13 @@ class TopicViewScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	onRefresh = () => {
+	onRefresh() {
 		this.setState({
 			reachedEnd: false
 		});
 
 		this.props.data.refetch();
-	};
+	}
 
 	/**
 	 * Return the footer component. Show a spacer by default, but a loading post
@@ -385,7 +392,7 @@ class TopicViewScreen extends Component {
 	 */
 	getLoadPreviousButton() {
 		if (this.state.earlierPostsAvailable) {
-			return <LoadMoreComments loading={this.state.loadingEarlierPosts} onPress={() => this.loadEarlierComments()} label={Lang.get("load_earlier")} />;
+			return <LoadMoreComments loading={this.state.loadingEarlierPosts} onPress={this.loadEarlierComments} label={Lang.get("load_earlier")} />;
 		}
 
 		return null;
@@ -458,7 +465,7 @@ class TopicViewScreen extends Component {
 	 * @param 	object 		followData 		Object with the selected values from the modal
 	 * @return 	void
 	 */
-	onFollow = async followData => {
+	async onFollow(followData) {
 		this.setState({
 			followModalVisible: false
 		});
@@ -481,14 +488,14 @@ class TopicViewScreen extends Component {
 		} catch (err) {
 			Alert.alert(Lang.get("error"), Lang.get("error_following"), [{ text: Lang.get("ok") }], { cancelable: false });
 		}
-	};
+	}
 
 	/**
 	 * Event handler for unfollowing the forum
 	 *
 	 * @return 	void
 	 */
-	onUnfollow = async () => {
+	async onUnfollow() {
 		this.setState({
 			followModalVisible: false
 		});
@@ -510,13 +517,13 @@ class TopicViewScreen extends Component {
 		} catch (err) {
 			Alert.alert(Lang.get("error"), Lang.get("error_unfollowing"), [{ text: Lang.get("ok") }], { cancelable: false });
 		}
-	};
+	}
 
-	addReply = () => {
+	addReply() {
 		this.props.navigation.navigate("ReplyTopic", {
 			topicID: this.props.data.forums.topic.id
 		});
-	};
+	}
 
 	render() {
 		// status 3 == fetchMore, status 4 == refreshing
@@ -535,8 +542,8 @@ class TopicViewScreen extends Component {
 			const listData = this.getListData();
 
 			return (
-				<View style={{ flex: 1 }}>
-					<View style={{ flex: 1, flexGrow: 1 }}>
+				<View style={styles.flex}>
+					<View style={[styles.flex, styles.flexGrow]}>
 						<FollowModal
 							isVisible={this.state.followModalVisible}
 							followData={topicData.follow}
@@ -545,11 +552,11 @@ class TopicViewScreen extends Component {
 							close={this.toggleFollowModal}
 						/>
 						<FlatList
-							style={{ flex: 1 }}
+							style={styles.flex}
 							ref={flatList => (this._flatList = flatList)}
 							keyExtractor={item => item.id}
-							ListHeaderComponent={() => this.getHeaderComponent(topicData)}
-							ListFooterComponent={() => this.getFooterComponent()}
+							ListHeaderComponent={this.getHeaderComponent(topicData)}
+							ListFooterComponent={this.getFooterComponent()}
 							renderItem={({ item }) => this.renderItem(item, topicData)}
 							data={listData}
 							refreshing={this.props.data.networkStatus == 4}
