@@ -1,19 +1,18 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import PropTypes from "prop-types";
 
-import { styleVars } from "../styles";
+import styles, { styleVars } from "../styles";
 
-export default class LoadMoreComments extends Component {
-	constructor(props) {
-		super(props);
-	}
-
+export default class LoadMoreComments extends PureComponent {
 	render() {
 		return (
-			<View style={componentStyles.wrapper}>
-				<TouchableOpacity style={componentStyles.button} onPress={!this.props.loading ? this.props.onPress : null}>
-					<Text style={[componentStyles.buttonText, this.props.loading ? componentStyles.loadingText : null]}>
+			<View style={[styles.flexRow, styles.flexAlignCenter, styles.mhStandard, styles.mtStandard, styles.mbTight]}>
+				<TouchableOpacity
+					style={[styles.phWide, styles.pvStandard, styles.flexGrow, componentStyles.button]}
+					onPress={!this.props.loading ? this.props.onPress : null}
+				>
+					<Text style={[styles.centerText, styles.smallText, componentStyles.buttonText, this.props.loading ? componentStyles.loadingText : null]}>
 						{this.props.loading ? "Loading..." : this.props.label}
 					</Text>
 				</TouchableOpacity>
@@ -23,26 +22,12 @@ export default class LoadMoreComments extends Component {
 }
 
 const componentStyles = StyleSheet.create({
-	wrapper: {
-		display: "flex",
-		flexDirection: 'row',
-		alignItems: "center",
-		marginTop: styleVars.spacing.standard,
-		marginBottom: styleVars.spacing.tight,
-		marginHorizontal: styleVars.spacing.standard
-	},
 	button: {
-		backgroundColor: "rgba(0,0,0,0.05)",
-		paddingHorizontal: 12,
-		paddingVertical: 7,
-		flexGrow: 1
-	},
-	buttonText: {
-		fontSize: 11,
-		textAlign: 'center'
+		backgroundColor: '#fff',
+		borderRadius: 4
 	},
 	loadingText: {
-		color: 'rgba(0,0,0,0.3)'
+		color: "rgba(0,0,0,0.3)"
 	}
 });
 

@@ -1,36 +1,30 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
 
-export default class DummyTextInput extends Component {	
-	constructor(props) {
-		super(props);
-	}
+import styles, { styleVars } from "../styles";
 
+export default class DummyTextInput extends PureComponent {
 	render() {
 		return (
-			<TouchableOpacity style={styles.textbox} onPress={this.props.onPress}>
-				<Text style={styles.placeholder}>
+			<TouchableOpacity style={[styles.phWide, styles.flex, styles.flexJustifyCenter, componentStyles.textbox]} onPress={this.props.onPress}>
+				<Text style={componentStyles.placeholder}>
 					{this.props.placeholder}
 				</Text>
 			</TouchableOpacity>
 		);
 	}
-}
+};
 
-const styles = StyleSheet.create({
+const componentStyles = StyleSheet.create({
 	textbox: {
 		backgroundColor: '#fff',
 		borderWidth: 1,
 		height: 34,
 		borderColor: 'rgba(0,0,0,0.15)',
 		borderRadius: 20,
-		paddingHorizontal: 10,
-		display: 'flex',
-		justifyContent: 'center',
-		flex: 1,
 		width: '100%'
 	},
 	placeholder: {
-		color: '#888',
+		color: styleVars.greys.placeholder
 	}
 });
