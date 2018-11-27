@@ -248,13 +248,16 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		marginHorizontal: styleVars.spacing.wide
+		marginHorizontal: styleVars.spacing.wide,
 	},
 	modalHeaderLink: {
+		zIndex: 10
+	},
+	modalHeaderLinkText: {
 		fontSize: styleVars.fontSizes.large,
 		color: styleVars.accentColor
 	},
-	modalHeaderLinkDisabled: {
+	modalHeaderLinkTextDisabled: {
 		color: styleVars.lightText,
 		opacity: 0.5
 	},
@@ -263,7 +266,12 @@ const styles = StyleSheet.create({
 		fontWeight: '500',
 		color: '#000',
 		fontSize: styleVars.fontSizes.large,
-		marginHorizontal: styleVars.spacing.wide
+		marginHorizontal: styleVars.spacing.wide,
+	},
+	modalTitleWithLinks: {
+		position: 'absolute',
+		left: 0,
+		right: 0
 	},
 	modalHandle: {
 		width: 40,

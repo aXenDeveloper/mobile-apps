@@ -420,12 +420,12 @@ class TagEdit extends Component {
 					<View style={[styles.modalInner, componentStyles.modalInner]}>
 						<View style={styles.modalHeader}>
 							<View style={styles.modalHeaderBar}>
-								<TouchableOpacity onPress={this.hideModal}>
-									<Text style={styles.modalHeaderLink}>{Lang.get("cancel")}</Text>
+								<TouchableOpacity style={styles.modalHeaderLink} onPress={this.hideModal}>
+									<Text style={styles.modalHeaderLinkText}>{Lang.get("cancel")}</Text>
 								</TouchableOpacity>
-								<Text style={styles.modalTitle}>{Lang.get('manage_tags')}</Text>
-								<TouchableOpacity onPress={this.submitTags} disabled={!this.getSaveButtonEnabledState()}>
-									<Text style={[styles.modalHeaderLink, !this.getSaveButtonEnabledState() ? styles.modalHeaderLinkDisabled : null]}>
+								<Text style={[styles.modalTitle, styles.modalTitleWithLinks]}>{Lang.get('manage_tags')}</Text>
+								<TouchableOpacity style={styles.modalHeaderLink} onPress={this.submitTags} disabled={!this.getSaveButtonEnabledState()}>
+									<Text style={[styles.modalHeaderLinkText, !this.getSaveButtonEnabledState() ? styles.modalHeaderLinkTextDisabled : null]}>
 										{Lang.get("save")}
 									</Text>
 								</TouchableOpacity>
