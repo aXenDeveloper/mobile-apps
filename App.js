@@ -8,6 +8,11 @@ import RootScreen from "./src/screens/RootScreen";
 
 const store = configureStore();
 
+/*if (process.env.NODE_ENV !== 'production') {
+	const {whyDidYouUpdate} = require('why-did-you-update');
+	whyDidYouUpdate(React, { include: [/^Post/], exclude: /^YellowBox/ });
+}*/
+
 export default class App extends Component {
   constructor(props) {
     super(props);
