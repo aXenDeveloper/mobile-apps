@@ -75,7 +75,7 @@ export const styleVars = {
 	badgeBackground: '#ff3b2f',
 	badgeText: '#fff',
 	greys: {
-		light: '#F2F4F7',
+		light: '#fafafa',
 		medium: '#f5f5f5',
 		darker: '#e0e0e0',
 		placeholder: '#888888'
@@ -179,6 +179,9 @@ const styles = StyleSheet.create({
 	flexAlignCenter: {
 		alignItems: 'center'
 	},
+	flexAlignStart: {
+		alignItems: 'flex-start'
+	},
 	flexAlignContentCenter: {
 		alignContent: 'center'
 	},
@@ -196,6 +199,15 @@ const styles = StyleSheet.create({
 	},
 	flexJustifyCenter: {
 		justifyContent: 'center'
+	},
+	flexJustifyEnd: {
+		justifyContent: 'flex-end'
+	},
+	flexAlignSelfStart: {
+		alignSelf: 'flex-start'
+	},
+	flexWrap: {
+		flexWrap: 'wrap'
 	},
 	flexGrow: {
 		flexGrow: 1
@@ -305,6 +317,9 @@ const styles = StyleSheet.create({
 	readBackground: {
 		backgroundColor: '#ffffff', //'#f5f5f7'
 	},
+	lightBackground: {
+		backgroundColor: styleVars.greys.light
+	},
 	text: {
 		color: '#000'
 	},
@@ -362,6 +377,9 @@ const styles = StyleSheet.create({
 	},
 	reverseText: {
 		color: styleVars.reverseText
+	},
+	accentText: {
+		color: styleVars.accentColor
 	},
 	centerText: {
 		textAlign: 'center'
