@@ -21,7 +21,7 @@ import ReactionModal from "../../atoms/ReactionModal";
 import relativeTime from "../../utils/RelativeTime";
 import getErrorMessage from "../../utils/getErrorMessage";
 import PostFragment from "./PostFragment";
-import { styleVars } from "../../styles";
+import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
 
 const PostReactionMutation = gql`
@@ -60,6 +60,7 @@ class Post extends Component {
 			whoReactedCount: 0,
 			whoReactedReaction: 0,
 			whoReactedImage: '',
+			ignoreOverride: false
 		};
 		this.onPressReaction = this.onPressReaction.bind(this);
 		this.onPressProfile = this.onPressProfile.bind(this);
@@ -70,6 +71,7 @@ class Post extends Component {
 		this.onPressReputation = this.onPressReputation.bind(this);
 		this.onReactionPress = this.onReactionPress.bind(this);
 		this.onPressPostDots = this.onPressPostDots.bind(this);
+		this.onPressIgnoredPost = this.onPressIgnoredPost.bind(this);
 	}
 
 	/**
@@ -88,13 +90,13 @@ class Post extends Component {
 	 */
 	loadingComponent() {
 		return (
-			<ShadowedArea style={[styles.post, styles.postWrapper]}>
+			<ShadowedArea style={[componentStyles.post, styles.mbVeryTight]}>
 				<PlaceholderContainer height={40}>
 					<PlaceholderElement circle radius={40} left={0} top={0} />
 					<PlaceholderElement width={160} height={15} top={0} left={50} />
 					<PlaceholderElement width={70} height={14} top={23} left={50} />
 				</PlaceholderContainer>
-				<PlaceholderContainer height={100} style={styles.postContentContainer}>
+				<PlaceholderContainer height={100} style={styles.mvWide}>
 					<PlaceholderElement width="100%" height={12} />
 					<PlaceholderElement width="70%" height={12} top={20} />
 					<PlaceholderElement width="82%" height={12} top={40} />
@@ -378,8 +380,44 @@ class Post extends Component {
 		this._actionSheet.show();
 	};
 
+	/**
+	 * Handler for showing/hiding an ignored post
+	 *
+	 * @return 	void
+	 */
+	onPressIgnoredPost() {
+		this.setState({
+			ignoreOverride: !this.state.ignoreOverride
+		});
+	}
+
+	/**
+	 * Render the ignored post wrapper (used when the user has ignored this user but hasn't chosen to show it manually)
+	 *
+	 * @return 	Component
+	 */
 	renderIgnoredPost() {
-		return <Text>This post is ignored!</Text>;
+		return (
+			<View style={styles.mbVeryTight}>
+				{this.renderIgnoreBar()}
+			</View>
+		);
+	}
+
+	/**
+	 * Render the bar that indicates this post is ignored
+	 *
+	 * @return 	Component
+	 */
+	renderIgnoreBar() {
+		return (
+			<ShadowedArea style={this.state.ignoreOverride ? styles.lightBackground : null}>
+				<TouchableOpacity style={[styles.flexRow, styles.flexJustifyBetween, styles.pvStandard, styles.phWide]} onPress={this.onPressIgnoredPost}>
+					<Text style={[styles.standardText, styles.veryLightText]}>{Lang.get('ignoring_user')}</Text>
+					<Text style={[styles.standardText, styles.accentText]}>{Lang.get( this.state.ignoreOverride ? 'hide' : 'show')}</Text>
+				</TouchableOpacity>
+			</ShadowedArea>
+		);
 	}
 
 	render() {
@@ -387,38 +425,39 @@ class Post extends Component {
 			return this.loadingComponent();
 		}
 
-		if (this.props.data.isIgnored) {
+		if (this.props.data.isIgnored && !this.state.ignoreOverride) {
 			return this.renderIgnoredPost();
 		}
 
 		const repButton = this.getReputationButton();
 
 		return (
-			<TouchableHighlight style={styles.postWrapper}>
-				<ShadowedArea style={styles.post}>
-					<View style={styles.postHeader} testId="postAuthor">
-						<TouchableOpacity style={styles.postInfo} onPress={this.props.data.author.id ? this.onPressProfile : null}>
-							<View style={styles.postInfo}>
+			<View style={styles.mbVeryTight}>
+				{this.props.data.isIgnored && this.state.ignoreOverride && this.renderIgnoreBar()}
+				<ShadowedArea style={componentStyles.post}>
+					<View style={[styles.flexRow, styles.flexAlignStart]} testId="postAuthor">
+						<TouchableOpacity style={styles.flex} onPress={this.props.data.author.id ? this.onPressProfile : null}>
+							<View style={[styles.flex, styles.flexRow, styles.flexAlignStart]}>
 								<UserPhoto url={this.props.data.author.photo} online={this.props.data.author.isOnline || null} size={36} />
-								<View style={styles.meta}>
-									<Text style={styles.username}>{this.props.data.author.name}</Text>
-									<Text style={styles.date}>{relativeTime.long(this.props.data.timestamp)}</Text>
+								<View style={[styles.flexColumn, styles.flexJustifyCenter, styles.mlStandard]}>
+									<Text style={styles.itemTitle}>{this.props.data.author.name}</Text>
+									<Text style={[styles.standardText, styles.lightText]}>{relativeTime.long(this.props.data.timestamp)}</Text>
 								</View>
 							</View>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.postInfoButton} onPress={this.onPressPostDots}>
-							<Image style={styles.postMenu} resizeMode="contain" source={require("../../../resources/dots.png")} />
+						<TouchableOpacity style={styles.flexAlignSelfStart} onPress={this.onPressPostDots}>
+							<Image style={componentStyles.postMenu} resizeMode="contain" source={require("../../../resources/dots.png")} />
 						</TouchableOpacity>
 					</View>
-					<View style={styles.postContentContainer}>
+					<View style={styles.mvWide}>
 						<RichTextContent>{this.props.data.content}</RichTextContent>
 						<Animatable.View ref={r => (this._reactionWrap = r)}>
 							{this.props.data.reputation.reactions.length && (
-								<View style={[styles.postReactionList]} testId="reactionList">
+								<View style={[styles.mtWide, styles.flexRow, styles.flexJustifyEnd, styles.flexWrap]} testId="reactionList">
 									{this.props.data.reputation.reactions.map(reaction => {
 										return (
 											<Reaction
-												style={styles.reactionItem}
+												style={styles.mlStandard}
 												key={reaction.id}
 												id={reaction.id}
 												image={reaction.image}
@@ -464,67 +503,22 @@ class Post extends Component {
 						}}
 					/>
 				</ShadowedArea>
-			</TouchableHighlight>
+			</View>
 		);
 	}
 }
 
 export default compose(graphql(PostReactionMutation), withNavigation)(Post);
-
 export { Post as TestPost }; // For test runner only
 
-const styles = StyleSheet.create({
-	postWrapper: {
-		marginBottom: 7
-	},
+const componentStyles = StyleSheet.create({
 	post: {
-		padding: 16,
+		padding: styleVars.spacing.wide,
 		paddingBottom: 0
-	},
-	postHeader: {
-		flexDirection: "row",
-		alignItems: "flex-start"
-	},
-	postInfo: {
-		flexDirection: "row",
-		alignItems: "flex-start",
-		flex: 1
-	},
-	meta: {
-		flex: 1,
-		flexDirection: "column",
-		justifyContent: "center",
-		marginLeft: 9
-	},
-	username: {
-		fontSize: styleVars.fontSizes.large,
-		fontWeight: "600",
-		color: "#171717"
-	},
-	date: {
-		fontSize: styleVars.fontSizes.standard,
-		color: "#8F8F8F"
-	},
-	postContentContainer: {
-		marginTop: 16,
-		marginBottom: 16
 	},
 	postMenu: {
 		width: 24,
 		height: 24,
 		opacity: 0.5
-	},
-	postInfoButton: {
-		alignSelf: "flex-start"
-	},
-	postReactionList: {
-		display: "flex",
-		justifyContent: "flex-end",
-		flexWrap: "wrap",
-		flexDirection: "row",
-		marginTop: 15
-	},
-	reactionItem: {
-		marginLeft: 10
 	}
 });

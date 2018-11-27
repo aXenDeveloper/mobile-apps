@@ -13,6 +13,8 @@ const LangFragment = gql`
 		add: phrase(key: "app_add")
 		share: phrase(key: "app_share")
 		report: phrase(key: "app_report")
+		show: phrase(key: "app_show")
+		hide: phrase(key: "app_hide")
 		load_earlier: phrase(key: "app_load_earlier")
 		write_reply: phrase(key: "app_write_reply")
 		unread_posts: phrase(key: "app_unread_posts")
@@ -59,6 +61,7 @@ const LangFragment = gql`
 		cant_show_reactions: phrase(key: "app_cant_show_reactions")
 		editor_quote_line_with_time: phrase(key: "app_editor_quote_line_with_time")
 		editor_quote_line: phrase(key: "app_editor_quote_line")
+		ignoring_user: phrase(key: "app_ignoring_user")
 
 		followed_member: phrase(key: "app_followed_member")
 		unfollowed_member: phrase(key: "app_unfollowed_member")
