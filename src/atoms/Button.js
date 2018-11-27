@@ -169,7 +169,7 @@ const componentStyles = StyleSheet.create({
 	warningFilledText: {
 		color: styleVars.warningButton.inverseColor
 	},
-	warningFilledText: {
+	warningFilledImage: {
 		tintColor: styleVars.warningButton.inverseColor
 	}
 });
