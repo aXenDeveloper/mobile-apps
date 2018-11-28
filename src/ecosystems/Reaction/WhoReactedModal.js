@@ -22,6 +22,7 @@ class WhoReactedModal extends Component {
 			offset: 0,
 			reachedEnd: false
 		};
+		this.preOnPressCallback = this.preOnPressCallback.bind(this);
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -72,6 +73,10 @@ class WhoReactedModal extends Component {
 		}
 	}
 
+	preOnPressCallback() {
+		this.props.close();
+	}
+
 	onEndReached() {
 		if( !this.state.loading && !this.state.reachedEnd ){
 			this.fetchData();
@@ -101,7 +106,7 @@ class WhoReactedModal extends Component {
 			content = (
 				<FlatList
 					data={this.state.results}
-					renderItem={({item}) => <MemberRow key={item.id} id={parseInt(item.id)} name={item.name} photo={item.photo} groupName={item.group.name} />}
+					renderItem={({item}) => <MemberRow key={item.id} id={parseInt(item.id)} name={item.name} photo={item.photo} groupName={item.group.name} preOnPressCallback={this.preOnPressCallback} />}
 					keyExtractor={item => item.id}
 					onEndReached={this.onEndReached}
 				/>

@@ -13,9 +13,14 @@ import styles, { styleVars } from "../../styles";
 class MemberRow extends Component {
 	constructor(props) {
 		super(props);
+		this.onPress = this.onPress.bind(this);
 	}
 
-	onPress = () => {
+	onPress() {
+		if( this.props.preOnPressCallback ){
+			this.props.preOnPressCallback();
+		}
+
 		this.props.navigation.navigate({
 			routeName: "Profile",
 			params: {
