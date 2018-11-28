@@ -60,6 +60,7 @@ const BootQuery = gql`
 				tags_min_req
 				reputation_enabled
 				reputation_highlight
+				reputation_show_profile
 			}
 			loginHandlers {
 				id

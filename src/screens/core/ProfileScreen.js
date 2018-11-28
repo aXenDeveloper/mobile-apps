@@ -391,7 +391,7 @@ class ProfileScreen extends Component {
 			if (
 				this.props.user.id &&
 				this.props.data.core.member.id !== this.props.user.id &&
-				(!this.props.data.core.member.moderateFollowers || this.props.data.core.member.follow.isFollowing)
+				(this.props.data.core.member.allowFollow || this.props.data.core.member.follow.isFollowing)
 			) {
 				showFollowButton = true;
 			}
@@ -471,14 +471,18 @@ class ProfileScreen extends Component {
 										<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.contentCount}</Text>
 										<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_content_count')}</Text>
 									</View>
-									<View style={[componentStyles.profileStatSection, componentStyles.profileStatSectionBorder]}>
-										<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.reputationCount}</Text>
-										<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_reputation')}</Text>
-									</View>
-									<View style={componentStyles.profileStatSection}>
-										<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.follow.followCount}</Text>
-										<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_followers')}</Text>
-									</View>
+									{this.props.site.settings.reputation_show_profile && (
+										<View style={[componentStyles.profileStatSection, componentStyles.profileStatSectionBorder]}>
+											<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.reputationCount}</Text>
+											<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_reputation')}</Text>
+										</View>
+									)}
+									{this.props.data.core.member.allowFollow && (
+										<View style={componentStyles.profileStatSection}>
+											<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.follow.followCount}</Text>
+											<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_followers')}</Text>
+										</View>
+									)}
 								</View>
 							</Animated.View>
 						</Animated.View>
