@@ -58,6 +58,8 @@ const BootQuery = gql`
 				tags_max
 				tags_len_max
 				tags_min_req
+				reputation_enabled
+				reputation_highlight
 			}
 			loginHandlers {
 				id

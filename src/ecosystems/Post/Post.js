@@ -4,6 +4,7 @@ import Modal from "react-native-modal";
 import ActionSheet from "react-native-actionsheet";
 import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
+import { connect } from "react-redux";
 import * as Animatable from "react-native-animatable";
 import { withNavigation } from "react-navigation";
 import _ from "underscore";
@@ -18,6 +19,7 @@ import PostControl from "../../atoms/PostControl";
 import RichTextContent from "../../atoms/RichTextContent";
 import Reaction from "../../atoms/Reaction";
 import ReactionModal from "../../atoms/ReactionModal";
+import CommentFlag from "../../atoms/CommentFlag";
 import relativeTime from "../../utils/RelativeTime";
 import getErrorMessage from "../../utils/getErrorMessage";
 import PostFragment from "./PostFragment";
@@ -420,6 +422,18 @@ class Post extends Component {
 		);
 	}
 
+	renderCommentFlag() {
+		if( !this.props.site.settings.reputation_enabled || !this.props.site.settings.reputation_highlight ){
+			return null;
+		}
+
+		if( this.props.data.reputation.reactionCount >= this.props.site.settings.reputation_highlight ){
+			return <CommentFlag />
+		}
+
+		return null;
+	}
+
 	render() {
 		if (this.props.loading) {
 			return this.loadingComponent();
@@ -502,13 +516,21 @@ class Post extends Component {
 							reactionID: parseInt(this.state.whoReactedReaction)
 						}}
 					/>
+					{this.renderCommentFlag()}
 				</ShadowedArea>
 			</View>
 		);
 	}
 }
 
-export default compose(graphql(PostReactionMutation), withNavigation)(Post);
+export default compose(
+	graphql(PostReactionMutation), 
+	withNavigation,
+	connect(state => ({
+		site: state.site
+	}))
+)(Post);
+
 export { Post as TestPost }; // For test runner only
 
 const componentStyles = StyleSheet.create({

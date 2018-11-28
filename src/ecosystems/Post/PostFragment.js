@@ -22,8 +22,10 @@ const PostFragment = gql`
 		content
 		isFirstPost
 		isIgnored
+		isFeatured
 		reputation {
 			__typename
+			reactionCount
 			canReact
 			hasReacted
 			canViewReps

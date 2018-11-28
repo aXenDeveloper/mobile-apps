@@ -9,6 +9,7 @@ export const styleVars = {
 	veryLightText: '#9ba3ab',
 	reverseText: '#fff',
 	accentColor: '#3370AA',
+	popularColor: '#F58D23',
 	appBackground: '#e6e8eb',
 	tabActive: '#37454B',
 	tabInactive: '#6e797e',
