@@ -50,14 +50,18 @@ class CreateTopicScreen extends Component {
 			title: "Create Topic",
 			headerTintColor: "white",
 			headerLeft: (
-				<Text style={{ color: "#fff" }} onPress={navigation.getParam("cancelTopic")}>
-					Cancel
-				</Text>
+				<View style={[styles.mlStandard]}>
+					<Text style={[styles.contentText, { color: "#fff" }]} onPress={navigation.getParam("cancelTopic")}>
+						Cancel
+					</Text>
+				</View>
 			),
 			headerRight: (
-				<Text style={{ color: "#fff" }} onPress={navigation.getParam("submitTopic")}>
-					Post
-				</Text>
+				<View style={[styles.mrStandard]}>
+					<Text style={[styles.contentText, { color: "#fff" }]} onPress={navigation.getParam("submitTopic")}>
+						Post
+					</Text>
+				</View>
 			)
 		};
 	};

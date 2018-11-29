@@ -31,14 +31,18 @@ class ReplyTopicScreen extends Component {
 			title: "Reply To Topic",
 			headerTintColor: "white",
 			headerLeft: (
-				<Text style={{ color: "#fff" }} onPress={navigation.getParam("cancelReply")}>
-					Cancel
-				</Text>
+				<View style={[styles.mlStandard]}>
+					<Text style={[styles.contentText, { color: "#fff" }]} onPress={navigation.getParam("cancelReply")}>
+						Cancel
+					</Text>
+				</View>
 			),
 			headerRight: (
-				<Text style={{ color: "#fff" }} onPress={navigation.getParam("submitReply")}>
-					Post
-				</Text>
+				<View style={[styles.mrStandard]}>
+					<Text style={[styles.contentText, { color: "#fff" }]} onPress={navigation.getParam("submitReply")}>
+						Post
+					</Text>
+				</View>
 			)
 		};
 	};
