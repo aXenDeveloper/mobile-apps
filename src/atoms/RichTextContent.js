@@ -222,15 +222,13 @@ export default class RichTextContent extends PureComponent {
 					onLinkPress={this.props.onLinkPress || this.onLinkPress}
 					ignoreNodesFunction={this.ignoreNodesFunction}
 				/>
-				{this._lightboxedImages.length && (
-					<Lightbox
-						animationIn="bounceIn"
-						isVisible={this.state.lightboxVisible}
-						data={this._lightboxedImages}
-						initialImage={this.state.defaultImage || false}
-						close={this.closeLightbox}
-					/>
-				)}
+				<Lightbox
+					animationIn="bounceIn"
+					isVisible={this.state.lightboxVisible}
+					data={this._lightboxedImages}
+					initialImage={this.state.defaultImage || false}
+					close={this.closeLightbox}
+				/>
 			</React.Fragment>
 		);
 	}
