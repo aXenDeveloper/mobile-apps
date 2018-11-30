@@ -40,6 +40,7 @@ const TopicViewQuery = gql`
 					module
 					controller
 				}
+				isUnread
 				timeLastRead
 				postCount
 				unreadCommentPosition
@@ -59,6 +60,7 @@ const TopicViewQuery = gql`
 					__typename
 					canComment
 					canCommentIfSignedIn
+					canMarkAsRead
 				}
 				posts(offsetAdjust: $offsetAdjust, offsetPosition: $offsetPosition, limit: $limit, findComment: $findComment) {
 					...PostFragment
@@ -71,6 +73,18 @@ const TopicViewQuery = gql`
 	}
 	${PostFragment}
 	${FollowModalFragment}
+`;
+
+const MarkTopicRead = gql`
+	mutation MarkTopicRead($id: ID!) {
+		mutateForums {
+			markTopicRead(id: $id) {
+				timeLastRead
+				unreadCommentPosition
+				isUnread
+			}
+		}
+	}
 `;
 
 class TopicViewScreen extends Component {
@@ -102,14 +116,14 @@ class TopicViewScreen extends Component {
 	constructor(props) {
 		super(props);
 		this._flatList = null; // Ref to the flatlist
-		//this._currentOffset = 0; // The offset we're currently displaying in the view
+		//this._startingOffset = 0; // The offset we're currently displaying in the view
 		this._initialOffsetDone = false; // Flag to indicate we've set our initial offset on render
 		this._aboutToScrollToEnd = false; // Flag to indicate a scrollToEnd is pending so we can avoid other autoscrolls
 		this.state = {
 			reachedEnd: false,
 			earlierPostsAvailable: null,
 			loadingEarlierPosts: false,
-			currentOffset: this.props.data.variables.offset || 0
+			startingOffset: this.props.data.variables.offset || 0
 		};
 
 		if (this.props.auth.authenticated) {
@@ -178,6 +192,10 @@ class TopicViewScreen extends Component {
 				});
 			}
 
+			// Check if we should mark this read
+			this.maybeMarkAsRead();
+
+			// If follow controls are available, show them
 			if (!this.props.data.forums.topic.passwordProtected) {
 				this.props.navigation.setParams({
 					showFollowControl: true,
@@ -196,20 +214,20 @@ class TopicViewScreen extends Component {
 			if (this.props.data.variables.offsetPosition == "ID" && this.props.data.forums.topic.findCommentPosition) {
 				// If we're starting at a specific post, then set the offset to that post's position
 				this.setState({
-					currentOffset: this.props.data.forums.topic.findCommentPosition
+					startingOffset: this.props.data.forums.topic.findCommentPosition
 				});
 				this._initialOffsetDone = true;
 			} else if (this.props.data.variables.offsetPosition == "UNREAD" && this.props.data.forums.topic.unreadCommentPosition) {
 				// If we're showing by unread, then the offset will be the last unread post position
 				this.setState({
-					currentOffset: this.props.data.forums.topic.unreadCommentPosition
+					startingOffset: this.props.data.forums.topic.unreadCommentPosition
 				});
 				this._initialOffsetDone = true;
 			} else if (this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0) {
 				// If we're showing the last post, the offset will be the total post count plus our adjustment
 				this.setState({
 					reachedEnd: true,
-					currentOffset: this.props.data.forums.topic.commentCount + this.props.data.variables.offsetAdjust
+					startingOffset: this.props.data.forums.topic.commentCount + this.props.data.variables.offsetAdjust
 				});
 				this.scrollToEnd();
 				this._initialOffsetDone = true;
@@ -218,9 +236,9 @@ class TopicViewScreen extends Component {
 
 		// Figure out if we need to change the state that determines whether the
 		// Load Earlier Posts button shows
-		if (prevState.earlierPostsAvailable == null || prevState.currentOffset !== this.state.currentOffset) {
+		if (prevState.earlierPostsAvailable == null || prevState.startingOffset !== this.state.startingOffset) {
 			//if (this.state.earlierPostsAvailable !== false) {
-			const showEarlierPosts = this.state.currentOffset > 0;
+			const showEarlierPosts = this.state.startingOffset > 0;
 
 			this.setState({
 				earlierPostsAvailable: showEarlierPosts
@@ -246,7 +264,7 @@ class TopicViewScreen extends Component {
 	 */
 	onEndReached() {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
-			const offsetAdjust = this.state.currentOffset + this.props.data.forums.topic.posts.length;
+			const offsetAdjust = this.state.startingOffset + this.props.data.forums.topic.posts.length;
 
 			// Don't try loading more if we're already showing everything in the topic
 			if (offsetAdjust >= this.props.data.forums.topic.commentCount) {
@@ -257,10 +275,11 @@ class TopicViewScreen extends Component {
 				variables: {
 					// When infinite loading, we must reset this otherwise the same unread posts will load again
 					offsetPosition: "FIRST",
-					offsetAdjust
+					offsetAdjust,
+					limit: Expo.Constants.manifest.extra.per_page
 				},
 				updateQuery: (previousResult, { fetchMoreResult }) => {
-					// Don't do anything if there wasn't any new items
+					// Don't do anything if there were no new items
 					if (!fetchMoreResult || fetchMoreResult.forums.topic.posts.length === 0) {
 						this.setState({
 							reachedEnd: true
@@ -280,6 +299,9 @@ class TopicViewScreen extends Component {
 						}
 					});
 
+					// Check if we should mark this read
+					this.maybeMarkAsRead();
+
 					return result;
 				}
 			});
@@ -298,19 +320,20 @@ class TopicViewScreen extends Component {
 			});
 
 			// Ensure the offset doesn't go below 0
-			const offsetAdjust = Math.max(this.state.currentOffset - Expo.Constants.manifest.extra.per_page, 0);
+			const offsetAdjust = Math.max(this.state.startingOffset - Expo.Constants.manifest.extra.per_page, 0);
 
 			this.props.data.fetchMore({
 				variables: {
 					offsetPosition: "FIRST",
-					offsetAdjust
+					offsetAdjust,
+					limit: Expo.Constants.manifest.extra.per_page
 				},
 				updateQuery: (previousResult, { fetchMoreResult }) => {
 					// We use this state to track whether we should show the Load Earlier Posts button
 					this.setState({
-						earlierPostsAvailable: this.state.currentOffset - Expo.Constants.manifest.extra.per_page > 0,
+						earlierPostsAvailable: this.state.startingOffset - Expo.Constants.manifest.extra.per_page > 0,
 						loadingEarlierPosts: false,
-						currentOffset: offsetAdjust
+						startingOffset: offsetAdjust
 					});
 
 					// Don't do anything if there wasn't any new items
@@ -338,6 +361,37 @@ class TopicViewScreen extends Component {
 					return result;
 				}
 			});
+		}
+	}
+
+	async maybeMarkAsRead() {
+		const offsetAdjust = this.state.startingOffset + this.props.data.forums.topic.posts.length;
+
+		// If we are unread and on the last 'page' of results...
+		if (
+			this.props.data.forums.topic.itemPermissions.canMarkRead &&
+			this.props.data.forums.topic.isUnread &&
+			offsetAdjust >= this.props.data.forums.topic.postCount - Expo.Constants.manifest.extra.per_page
+		) {
+			try {
+				const { data } = await this.props.client.mutate({
+					mutation: MarkTopicRead,
+					variables: {
+						id: this.props.data.forums.topic.id
+					},
+					optimisticResponse: {
+						mutateForums: {
+							__typename: "mutate_Forums",
+							markTopicRead: {
+								...this.props.data.forums.topic,
+								isUnread: false
+							}
+						}
+					}
+				});
+			} catch (err) {
+				console.log("Couldn't mark topic as read: " + err);
+			}
 		}
 	}
 

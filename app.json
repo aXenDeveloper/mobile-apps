@@ -2,6 +2,7 @@
   "expo": {
     "sdkVersion": "30.0.0",
     "orientation": "portrait",
+    "privacy": "unlisted",
     "extra": {
 		"oauth_client_id": "e9a2ba72438fe656c678f41095a360ea",
 		"api_url": "http://192.168.180.170/ipsdev/graphql-api/",
