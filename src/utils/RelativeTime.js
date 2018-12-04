@@ -14,40 +14,46 @@ class RelativeTime {
 		this.formats = {
 			seconds: {
 				short: 's',
-				long: ' sec'
+				long: 'sec'
 			},
 			minutes: {
 				short: 'm',
-				long: ' min'
+				long: 'min'
 			},
 			hours: {
 				short: 'h',
-				long: ' hr'
+				long: 'hr'
 			},
 			days: {
 				short: 'd',
-				long: ' day'
+				long: 'day'
 			},
 			weeks: {
 				short: 'w',
-				long: ' week'
+				long: 'week'
 			},
 			months: {
 				short: 'mo',
-				long: ' month'
+				long: 'month'
 			},
 			years: {
 				short: 'y',
-				long: ' year'
+				long: 'year'
 			}
 		};
 	};
 
-	relativeFormat(timestamp, format) {
-		let time = moment.unix(timestamp);
-		let diff = Math.abs(moment().diff(time));
+	relativeFormat(timestamp, format, phrase = true) {
+		const time = moment.unix(timestamp);
+		let diff = moment().diff(time);
 		let unit = null;
 		let num = null;
+		let future = false;
+
+		if( diff < 0 ){
+			future = true;
+			diff = diff * -1;
+		}
 
 		if (diff <= this.second) {
 			unit = 'seconds';
@@ -72,25 +78,36 @@ class RelativeTime {
 			num = moment.duration(diff)[unit]();
 		}
 		
-		unitStr = unit = this.formats[unit][format];
+		let unitStr = unit = this.formats[unit][format];
+		let toReturn;
 		
 		if (format === 'long') {
 			if (num > 1) {
-				unitStr += 's';
+				unitStr = `${unitStr}s`;
 			}
 
-			unitStr += ' ago';
+			if( phrase ){
+				if( !future ){
+					toReturn = `${num} ${unitStr} ago`;
+				} else {
+					toReturn = `in ${num} ${unitStr}`;
+				} 
+			} else {
+				toReturn = `${num} ${unitStr}`;
+			}
+		} else {
+			toReturn = `${num}${unitStr}`;
 		}
 		
-		return num + unitStr;
+		return toReturn;
 	};
 
-	short(timestamp) {
-		return this.relativeFormat(timestamp, 'short');
+	short(timestamp, phrase = true) {
+		return this.relativeFormat(timestamp, 'short', phrase);
 	};
 
-	long(timestamp) {
-		return this.relativeFormat(timestamp, 'long');
+	long(timestamp, phrase = true) {
+		return this.relativeFormat(timestamp, 'long', phrase);
 	};
 }
 
