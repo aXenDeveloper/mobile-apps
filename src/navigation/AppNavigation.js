@@ -17,6 +17,7 @@ import NotificationsScreen from "../screens/core/NotificationsScreen";
 import NotificationsSettingsScreen from "../screens/core/NotificationsSettingsScreen";
 import ProfileScreen from "../screens/core/ProfileScreen";
 import UserScreen from "../screens/core/UserScreen";
+import PollScreen from "../screens/core/PollScreen";
 import LoginScreen from "../screens/core/LoginRegister/LoginScreen";
 import RegisterScreen from "../screens/core/LoginRegister/RegisterScreen";
 import WebViewScreen from "../screens/core/WebViewScreen";
@@ -72,6 +73,7 @@ class AppNavigation extends Component {
 				},
 				TopicList: { screen: TopicListScreen },
 				TopicView: { screen: TopicViewScreen },
+				Poll: { screen: PollScreen },
 				Profile: { screen: ProfileScreen },
 				SearchStack: { screen: SearchScreen },
 				NotificationsStack: { screen: NotificationsScreen },

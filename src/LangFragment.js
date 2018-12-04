@@ -104,6 +104,14 @@ const LangFragment = gql`
 		incorrect_forum_password: phrase(key: "app_incorrect_forum_password")
 		no_post: phrase(key: "app_no_post")
 
+		votes: phrase(key: "app_votes")
+		poll_closed: phrase(key: "app_poll_closed")
+		poll_closes_date: phrase(key: "app_poll_closes_date")
+		poll_view: phrase(key: "app_poll_view")
+		poll_view_results: phrase(key: "app_poll_view_results")
+		poll_view_and_vote: phrase(key: "app_poll_view_and_vote")
+		poll_you_voted: phrase(key: "app_poll_you_voted")
+
 		tags_min_max: phrase(key: "app_tags_min_max")
 		tags_min: phrase(key: "app_tags_min")
 		tags_max: phrase(key: "app_tags_max")

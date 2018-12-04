@@ -16,6 +16,8 @@ const icons = {
 	TAG_SOLID: require("../resources/tag_solid.png"),
 	TRASH: require("../resources/trash.png"),
 	USER_DOCUMENT: require("../resources/edit_profile.png"),
+	POLL: require("../resources/poll.png"),
+	VIEW: require("../resources/view.png")
 };
 
 export default icons;

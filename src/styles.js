@@ -388,6 +388,9 @@ const styles = StyleSheet.create({
 	italicText: {
 		fontStyle: 'italic'
 	},
+	mediumText: {
+		fontWeight: "600"
+	},
 
 	/* Spacing styles */
 	mVeryTight: { margin: styleVars.spacing.veryTight },

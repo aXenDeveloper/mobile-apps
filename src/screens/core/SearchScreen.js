@@ -643,7 +643,7 @@ const componentStyles = StyleSheet.create({
 		fontSize: 13
 	},
 	activeTabUnderline: {
-		backgroundColor: "#2080A7",
+		backgroundColor: styleVars.accentColor,
 		height: 2
 	},
 	tab: {
@@ -677,7 +677,7 @@ const componentStyles = StyleSheet.create({
 	},
 	seeAllRowText: {
 		textAlign: "center",
-		color: styleVars.primaryButton.mainColor,
+		color: styleVars.primaryButton.accentColor,
 		fontSize: styleVars.fontSizes.content,
 		fontWeight: "500"
 	},

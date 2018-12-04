@@ -12,6 +12,7 @@ import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import getErrorMessage from "../../utils/getErrorMessage";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import { Post, PostFragment } from "../../ecosystems/Post";
+import { PollPreview, PollModal, PollFragment } from "../../ecosystems/Poll";
 import Tag from "../../atoms/Tag";
 import TagList from "../../atoms/TagList";
 import ErrorBox from "../../atoms/ErrorBox";
@@ -56,6 +57,9 @@ const TopicViewQuery = gql`
 					name
 				}
 				locked
+				poll {
+					...PollFragment
+				}
 				itemPermissions {
 					__typename
 					canComment
@@ -71,6 +75,7 @@ const TopicViewQuery = gql`
 			}
 		}
 	}
+	${PollFragment}
 	${PostFragment}
 	${FollowModalFragment}
 `;
@@ -123,7 +128,9 @@ class TopicViewScreen extends Component {
 			reachedEnd: false,
 			earlierPostsAvailable: null,
 			loadingEarlierPosts: false,
-			startingOffset: this.props.data.variables.offset || 0
+			startingOffset: this.props.data.variables.offset || 0,
+			pollModalVisible: false,
+			followModalVisible: false
 		};
 
 		if (this.props.auth.authenticated) {
@@ -136,6 +143,7 @@ class TopicViewScreen extends Component {
 
 		this.loadEarlierComments = this.loadEarlierComments.bind(this);
 		this.toggleFollowModal = this.toggleFollowModal.bind(this);
+		this.goToPollScreen = this.goToPollScreen.bind(this);
 		this.onEndReached = this.onEndReached.bind(this);
 		this.onRefresh = this.onRefresh.bind(this);
 		this.onFollow = this.onFollow.bind(this);
@@ -434,8 +442,18 @@ class TopicViewScreen extends Component {
 				{this.getLoadPreviousButton()}
 				{topicData.locked && <Text>This topic is locked</Text>}
 				{topicData.tags.length && <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList>}
+				{topicData.poll !== null && <PollPreview data={topicData.poll} onPress={this.goToPollScreen} />}
 			</React.Fragment>
 		);
+	}
+
+	goToPollScreen() {
+		/*this.setState({
+			pollModalVisible: !this.state.pollModalVisible
+		});*/
+		this.props.navigation.navigate('Poll', {
+			data: this.props.data.forums.topic.poll
+		});
 	}
 
 	/**
@@ -617,6 +635,9 @@ class TopicViewScreen extends Component {
 							onRefresh={this.onRefresh}
 							onEndReached={this.onEndReached}
 						/>
+						{this.props.data.forums.topic.poll !== null && (
+							<PollModal isVisible={this.state.pollModalVisible} data={this.props.data.forums.topic.poll} />
+						)}
 						{this.props.data.forums.topic.itemPermissions.canComment && (
 							<Pager light>
 								<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
