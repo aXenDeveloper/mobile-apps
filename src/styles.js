@@ -9,6 +9,7 @@ export const styleVars = {
 	veryLightText: '#9ba3ab',
 	reverseText: '#fff',
 	accentColor: '#3370AA',
+	altAccentColor: '#009BA2',
 	popularColor: '#F58D23',
 	appBackground: '#e6e8eb',
 	tabActive: '#37454B',
@@ -183,6 +184,9 @@ const styles = StyleSheet.create({
 	flexAlignStart: {
 		alignItems: 'flex-start'
 	},
+	flexAlignEnd: {
+		alignItems: 'flex-end'
+	},
 	flexAlignContentCenter: {
 		alignContent: 'center'
 	},
@@ -206,6 +210,9 @@ const styles = StyleSheet.create({
 	},
 	flexAlignSelfStart: {
 		alignSelf: 'flex-start'
+	},
+	flexAlignSelfCenter: {
+		alignSelf: 'center'
 	},
 	flexWrap: {
 		flexWrap: 'wrap'

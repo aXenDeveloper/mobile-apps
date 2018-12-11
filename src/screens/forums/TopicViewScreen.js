@@ -452,7 +452,8 @@ class TopicViewScreen extends Component {
 			pollModalVisible: !this.state.pollModalVisible
 		});*/
 		this.props.navigation.navigate('Poll', {
-			data: this.props.data.forums.topic.poll
+			data: this.props.data.forums.topic.poll,
+			itemID: this.props.data.forums.topic.id
 		});
 	}
 

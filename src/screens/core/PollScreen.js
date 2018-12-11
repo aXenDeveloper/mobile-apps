@@ -1,26 +1,185 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView, SectionList, StyleSheet, Image, StatusBar, Animated, Platform, Dimensions, Alert } from "react-native";
-import HeaderBackButton from "react-navigation";
+import { Text, View, FlatList, StyleSheet, Alert } from "react-native";
+import gql from "graphql-tag";
+import { graphql, compose, withApollo } from "react-apollo";
+import { connect } from "react-redux";
+import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
+import ShadowedArea from "../../atoms/ShadowedArea";
+import Button from "../../atoms/Button";
+import { PollQuestion, PollFragment } from "../../ecosystems/Poll";
 import styles, { styleVars } from "../../styles";
 
+const PollVoteMutation = gql`
+	mutation PollVoteMutation($itemID: ID!, $poll: [core_PollQuestionInput]) {
+		mutateForums {
+			voteInPoll(itemID: $itemID, poll: $poll) {
+				id
+				poll {
+					...PollFragment
+				}
+			}
+		}
+	}
+	${PollFragment}
+`;
+
 class PollScreen extends Component {
-	static navigationOptions = {
-		title: "Poll"
-	};
+	static navigationOptions = ({ navigation }) => ({
+		headerTitle: (
+			<TwoLineHeader title={navigation.state.params.data.title} subtitle={Lang.pluralize(Lang.get("votes"), navigation.state.params.data.votes)} />
+		)
+	});
 
 	constructor(props) {
 		super(props);
+		this.voteHandler = this.voteHandler.bind(this);
+		this.submitVotes = this.submitVotes.bind(this);
+		this.viewResults = this.viewResults.bind(this);
+		this.viewWithoutVoting = this.viewWithoutVoting.bind(this);
+		this.toggleVoting = this.toggleVoting.bind(this);
+		this._votes = {};
+		this.state = {
+			showResults: true,
+			votes: {}
+		};
+	}
+
+	voteHandler(question, data) {
+		const votes = { ...this.state.votes };
+		votes[question] = data;
+
+		this.setState({ votes });
+	}
+
+	async submitVotes() {
+		const itemID = this.props.navigation.state.params.itemID;
+		const poll = this.buildPollData();
+
+		try {
+			const { data } = await this.props.client.mutate({
+				mutation: PollVoteMutation,
+				variables: {
+					itemID,
+					poll
+				}
+			});
+
+			this.setState({
+				showResults: true
+			});
+		} catch (err) {
+			// @todo show error
+			console.log( err );
+		}
+	}
+
+	buildPollData() {
+		// Turns: {"0": { "0": true, "1": false }, "1": { "0": true, "1": true, "2": true } }
+		// Into: [ { id: 1, choices: [1] }, { id: 2, choices, [0, 1, 2] } ]
+		const data = Object.keys(this.state.votes).map(questionIndex => {
+			const choices = _.filter(Object.keys(this.state.votes[questionIndex]), val => this.state.votes[questionIndex][val] === true).map(val =>
+				parseInt(val) + 1 // Choices are 1-indexed for some reason,
+			);
+			return {
+				id: parseInt( questionIndex ) + 1, // Questions are 1-indexed for some reason
+				choices
+			};
+		});
+
+		console.log(data);
+		return data;
+	}
+
+	viewWithoutVoting() {}
+
+	toggleVoting() {
+		this.setState({
+			showResults: !this.state.showResults
+		});
+	}
+
+	viewResults() {
+		if (!this.props.site.settings.allow_result_view) {
+			// Show alert to tell the user they'll lose their vote if they proceed
+			Alert.alert(Lang.get("confirm"), Lang.get("poll_view_confirm"), [
+				{
+					text: Lang.get("cancel")
+				},
+				{
+					text: Lang.get("ok"),
+					onPress: () => this.viewWithoutVoting()
+				}
+			]);
+		}
+	}
+
+	getPollFooter() {
+		const showResult = this.shouldShowResults();
+		let buttons;
+
+		if (this.props.navigation.state.params.data.canVote && !this.props.navigation.state.params.data.hasVoted) {
+			buttons = [
+				<Button key='submit' type="primary" size="large" filled onPress={this.submitVotes} title="Submit Votes" />,
+				<Button key='view' type="light" size="large" filled onPress={this.viewResults} title="View Results" style={styles.mtStandard} />
+			];
+		} else if (this.props.navigation.state.params.data.canVote && this.props.navigation.state.params.data.hasVoted) {
+			if (showResult) {
+				buttons = [
+					<Button key='change' type="light" size="large" filled onPress={this.toggleVoting} title="Change My Vote" />
+				];
+			} else {
+				buttons = [
+					<Button key='update' type="primary" size="large" filled onPress={this.submitVotes} title="Update My Vote" />,
+					<Button key='cancel' type="light" size="large" filled onPress={this.toggleVoting} title="Cancel" style={styles.mtStandard} />
+				];
+			}
+		}
+
+		if( buttons ){
+			return (
+				<ShadowedArea style={styles.pWide}>
+					{buttons}
+				</ShadowedArea>
+			);
+		}
+	}
+
+	shouldShowResults() {
+		const pollData = this.props.navigation.state.params.data;
+		let showResult = false;
+
+		if ((!pollData.hasVoted && pollData.canViewResults && this.state.showResults) || (pollData.hasVoted && this.state.showResults)) {
+			showResult = true;
+		}
+
+		return showResult;
 	}
 
 	render() {
+		const pollData = this.props.navigation.state.params.data;
+		const canVote = !pollData.hasVoted && pollData.canVote;
+		const showResult = this.shouldShowResults();
+
 		return (
-			<Text>Poll</Text>
+			<FlatList
+				data={pollData.questions}
+				keyExtractor={item => item.id}
+				renderItem={({ item, index }) => (
+					<PollQuestion key={index} questionNumber={index} data={item} voteHandler={this.voteHandler} showResult={showResult} />
+				)}
+				ListFooterComponent={this.getPollFooter()}
+			/>
 		);
 	}
 }
 
-export default PollScreen;
+export default compose(
+	withApollo,
+	connect(state => ({
+		site: state.site
+	}))
+)(PollScreen);

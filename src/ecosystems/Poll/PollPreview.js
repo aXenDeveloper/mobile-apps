@@ -53,7 +53,7 @@ class PollPreview extends Component {
 		return (
 			<ShadowedArea style={[styles.phWide, styles.ptWide, styles.flexAlignCenter, styles.mbStandard]}>
 				<Image source={icons.POLL} resizeMode='contain' style={componentStyles.icon} />
-				<Text style={[styles.text, styles.contentText, styles.mediumText, styles.mtStandard]}>Poll: {this.props.data.title}</Text>
+				<Text style={[styles.text, styles.contentText, styles.mediumText, styles.mtStandard]}>{Lang.get('poll_prefix')} {this.props.data.title}</Text>
 				<View style={[styles.mtVeryTight, styles.flexRow, styles.flexJustifyCenter]}>
 					<Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.pluralize( Lang.get('votes'), this.props.data.votes )}</Text>
 					{this.props.data.hasVoted && <Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.get('poll_you_voted')}</Text>}

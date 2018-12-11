@@ -10,6 +10,7 @@ const LangFragment = gql`
 		end_of_forum: phrase(key: "app_end_of_forum")
 		cancel: phrase(key: "app_cancel")
 		save: phrase(key: "app_save")
+		confirm: phrase(key: "app_confirm")
 		add: phrase(key: "app_add")
 		share: phrase(key: "app_share")
 		report: phrase(key: "app_report")
@@ -111,6 +112,10 @@ const LangFragment = gql`
 		poll_view_results: phrase(key: "app_poll_view_results")
 		poll_view_and_vote: phrase(key: "app_poll_view_and_vote")
 		poll_you_voted: phrase(key: "app_poll_you_voted")
+		poll_prefix: phrase(key: "app_poll_prefix")
+		poll_question_number: phrase(key: "app_poll_question_number")
+		poll_multiple_choice: phrase(key: "app_poll_multiple_choice")
+		poll_view_confirm: phrase(key: "app_poll_view_confirm")
 
 		tags_min_max: phrase(key: "app_tags_min_max")
 		tags_min: phrase(key: "app_tags_min")

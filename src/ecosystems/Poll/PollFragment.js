@@ -9,6 +9,7 @@ const PollFragment = gql`
 			id
 			title
 			isMultiChoice
+			votes
 			choices {
 				id
 				title

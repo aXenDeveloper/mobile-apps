@@ -2,6 +2,7 @@ const icons = {
 	BELL: require("../resources/notification_settings.png"),
 	CHECKMARK2: require("../resources/checkmark_alt.png"),
 	CHECKMARK: require("../resources/checkmark.png"),
+	CHECKMARK_CIRCLE_SOLID: require("../resources/checkmark_circle_solid.png"),
 	COG: require("../resources/settings.png"),
 	CROSS: require("../resources/close.png"),
 	HEART: require('../resources/comment_like.png'),
