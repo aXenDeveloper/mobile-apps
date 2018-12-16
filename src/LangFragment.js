@@ -116,6 +116,7 @@ const LangFragment = gql`
 		poll_question_number: phrase(key: "app_poll_question_number")
 		poll_multiple_choice: phrase(key: "app_poll_multiple_choice")
 		poll_view_confirm: phrase(key: "app_poll_view_confirm")
+		poll_no_permission: phrase(key: "app_poll_no_permission")
 
 		tags_min_max: phrase(key: "app_tags_min_max")
 		tags_min: phrase(key: "app_tags_min")

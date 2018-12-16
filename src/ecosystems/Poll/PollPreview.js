@@ -50,18 +50,38 @@ class PollPreview extends Component {
 	}
 
 	render() {
+		let content;
+
+		if( !this.props.data.canVote && !this.props.data.canViewResults && !this.props.data.hasVoted ){
+			content = (
+				<View style={[styles.mvWide]}>
+					<Text style={[styles.centerText, styles.lightText]}>
+						{Lang.get('poll_no_permission')}
+					</Text>
+				</View>
+			);
+		} else {
+			content = (
+				<React.Fragment>
+					<Text style={[styles.text, styles.contentText, styles.mediumText, styles.mtStandard]}>
+						{Lang.get('poll_prefix')} {this.props.data.title}
+					</Text>
+					<View style={[styles.mtVeryTight, styles.flexRow, styles.flexJustifyCenter]}>
+						<Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.pluralize( Lang.get('votes'), this.props.data.votes )}</Text>
+						{this.props.data.hasVoted && <Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.get('poll_you_voted')}</Text>}
+						{this.getCloseText()}
+					</View>
+					<PostControls style={styles.mtWide}>
+						<PostControl testId="viewPoll" label={this.getButtonText()} onPress={this.props.onPress} />
+					</PostControls>
+				</React.Fragment>
+			);
+		}
+
 		return (
 			<ShadowedArea style={[styles.phWide, styles.ptWide, styles.flexAlignCenter, styles.mbStandard]}>
 				<Image source={icons.POLL} resizeMode='contain' style={componentStyles.icon} />
-				<Text style={[styles.text, styles.contentText, styles.mediumText, styles.mtStandard]}>{Lang.get('poll_prefix')} {this.props.data.title}</Text>
-				<View style={[styles.mtVeryTight, styles.flexRow, styles.flexJustifyCenter]}>
-					<Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.pluralize( Lang.get('votes'), this.props.data.votes )}</Text>
-					{this.props.data.hasVoted && <Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.get('poll_you_voted')}</Text>}
-					{this.getCloseText()}
-				</View>
-				<PostControls style={styles.mtWide}>
-					<PostControl testId="viewPoll" label={this.getButtonText()} onPress={this.props.onPress} />
-				</PostControls>
+				{content}
 			</ShadowedArea>
 		);
 	}

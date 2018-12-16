@@ -13,6 +13,20 @@ import Button from "../../atoms/Button";
 import { PollQuestion, PollFragment } from "../../ecosystems/Poll";
 import styles, { styleVars } from "../../styles";
 
+const PollQuery = gql`
+	query TopicViewQuery($id: ID!) {
+		forums {
+			topic(id: $id) {
+				id
+				poll {
+					...PollFragment
+				}
+			}
+		}
+	}
+	${PollFragment}
+`;
+
 const PollVoteMutation = gql`
 	mutation PollVoteMutation($itemID: ID!, $poll: [core_PollQuestionInput]) {
 		mutateForums {
@@ -94,7 +108,27 @@ class PollScreen extends Component {
 		return data;
 	}
 
-	viewWithoutVoting() {}
+	async viewWithoutVoting() {
+		const itemID = this.props.navigation.state.params.itemID;
+
+		try {
+			const { data } = await this.props.client.mutate({
+				mutation: PollVoteMutation,
+				variables: {
+					itemID,
+					poll: null // this causes a null vote, i.e. view without voting
+				}
+			});
+
+			this.setState({
+				showResults: true
+			});
+		} catch (err) {
+			// @todo show error
+			console.log( err );
+		}
+
+	}
 
 	toggleVoting() {
 		this.setState({
@@ -121,12 +155,12 @@ class PollScreen extends Component {
 		const showResult = this.shouldShowResults();
 		let buttons;
 
-		if (this.props.navigation.state.params.data.canVote && !this.props.navigation.state.params.data.hasVoted) {
+		if (this.props.data.forums.topic.poll.canVote && !this.props.data.forums.topic.poll.hasVoted) {
 			buttons = [
 				<Button key='submit' type="primary" size="large" filled onPress={this.submitVotes} title="Submit Votes" />,
 				<Button key='view' type="light" size="large" filled onPress={this.viewResults} title="View Results" style={styles.mtStandard} />
 			];
-		} else if (this.props.navigation.state.params.data.canVote && this.props.navigation.state.params.data.hasVoted) {
+		} else if (this.props.data.forums.topic.poll.canVote && this.props.data.forums.topic.poll.hasVoted) {
 			if (showResult) {
 				buttons = [
 					<Button key='change' type="light" size="large" filled onPress={this.toggleVoting} title="Change My Vote" />
@@ -149,7 +183,7 @@ class PollScreen extends Component {
 	}
 
 	shouldShowResults() {
-		const pollData = this.props.navigation.state.params.data;
+		const pollData = this.props.data.forums.topic.poll;
 		let showResult = false;
 
 		if ((!pollData.hasVoted && pollData.canViewResults && this.state.showResults) || (pollData.hasVoted && this.state.showResults)) {
@@ -160,24 +194,41 @@ class PollScreen extends Component {
 	}
 
 	render() {
-		const pollData = this.props.navigation.state.params.data;
-		const canVote = !pollData.hasVoted && pollData.canVote;
-		const showResult = this.shouldShowResults();
 
-		return (
-			<FlatList
-				data={pollData.questions}
-				keyExtractor={item => item.id}
-				renderItem={({ item, index }) => (
-					<PollQuestion key={index} questionNumber={index} data={item} voteHandler={this.voteHandler} showResult={showResult} />
-				)}
-				ListFooterComponent={this.getPollFooter()}
-			/>
-		);
+		if( this.props.data.loading ){
+			return <Text>Loading</Text>;
+		} else if (this.props.data.error) {
+			return <Text>Error</Text>
+		} else {
+			const pollData = this.props.data.forums.topic.poll;
+			const canVote = !pollData.hasVoted && pollData.canVote;
+			const showResult = this.shouldShowResults();
+
+			return (
+				<FlatList
+					data={pollData.questions}
+					keyExtractor={item => item.id}
+					renderItem={({ item, index }) => (
+						<PollQuestion key={index} questionNumber={index} data={item} voteHandler={this.voteHandler} showResult={showResult} />
+					)}
+					ListFooterComponent={this.getPollFooter()}
+				/>
+			);
+		}
 	}
 }
 
 export default compose(
+	graphql(PollQuery, {
+		options: props => {
+			return {
+				notifyOnNetworkStatusChange: true,
+				variables: {
+					id: props.navigation.state.params.itemID,
+				}
+			};
+		}
+	}),
 	withApollo,
 	connect(state => ({
 		site: state.site
