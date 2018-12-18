@@ -31,8 +31,10 @@ const TopicListQuery = gql`
 					title
 					postCount
 					content(stripped: true, singleLine: true, truncateLength: 100)
-					pinned
-					locked
+					isPinned
+					isLocked
+					isHot
+					isFeatured
 					started
 					isUnread
 					lastPostAuthor {
@@ -220,9 +222,10 @@ class TopicListScreen extends Component {
 			author: topic.author.name,
 			started: topic.started,
 			snippet: topic.content.trim(),
-			hot: false,
-			pinned: topic.pinned,
-			locked: topic.locked,
+			isHot: topic.isHot,
+			isPinned: topic.isPinned,
+			isLocked: topic.isLocked,
+			isFeatured: topic.isFeatured,
 			lastPostDate: topic.lastPostDate,
 			lastPostPhoto: topic.lastPostAuthor.photo,
 			contentImages: topic.contentImages

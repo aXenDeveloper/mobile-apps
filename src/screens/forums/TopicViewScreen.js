@@ -56,7 +56,7 @@ const TopicViewQuery = gql`
 					__typename
 					name
 				}
-				locked
+				isLocked
 				poll {
 					...PollFragment
 				}
@@ -440,7 +440,7 @@ class TopicViewScreen extends Component {
 		return (
 			<React.Fragment>
 				{this.getLoadPreviousButton()}
-				{topicData.locked && <Text>This topic is locked</Text>}
+				{topicData.isLocked && <Text>This topic is locked</Text>}
 				{topicData.tags.length && <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList>}
 				{topicData.poll !== null && <PollPreview data={topicData.poll} onPress={this.goToPollScreen} />}
 			</React.Fragment>

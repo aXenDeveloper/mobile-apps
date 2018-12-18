@@ -15,7 +15,8 @@ import LockedIcon from "../../atoms/LockedIcon";
 import TopicStatus from "../../atoms/TopicStatus";
 import LastPostInfo from "../../ecosystems/LastPostInfo";
 import ContentRow from "../../ecosystems/ContentRow";
-import styles, { styleVars } from "../../styles.js";
+import styles, { styleVars } from "../../styles";
+import icons from "../../icons";
 
 class TopicRow extends Component {
 	constructor(props) {
@@ -87,6 +88,7 @@ class TopicRow extends Component {
 					<View style={componentStyles.topicInfo}>
 						<View style={componentStyles.topicTitle}>
 							{showAsUnread && <TopicIcon style={componentStyles.topicIcon} unread={this.props.data.unread} />}
+							{this.props.data.isLocked && <LockedIcon style={componentStyles.lockedIcon} />}
 							<Text style={[componentStyles.topicTitleText, showAsUnread ? styles.title : styles.titleRead]} numberOfLines={1}>
 								{this.props.data.title}
 							</Text>
@@ -99,9 +101,12 @@ class TopicRow extends Component {
 				</View>
 				<View style={componentStyles.topicStatusesWrap}>
 					<View style={componentStyles.topicMeta}>
-						{this.props.data.hot && <TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="hot" />}
-						{this.props.data.pinned && (
+						{this.props.data.isHot && <TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="hot" />}
+						{this.props.data.isPinned && (
 							<TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="pinned" />
+						)}
+						{this.props.data.isFeatured && (
+							<TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="featured" />
 						)}
 
 						<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText, componentStyles.lastPostTime]}>
@@ -162,8 +167,9 @@ const componentStyles = StyleSheet.create({
 		alignSelf: "flex-start"
 	},
 	lockedIcon: {
-		marginTop: 3,
-		alignSelf: "flex-start",
+		marginTop: 1,
+		marginRight: 4,
+		alignSelf: "center",
 		width: 12,
 		height: 12
 	},

@@ -28,8 +28,8 @@ const FluidForumQuery = gql`
 				title
 				postCount
 				content(stripped: true, singleLine: true, truncateLength: 100)
-				pinned
-				locked
+				isPinned
+				isLocked
 				started
 				isUnread
 				lastPostAuthor {
@@ -156,9 +156,9 @@ class FluidForumScreen extends Component {
 			author: topic.author.name,
 			started: topic.started,
 			snippet: topic.content.trim(),
-			hot: false,
-			pinned: topic.pinned,
-			locked: topic.locked,
+			isHot: false,
+			isPinned: topic.isPinned,
+			isLocked: topic.isLocked,
 			lastPostDate: topic.lastPostDate,
 			lastPostPhoto: topic.lastPostAuthor.photo,
 			contentImages: topic.contentImages

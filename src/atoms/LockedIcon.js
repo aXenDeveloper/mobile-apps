@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
 import { StyleSheet, Image } from 'react-native';
 
-export default class LockedIcon extends Component {	
-	constructor(props) {
-		super(props);
-	}
+import icons from "../icons";
 
-	render() {
-		return <Image style={[this.props.style, styles.topicIcon]} resizeMode='stretch' source={require('../../resources/locked.png')} />;
-	}
-}
+const LockedIcon = (props) => (
+	 <Image style={[props.style, componentStyles.icon]} resizeMode='stretch' source={icons.LOCKED} />
+);
 
-const styles = StyleSheet.create({
+export default LockedIcon;
+
+const componentStyles = StyleSheet.create({
 	icon: {
-		width: 12,
-		height: 12,
+		width: 14,
+		height: 14,
 	}
 });
