@@ -19,8 +19,8 @@ import LargeTitle from "../../atoms/LargeTitle";
 import ErrorBox from "../../atoms/ErrorBox";
 import StreamCard from "../../ecosystems/Stream";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
+import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import ContentCard from "../../ecosystems/ContentCard";
-import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import getErrorMessage from "../../utils/getErrorMessage";
 import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import styles, { styleVars } from "../../styles";
@@ -206,16 +206,32 @@ class HomeScreen extends Component {
 		if (this.state.error) {
 			return <ErrorBox message={Lang.get('home_view_error')} refresh={() => this.refreshAfterError()} />;
 		} else {
+			let navigation;
+			
+			if( this.state.navConfig.length ){
+				navigation = (
+					<FlatList
+						renderItem={({ item }) => this.renderNavItem(item)}
+						data={this.state.navConfig}
+						keyExtractor={item => item.key}
+						horizontal
+						showsHorizontalScrollIndicator={false}
+					/>
+				);
+			} else {
+				navigation = (
+					<PlaceholderContainer>
+						<PlaceholderElement width={120} top={0} left={0} height={45} style={{ borderRadius: 45 }} />
+						<PlaceholderElement width={120} top={0} left={130} height={45} style={{ borderRadius: 45 }} />
+						<PlaceholderElement width={120} top={0} left={260} height={45} style={{ borderRadius: 45 }} />
+					</PlaceholderContainer>
+				);
+			}
+
 			return (
 				<React.Fragment>
 					<View style={componentStyles.navigator}>
-						<FlatList
-							renderItem={({ item }) => this.renderNavItem(item)}
-							data={this.state.navConfig}
-							keyExtractor={item => item.key}
-							horizontal
-							showsHorizontalScrollIndicator={false}
-						/>
+						{navigation}
 					</View>
 					{this.getLoginRegPrompt()}
 					<ScrollView style={componentStyles.browseWrapper}>
@@ -257,6 +273,7 @@ const componentStyles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomColor: 'rgba(0,0,0,0.1)',
 		paddingVertical: styleVars.spacing.standard,
+		height: 70
 	},
 	navItem: {
 		display: 'flex',
