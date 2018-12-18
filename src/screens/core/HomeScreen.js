@@ -221,9 +221,9 @@ class HomeScreen extends Component {
 			} else {
 				navigation = (
 					<PlaceholderContainer>
-						<PlaceholderElement width={120} top={0} left={0} height={45} style={{ borderRadius: 45 }} />
-						<PlaceholderElement width={120} top={0} left={130} height={45} style={{ borderRadius: 45 }} />
-						<PlaceholderElement width={120} top={0} left={260} height={45} style={{ borderRadius: 45 }} />
+						<PlaceholderElement width={120} top={0} left={15} height={45} style={{ borderRadius: 45 }} />
+						<PlaceholderElement width={120} top={0} left={145} height={45} style={{ borderRadius: 45 }} />
+						<PlaceholderElement width={120} top={0} left={275} height={45} style={{ borderRadius: 45 }} />
 					</PlaceholderContainer>
 				);
 			}
