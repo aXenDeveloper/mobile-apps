@@ -145,8 +145,6 @@ class Post extends Component {
 	 * @return 	void
 	 */
 	onPressReaction(reaction) {
-		// @todo show follow list
-		//console.log("press reaction");
 		this.setState({
 			whoReactedModalVisible: true,
 			whoReactedReaction: reaction.id,
@@ -444,48 +442,54 @@ class Post extends Component {
 		}
 
 		const repButton = this.getReputationButton();
-
+		
 		return (
 			<View style={styles.mbVeryTight}>
 				{this.props.data.isIgnored && this.state.ignoreOverride && this.renderIgnoreBar()}
-				<ShadowedArea style={componentStyles.post}>
-					<View style={[styles.flexRow, styles.flexAlignStart]} testId="postAuthor">
-						<TouchableOpacity style={styles.flex} onPress={this.props.data.author.id ? this.onPressProfile : null}>
-							<View style={[styles.flex, styles.flexRow, styles.flexAlignStart]}>
-								<UserPhoto url={this.props.data.author.photo} online={this.props.data.author.isOnline || null} size={36} />
-								<View style={[styles.flexColumn, styles.flexJustifyCenter, styles.mlStandard]}>
-									<Text style={styles.itemTitle}>{this.props.data.author.name}</Text>
-									<Text style={[styles.standardText, styles.lightText]}>{relativeTime.long(this.props.data.timestamp)}</Text>
-								</View>
+				<ShadowedArea style={[styles.pvWide, componentStyles.post, this.props.style]}>
+					{this.props.topComponent}
+					<View style={styles.flexRow}>
+						{this.props.leftComponent}
+						<View style={[this.props.leftComponent ? styles.mrWide : styles.mhWide, styles.flexBasisZero, styles.flexGrow]}>
+							<View style={[styles.flexRow, styles.flexAlignStart]} testId="postAuthor">
+								<TouchableOpacity style={styles.flex} onPress={this.props.data.author.id ? this.onPressProfile : null}>
+									<View style={[styles.flex, styles.flexRow, styles.flexAlignStart]}>
+										<UserPhoto url={this.props.data.author.photo} online={this.props.data.author.isOnline || null} size={36} />
+										<View style={[styles.flexColumn, styles.flexJustifyCenter, styles.mlStandard]}>
+											<Text style={styles.itemTitle}>{this.props.data.author.name}</Text>
+											<Text style={[styles.standardText, styles.lightText]}>{relativeTime.long(this.props.data.timestamp)}</Text>
+										</View>
+									</View>
+								</TouchableOpacity>
+								<TouchableOpacity style={styles.flexAlignSelfStart} onPress={this.onPressPostDots}>
+									<Image style={componentStyles.postMenu} resizeMode="contain" source={require("../../../resources/dots.png")} />
+								</TouchableOpacity>
 							</View>
-						</TouchableOpacity>
-						<TouchableOpacity style={styles.flexAlignSelfStart} onPress={this.onPressPostDots}>
-							<Image style={componentStyles.postMenu} resizeMode="contain" source={require("../../../resources/dots.png")} />
-						</TouchableOpacity>
-					</View>
-					<View style={styles.mvWide}>
-						<RichTextContent>{this.props.data.content}</RichTextContent>
-						<Animatable.View ref={r => (this._reactionWrap = r)}>
-							{this.props.data.reputation.reactions.length && (
-								<View style={[styles.mtWide, styles.flexRow, styles.flexJustifyEnd, styles.flexWrap]} testId="reactionList">
-									{this.props.data.reputation.reactions.map(reaction => {
-										return (
-											<Reaction
-												style={styles.mlStandard}
-												key={reaction.id}
-												id={reaction.id}
-												image={reaction.image}
-												count={reaction.count}
-												onPress={this.props.data.reputation.canViewReps ? this.onPressReaction : null}
-											/>
-										);
-									})}
-								</View>
-							)}
-						</Animatable.View>
+							<View style={styles.mvWide}>
+								<RichTextContent>{this.props.data.content}</RichTextContent>
+								<Animatable.View ref={r => (this._reactionWrap = r)}>
+									{this.props.data.reputation.reactions.length && (
+										<View style={[styles.mtWide, styles.flexRow, styles.flexJustifyEnd, styles.flexWrap]} testId="reactionList">
+											{this.props.data.reputation.reactions.map(reaction => {
+												return (
+													<Reaction
+														style={styles.mlStandard}
+														key={reaction.id}
+														id={reaction.id}
+														image={reaction.image}
+														count={reaction.count}
+														onPress={this.props.data.reputation.canViewReps ? this.onPressReaction : null}
+													/>
+												);
+											})}
+										</View>
+									)}
+								</Animatable.View>
+							</View>
+						</View>
 					</View>
 					{(repButton || this.props.canReply) && (
-						<PostControls>
+						<PostControls style={styles.mhWide}>
 							{this.props.canReply && (
 								<PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />
 							)}
@@ -535,7 +539,7 @@ export { Post as TestPost }; // For test runner only
 
 const componentStyles = StyleSheet.create({
 	post: {
-		padding: styleVars.spacing.wide,
+		//padding: styleVars.spacing.wide,
 		paddingBottom: 0
 	},
 	postMenu: {

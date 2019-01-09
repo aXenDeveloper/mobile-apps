@@ -19,7 +19,7 @@ export default class TwoLineHeader extends Component {
 			);
 		} else {
 			return (
-				<View>
+				<View style={this.props.style}>
 					<Text style={styles.headerTitle} numberOfLines={1}>{this.props.title}</Text>
 					<Text style={styles.headerSubtitle}>{this.props.subtitle}</Text>
 				</View>

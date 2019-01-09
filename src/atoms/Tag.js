@@ -4,8 +4,8 @@ import { Text, View, StyleSheet } from "react-native";
 import styles, { styleVars } from "../styles";
 
 const Tag = props => (
-	<View style={[componentStyles.tagWrapper, styles.pvVeryTight, styles.phVeryWide, styles.mvVeryTight, styles.mrStandard]}>
-		<Text style={[componentStyles.tag, styles.smallText, props.style]}>
+	<View style={[componentStyles.tagWrapper, styles.pvVeryTight, styles.phStandard, styles.mvVeryTight, styles.mrStandard]}>
+		<Text style={[componentStyles.tag, styles.tinyText, props.style]}>
 			{props.children}
 		</Text>
 	</View>

@@ -8,7 +8,7 @@ export default class TagList extends Component {
 
 	render() {
 		return (
-			<View style={styles.tagList}>{this.props.children}</View>
+			<View style={[styles.tagList, this.props.style]}>{this.props.children}</View>
 		);
 	}
 }
@@ -16,9 +16,7 @@ export default class TagList extends Component {
 const styles = StyleSheet.create({
 	tagList: {
 		flexWrap: 'wrap', 
-        alignItems: 'flex-start',
-        flexDirection:'row',
-        paddingVertical: 13,
-        paddingHorizontal: 16
+		alignItems: 'flex-start',
+		flexDirection:'row'
 	}
 });

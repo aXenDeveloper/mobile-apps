@@ -1,22 +1,26 @@
 import React, { Component } from "react";
-import { Text, View, Button, ScrollView, FlatList, TouchableOpacity, TextInput } from "react-native";
+import { Text, Image, View, Button, ScrollView, FlatList, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
 import Modal from "react-native-modal";
 import _ from "underscore";
+import shortNumber from "short-number";
 
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import getErrorMessage from "../../utils/getErrorMessage";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
+import ShadowedArea from "../../atoms/ShadowedArea";
 import { Post, PostFragment } from "../../ecosystems/Post";
 import { PollPreview, PollModal, PollFragment } from "../../ecosystems/Poll";
+import { QuestionVote, BestAnswer } from "../../ecosystems/TopicView";
 import Tag from "../../atoms/Tag";
 import TagList from "../../atoms/TagList";
 import ErrorBox from "../../atoms/ErrorBox";
 import Pager from "../../atoms/Pager";
+import ContentItemStat from "../../atoms/ContentItemStat";
 import PagerButton from "../../atoms/PagerButton";
 import DummyTextInput from "../../atoms/DummyTextInput";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
@@ -26,7 +30,8 @@ import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import FollowButton from "../../atoms/FollowButton";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 
-import styles from "../../styles";
+import styles, { styleVars } from "../../styles";
+import icons from "../../icons";
 
 const TopicViewQuery = gql`
 	query TopicViewQuery($id: ID!, $offsetAdjust: Int, $offsetPosition: forums_Post_offset_position, $limit: Int, $findComment: Int) {
@@ -44,9 +49,11 @@ const TopicViewQuery = gql`
 				isUnread
 				timeLastRead
 				postCount
+				views
 				unreadCommentPosition
 				findCommentPosition(findComment: $findComment)
 				started
+				updated
 				title
 				author {
 					__typename
@@ -68,10 +75,24 @@ const TopicViewQuery = gql`
 				}
 				posts(offsetAdjust: $offsetAdjust, offsetPosition: $offsetPosition, limit: $limit, findComment: $findComment) {
 					...PostFragment
+					isQuestion
+					answerVotes
+					isBestAnswer
+					canVoteUp
+					canVoteDown
+					vote
 				}
 				follow {
 					...FollowModalFragment
 				}
+				isQuestion
+				questionVotes
+				canVoteUp
+				canVoteDown
+				vote
+				hasBestAnswer
+				canSetBestAnswer
+				bestAnswerID
 			}
 		}
 	}
@@ -92,18 +113,59 @@ const MarkTopicRead = gql`
 	}
 `;
 
+const VoteQuestion = gql`
+	mutation VoteQuestion($id: ID!, $vote: forums_InputVoteQuestionType!) {
+		mutateForums {
+			voteQuestion(id: $id, vote: $vote) {
+				id
+				questionVotes
+				canVoteUp
+				canVoteDown
+				vote
+				hasBestAnswer
+			}
+		}
+	}
+`;
+
+const VoteAnswer = gql`
+	mutation VoteAnswer($id: ID!, $vote: forums_InputVoteAnswerType!) {
+		mutateForums {
+			voteAnswer(id: $id, vote: $vote) {
+				id
+				answerVotes
+				isBestAnswer
+				canVoteUp
+				canVoteDown
+				vote
+			}
+		}
+	}
+`;
+
+const SetBestAnswer = gql`
+	mutation SetBestAnswer($id: ID!) {
+		mutateForums {
+			setBestAnswer(id: $id) {
+				id
+				isBestAnswer
+			}
+		}
+	}
+`;
+
 class TopicViewScreen extends Component {
 	/**
 	 * React Navigation config
 	 */
 	static navigationOptions = ({ navigation }) => ({
 		headerTitle:
-			!navigation.state.params.title || !navigation.state.params.author || !navigation.state.params.started ? (
+			!navigation.state.params.title || !navigation.state.params.author ? (
 				<TwoLineHeader loading={true} />
 			) : (
 				<TwoLineHeader
 					title={navigation.state.params.title}
-					subtitle={`Started by ${navigation.state.params.author}, ${relativeTime.long(navigation.state.params.started)}`} //@todo lang abstraction
+					subtitle={`Started by ${navigation.state.params.author}`} //@todo lang abstraction
 				/>
 			),
 		headerRight: navigation.state.params.showFollowControl && (
@@ -115,7 +177,10 @@ class TopicViewScreen extends Component {
 	 * GraphQL error types
 	 */
 	static errors = {
-		NO_TOPIC: Lang.get("no_topic")
+		NO_TOPIC: Lang.get("no_topic"),
+		INVALID_ID: Lang.get("invalid_topic"),
+		NON_QUESTION: Lang.get("not_question"),
+		CANNOT_VOTE: Lang.get("cannot_vote")
 	};
 
 	constructor(props) {
@@ -124,6 +189,9 @@ class TopicViewScreen extends Component {
 		//this._startingOffset = 0; // The offset we're currently displaying in the view
 		this._initialOffsetDone = false; // Flag to indicate we've set our initial offset on render
 		this._aboutToScrollToEnd = false; // Flag to indicate a scrollToEnd is pending so we can avoid other autoscrolls
+		this._answerVoteUpHandlers = {}; // Stores memoized event handlers for voting answers up
+		this._answerVoteDownHandlers = {}; // Stores memoized event handlers for voting answers up
+		this._bestAnswerHandlers = {}; // Stores memoized event handlers for settings answers as best
 		this.state = {
 			reachedEnd: false,
 			earlierPostsAvailable: null,
@@ -149,6 +217,8 @@ class TopicViewScreen extends Component {
 		this.onFollow = this.onFollow.bind(this);
 		this.onUnfollow = this.onUnfollow.bind(this);
 		this.addReply = this.addReply.bind(this);
+		this.onVoteQuestionUp = this.onVoteQuestionUp.bind(this);
+		this.onVoteQuestionDown = this.onVoteQuestionDown.bind(this);
 	}
 
 	/**
@@ -195,7 +265,6 @@ class TopicViewScreen extends Component {
 			if (!this.props.navigation.state.params.author) {
 				this.props.navigation.setParams({
 					author: this.props.data.forums.topic.author.name,
-					started: this.props.data.forums.topic.started,
 					title: this.props.data.forums.topic.title
 				});
 			}
@@ -432,6 +501,139 @@ class TopicViewScreen extends Component {
 	}
 
 	/**
+	 * Event handler for voting the question up
+	 *
+	 * @return 	void
+	 */
+	onVoteQuestionUp() {
+		const topicData = this.props.data.forums.topic;
+
+		if (topicData.vote == "UP" || !topicData.canVoteUp) {
+			return;
+		}
+
+		this.onVoteQuestion("UP");
+	}
+
+	/**
+	 * Event handler for voting the question down
+	 *
+	 * @return 	void
+	 */
+	onVoteQuestionDown() {
+		const topicData = this.props.data.forums.topic;
+
+		if (topicData.vote == "DOWN" || !topicData.canVoteDown) {
+			return;
+		}
+
+		this.onVoteQuestion("DOWN");
+	}
+
+	/**
+	 * Update the question with the given vote type and optimistically update UI
+	 *
+	 * @param 	string 		vote 		'UP' or 'DOWN'
+	 * @return 	void
+	 */
+	async onVoteQuestion(vote) {
+		const topicData = this.props.data.forums.topic;
+		let questionVotes = topicData.questionVotes;
+
+		// If we've already voted, reverse that first
+		if (topicData.vote) {
+			if (topicData.vote == "UP") {
+				questionVotes--;
+			} else {
+				questionVotes++;
+			}
+		}
+
+		// Now adjust for this new vote
+		questionVotes = questionVotes + (vote == "UP" ? 1 : -1);
+
+		try {
+			const { data } = await this.props.client.mutate({
+				mutation: VoteQuestion,
+				variables: {
+					id: this.props.data.forums.topic.id,
+					vote
+				},
+				optimisticResponse: {
+					mutateForums: {
+						__typename: "mutate_Forums",
+						voteQuestion: {
+							...this.props.data.forums.topic,
+							questionVotes,
+							canVoteUp: vote !== "UP",
+							canVoteDown: vote !== "DOWN",
+							vote
+						}
+					}
+				}
+			});
+		} catch (err) {
+			const error = getErrorMessage(err, TopicViewScreen.errors);
+			Alert.alert(Lang.get("error"), error ? error : Lang.get("error_voting_question"), [{ text: Lang.get("ok") }], { cancelable: false });
+		}
+	}
+
+	/**
+	 * Update an answer with the given vote type and optimistically update UI
+	 *
+	 * @param 	string|int 	id 			Post ID
+	 * @param 	string 		vote 		'UP' or 'DOWN'
+	 * @return 	void
+	 */
+	async onVoteAnswer(id, vote) {
+		const postData = _.find(this.props.data.forums.topic.posts, post => parseInt(post.id) === parseInt(id));
+
+		if (!postData) {
+			Alert.alert(Lang.get("error"), error ? error : Lang.get("error_voting_answer"), [{ text: Lang.get("ok") }], { cancelable: false });
+			return;
+		}
+
+		let answerVotes = postData.answerVotes;
+
+		// If we've already voted, reverse that first
+		if (postData.vote) {
+			if (postData.vote == "UP") {
+				answerVotes--;
+			} else {
+				answerVotes++;
+			}
+		}
+
+		// Now adjust for this new vote
+		answerVotes = answerVotes + (vote == "UP" ? 1 : -1);
+
+		try {
+			const { data } = await this.props.client.mutate({
+				mutation: VoteAnswer,
+				variables: {
+					id,
+					vote
+				},
+				optimisticResponse: {
+					mutateForums: {
+						__typename: "mutate_Forums",
+						voteAnswer: {
+							...postData,
+							answerVotes,
+							canVoteUp: vote !== "UP",
+							canVoteDown: vote !== "DOWN",
+							vote
+						}
+					}
+				}
+			});
+		} catch (err) {
+			const error = getErrorMessage(err, TopicViewScreen.errors);
+			Alert.alert(Lang.get("error"), error ? error : Lang.get("error_voting_question"), [{ text: Lang.get("ok") }], { cancelable: false });
+		}
+	}
+
+	/**
 	 * Return the header component. Shows locked status, tags, etc.
 	 *
 	 * @return 	Component
@@ -439,10 +641,38 @@ class TopicViewScreen extends Component {
 	getHeaderComponent(topicData) {
 		return (
 			<React.Fragment>
-				{this.getLoadPreviousButton()}
-				{topicData.isLocked && <Text>This topic is locked</Text>}
-				{topicData.tags.length && <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList>}
+				<ShadowedArea style={[styles.flexRow, styles.flexAlignStretch, styles.pvStandard, styles.mbStandard]}>
+					{topicData.isQuestion && (
+						<View style={styles.flexAlignSelfCenter}>
+							<QuestionVote
+								score={topicData.questionVotes}
+								hasVotedUp={topicData.vote == "UP"}
+								hasVotedDown={topicData.vote == "DOWN"}
+								canVoteUp={topicData.canVoteUp}
+								canVoteDown={topicData.canVoteDown}
+								downvoteEnabled={this.props.site.settings.forums_questions_downvote}
+								onVoteUp={this.onVoteQuestionUp}
+								onVoteDown={this.onVoteQuestionDown}
+							/>
+						</View>
+					)}
+					<View style={[styles.flexGrow, styles.flexAlignSelfCenter, !topicData.isQuestion ? styles.phWide : null]}>
+						<View style={styles.flexRow}>
+							<ContentItemStat value={relativeTime.short(topicData.started)} name="Started" />
+							<ContentItemStat value={relativeTime.short(topicData.updated)} name="Updated" />
+							<ContentItemStat value={shortNumber(topicData.postCount)} name="Replies" />
+							<ContentItemStat value={shortNumber(topicData.views)} name="Views" />
+						</View>
+						{(topicData.tags.length || topicData.isLocked) && (
+							<View style={[styles.mtStandard, styles.ptStandard, componentStyles.metaInfo, topicData.isQuestion ? styles.plWide : null]}>
+								{topicData.tags.length && <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList>}
+								{topicData.isLocked && <Text>This topic is locked</Text>}
+							</View>
+						)}
+					</View>
+				</ShadowedArea>
 				{topicData.poll !== null && <PollPreview data={topicData.poll} onPress={this.goToPollScreen} />}
+				{this.getLoadPreviousButton()}
 			</React.Fragment>
 		);
 	}
@@ -451,7 +681,7 @@ class TopicViewScreen extends Component {
 		/*this.setState({
 			pollModalVisible: !this.state.pollModalVisible
 		});*/
-		this.props.navigation.navigate('Poll', {
+		this.props.navigation.navigate("Poll", {
 			data: this.props.data.forums.topic.poll,
 			itemID: this.props.data.forums.topic.id
 		});
@@ -496,7 +726,225 @@ class TopicViewScreen extends Component {
 			);
 		}
 
-		return <Post data={item} key={item.id} canReply={topicData.itemPermissions.canComment} topic={topicData} />;
+		const voteControl = this.getAnswerVoteComponent(item);
+		const questionHeaderControl = this.getQuestionHeaderComponent(item);
+		const additionalPostStyle = this.getAdditionalPostStyles(item);
+
+		return (
+			<Post
+				data={item}
+				key={item.id}
+				canReply={topicData.itemPermissions.canComment}
+				topic={topicData}
+				leftComponent={voteControl}
+				topComponent={questionHeaderControl}
+				style={additionalPostStyle}
+			/>
+		);
+	}
+
+	getAdditionalPostStyles(post) {
+		if (!this.props.data.forums.topic.isQuestion) {
+			return null;
+		}
+
+		if (post.isQuestion || post.isBestAnswer) {
+			return [styles.mbStandard];
+		}
+	}
+
+	getQuestionHeaderComponent(post) {
+		if (!this.props.data.forums.topic.isQuestion) {
+			return null;
+		}
+
+		if (post.isQuestion) {
+			return (
+				<View style={[styles.mhWide, styles.pbStandard, styles.mbStandard, styles.bBorder, styles.mediumBorder]}>
+					<Text style={[styles.standardText, styles.mediumText]}>Question asked by {this.props.data.forums.topic.author.name}</Text>
+				</View>
+			);
+		}
+
+		if (post.isBestAnswer) {
+			return (
+				<View style={[styles.mhWide, styles.pbStandard, styles.mbStandard, styles.bBorder, styles.mediumBorder]}>
+					<Text style={[styles.standardText, styles.mediumText]}>Best answer to this question</Text>
+				</View>
+			);
+		}
+	}
+
+	getAnswerVoteComponent(post) {
+		const topicData = this.props.data.forums.topic;
+		
+		if (!topicData.isQuestion || post.isQuestion) {
+			return null;
+		}
+
+		return (
+			<View>
+				<QuestionVote
+					score={post.answerVotes}
+					hasVotedUp={post.vote == "UP"}
+					hasVotedDown={post.vote == "DOWN"}
+					canVoteUp={post.canVoteUp}
+					canVoteDown={post.canVoteDown}
+					downvoteEnabled={this.props.site.settings.forums_questions_downvote}
+					onVoteUp={this.getQuestionVoteUpHandler(post.id)}
+					onVoteDown={this.getQuestionVoteDownHandler(post.id)}
+					smaller
+				/>
+
+				{(post.isBestAnswer || topicData.canSetBestAnswer) && (
+					<View style={[styles.flexRow, styles.flexJustifyCenter, styles.mvStandard]}>
+						<BestAnswer
+							setBestAnswer={topicData.canSetBestAnswer && !post.isBestAnswer ? this.getSetBestAnswerHandler(post.id) : null}
+							isBestAnswer={post.isBestAnswer}
+						/>
+					</View>
+				)}
+			</View>
+		);
+	}
+
+	getSetBestAnswerHandler(id) {
+		if (_.isUndefined(this._bestAnswerHandlers[id])) {
+			this._bestAnswerHandlers[id] = () => this.onSetBestAnswer(id);
+		}
+
+		return this._bestAnswerHandlers[id];
+	}
+
+	getQuestionVoteDownHandler(id) {
+		if (_.isUndefined(this._answerVoteDownHandlers[id])) {
+			this._answerVoteDownHandlers[id] = () => this.onVoteAnswer(id, "DOWN");
+		}
+
+		return this._answerVoteDownHandlers[id];
+	}
+
+	getQuestionVoteUpHandler(id) {
+		if (_.isUndefined(this._answerVoteUpHandlers[id])) {
+			this._answerVoteUpHandlers[id] = () => this.onVoteAnswer(id, "UP");
+		}
+
+		return this._answerVoteUpHandlers[id];
+	}
+
+	onSetBestAnswer(id) {
+		const topicData = this.props.data.forums.topic;
+
+		// If the selected post isn't the same as the one that's already best answer, prompt for the change
+		if (topicData.hasBestAnswer && parseInt(topicData.bestAnswerID) !== parseInt(id)) {
+			Alert.alert(
+				Lang.get("replace_best_answer_title"), 
+				Lang.get("replace_best_answer_text"), 
+				[
+					{ text: Lang.get("cancel"), onPress: () => console.log("cancel") },
+					{ text: Lang.get("replace"), onPress: () => this.updateBestAnswer(id) }
+				], 
+				{ cancelable: false }
+			);
+		} else {
+			this.updateBestAnswer(id);
+		}
+	}
+
+	async updateBestAnswer(id) {
+		const topicData = this.props.data.forums.topic;
+		const newBestAnswer = _.find(topicData.posts, post => parseInt(post.id) === parseInt(id));
+		const existingBestAnswer = topicData.hasBestAnswer ? _.find(topicData.posts, post => parseInt(post.id) === parseInt(topicData.bestAnswerID)) : null;
+
+		try {
+			const { data } = await this.props.client.mutate({
+				mutation: SetBestAnswer,
+				variables: {
+					id
+				},
+				optimisticResponse: {
+					mutateForums: {
+						__typename: "mutate_Forums",
+						setBestAnswer: {
+							...newBestAnswer,
+							isBestAnswer: true
+						}
+					}
+				},
+				update: (proxy) => {
+					// So, what's happening here...
+					// We need to update both the topic and the existing Best Answer (if one is set) in our local cache so that the UI reflects
+					// this change. We do this by writing fragments to the local cache in GraphQL syntax.
+					try {
+						proxy.writeQuery({
+							query: gql`
+								query Topic {
+									__typename
+									forums {
+										__typename
+										topic(id: ${topicData.id}) {
+											id
+											__typename
+											bestAnswerID
+											hasBestAnswer
+										}
+									}
+								}
+							`,
+							data: {
+								__typename: 'Query',
+								forums: {
+									__typename: 'forums',
+									topic: {
+										__typename: 'forums_Topic',
+										id: topicData.id,
+										bestAnswerID: newBestAnswer.id,
+										hasBestAnswer: true
+									}
+								}
+							}
+						});
+					} catch (err) {
+						console.log(err);
+					}
+
+					if( existingBestAnswer !== null ){
+						try {
+							proxy.writeQuery({
+								query: gql`
+									query Post {
+										__typename
+										forums {
+											__typename
+											post(id: ${existingBestAnswer.id}) {
+												id
+												__typename
+												isBestAnswer
+											}
+										}
+									}
+								`,
+								data: {
+									__typename: 'Query',
+									forums: {
+										__typename: 'forums',
+										post: {
+											id: existingBestAnswer.id,
+											__typename: 'forums_Post',
+											isBestAnswer: false
+										}
+									}
+								}
+							});
+						} catch (err) {
+							console.log(err);
+						}
+					}
+				}
+			});
+		} catch (err) {
+			console.log("Couldn't set post as best answer: " + err); // @todo error
+		}
 	}
 
 	/**
@@ -692,3 +1140,10 @@ export default compose(
 	})),
 	withApollo
 )(TopicViewScreen);
+
+const componentStyles = StyleSheet.create({
+	metaInfo: {
+		borderTopWidth: 1,
+		borderTopColor: styleVars.borderColors.medium
+	}
+});

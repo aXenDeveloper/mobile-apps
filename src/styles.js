@@ -47,10 +47,12 @@ export const styleVars = {
 		extraWide: 24
 	},
 	fontSizes: {
+		tiny: 11,
 		small: 13,
 		standard: 14,
 		content: 15,
-		large: 17
+		large: 17,
+		extraLarge: 19
 	},
 	fontFamily: 'System',
 	lineHeight: {
@@ -349,6 +351,12 @@ const styles = StyleSheet.create({
 	},
 
 	/* Typography */
+	contentTitle: {
+		fontSize: styleVars.fontSizes.extraLarge,
+		fontWeight: "600",
+		color: '#171717',
+		fontFamily: styleVars.fontFamily
+	},
 	itemTitle: {
 		fontSize: styleVars.fontSizes.large,
 		fontWeight: "600",
@@ -364,6 +372,9 @@ const styles = StyleSheet.create({
 	highlightedText: {
 		backgroundColor: styleVars.searchHighlight,
 		color: styleVars.searchHighlightText
+	},
+	tinyText: {
+		fontSize: styleVars.fontSizes.tiny
 	},
 	smallText: {
 		fontSize: styleVars.fontSizes.small
@@ -397,6 +408,28 @@ const styles = StyleSheet.create({
 	},
 	mediumText: {
 		fontWeight: "600"
+	},
+
+	/* Border styles */
+	bBorder: { borderBottomWidth: 1 },
+	tBorder: { borderTopWidth: 1 },
+	lBorder: { borderLeftWidth: 1 },
+	rBorder: { borderRightWidth: 1 },
+	hBorder: { borderLeftWidth: 1, borderRightWidth: 1 },
+	vBorder: { borderTopWidth: 1, borderBottomWidth: 1 },
+
+	lightBorder: { borderColor: styleVars.borderColors.light },
+	mediumBorder: { borderColor: styleVars.borderColors.medium },
+	darkBorder: { borderColor: styleVars.borderColors.dark },
+
+	/* Image styles */
+	tinyImage: {
+		width: 14,
+		height: 14,
+	},
+	smallImage: {
+		width: 20,
+		height: 20
 	},
 
 	/* Spacing styles */
