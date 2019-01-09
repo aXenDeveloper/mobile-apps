@@ -111,6 +111,8 @@ const LangFragment = gql`
 		error_voting_question: phrase(key: "app_error_voting_question")
 		replace_best_answer_title: phrase(key: "app_replace_best_answer_title")
 		replace_best_answer_text: phrase(key: "app_replace_best_answer_text")
+		question_asked_by: phrase(key: "app_question_asked_by")
+		this_is_best_answer: phrase(key: "app_this_is_best_answer")
 
 		votes: phrase(key: "app_votes")
 		votes_nonum: phrase(key: "app_votes_nonum")

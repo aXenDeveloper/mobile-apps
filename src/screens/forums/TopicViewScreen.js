@@ -441,6 +441,12 @@ class TopicViewScreen extends Component {
 		}
 	}
 
+	/**
+	 * May execute a mutation to mark the topic as read, depending on whether the user
+	 * has scrolled far enough for us to consider it 'read'.
+	 *
+	 * @return 	void
+	 */
 	async maybeMarkAsRead() {
 		const offsetAdjust = this.state.startingOffset + this.props.data.forums.topic.posts.length;
 
@@ -743,6 +749,12 @@ class TopicViewScreen extends Component {
 		);
 	}
 
+	/**
+	 * Return additional styles to be applied to a Post component for a post
+	 *
+	 * @param 	object 	post	A post object
+	 * @return 	array|null
+	 */
 	getAdditionalPostStyles(post) {
 		if (!this.props.data.forums.topic.isQuestion) {
 			return null;
@@ -753,6 +765,13 @@ class TopicViewScreen extends Component {
 		}
 	}
 
+	/**
+	 * Return a header component when our topic is a question
+	 * Displays "question asked by" or "best answer" string
+	 *
+	 * @param 	object 	post	A post object
+	 * @return 	Component|null
+	 */
 	getQuestionHeaderComponent(post) {
 		if (!this.props.data.forums.topic.isQuestion) {
 			return null;
@@ -761,7 +780,9 @@ class TopicViewScreen extends Component {
 		if (post.isQuestion) {
 			return (
 				<View style={[styles.mhWide, styles.pbStandard, styles.mbStandard, styles.bBorder, styles.mediumBorder]}>
-					<Text style={[styles.standardText, styles.mediumText]}>Question asked by {this.props.data.forums.topic.author.name}</Text>
+					<Text style={[styles.standardText, styles.mediumText]}>
+						{Lang.get("question_asked_by", { name: this.props.data.forums.topic.author.name })}
+					</Text>
 				</View>
 			);
 		}
@@ -769,15 +790,21 @@ class TopicViewScreen extends Component {
 		if (post.isBestAnswer) {
 			return (
 				<View style={[styles.mhWide, styles.pbStandard, styles.mbStandard, styles.bBorder, styles.mediumBorder]}>
-					<Text style={[styles.standardText, styles.mediumText]}>Best answer to this question</Text>
+					<Text style={[styles.standardText, styles.mediumText]}>{Lang.get("this_is_best_answer")}</Text>
 				</View>
 			);
 		}
 	}
 
+	/**
+	 * Return a vote control and best answer control if our topic is a question
+	 *
+	 * @param 	object 	post	A post object
+	 * @return 	Component|null
+	 */
 	getAnswerVoteComponent(post) {
 		const topicData = this.props.data.forums.topic;
-		
+
 		if (!topicData.isQuestion || post.isQuestion) {
 			return null;
 		}
@@ -808,6 +835,12 @@ class TopicViewScreen extends Component {
 		);
 	}
 
+	/**
+	 * Memoization function, stores event handlers for marking a post as best answer
+	 *
+	 * @param 	number 		id 		Post ID
+	 * @return 	function
+	 */
 	getSetBestAnswerHandler(id) {
 		if (_.isUndefined(this._bestAnswerHandlers[id])) {
 			this._bestAnswerHandlers[id] = () => this.onSetBestAnswer(id);
@@ -816,6 +849,12 @@ class TopicViewScreen extends Component {
 		return this._bestAnswerHandlers[id];
 	}
 
+	/**
+	 * Memoization function, stores event handlers for downvoting an answer
+	 *
+	 * @param 	number 		id 		Post ID
+	 * @return 	function
+	 */
 	getQuestionVoteDownHandler(id) {
 		if (_.isUndefined(this._answerVoteDownHandlers[id])) {
 			this._answerVoteDownHandlers[id] = () => this.onVoteAnswer(id, "DOWN");
@@ -824,6 +863,12 @@ class TopicViewScreen extends Component {
 		return this._answerVoteDownHandlers[id];
 	}
 
+	/**
+	 * Memoization function, stores event handlers for upvoting an answer
+	 *
+	 * @param 	number 		id 		Post ID
+	 * @return 	function
+	 */
 	getQuestionVoteUpHandler(id) {
 		if (_.isUndefined(this._answerVoteUpHandlers[id])) {
 			this._answerVoteUpHandlers[id] = () => this.onVoteAnswer(id, "UP");
@@ -832,18 +877,22 @@ class TopicViewScreen extends Component {
 		return this._answerVoteUpHandlers[id];
 	}
 
+	/**
+	 * Event handler for setting a best answer. Prompts user to confirm if an existing post is already
+	 * marked as best answer, then calls `this.updateBestAnswer` to execute the change.
+	 *
+	 * @param 	number 		id 		Post ID to set as best answer
+	 * @return 	void
+	 */
 	onSetBestAnswer(id) {
 		const topicData = this.props.data.forums.topic;
 
 		// If the selected post isn't the same as the one that's already best answer, prompt for the change
 		if (topicData.hasBestAnswer && parseInt(topicData.bestAnswerID) !== parseInt(id)) {
 			Alert.alert(
-				Lang.get("replace_best_answer_title"), 
-				Lang.get("replace_best_answer_text"), 
-				[
-					{ text: Lang.get("cancel"), onPress: () => console.log("cancel") },
-					{ text: Lang.get("replace"), onPress: () => this.updateBestAnswer(id) }
-				], 
+				Lang.get("replace_best_answer_title"),
+				Lang.get("replace_best_answer_text"),
+				[{ text: Lang.get("cancel"), onPress: () => console.log("cancel") }, { text: Lang.get("replace"), onPress: () => this.updateBestAnswer(id) }],
 				{ cancelable: false }
 			);
 		} else {
@@ -851,6 +900,12 @@ class TopicViewScreen extends Component {
 		}
 	}
 
+	/**
+	 * executes query to set a post as the best answer in a topic
+	 *
+	 * @param 	number 		id 		Post ID to set as best answer
+	 * @return 	void
+	 */
 	async updateBestAnswer(id) {
 		const topicData = this.props.data.forums.topic;
 		const newBestAnswer = _.find(topicData.posts, post => parseInt(post.id) === parseInt(id));
@@ -871,7 +926,7 @@ class TopicViewScreen extends Component {
 						}
 					}
 				},
-				update: (proxy) => {
+				update: proxy => {
 					// So, what's happening here...
 					// We need to update both the topic and the existing Best Answer (if one is set) in our local cache so that the UI reflects
 					// this change. We do this by writing fragments to the local cache in GraphQL syntax.
@@ -892,11 +947,11 @@ class TopicViewScreen extends Component {
 								}
 							`,
 							data: {
-								__typename: 'Query',
+								__typename: "Query",
 								forums: {
-									__typename: 'forums',
+									__typename: "forums",
 									topic: {
-										__typename: 'forums_Topic',
+										__typename: "forums_Topic",
 										id: topicData.id,
 										bestAnswerID: newBestAnswer.id,
 										hasBestAnswer: true
@@ -908,7 +963,7 @@ class TopicViewScreen extends Component {
 						console.log(err);
 					}
 
-					if( existingBestAnswer !== null ){
+					if (existingBestAnswer !== null) {
 						try {
 							proxy.writeQuery({
 								query: gql`
@@ -925,12 +980,12 @@ class TopicViewScreen extends Component {
 									}
 								`,
 								data: {
-									__typename: 'Query',
+									__typename: "Query",
 									forums: {
-										__typename: 'forums',
+										__typename: "forums",
 										post: {
 											id: existingBestAnswer.id,
-											__typename: 'forums_Post',
+											__typename: "forums_Post",
 											isBestAnswer: false
 										}
 									}
@@ -1040,6 +1095,11 @@ class TopicViewScreen extends Component {
 		}
 	}
 
+	/**
+	 * Event handler for tapping the Add Reply bar. Opens reply modal.
+	 *
+	 * @return 	void
+	 */
 	addReply() {
 		this.props.navigation.navigate("ReplyTopic", {
 			topicID: this.props.data.forums.topic.id
