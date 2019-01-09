@@ -5,11 +5,12 @@ import { connect } from "react-redux";
 import { withNavigation } from "react-navigation";
 
 import Lang from "../../utils/Lang";
-import getSuitableImage from "../../utils/getSuitableImage";
 import relativeTime from "../../utils/RelativeTime";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import UserPhoto from "../../atoms/UserPhoto";
+import TopicInfo from "./TopicInfo";
+import QuestionInfo from "./QuestionInfo";
 import TopicIcon from "../../atoms/TopicIcon";
 import LockedIcon from "../../atoms/LockedIcon";
 import TopicStatus from "../../atoms/TopicStatus";
@@ -44,21 +45,6 @@ class TopicRow extends Component {
 	}
 
 	/**
-	 * Return a suitable thumbnail for the topic, if available
-	 *
-	 * @return 	Component|null
-	 */
-	getThumbnail() {
-		const suitableImage = getSuitableImage(this.props.data.contentImages);
-
-		if (suitableImage) {
-			return <Image source={{ url: suitableImage }} resizeMode="cover" style={componentStyles.thumbnailImage} />;
-		}
-
-		return null;
-	}
-
-	/**
 	 * Event handler for tapping on the topic row
 	 *
 	 * @return 	void
@@ -80,25 +66,11 @@ class TopicRow extends Component {
 
 		// Only show as unread if we're a member and unread flag is true
 		const showAsUnread = this.props.auth.authenticated && this.props.data.unread;
-		const image = this.getThumbnail();
+		const InfoComponent = this.props.data.isQuestion ? QuestionInfo : TopicInfo;
 
 		return (
 			<ContentRow withSpace unread={showAsUnread} onPress={this.props.onPress || this.onPress}>
-				<View style={[componentStyles.topicRowInner, image !== null ? componentStyles.topicRowInnerWithImage : null]}>
-					<View style={componentStyles.topicInfo}>
-						<View style={componentStyles.topicTitle}>
-							{showAsUnread && <TopicIcon style={componentStyles.topicIcon} unread={this.props.data.unread} />}
-							{this.props.data.isLocked && <LockedIcon style={componentStyles.lockedIcon} />}
-							<Text style={[componentStyles.topicTitleText, showAsUnread ? styles.title : styles.titleRead]} numberOfLines={1}>
-								{this.props.data.title}
-							</Text>
-						</View>
-						<Text style={[componentStyles.topicSnippet, showAsUnread ? styles.text : styles.textRead]} numberOfLines={1}>
-							{this.props.data.snippet}
-						</Text>
-					</View>
-					<View style={componentStyles.thumbnail}>{image}</View>
-				</View>
+				<InfoComponent data={this.props.data} showAsUnread={showAsUnread} styles={componentStyles} />
 				<View style={componentStyles.topicStatusesWrap}>
 					<View style={componentStyles.topicMeta}>
 						{this.props.data.isHot && <TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="hot" />}

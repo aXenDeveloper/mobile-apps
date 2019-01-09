@@ -62,6 +62,7 @@ const BootQuery = gql`
 				reputation_highlight
 				reputation_show_profile
 				allow_result_view
+				forums_questions_downvote
 			}
 			loginHandlers {
 				id

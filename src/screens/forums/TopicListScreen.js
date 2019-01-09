@@ -46,6 +46,12 @@ const TopicListQuery = gql`
 						name
 					}
 					contentImages
+					isQuestion
+					questionVotes
+					canVoteUp
+					canVoteDown
+					vote
+					hasBestAnswer
 				}
 				follow {
 					...FollowModalFragment
@@ -207,7 +213,8 @@ class TopicListScreen extends Component {
 
 	/**
 	 * Given a post and topic data, return an object with a more useful structure
-	 *
+	 * 
+	 * @todo this is stupid, so eliminate this
 	 * @param 	object 	post 		A raw post object from GraphQL
 	 * @param 	object 	topicData 	The topic data
 	 * @return 	object
@@ -228,7 +235,13 @@ class TopicListScreen extends Component {
 			isFeatured: topic.isFeatured,
 			lastPostDate: topic.lastPostDate,
 			lastPostPhoto: topic.lastPostAuthor.photo,
-			contentImages: topic.contentImages
+			contentImages: topic.contentImages,
+			isQuestion: topic.isQuestion,
+			questionVotes: topic.questionVotes,
+			canVoteUp: topic.canVoteUp,
+			canVoteDown: topic.canVoteDown,
+			vote: topic.vote,
+			hasBestAnswer: topic.hasBestAnswer,
 		};
 	}
 
