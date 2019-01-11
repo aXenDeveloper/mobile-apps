@@ -12,8 +12,7 @@ import getErrorMessage from "../../utils/getErrorMessage";
 import FollowButton from "../../atoms/FollowButton";
 import ErrorBox from "../../atoms/ErrorBox";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
-import Pager from "../../atoms/Pager";
-import PagerButton from "../../atoms/PagerButton";
+import ActionBar from "../../atoms/ActionBar";
 import SectionHeader from "../../atoms/SectionHeader";
 import ForumItem from "../../ecosystems/ForumItem";
 import TopicRow from "../../ecosystems/TopicRow";
@@ -227,7 +226,7 @@ class FluidForumScreen extends Component {
 
 /*
 {forumData.create.canCreate ? (
-	<Pager>
+	<ActionBar>
 		<AddButton
 			icon={require("../../../resources/compose.png")}
 			title="Create New Topic"
@@ -243,7 +242,7 @@ class FluidForumScreen extends Component {
 				})
 			}
 		/>
-	</Pager>
+	</ActionBar>
 ) : null}*/
 
 export default compose(

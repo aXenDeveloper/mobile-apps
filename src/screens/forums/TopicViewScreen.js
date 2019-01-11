@@ -19,9 +19,9 @@ import { QuestionVote, BestAnswer } from "../../ecosystems/TopicView";
 import Tag from "../../atoms/Tag";
 import TagList from "../../atoms/TagList";
 import ErrorBox from "../../atoms/ErrorBox";
+import ActionBar from "../../atoms/ActionBar";
 import Pager from "../../atoms/Pager";
 import ContentItemStat from "../../atoms/ContentItemStat";
-import PagerButton from "../../atoms/PagerButton";
 import DummyTextInput from "../../atoms/DummyTextInput";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import LoadMoreComments from "../../atoms/LoadMoreComments";
@@ -198,7 +198,8 @@ class TopicViewScreen extends Component {
 			loadingEarlierPosts: false,
 			startingOffset: this.props.data.variables.offset || 0,
 			pollModalVisible: false,
-			followModalVisible: false
+			followModalVisible: false,
+			currentPosition: 1
 		};
 
 		if (this.props.auth.authenticated) {
@@ -208,6 +209,11 @@ class TopicViewScreen extends Component {
 				onPressFollow: this.toggleFollowModal
 			});
 		}
+
+		this._viewabilityConfig = {
+			minimumViewTime: 600,
+			itemVisiblePercentThreshold: 25
+		};
 
 		this.loadEarlierComments = this.loadEarlierComments.bind(this);
 		this.toggleFollowModal = this.toggleFollowModal.bind(this);
@@ -219,6 +225,7 @@ class TopicViewScreen extends Component {
 		this.addReply = this.addReply.bind(this);
 		this.onVoteQuestionUp = this.onVoteQuestionUp.bind(this);
 		this.onVoteQuestionDown = this.onVoteQuestionDown.bind(this);
+		this.onViewableItemsChanged = this.onViewableItemsChanged.bind(this);
 	}
 
 	/**
@@ -1106,6 +1113,29 @@ class TopicViewScreen extends Component {
 		});
 	}
 
+	onViewableItemsChanged({ viewableItems }) {
+		// Get an array of visible items that contains only posts
+		const postItems = _.reject(viewableItems, item => item.key == "unread" || item.key == "loginPrompt");
+
+		// We may have no posts that are 50% viewable right now
+		if( !postItems.length ){
+			return;
+		}
+
+		// Get the last item, which represents the 'max' post we can see
+		const lastItem = _.last(postItems);
+		// Get the ID from it, which we'll use to locate the true index from our main post array
+		const lastItemID = parseInt( lastItem.item.id );
+		// Find the index of this item in our main posts array
+		const postIndex = this.props.data.forums.topic.posts.findIndex(post => parseInt(post.id) === lastItemID);
+		// Finally get the true position of this post once offset is considered. +1 since we started with zero-index array.
+		const realIndex = this.state.startingOffset + postIndex + 1;
+
+		this.setState({
+			currentPosition: realIndex
+		});
+	}
+
 	render() {
 		// status 3 == fetchMore, status 4 == refreshing
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
@@ -1143,21 +1173,26 @@ class TopicViewScreen extends Component {
 							refreshing={this.props.data.networkStatus == 4}
 							onRefresh={this.onRefresh}
 							onEndReached={this.onEndReached}
+							onViewableItemsChanged={this.onViewableItemsChanged}
+							viewabilityConfig={this._viewabilityConfig}
 						/>
 						{this.props.data.forums.topic.poll !== null && (
 							<PollModal isVisible={this.state.pollModalVisible} data={this.props.data.forums.topic.poll} />
 						)}
-						{this.props.data.forums.topic.itemPermissions.canComment && (
-							<Pager light>
-								<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
-							</Pager>
-						)}
+						<Pager total={topicData.postCount} currentPosition={this.state.currentPosition} onChange={() => {}} />
 					</View>
 				</View>
 			);
 		}
 	}
 }
+
+/*
+{this.props.data.forums.topic.itemPermissions.canComment && (
+							<ActionBar light>
+								<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
+							</ActionBar>
+						)}*/
 
 export default compose(
 	graphql(TopicViewQuery, {
