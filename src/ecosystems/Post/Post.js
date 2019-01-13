@@ -74,6 +74,7 @@ class Post extends Component {
 		this.onReactionPress = this.onReactionPress.bind(this);
 		this.onPressPostDots = this.onPressPostDots.bind(this);
 		this.onPressIgnoredPost = this.onPressIgnoredPost.bind(this);
+		this.onLayout = this.onLayout.bind(this);
 	}
 
 	/**
@@ -82,6 +83,24 @@ class Post extends Component {
 	static errors = {
 		NO_POST: Lang.get("no_post")
 	};
+
+	onLayout(event) {
+		if( this.props.onPostLayout ){
+			const { height } = event.nativeEvent.layout;
+			this.props.onPostLayout({
+				id: parseInt( this.props.data.id ),
+				height: height
+			});
+		}
+	}
+
+	componentWillUnmount() {
+		/*if( this.props.onPostUnmount ){
+			this.props.onPostUnmount({
+				id: parseInt( this.props.data.id )
+			});
+		}*/
+	}
 
 	//====================================================================
 	// LOADING
@@ -92,7 +111,7 @@ class Post extends Component {
 	 */
 	loadingComponent() {
 		return (
-			<ShadowedArea style={[componentStyles.post, styles.mbVeryTight]}>
+			<ShadowedArea style={[componentStyles.post, styles.pWide, styles.mbVeryTight]}>
 				<PlaceholderContainer height={40}>
 					<PlaceholderElement circle radius={40} left={0} top={0} />
 					<PlaceholderElement width={160} height={15} top={0} left={50} />
@@ -443,85 +462,89 @@ class Post extends Component {
 
 		const repButton = this.getReputationButton();
 		
+		// <Text>{this.props.position}</Text>
+
 		return (
-			<View style={styles.mbVeryTight}>
-				{this.props.data.isIgnored && this.state.ignoreOverride && this.renderIgnoreBar()}
-				<ShadowedArea style={[styles.pvWide, componentStyles.post, this.props.style]}>
-					{this.props.topComponent}
-					<View style={styles.flexRow}>
-						{this.props.leftComponent}
-						<View style={[this.props.leftComponent ? styles.mrWide : styles.mhWide, styles.flexBasisZero, styles.flexGrow]}>
-							<View style={[styles.flexRow, styles.flexAlignStart]} testId="postAuthor">
-								<TouchableOpacity style={styles.flex} onPress={this.props.data.author.id ? this.onPressProfile : null}>
-									<View style={[styles.flex, styles.flexRow, styles.flexAlignStart]}>
-										<UserPhoto url={this.props.data.author.photo} online={this.props.data.author.isOnline || null} size={36} />
-										<View style={[styles.flexColumn, styles.flexJustifyCenter, styles.mlStandard]}>
-											<Text style={styles.itemTitle}>{this.props.data.author.name}</Text>
-											<Text style={[styles.standardText, styles.lightText]}>{relativeTime.long(this.props.data.timestamp)}</Text>
+			<View onLayout={this.onLayout}>
+				<View style={styles.mbVeryTight}>
+					{this.props.data.isIgnored && this.state.ignoreOverride && this.renderIgnoreBar()}
+					<ShadowedArea style={[styles.pvWide, componentStyles.post, this.props.style]}>
+						{this.props.topComponent}
+						<View style={styles.flexRow}>
+							{this.props.leftComponent}
+							<View style={[this.props.leftComponent ? styles.mrWide : styles.mhWide, styles.flexBasisZero, styles.flexGrow]}>
+								<View style={[styles.flexRow, styles.flexAlignStart]} testId="postAuthor">
+									<TouchableOpacity style={styles.flex} onPress={this.props.data.author.id ? this.onPressProfile : null}>
+										<View style={[styles.flex, styles.flexRow, styles.flexAlignStart]}>
+											<UserPhoto url={this.props.data.author.photo} online={this.props.data.author.isOnline || null} size={36} />
+											<View style={[styles.flexColumn, styles.flexJustifyCenter, styles.mlStandard]}>
+												<Text style={styles.itemTitle}>{this.props.data.author.name}</Text>
+												<Text style={[styles.standardText, styles.lightText]}>{relativeTime.long(this.props.data.timestamp)}</Text>
+											</View>
 										</View>
-									</View>
-								</TouchableOpacity>
-								<TouchableOpacity style={styles.flexAlignSelfStart} onPress={this.onPressPostDots}>
-									<Image style={componentStyles.postMenu} resizeMode="contain" source={require("../../../resources/dots.png")} />
-								</TouchableOpacity>
-							</View>
-							<View style={styles.mvWide}>
-								<RichTextContent>{this.props.data.content}</RichTextContent>
-								<Animatable.View ref={r => (this._reactionWrap = r)}>
-									{this.props.data.reputation.reactions.length && (
-										<View style={[styles.mtWide, styles.flexRow, styles.flexJustifyEnd, styles.flexWrap]} testId="reactionList">
-											{this.props.data.reputation.reactions.map(reaction => {
-												return (
-													<Reaction
-														style={styles.mlStandard}
-														key={reaction.id}
-														id={reaction.id}
-														image={reaction.image}
-														count={reaction.count}
-														onPress={this.props.data.reputation.canViewReps ? this.onPressReaction : null}
-													/>
-												);
-											})}
-										</View>
-									)}
-								</Animatable.View>
+									</TouchableOpacity>
+									<TouchableOpacity style={styles.flexAlignSelfStart} onPress={this.onPressPostDots}>
+										<Image style={componentStyles.postMenu} resizeMode="contain" source={require("../../../resources/dots.png")} />
+									</TouchableOpacity>
+								</View>
+								<View style={styles.mvWide}>
+									<RichTextContent>{this.props.data.content}</RichTextContent>
+									<Animatable.View ref={r => (this._reactionWrap = r)}>
+										{this.props.data.reputation.reactions.length && (
+											<View style={[styles.mtWide, styles.flexRow, styles.flexJustifyEnd, styles.flexWrap]} testId="reactionList">
+												{this.props.data.reputation.reactions.map(reaction => {
+													return (
+														<Reaction
+															style={styles.mlStandard}
+															key={reaction.id}
+															id={reaction.id}
+															image={reaction.image}
+															count={reaction.count}
+															onPress={this.props.data.reputation.canViewReps ? this.onPressReaction : null}
+														/>
+													);
+												})}
+											</View>
+										)}
+									</Animatable.View>
+								</View>
 							</View>
 						</View>
-					</View>
-					{(repButton || this.props.canReply) && (
-						<PostControls style={styles.mhWide}>
-							{this.props.canReply && (
-								<PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />
-							)}
-							{repButton}
-						</PostControls>
-					)}
-					<ActionSheet
-						ref={o => (this._actionSheet = o)}
-						title={Lang.get("post_options")}
-						options={this.actionSheetOptions()}
-						cancelButtonIndex={this.actionSheetCancelIndex()}
-						onPress={this.actionSheetPress}
-					/>
-					<ReactionModal
-						visible={this.state.reactionModalVisible}
-						closeModal={this.hideReactionModal}
-						reactions={this.props.data.reputation.availableReactions}
-						onReactionPress={this.onReactionPress}
-					/>
-					<WhoReactedModal
-						visible={this.state.whoReactedModalVisible}
-						close={this.hideWhoReactedModal}
-						expectedCount={this.state.whoReactedCount}
-						reactionImage={this.state.whoReactedImage}
-						query={WhoReactedQuery}
-						variables={{
-							id: this.props.data.id,
-							reactionID: parseInt(this.state.whoReactedReaction)
-						}}
-					/>
-					{this.renderCommentFlag()}
-				</ShadowedArea>
+						{(repButton || this.props.canReply) && (
+							<PostControls style={styles.mhWide}>
+								{this.props.canReply && (
+									<PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />
+								)}
+								{repButton}
+							</PostControls>
+						)}
+						<ActionSheet
+							ref={o => (this._actionSheet = o)}
+							title={Lang.get("post_options")}
+							options={this.actionSheetOptions()}
+							cancelButtonIndex={this.actionSheetCancelIndex()}
+							onPress={this.actionSheetPress}
+						/>
+						<ReactionModal
+							visible={this.state.reactionModalVisible}
+							closeModal={this.hideReactionModal}
+							reactions={this.props.data.reputation.availableReactions}
+							onReactionPress={this.onReactionPress}
+						/>
+						<WhoReactedModal
+							visible={this.state.whoReactedModalVisible}
+							close={this.hideWhoReactedModal}
+							expectedCount={this.state.whoReactedCount}
+							reactionImage={this.state.whoReactedImage}
+							query={WhoReactedQuery}
+							variables={{
+								id: this.props.data.id,
+								reactionID: parseInt(this.state.whoReactedReaction)
+							}}
+						/>
+						{this.renderCommentFlag()}
+					</ShadowedArea>
+				</View>
 			</View>
 		);
 	}

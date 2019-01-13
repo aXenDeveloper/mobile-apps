@@ -1,15 +1,27 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Text, View, Button, StyleSheet, TouchableHighlight } from 'react-native';
 
 import styles, { styleVars } from "../styles";
 
-const ActionBar = (props) => (	
-	<View style={[ componentStyles.pager, props.light ? componentStyles.light : componentStyles.dark, props.style ]}>
-		{props.children}
-	</View>
-);
+export default class ActionBar extends PureComponent {
+	constructor(props) {
+		super(props);
+	}
 
-export default ActionBar;
+	componentDidMount() {
+		if( this.props.onRef && this._wrapperRef ){
+			this.props.onRef( this._wrapperRef );
+		}
+	}
+
+	render() {
+		return (
+			<View style={[ componentStyles.pager, this.props.light ? componentStyles.light : componentStyles.dark, this.props.style ]} ref={ref => this._wrapperRef = ref}>
+				{this.props.children}
+			</View>
+		);
+	}
+}
 
 const componentStyles = StyleSheet.create({
 	pager: {

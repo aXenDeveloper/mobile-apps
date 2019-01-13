@@ -85,6 +85,13 @@ export default class LoginRegisterPrompt extends Component {
 	 */
 	_onWrapperLayout(e) {
 		this._origHeight = e.nativeEvent.layout.height;
+
+		if( this.props.onLayout ){
+			this.props.onLayout({
+				id: 'loginPrompt',
+				height: this._origHeight
+			});
+		}
 	}
 
 	/**
