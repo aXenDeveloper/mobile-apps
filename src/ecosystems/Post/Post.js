@@ -13,6 +13,7 @@ import Lang from "../../utils/Lang";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
 import { WhoReactedModal, WhoReactedFragment } from "../../ecosystems/Reaction";
 import ShadowedArea from "../../atoms/ShadowedArea";
+import ViewMeasure from "../../atoms/ViewMeasure";
 import UserPhoto from "../../atoms/UserPhoto";
 import PostControls from "../../atoms/PostControls";
 import PostControl from "../../atoms/PostControl";
@@ -74,7 +75,6 @@ class Post extends Component {
 		this.onReactionPress = this.onReactionPress.bind(this);
 		this.onPressPostDots = this.onPressPostDots.bind(this);
 		this.onPressIgnoredPost = this.onPressIgnoredPost.bind(this);
-		this.onLayout = this.onLayout.bind(this);
 	}
 
 	/**
@@ -83,24 +83,6 @@ class Post extends Component {
 	static errors = {
 		NO_POST: Lang.get("no_post")
 	};
-
-	onLayout(event) {
-		if( this.props.onPostLayout ){
-			const { height } = event.nativeEvent.layout;
-			this.props.onPostLayout({
-				id: parseInt( this.props.data.id ),
-				height: height
-			});
-		}
-	}
-
-	componentWillUnmount() {
-		/*if( this.props.onPostUnmount ){
-			this.props.onPostUnmount({
-				id: parseInt( this.props.data.id )
-			});
-		}*/
-	}
 
 	//====================================================================
 	// LOADING
@@ -465,7 +447,7 @@ class Post extends Component {
 		// <Text>{this.props.position}</Text>
 
 		return (
-			<View onLayout={this.onLayout}>
+			<ViewMeasure onLayout={this.props.onLayout} id={parseInt(this.props.data.id)}>
 				<View style={styles.mbVeryTight}>
 					{this.props.data.isIgnored && this.state.ignoreOverride && this.renderIgnoreBar()}
 					<ShadowedArea style={[styles.pvWide, componentStyles.post, this.props.style]}>
@@ -545,7 +527,7 @@ class Post extends Component {
 						{this.renderCommentFlag()}
 					</ShadowedArea>
 				</View>
-			</View>
+			</ViewMeasure>
 		);
 	}
 }

@@ -21,6 +21,7 @@ import TagList from "../../atoms/TagList";
 import ErrorBox from "../../atoms/ErrorBox";
 import ActionBar from "../../atoms/ActionBar";
 import Pager from "../../atoms/Pager";
+import ViewMeasure from "../../atoms/ViewMeasure";
 import ContentItemStat from "../../atoms/ContentItemStat";
 import DummyTextInput from "../../atoms/DummyTextInput";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
@@ -154,6 +155,8 @@ const SetBestAnswer = gql`
 	}
 `;
 
+const LOAD_MORE_HEIGHT = 0;
+
 class TopicViewScreen extends Component {
 	/**
 	 * React Navigation config
@@ -189,6 +192,7 @@ class TopicViewScreen extends Component {
 		//this._startingOffset = 0; // The offset we're currently displaying in the view
 		this._cellHeights = {}; // Store the height of each post
 		this._headerHeight = 0;
+		this._loadMoreHeight = 0;
 		this._initialOffsetDone = false; // Flag to indicate we've set our initial offset on render
 		this._aboutToScrollToEnd = false; // Flag to indicate a scrollToEnd is pending so we can avoid other autoscrolls
 		this._answerVoteUpHandlers = {}; // Stores memoized event handlers for voting answers up
@@ -233,7 +237,6 @@ class TopicViewScreen extends Component {
 		this.onViewableItemsChanged = this.onViewableItemsChanged.bind(this);
 		this.scrollToPost = this.scrollToPost.bind(this);
 		this.onPostLayout = this.onPostLayout.bind(this);
-		this.onPostUnmount = this.onPostUnmount.bind(this);
 		this.onHeaderLayout = this.onHeaderLayout.bind(this);
 	}
 
@@ -438,10 +441,17 @@ class TopicViewScreen extends Component {
 			}
 		}
 
-		// Figure out if we need to change the state that determines whether the
-		// Load Earlier Posts button shows
-		if (prevState.earlierPostsAvailable == null || (prevState.startingOffset !== this.state.startingOffset && !this.state.loadingUnseenPosts)) {
-			//if (this.state.earlierPostsAvailable !== false) {
+		// If we've loaded in posts from a different position in the topic, see if we need to scroll to the right place
+		if( prevState.loadingUnseenPosts && !this.state.loadingUnseenPosts ){
+			if( this.state.startingOffset > 0 ){
+				this._flatList.scrollToOffset({
+					offset: this._headerHeight,
+					animated: false
+				});
+			}
+		} else if (prevState.earlierPostsAvailable == null || (prevState.startingOffset !== this.state.startingOffset && !this.state.loadingUnseenPosts)) {
+			// Figure out if we need to change the state that determines whether the
+			// Load Earlier Posts button shows
 			const showEarlierPosts = this.state.startingOffset > 0;
 
 			this.setState({
@@ -452,12 +462,11 @@ class TopicViewScreen extends Component {
 			if (!this.props.data.loading && !this.props.data.error) {
 				if (showEarlierPosts && !this._aboutToScrollToEnd) {
 					this._flatList.scrollToOffset({
-						offset: 40,
+						offset: this._headerHeight + LOAD_MORE_HEIGHT,
 						animated: false
 					});
 				}
 			}
-			//}
 		}
 	}
 
@@ -773,7 +782,7 @@ class TopicViewScreen extends Component {
 	 */
 	getHeaderComponent(topicData) {
 		return (
-			<View onLayout={this.onHeaderLayout}>
+			<ViewMeasure onLayout={this.onHeaderLayout} id='header'>
 				<ShadowedArea style={[styles.flexRow, styles.flexAlignStretch, styles.pvStandard, styles.mbStandard]}>
 					{topicData.isQuestion && (
 						<View style={styles.flexAlignSelfCenter}>
@@ -806,7 +815,7 @@ class TopicViewScreen extends Component {
 				</ShadowedArea>
 				{topicData.poll !== null && <PollPreview data={topicData.poll} onPress={this.goToPollScreen} />}
 				{this.getLoadPreviousButton()}
-			</View>
+			</ViewMeasure>
 		);
 	}
 
@@ -878,15 +887,20 @@ class TopicViewScreen extends Component {
 				leftComponent={voteControl}
 				topComponent={questionHeaderControl}
 				style={additionalPostStyle}
-				onPostLayout={this.onPostLayout}
-				onPostUnmount={this.onPostUnmount}
+				onLayout={this.onPostLayout}
 				position={this.state.startingOffset + index + 1}
 			/>
 		);
 	}
 
-	onHeaderLayout(event) {
-		const { height } = event.nativeEvent.layout;
+	/**
+	 * Callback for when the header has a layoutchange
+	 *
+	 * @param 	object 		data
+	 * @return 	void
+	 */
+	onHeaderLayout(data) {
+		const { height } = data.measure;
 		this._headerHeight = height;
 	}
 
@@ -895,24 +909,12 @@ class TopicViewScreen extends Component {
 	 * We use this to store the height of each post component, used later when scrolling
 	 * to specific posts.
 	 *
-	 * @param 	object 		postData 	{id: the post ID unmounting, height: the post's height}
+	 * @param 	object 		data 	{id: the post ID unmounting, height: the post's height}
 	 * @return 	void
 	 */
-	onPostLayout(postData) {
-		this._cellHeights[parseInt(postData.id)] = postData.height;
-	}
-
-	/**
-	 * Callback passed to each Post, called when the Post unmount
-	 *
-	 * @param 	object 		postData 	{id: the post ID unmounting}
-	 * @return 	void
-	 */
-	onPostUnmount(postData) {
-		/*try {
-			delete this._cellHeights[postData.id];
-			console.log('unmounted ' + postData.id);
-		} catch (err) {}*/
+	onPostLayout(data) {
+		const { height } = data.measure;
+		this._cellHeights[data.id] = height;
 	}
 
 	/**
@@ -1366,6 +1368,7 @@ class TopicViewScreen extends Component {
 							onEndReached={this.onEndReached}
 							onViewableItemsChanged={this.onViewableItemsChanged}
 							viewabilityConfig={this._viewabilityConfig}
+							initialScrollIndex={0}
 						/>
 						{this.props.data.forums.topic.poll !== null && (
 							<PollModal isVisible={this.state.pollModalVisible} data={this.props.data.forums.topic.poll} />
@@ -1374,7 +1377,7 @@ class TopicViewScreen extends Component {
 							total={topicData.postCount}
 							currentPosition={this.state.currentPosition}
 							onChange={this.scrollToPost}
-							unreadIndicator={this.props.data.forums.topic.unreadCommentPosition}
+							unreadIndicator={topicData.isUnread ? topicData.unreadCommentPosition : false}
 						/>
 					</View>
 				</View>
@@ -1385,10 +1388,11 @@ class TopicViewScreen extends Component {
 
 /*
 {this.props.data.forums.topic.itemPermissions.canComment && (
-							<ActionBar light>
-								<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
-							</ActionBar>
-						)}*/
+	<ActionBar light>
+		<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
+	</ActionBar>
+)}
+*/
 
 export default compose(
 	graphql(TopicViewQuery, {

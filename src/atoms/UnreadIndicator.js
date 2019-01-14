@@ -2,37 +2,19 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
+import ViewMeasure from "./ViewMeasure";
 import { styleVars } from '../styles';
 
 export default class UnreadIndicator extends Component {	
 	constructor(props) {
 		super(props);
-		this.onLayout = this.onLayout.bind(this);
-	}
-
-	/**
-	 * Event handler for the wrapper's onLayout callback
-	 * We use this to pass the height to interested components
-	 *
-	 * @param 	object 		event 		Event object
-	 * @return 	void
-	 */
-	onLayout(event) {
-		if( this.props.onLayout ){
-			const { height } = event.nativeEvent.layout;
-
-			this.props.onLayout({
-				id: 'unread',
-				height
-			});
-		}
 	}
 
 	render() {
 		return (
-			<View style={styles.wrapper} onLayout={this.onLayout}>
+			<ViewMeasure style={styles.wrapper} onLayout={this.props.onLayout} id='unread'>
 				<Text style={styles.text}>{this.props.label.toUpperCase()}</Text>
-			</View>
+			</ViewMeasure>
 		)
 	}
 }
