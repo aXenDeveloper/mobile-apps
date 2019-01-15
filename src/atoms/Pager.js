@@ -34,24 +34,36 @@ export default class Pager extends PureComponent {
 		this._updateBar();
 	}
 
+	/**
+	 * onLayout handler for our wrapper changing size.
+	 * Used to get the width of our component so we can calculate percentage positions.
+	 *
+	 * @param 	object 		event 		Event object
+	 * @return 	void
+	 */
 	onWrapperLayout(event) {
 		const { width } = event.nativeEvent.layout;
 		this._wrapperWidth = width;
 	}
 
-	onPanResponderGrant(evt, gestureState) {
-		// The gesture has started. Show visual feedback so the user knows
-		// what is happening!
-
+	/**
+	 * Pan gesture begins
+	 *
+	 * @return 	void
+	 */
+	onPanResponderGrant() {
 		this.setState({
 			isBeingTouched: true
 		});
-
-		console.log("Grant");
-		//console.log(gestureState.dx);
-		// gestureState.d{x,y} will be set to zero now
 	}
 
+	/**
+	 * User pans
+	 *
+	 * @param 	object 		evt 			Event object
+	 * @param 	object 		gestureState	Contains coords and other info for touch gesture
+	 * @return 	void
+	 */
 	onPanResponderMove(evt, gestureState) {
 		const moveX = gestureState.moveX;
 		const percentageX = (moveX / this._wrapperWidth * 100).toFixed(1);
@@ -63,7 +75,12 @@ export default class Pager extends PureComponent {
 		});
 	}
 
-	onPanResponderRelease(evt, gestureState) {
+	/**
+	 * User releases touch
+	 *
+	 * @return 	void
+	 */
+	onPanResponderRelease() {
 		// The user has released all touches while this view is the
 		// responder. This typically means a gesture has succeeded
 		this.setState({
@@ -71,9 +88,12 @@ export default class Pager extends PureComponent {
 		});
 	}
 
-	onPanResponderTerminate(evt, gestureState) {
-		// The user has released all touches while this view is the
-		// responder. This typically means a gesture has succeeded
+	/**
+	 * Touch is terminated (e.g. another component takes touch focus)
+	 *
+	 * @return 	void
+	 */
+	onPanResponderTerminate() {
 		this.setState({
 			isBeingTouched: false
 		});
