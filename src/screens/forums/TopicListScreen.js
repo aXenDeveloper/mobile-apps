@@ -12,8 +12,7 @@ import getErrorMessage from "../../utils/getErrorMessage";
 import FollowButton from "../../atoms/FollowButton";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import ErrorBox from "../../atoms/ErrorBox";
-import Pager from "../../atoms/Pager";
-import PagerButton from "../../atoms/PagerButton";
+import ActionBar from "../../atoms/ActionBar";
 import SectionHeader from "../../atoms/SectionHeader";
 import { ForumItem, ForumItemFragment } from "../../ecosystems/ForumItem";
 import TopicRow from "../../ecosystems/TopicRow";
@@ -430,9 +429,9 @@ class TopicListScreen extends Component {
 							ListEmptyComponent={ListEmptyComponent}
 						/>
 						{forumData.create.canCreate && (
-							<Pager>
+							<ActionBar>
 								<AddButton icon={require("../../../resources/compose.png")} title={Lang.get("create_new_topic")} onPress={this.createTopic} />
-							</Pager>
+							</ActionBar>
 						)}
 					</View>
 				</View>

@@ -3,6 +3,7 @@ import { Text, Image, View, Animated, Easing, AsyncStorage, TouchableOpacity, St
 
 import ShadowedArea from "../../atoms/ShadowedArea";
 import Button from "../../atoms/Button";
+import ViewMeasure from "../../atoms/ViewMeasure";
 import Lang from "../../utils/Lang";
 import styles, { styleVars } from '../../styles';
 
@@ -16,6 +17,10 @@ export default class LoginRegisterPrompt extends Component {
 		this._origHeight = 0;
 		this._wrapper = null;
 		this._animatedValue = new Animated.Value(1);
+		this.onWrapperLayout = this.onWrapperLayout.bind(this);
+		this.onLoginPress = this.onLoginPress.bind(this);
+		this.onRegisterPress = this.onRegisterPress.bind(this);
+		this.closeLoginBox = this.closeLoginBox.bind(this);
 	}
 
 	/**
@@ -83,7 +88,7 @@ export default class LoginRegisterPrompt extends Component {
 	 * @param 	object 		e 		Event object
 	 * @return 	void
 	 */
-	_onWrapperLayout(e) {
+	onWrapperLayout(e) {
 		this._origHeight = e.nativeEvent.layout.height;
 	}
 
@@ -133,26 +138,28 @@ export default class LoginRegisterPrompt extends Component {
 		}
 
 		return (
-			<ShadowedArea style={[styles.row, this.props.style]} onLayout={(e) => this._onWrapperLayout(e)}>
-				<Animated.View style={[componentStyles.outerWrapper, this.state.hiding ? { height, opacity } : null]}>
-					<View style={[ componentStyles.innerWrapper, this.state.hiding ? { position: 'absolute', left: 0, right: 0, bottom: 0 } : null ]}>
-						<View style={[ componentStyles.loginBox, this.props.closable ? componentStyles.loginBoxClosable : null ]}>
-							<Image source={require("../../../resources/register_prompt.png")} style={componentStyles.loginIcon} resizeMode='contain' />
-							<View style={componentStyles.loginInner}>
-								<Text style={componentStyles.loginText}>{this.props.message}</Text>
+			<ViewMeasure onLayout={this.props.onLayout} id='loginPrompt'>
+				<ShadowedArea style={[styles.row, this.props.style]} onLayout={this.onWrapperLayout}>
+					<Animated.View style={[componentStyles.outerWrapper, this.state.hiding ? { height, opacity } : null]}>
+						<View style={[ componentStyles.innerWrapper, this.state.hiding ? { position: 'absolute', left: 0, right: 0, bottom: 0 } : null ]}>
+							<View style={[ componentStyles.loginBox, this.props.closable ? componentStyles.loginBoxClosable : null ]}>
+								<Image source={require("../../../resources/register_prompt.png")} style={componentStyles.loginIcon} resizeMode='contain' />
+								<View style={componentStyles.loginInner}>
+									<Text style={componentStyles.loginText}>{this.props.message}</Text>
+								</View>
+								{this.props.closable &&
+									<TouchableOpacity onPress={this.closeLoginBox} hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}>
+										<Image source={require("../../../resources/close.png")} style={componentStyles.closeButton} />
+									</TouchableOpacity>}
 							</View>
-							{this.props.closable &&
-								<TouchableOpacity onPress={() => this.closeLoginBox()} hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}>
-									<Image source={require("../../../resources/close.png")} style={componentStyles.closeButton} />
-								</TouchableOpacity>}
+							<View style={componentStyles.buttonBar}>
+								<Button type='primary' filled rounded size='medium' title={Lang.get('register')} onPress={this.onRegisterPress} style={[componentStyles.button, styles.mrTight]} /> 
+								<Button type='primary' filled rounded size='medium' title={Lang.get('sign_in')} onPress={this.onLoginPress} style={[componentStyles.button, this.props.register ? styles.mlTight : null]} />
+							</View>
 						</View>
-						<View style={componentStyles.buttonBar}>
-							<Button type='primary' filled rounded size='medium' title={Lang.get('register')} onPress={() => this.onRegisterPress()} style={[componentStyles.button, styles.mrTight]} /> 
-							<Button type='primary' filled rounded size='medium' title={Lang.get('sign_in')} onPress={() => this.onLoginPress()} style={[componentStyles.button, this.props.register ? styles.mlTight : null]} />
-						</View>
-					</View>
-				</Animated.View>
-			</ShadowedArea>
+					</Animated.View>
+				</ShadowedArea>
+			</ViewMeasure>
 		);
 	}
 }
