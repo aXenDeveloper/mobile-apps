@@ -215,14 +215,6 @@ class TopicViewScreen extends Component {
 			loadingUnseenPosts: false
 		};
 
-		if (this.props.auth.authenticated) {
-			this.props.navigation.setParams({
-				showFollowControl: false,
-				isFollowed: false,
-				onPressFollow: this.toggleFollowModal
-			});
-		}
-
 		this._viewabilityConfig = {
 			minimumViewTime: 600,
 			viewAreaCoveragePercentThreshold: 0
@@ -243,6 +235,14 @@ class TopicViewScreen extends Component {
 		this.scrollToPost = this.scrollToPost.bind(this);
 		this.onPostLayout = this.onPostLayout.bind(this);
 		this.onHeaderLayout = this.onHeaderLayout.bind(this);
+
+		if (this.props.auth.authenticated) {
+			this.props.navigation.setParams({
+				showFollowControl: false,
+				isFollowed: false,
+				onPressFollow: this.toggleFollowModal
+			});
+		}
 	}
 
 	/**
