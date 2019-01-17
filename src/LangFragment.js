@@ -64,6 +64,7 @@ const LangFragment = gql`
 		editor_quote_line_with_time: phrase(key: "app_editor_quote_line_with_time")
 		editor_quote_line: phrase(key: "app_editor_quote_line")
 		ignoring_user: phrase(key: "app_ignoring_user")
+		pagination: phrase(key: "app_pagination")
 
 		followed_member: phrase(key: "app_followed_member")
 		unfollowed_member: phrase(key: "app_unfollowed_member")

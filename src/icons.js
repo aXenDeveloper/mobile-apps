@@ -13,6 +13,8 @@ const icons = {
 	PINNED: require("../resources/pinned.png"),
 	PLUS_CIRCLE: require("../resources/plus.png"),
 	QUOTE: require('../resources/comment_quote.png'),
+	QUOTE_SOLID: require('../resources/comment_quote_solid.png'),
+	REPLY: require('../resources/reply.png'),
 	SEARCH: require("../resources/search.png"),
 	SIGN_OUT: require("../resources/signout.png"),
 	STAR_SOLID: require("../resources/star_solid.png"),

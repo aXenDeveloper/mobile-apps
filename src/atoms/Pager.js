@@ -4,6 +4,7 @@ import * as Animatable from "react-native-animatable";
 import PropTypes from "prop-types";
 import _ from "underscore";
 
+import Lang from "../utils/Lang";
 import ActionBar from "./ActionBar";
 import styles, { styleVars } from "../styles";
 
@@ -151,7 +152,6 @@ export default class Pager extends PureComponent {
 					styles.flex,
 					styles.flexAlignCenter,
 					styles.flexJustifyCenter,
-					styles.pTight,
 					styles.tBorder,
 					styles.mediumBorder,
 					componentStyles.pager
@@ -164,7 +164,10 @@ export default class Pager extends PureComponent {
 				</View>
 				<Animatable.View ref={ref => (this._trackerTextRef = ref)} style={{ opacity: 1 }}>
 					<Text style={componentStyles.trackerText}>
-						{this.state.isBeingTouched ? this.state.jumpingToPost : this.props.currentPosition} of {this.props.total}
+						{Lang.get('pagination', {
+							from: this.state.isBeingTouched ? this.state.jumpingToPost : this.props.currentPosition,
+							to: this.props.total
+						})}
 					</Text>
 				</Animatable.View>
 				{unreadPosition && (

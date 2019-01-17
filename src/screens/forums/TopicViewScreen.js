@@ -21,6 +21,7 @@ import TagList from "../../atoms/TagList";
 import ErrorBox from "../../atoms/ErrorBox";
 import ActionBar from "../../atoms/ActionBar";
 import Pager from "../../atoms/Pager";
+import ReplyButton from "../../atoms/ReplyButton";
 import ViewMeasure from "../../atoms/ViewMeasure";
 import ContentItemStat from "../../atoms/ContentItemStat";
 import DummyTextInput from "../../atoms/DummyTextInput";
@@ -1392,10 +1393,13 @@ class TopicViewScreen extends Component {
 						)}
 						<Pager
 							total={topicData.postCount}
-							currentPosition={this.state.currentPosition}
+							currentPosition={Math.max( 1, this.state.currentPosition )}
 							onChange={this.scrollToPost}
 							unreadIndicator={topicData.isUnread ? topicData.unreadCommentPosition : false}
 						/>
+						{this.props.data.forums.topic.itemPermissions.canComment && (
+							<ReplyButton onPress={this.addReply} />
+						)}
 					</View>
 				</View>
 			);
@@ -1404,11 +1408,12 @@ class TopicViewScreen extends Component {
 }
 
 /*
+
 {this.props.data.forums.topic.itemPermissions.canComment && (
-	<ActionBar light>
-		<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
-	</ActionBar>
-)}
+							<ActionBar light>
+								<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
+							</ActionBar>
+						)}
 */
 
 export default compose(
