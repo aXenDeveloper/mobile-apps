@@ -68,7 +68,7 @@ class RelativeTime {
 			unit = 'days';
 		} else if (diff < this.month) {
 			unit = 'weeks';
-		} else if (diff < this.year) {
+		} else if (diff <= this.year) {
 			unit = 'months';
 		} else {
 			unit = 'years';
