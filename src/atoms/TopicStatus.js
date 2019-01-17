@@ -22,6 +22,10 @@ export default class TopicStatus extends Component {
 			featured: {
 				text: "Featured",
 				icon: <Image style={[componentStyles.statusIcon, componentStyles.featuredIcon]} resizeMode='stretch' source={icons.STAR_SOLID} />	
+			},
+			locked: {
+				text: "Locked",
+				icon: <Image style={[componentStyles.statusIcon, componentStyles.lockedIcon]} resizeMode='stretch' source={icons.LOCKED} />	
 			}
 		};
 
@@ -68,5 +72,11 @@ const componentStyles = StyleSheet.create({
 	},
 	hotIcon: {
 		tintColor: '#d5611b'
+	},
+	locked: {
+		color: styleVars.lightText
+	},
+	lockedIcon: {
+		tintColor: styleVars.lightText
 	}
 });
