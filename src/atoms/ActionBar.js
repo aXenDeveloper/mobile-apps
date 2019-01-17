@@ -36,7 +36,7 @@ const componentStyles = StyleSheet.create({
 		backgroundColor: '#37454B',
 	},
 	light: {
-		backgroundColor: styleVars.greys.medium,
+		backgroundColor: styleVars.greys.light,
 		borderTopWidth: 1,
 		borderTopColor: 'rgba(0,0,0,0.1)'
 	}

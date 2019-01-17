@@ -1365,13 +1365,6 @@ class TopicViewScreen extends Component {
 			return (
 				<View style={styles.flex}>
 					<View style={[styles.flex, styles.flexGrow]}>
-						<FollowModal
-							isVisible={this.state.followModalVisible}
-							followData={topicData.follow}
-							onFollow={this.onFollow}
-							onUnfollow={this.onUnfollow}
-							close={this.toggleFollowModal}
-						/>
 						<FlatList
 							style={styles.flex}
 							ref={flatList => (this._flatList = flatList)}
@@ -1388,17 +1381,26 @@ class TopicViewScreen extends Component {
 							viewabilityConfig={this._viewabilityConfig}
 							initialScrollIndex={0}
 						/>
-						{this.props.data.forums.topic.poll !== null && (
-							<PollModal isVisible={this.state.pollModalVisible} data={this.props.data.forums.topic.poll} />
-						)}
 						<Pager
 							total={topicData.postCount}
 							currentPosition={Math.max( 1, this.state.currentPosition )}
 							onChange={this.scrollToPost}
 							unreadIndicator={topicData.isUnread ? topicData.unreadCommentPosition : false}
 						/>
+						<FollowModal
+							isVisible={this.state.followModalVisible}
+							followData={topicData.follow}
+							onFollow={this.onFollow}
+							onUnfollow={this.onUnfollow}
+							close={this.toggleFollowModal}
+						/>
+						{this.props.data.forums.topic.poll !== null && (
+							<PollModal isVisible={this.state.pollModalVisible} data={this.props.data.forums.topic.poll} />
+						)}
 						{this.props.data.forums.topic.itemPermissions.canComment && (
-							<ReplyButton onPress={this.addReply} />
+							<ActionBar light>
+								<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
+							</ActionBar>
 						)}
 					</View>
 				</View>
@@ -1409,11 +1411,7 @@ class TopicViewScreen extends Component {
 
 /*
 
-{this.props.data.forums.topic.itemPermissions.canComment && (
-							<ActionBar light>
-								<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
-							</ActionBar>
-						)}
+
 */
 
 export default compose(

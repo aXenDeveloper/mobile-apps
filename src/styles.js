@@ -79,10 +79,10 @@ export const styleVars = {
 	badgeBackground: '#ff3b2f',
 	badgeText: '#fff',
 	greys: {
-		light: '#fafafa',
-		medium: '#f5f5f5',
-		darker: '#e0e0e0',
-		placeholder: '#888888'
+		light: '#FAFAFA',
+		medium: '#F2F4F5',
+		darker: '#DADDE0',
+		placeholder: '#7E8387'
 	}
 };
 
@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		height: isIphoneX() ? 60 : 55,
 		paddingBottom: styleVars.spacing.veryTight,
-		paddingTop: styleVars.spacing.tight
+		paddingTop: styleVars.spacing.tight,
+		borderTopColor: 'rgba(0,0,0,0.1)'
 	},
 	swipeItemWrap: {
 		backgroundColor: styleVars.accentColor,

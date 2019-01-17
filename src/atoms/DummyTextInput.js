@@ -18,9 +18,9 @@ export default class DummyTextInput extends PureComponent {
 const componentStyles = StyleSheet.create({
 	textbox: {
 		backgroundColor: '#fff',
+		height: 38,
 		borderWidth: 1,
-		height: 34,
-		borderColor: 'rgba(0,0,0,0.15)',
+		borderColor: 'rgba(0,0,0,0.075)',
 		borderRadius: 20,
 		width: '100%'
 	},

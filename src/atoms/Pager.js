@@ -118,7 +118,7 @@ export default class Pager extends PureComponent {
 		if (!prevState.isBeingTouched && this.state.isBeingTouched) {
 			this._actionBarRef.transitionTo({ height: 75, maxHeight: 75 });
 		} else if (prevState.isBeingTouched && !this.state.isBeingTouched) {
-			this._actionBarRef.transitionTo({ height: 30, maxHeight: 30 });
+			this._actionBarRef.transitionTo({ height: 33, maxHeight: 33 });
 
 			if (this.props.onChange) {
 				this.props.onChange(this.state.jumpingToPost);
@@ -152,8 +152,6 @@ export default class Pager extends PureComponent {
 					styles.flex,
 					styles.flexAlignCenter,
 					styles.flexJustifyCenter,
-					styles.tBorder,
-					styles.mediumBorder,
 					componentStyles.pager
 				]}
 				ref={ref => (this._actionBarRef = ref)}
@@ -182,16 +180,23 @@ export default class Pager extends PureComponent {
 
 const componentStyles = StyleSheet.create({
 	pager: {
-		height: 30,
-		maxHeight: 30,
-		backgroundColor: styleVars.greys.light
+		height: 33,
+		maxHeight: 33,
+		backgroundColor: styleVars.greys.light,
+		borderTopWidth: 1,
+		borderTopColor: styleVars.borderColors.dark,
+		marginBottom: -1,
+		zIndex: 100
 	},
 	trackerWrapper: {
 		position: "absolute",
 		top: 0,
 		bottom: 0,
 		left: 0,
-		right: 0
+		right: 0,
+		//borderRadius: 30,
+		//overflow: 'hidden',
+		backgroundColor: styleVars.greys.light
 	},
 	trackerBar: {
 		position: "absolute",
@@ -206,7 +211,7 @@ const componentStyles = StyleSheet.create({
 	trackerText: {
 		fontWeight: "500",
 		fontSize: styleVars.fontSizes.small,
-		color: styleVars.lightText
+		color: styleVars.lightText,
 	},
 	unreadBar: {
 		position: "absolute",
