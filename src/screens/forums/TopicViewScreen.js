@@ -27,6 +27,7 @@ import DummyTextInput from "../../atoms/DummyTextInput";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import LoadMoreComments from "../../atoms/LoadMoreComments";
 import EndOfComments from "../../atoms/EndOfComments";
+import TopicStatus from "../../atoms/TopicStatus";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import FollowButton from "../../atoms/FollowButton";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
@@ -56,6 +57,9 @@ const TopicViewQuery = gql`
 				started
 				updated
 				title
+				isHot
+				isPinned
+				isFeatured
 				author {
 					__typename
 					name
@@ -805,10 +809,23 @@ class TopicViewScreen extends Component {
 							<ContentItemStat value={shortNumber(topicData.postCount)} name="Replies" />
 							<ContentItemStat value={shortNumber(topicData.views)} name="Views" />
 						</View>
-						{(topicData.tags.length || topicData.isLocked) && (
+						{(topicData.tags.length || topicData.isLocked || topicData.isHot || topicData.isPinned || topicData.isFeatured) && (
 							<View style={[styles.mtStandard, styles.ptStandard, componentStyles.metaInfo, topicData.isQuestion ? styles.plWide : null]}>
 								{topicData.tags.length && <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList>}
-								{topicData.isLocked && <Text>This topic is locked</Text>}
+								<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter]}>
+									{topicData.isLocked && (
+										<TopicStatus style={styles.mrStandard} type="locked" />
+									)}
+									{topicData.isHot && (
+										<TopicStatus style={styles.mrStandard} type="hot" />
+									)}
+									{topicData.isPinned && (
+										<TopicStatus style={styles.mrStandard} type="pinned" />
+									)}
+									{topicData.isFeatured && (
+										<TopicStatus style={styles.mrStandard} type="featured" />
+									)}
+								</View>
 							</View>
 						)}
 					</View>
