@@ -5,8 +5,8 @@ import { ImagePicker, Permissions } from "expo";
 import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 import _ from "lodash";
 import { connect } from "react-redux";
-import { setFocus, setFormatting, resetEditor, resetImagePicker } from "../../redux/actions/editor";
-import styles from "../../styles";
+import { setFocus, setFormatting, resetEditor, resetImagePicker, addImageToUpload } from "../../redux/actions/editor";
+import styles, { styleVars } from "../../styles";
 //import AdvancedWebView from 'react-native-advanced-webview';
 
 const EDITOR_VIEW = require("../../../web/dist/index.html");
@@ -314,6 +314,7 @@ class QuillEditor extends Component {
 	 * @return 	void
 	 */
 	async showImagePicker() {
+		const { dispatch } = this.props;
 		const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
 		if (status === "granted") {
@@ -322,11 +323,11 @@ class QuillEditor extends Component {
 				aspect: [4, 3]
 			});
 
-			console.log(result);
-
 			if (result.cancelled) {
 				return;
 			}
+
+			dispatch(addImageToUpload(result));
 		} else {
 			throw new Error("Permission not granted");
 		}
@@ -340,7 +341,7 @@ class QuillEditor extends Component {
 		`;
 
 		return (
-			<View style={{ flex: 1 }}>
+			<View style={{ flex: 1, backgroundColor: '#fff' }}>
 				<Modal
 					style={modalStyles.modal}
 					avoidKeyboard={true}

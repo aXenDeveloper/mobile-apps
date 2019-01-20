@@ -1,15 +1,34 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Text, TextInput } from "react-native";
+import { View, StyleSheet, ScrollView, Text, TextInput, Animated, TouchableOpacity, Image } from "react-native";
 import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 import { connect } from "react-redux";
 import _ from "underscore";
 import { QuillToolbarButton } from "./QuillToolbarButton";
 import { QuillToolbarSeparator } from "./QuillToolbarSeparator";
+import { UploadedImage } from "./UploadedImage";
 import { setFocus, setButtonState, openLinkModal, openImagePicker } from "../../redux/actions/editor";
+import * as Animatable from "react-native-animatable";
+
+import icons from "../../icons";
+import styles, { styleVars } from "../../styles";
+
+const TOOLBAR_HEIGHT = 44;
 
 class QuillToolbar extends Component {
 	constructor(props) {
 		super(props);
+
+		this.state = {
+			showToolbar: true,
+			showImageToolbar: false
+		};
+
+		this._formattingHandlers = {};
+		this.openLinkModal = this.openLinkModal.bind(this);
+		this.openImagePicker = this.openImagePicker.bind(this);
+		this.toggleFormatting = this.toggleFormatting.bind(this);
+		this.showImageToolbar = this.showImageToolbar.bind(this);
+		this.hideImageToolbar = this.hideImageToolbar.bind(this);
 	}
 
 	/**
@@ -39,6 +58,29 @@ class QuillToolbar extends Component {
 		);
 	}
 
+	showImageToolbar() {
+		this.setState(
+			{
+				showImageToolbar: true
+			},
+			() => {
+				this._wrapper.transitionTo({ height: 75 });
+				this._toolbar.transitionTo({ opacity: 0 });
+				this._imageToolbar.transitionTo({ opacity: 1 });
+			}
+		);
+	}
+
+	async hideImageToolbar() {
+		this._wrapper.transitionTo({ height: TOOLBAR_HEIGHT });
+		this._toolbar.transitionTo({ opacity: 1 });
+		await this._imageToolbar.transitionTo({ opacity: 0 }, null);
+
+		this.setState({
+			showImageToolbar: false
+		});
+	}
+
 	/**
 	 * Dispatch action to open the link modal in the editor
 	 *
@@ -57,47 +99,86 @@ class QuillToolbar extends Component {
 		this.props.dispatch(openImagePicker());
 	}
 
+	/**
+	 * Memoization function that returns a formatting handler
+	 *
+	 * @return 	void
+	 */
+	getFormattingHandler(button, option = null) {
+		if (_.isUndefined(this._formattingHandlers[button])) {
+			this._formattingHandlers = () => this.toggleFormatting(button, option);
+		}
+
+		return this._formattingHandlers[button];
+	}
+
 	render() {
+		const attachedImages = this.props.editor.attachedImages.slice(0); // clone
+
 		return (
-			<KeyboardAccessoryView hideBorder visibleOpacity={this.props.editor.focused ? 1 : 0}>
-				<View style={[toolbarStyles.toolbarOuter]}>
-					<View style={toolbarStyles.toolbarInner}>
-						<QuillToolbarButton 
-							icon={require("../../../resources/image.png")}
-							onPress={() => this.openImagePicker()} 
-						/>
-						<QuillToolbarButton
-							active={this.props.editor.linkModalActive}
-							icon={require("../../../resources/link.png")}
-							onPress={() => this.openLinkModal()}
-						/>
-						<QuillToolbarSeparator />
-						<QuillToolbarButton
-							active={this.props.editor.formatting.bold}
-							icon={require("../../../resources/bold.png")}
-							onPress={() => this.toggleFormatting("bold")}
-						/>
-						<QuillToolbarButton
-							active={this.props.editor.formatting.italic}
-							icon={require("../../../resources/italic.png")}
-							onPress={() => this.toggleFormatting("italic")}
-						/>
-						<QuillToolbarButton
-							active={this.props.editor.formatting.underline}
-							icon={require("../../../resources/underline.png")}
-							onPress={() => this.toggleFormatting("underline")}
-						/>
-						<QuillToolbarButton
-							active={this.props.editor.formatting.list.bullet}
-							icon={require("../../../resources/list_unordered.png")}
-							onPress={() => this.toggleFormatting("list", "bullet")}
-						/>
-						<QuillToolbarButton
-							active={this.props.editor.formatting.list.ordered}
-							icon={require("../../../resources/list_ordered.png")}
-							onPress={() => this.toggleFormatting("list", "ordered")}
-						/>
-					</View>
+			<KeyboardAccessoryView hideBorder alwaysVisible={this.props.editor.focused} visibleOpacity={this.props.editor.focused ? 1 : 0}>
+				<View style={componentStyles.toolbarOuter}>
+					<Animatable.View style={[componentStyles.toolbarInner]} ref={ref => (this._wrapper = ref)}>
+						{this.state.showToolbar && (
+							<Animatable.View style={[styles.flexRow, styles.flexAlignCenter, componentStyles.toolbarIcons]} ref={ref => (this._toolbar = ref)}>
+								<QuillToolbarButton icon={require("../../../resources/image.png")} onPress={this.showImageToolbar} />
+								<QuillToolbarButton
+									active={this.props.editor.linkModalActive}
+									icon={require("../../../resources/link.png")}
+									onPress={this.openLinkModal}
+								/>
+								<QuillToolbarSeparator />
+								<QuillToolbarButton
+									active={this.props.editor.formatting.bold}
+									icon={require("../../../resources/bold.png")}
+									onPress={this.getFormattingHandler("bold")}
+								/>
+								<QuillToolbarButton
+									active={this.props.editor.formatting.italic}
+									icon={require("../../../resources/italic.png")}
+									onPress={this.getFormattingHandler("italic")}
+								/>
+								<QuillToolbarButton
+									active={this.props.editor.formatting.underline}
+									icon={require("../../../resources/underline.png")}
+									onPress={this.getFormattingHandler("underline")}
+								/>
+								<QuillToolbarButton
+									active={this.props.editor.formatting.list.bullet}
+									icon={require("../../../resources/list_unordered.png")}
+									onPress={this.getFormattingHandler("list", "bullet")}
+								/>
+								<QuillToolbarButton
+									active={this.props.editor.formatting.list.ordered}
+									icon={require("../../../resources/list_ordered.png")}
+									onPress={this.getFormattingHandler("list", "ordered")}
+								/>
+							</Animatable.View>
+						)}
+						{this.state.showImageToolbar && (
+							<Animatable.View
+								style={[styles.flexRow, styles.pvTight, styles.plTight, componentStyles.imageToolbar]}
+								ref={ref => (this._imageToolbar = ref)}
+							>
+								<ScrollView horizontal style={[styles.flexRow, styles.flexGrow]}>
+									<TouchableOpacity
+										onPress={this.openImagePicker}
+										style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter, styles.mrStandard, componentStyles.addImage]}
+									>
+										<Image source={icons.PLUS_CIRCLE} resizeMode="contain" style={componentStyles.addImageIcon} />
+									</TouchableOpacity>
+									{attachedImages.reverse().map(image => (
+										<UploadedImage image={image.uri} status={image.status} key={image.uri} />
+									))}
+								</ScrollView>
+								<TouchableOpacity onPress={this.hideImageToolbar} style={[styles.pvTight, componentStyles.closeImageToolbar]}>
+									<View style={[styles.flex, styles.flexJustifyCenter, styles.phTight, componentStyles.closeImageToolbarInner]}>
+										<Image source={icons.CROSS} resizeMode="contain" style={componentStyles.closeIcon} />
+									</View>
+								</TouchableOpacity>
+							</Animatable.View>
+						)}
+					</Animatable.View>
 				</View>
 			</KeyboardAccessoryView>
 		);
@@ -108,16 +189,43 @@ export default connect(state => ({
 	editor: state.editor
 }))(QuillToolbar);
 
-const toolbarStyles = StyleSheet.create({
+const componentStyles = StyleSheet.create({
 	toolbarOuter: {
-		backgroundColor: "#ffffff",
+		backgroundColor: "rgba(255,255,255,0.8)",
 		borderTopWidth: 1,
-		borderTopColor: "#c7c7c7"
+		borderTopColor: styleVars.borderColors.medium
 	},
 	toolbarInner: {
-		height: 44,
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center"
+		height: TOOLBAR_HEIGHT
+	},
+	toolbarIcons: {
+		...StyleSheet.absoluteFillObject,
+		opacity: 1
+	},
+	imageToolbar: {
+		...StyleSheet.absoluteFillObject,
+		opacity: 0
+	},
+	addImage: {
+		backgroundColor: "#fff",
+		borderWidth: 1,
+		borderColor: styleVars.greys.medium,
+		width: 60,
+		height: 60,
+		borderRadius: 6
+	},
+	addImageIcon: {
+		width: 20,
+		height: 20,
+		tintColor: styleVars.greys.placeholder
+	},
+	closeImageToolbarInner: {
+		borderLeftWidth: 1,
+		borderLeftColor: styleVars.greys.medium
+	},
+	closeIcon: {
+		width: 20,
+		height: 20,
+		tintColor: styleVars.greys.placeholder
 	}
 });

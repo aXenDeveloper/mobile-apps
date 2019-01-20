@@ -47,3 +47,10 @@ export const RESET_IMAGE_PICKER = "RESET_IMAGE_PICKER";
 export const resetImagePicker = data => ({
 	type: RESET_IMAGE_PICKER,
 });
+export const ADD_IMAGE_TO_UPLOAD = "ADD_IMAGE_TO_UPLOAD";
+export const addImageToUpload = data => ({
+	type: ADD_IMAGE_TO_UPLOAD,
+	payload: {
+		...data
+	}
+});

@@ -79,7 +79,7 @@ export const styleVars = {
 	badgeBackground: '#ff3b2f',
 	badgeText: '#fff',
 	greys: {
-		light: '#FAFAFA',
+		light: '#F7F9FA',
 		medium: '#F2F4F5',
 		darker: '#DADDE0',
 		placeholder: '#7E8387'
