@@ -65,6 +65,10 @@ const LangFragment = gql`
 		editor_quote_line: phrase(key: "app_editor_quote_line")
 		ignoring_user: phrase(key: "app_ignoring_user")
 		pagination: phrase(key: "app_pagination")
+		insert_into_post: phrase(key: "app_insert_into_post")
+		delete_image: phrase(key: "app_delete_image")
+		cancel_upload: phrase(key: "app_cancel_upload")
+		attachment_options: phrase(key: "app_attachment_options")
 
 		followed_member: phrase(key: "app_followed_member")
 		unfollowed_member: phrase(key: "app_unfollowed_member")

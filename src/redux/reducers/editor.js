@@ -5,6 +5,7 @@ const initialState = {
 	focused: false,
 	linkModalActive: false,
 	imagePickerOpened: false,
+	attachedImages: [],
 	formatting: {
 		link: false,
 		bold: false,
@@ -73,6 +74,18 @@ export default function editor(state = initialState, { type, payload }) {
 			};
 		case actions.RESET_EDITOR:
 			return Object.assign({}, initialState);
+		case actions.ADD_IMAGE_TO_UPLOAD:
+			return {
+				...state,
+				attachedImages: [
+					...state.attachedImages,
+					{ 
+						...payload,
+						status: 'READY',
+						progress: 0
+					}
+				]
+			};
 		default: 
 			return state;
 	}
