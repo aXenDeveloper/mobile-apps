@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { createBottomTabNavigator, createMaterialTopTabNavigator, createDrawerNavigator, createStackNavigator, NavigationActions } from "react-navigation";
+import { createAppContainer, createBottomTabNavigator, createMaterialTopTabNavigator, createDrawerNavigator, createStackNavigator, NavigationActions } from "react-navigation";
 import { BottomTabBar } from "react-navigation-tabs";
 import { View } from "react-native";
 import Image from "react-native-remote-svg";
@@ -89,7 +89,7 @@ class AppNavigation extends Component {
 			{
 				initialRouteName: initialRoute || 'HomeScreen',
 				cardStyle: styles.stackCardStyle,
-				navigationOptions: Object.assign({
+				defaultNavigationOptions: Object.assign({
 					header: props => {
 						return <CustomHeader {...props} />;
 					},
@@ -112,7 +112,7 @@ class AppNavigation extends Component {
 			{
 				initialRouteName: 'AccountSettingsScreen',
 				cardStyle: styles.stackCardStyle,
-				navigationOptions: Object.assign({
+				defaultNavigationOptions: Object.assign({
 					title: 'Settings',
 					header: null
 				}, options || null)
@@ -130,7 +130,7 @@ class AppNavigation extends Component {
 		{
 			initialRouteName: 'LoginScreen',
 			cardStyle: styles.stackCardStyle,
-			navigationOptions: {
+			defaultNavigationOptions: {
 				header: props => {
 					return <CustomHeader {...props} />;
 				},
@@ -207,7 +207,7 @@ class AppNavigation extends Component {
 			},
 			{
 				mode: "modal",
-				navigationOptions: {
+				defaultNavigationOptions: {
 					header: props => {
 						return <CustomHeader {...props} />;
 					},
@@ -220,14 +220,17 @@ class AppNavigation extends Component {
 			}
 		);
 
-		return createDrawerNavigator({
-			Master: {
-				screen: masterStack
-			}
-		}, {
-			drawerPosition: 'left',
-			contentComponent: UserScreen
-		});
+
+		return createAppContainer(
+			createDrawerNavigator({
+				Master: {
+					screen: masterStack
+				}
+			}, {
+				drawerPosition: 'left',
+				contentComponent: UserScreen
+			})
+		);
 	}
 
 	/**
