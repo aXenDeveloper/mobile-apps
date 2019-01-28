@@ -395,15 +395,13 @@ class TopicViewScreen extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps, prevState) {
-		const topicData = this.props.data.forums.topic;
-
 		// If we're no longer loading, toggle the follow button if needed
 		if (prevProps.data.loading && !this.props.data.loading && !this.props.data.error) {
 			// If we mounted without the info we need to set the screen title, then set them now
 			if (!this.props.navigation.state.params.author) {
 				this.props.navigation.setParams({
-					author: topicData.author.name,
-					title: topicData.title
+					author: this.props.data.forums.topic.author.name,
+					title: this.props.data.forums.topic.title
 				});
 			}
 
@@ -411,10 +409,10 @@ class TopicViewScreen extends Component {
 			this.maybeMarkAsRead();
 
 			// If follow controls are available, show them
-			if (!topicData.passwordProtected && !topicData.isArchived && this.props.auth.authenticated) {
+			if (!this.props.data.forums.topic.passwordProtected && !this.props.data.forums.topic.isArchived && this.props.auth.authenticated) {
 				this.props.navigation.setParams({
 					showFollowControl: true,
-					isFollowed: topicData.follow.isFollowing
+					isFollowed: this.props.data.forums.topic.follow.isFollowing
 				});
 			}
 		} else if (!prevProps.data.error && this.props.data.error) {
@@ -426,23 +424,23 @@ class TopicViewScreen extends Component {
 		// Update our offset tracker, but only if we haven't done it before, otherwise
 		// we'll replace our offset with the initial offset every time the component updates
 		if (!this._initialOffsetDone && !this.props.data.loading && !this.props.data.error) {
-			if (this.props.data.variables.offsetPosition == "ID" && topicData.findCommentPosition) {
+			if (this.props.data.variables.offsetPosition == "ID" && this.props.data.forums.topic.findCommentPosition) {
 				// If we're starting at a specific post, then set the offset to that post's position
 				this.setState({
-					startingOffset: topicData.findCommentPosition
+					startingOffset: this.props.data.forums.topic.findCommentPosition
 				});
 				this._initialOffsetDone = true;
-			} else if (this.props.data.variables.offsetPosition == "UNREAD" && topicData.unreadCommentPosition) {
+			} else if (this.props.data.variables.offsetPosition == "UNREAD" && this.props.data.forums.topic.unreadCommentPosition) {
 				// If we're showing by unread, then the offset will be the last unread post position
 				this.setState({
-					startingOffset: topicData.unreadCommentPosition
+					startingOffset: this.props.data.forums.topic.unreadCommentPosition
 				});
 				this._initialOffsetDone = true;
 			} else if (this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0) {
 				// If we're showing the last post, the offset will be the total post count plus our adjustment
 				this.setState({
 					reachedEnd: true,
-					startingOffset: topicData.commentCount + this.props.data.variables.offsetAdjust
+					startingOffset: this.props.data.forums.topic.commentCount + this.props.data.variables.offsetAdjust
 				});
 				this.scrollToEnd();
 				this._initialOffsetDone = true;
@@ -450,8 +448,8 @@ class TopicViewScreen extends Component {
 		}
 
 		// If we've loaded in posts from a different position in the topic, see if we need to scroll to the right place
-		if( prevState.loadingUnseenPosts && !this.state.loadingUnseenPosts ){
-			if( this.state.startingOffset > 0 ){
+		if (prevState.loadingUnseenPosts && !this.state.loadingUnseenPosts) {
+			if (this.state.startingOffset > 0) {
 				this._flatList.scrollToOffset({
 					offset: this._headerHeight,
 					animated: false
@@ -790,7 +788,7 @@ class TopicViewScreen extends Component {
 	 */
 	getHeaderComponent(topicData) {
 		return (
-			<ViewMeasure onLayout={this.onHeaderLayout} id='header'>
+			<ViewMeasure onLayout={this.onHeaderLayout} id="header">
 				<ShadowedArea style={[styles.flexRow, styles.flexAlignStretch, styles.pvStandard, styles.mbStandard]}>
 					{topicData.isQuestion && (
 						<View style={styles.flexAlignSelfCenter}>
@@ -817,21 +815,11 @@ class TopicViewScreen extends Component {
 							<View style={[styles.mtStandard, styles.ptStandard, componentStyles.metaInfo, topicData.isQuestion ? styles.plWide : null]}>
 								{topicData.tags.length && <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList>}
 								<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter]}>
-									{topicData.isArchived && (
-										<TopicStatus style={styles.mrStandard} type="archived" />
-									)}
-									{topicData.isLocked && (
-										<TopicStatus style={styles.mrStandard} type="locked" />
-									)}
-									{topicData.isHot && (
-										<TopicStatus style={styles.mrStandard} type="hot" />
-									)}
-									{topicData.isPinned && (
-										<TopicStatus style={styles.mrStandard} type="pinned" />
-									)}
-									{topicData.isFeatured && (
-										<TopicStatus style={styles.mrStandard} type="featured" />
-									)}
+									{topicData.isArchived && <TopicStatus style={styles.mrStandard} type="archived" />}
+									{topicData.isLocked && <TopicStatus style={styles.mrStandard} type="locked" />}
+									{topicData.isHot && <TopicStatus style={styles.mrStandard} type="hot" />}
+									{topicData.isPinned && <TopicStatus style={styles.mrStandard} type="pinned" />}
+									{topicData.isFeatured && <TopicStatus style={styles.mrStandard} type="featured" />}
 								</View>
 							</View>
 						)}
@@ -1389,7 +1377,7 @@ class TopicViewScreen extends Component {
 						/>
 						<Pager
 							total={topicData.postCount}
-							currentPosition={Math.max( 1, this.state.currentPosition )}
+							currentPosition={Math.max(1, this.state.currentPosition)}
 							onChange={this.scrollToPost}
 							unreadIndicator={topicData.isUnread ? topicData.unreadCommentPosition : false}
 						/>
@@ -1402,14 +1390,13 @@ class TopicViewScreen extends Component {
 								close={this.toggleFollowModal}
 							/>
 						)}
-						{topicData.poll !== null && (
-							<PollModal isVisible={this.state.pollModalVisible} data={topicData.poll} />
-						)}
-						{topicData.itemPermissions.canComment && !topicData.isArchived && (
-							<ActionBar light>
-								<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
-							</ActionBar>
-						)}
+						{topicData.poll !== null && <PollModal isVisible={this.state.pollModalVisible} data={topicData.poll} />}
+						{topicData.itemPermissions.canComment &&
+							!topicData.isArchived && (
+								<ActionBar light>
+									<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
+								</ActionBar>
+							)}
 					</View>
 				</View>
 			);
