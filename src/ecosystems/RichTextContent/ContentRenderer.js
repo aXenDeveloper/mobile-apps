@@ -2,16 +2,19 @@ import React, { PureComponent } from "react";
 import { Text, View, StyleSheet, Image, Dimensions } from "react-native";
 import HTML from "react-native-render-html";
 import { iframe, a } from "react-native-render-html/src/HTMLRenderers";
+import { compose } from "react-apollo";
+import { withNavigation } from "react-navigation";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
+import { mapUrlToRoute } from "../../utils/isSupportedType";
 import Lightbox from "../Lightbox";
 import { Mention, Embed } from "../RichTextContent";
 import { styleVars, richTextStyles } from "../../styles";
 import dom from "../../utils/DOM";
 
-export default class ContentRenderer extends PureComponent {
+class ContentRenderer extends PureComponent {
 	constructor(props) {
 		super(props);
 		this._lightboxedImages = {};
@@ -176,6 +179,14 @@ export default class ContentRenderer extends PureComponent {
 
 			return;
 		}
+
+		// Not an image, so open in webview
+		this.props.navigation.navigate({
+			routeName: "WebView",
+			params: {
+				url: data
+			}
+		});
 	}
 
 	/**
@@ -233,3 +244,7 @@ export default class ContentRenderer extends PureComponent {
 		);
 	}
 }
+
+export default compose(
+	withNavigation
+)(ContentRenderer);
