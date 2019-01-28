@@ -1206,7 +1206,7 @@ class TopicViewScreen extends Component {
 
 		// If they're a guest, insert an item so that a login prompt will show
 		// Only if we're at the start of the topic
-		if (!this.props.auth.authenticated && topicData.posts[0].isFirstPost && topicData.itemPermissions.canCommentIfSignedIn) {
+		if (!this.props.auth.authenticated && !topicData.isArchived && topicData.posts[0].isFirstPost && topicData.itemPermissions.canCommentIfSignedIn) {
 			returnedData.splice(1, 0, {
 				id: "loginPrompt"
 			});
