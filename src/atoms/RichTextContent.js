@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import { Text, View, StyleSheet, Image, Dimensions } from "react-native";
 import HTML from "react-native-render-html";
+import { iframe } from "react-native-render-html/src/HTMLRenderers";
 import _ from "underscore";
 
 import Lang from "../utils/Lang";
@@ -140,10 +141,12 @@ export default class RichTextContent extends PureComponent {
 	renderers() {
 		return {
 			br: () => null,
-			iframe: ({ ...attribs }) => {
-				if (!_.isUndefined(attribs["data-embedcontent"])) {
-					return <Embed url={attribs.src} key={attribs["data-embedid"]} />;
+			iframe: (htmlAttribs, children, convertedCSSStyles, passProps) => {
+				if (!_.isUndefined(htmlAttribs["data-embedcontent"])) {
+					return <Embed url={htmlAttribs.src} key={htmlAttribs["data-embedid"]} />;
 				}
+
+				return iframe(htmlAttribs, children, convertedCSSStyles, passProps);
 			}
 			/*a: (attribs, children) => {
 				// Track images that should be lightboxed so we can access them in our onLinkPress handler
@@ -218,7 +221,7 @@ export default class RichTextContent extends PureComponent {
 					baseFontStyle={this.props.baseFontStyle || richTextStyles(this.props.dark).defaultTextStyle}
 					html={this.props.children}
 					imagesMaxWidth={parseInt(Dimensions.get("window").width) - 35}
-					staticContentMaxWidth={parseInt(Dimensions.get("window").width) - 35}
+					staticContentMaxWidth	={parseInt(Dimensions.get("window").width) - 35}
 					onLinkPress={this.props.onLinkPress || this.onLinkPress}
 					ignoreNodesFunction={this.ignoreNodesFunction}
 				/>
