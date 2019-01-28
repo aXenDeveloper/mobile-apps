@@ -17,7 +17,7 @@ import ViewMeasure from "../../atoms/ViewMeasure";
 import UserPhoto from "../../atoms/UserPhoto";
 import PostControls from "../../atoms/PostControls";
 import PostControl from "../../atoms/PostControl";
-import RichTextContent from "../../atoms/RichTextContent";
+import RichTextContent from "../../ecosystems/RichTextContent";
 import Reaction from "../../atoms/Reaction";
 import ReactionModal from "../../atoms/ReactionModal";
 import CommentFlag from "../../atoms/CommentFlag";

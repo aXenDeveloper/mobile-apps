@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
 
 import UserPhoto from "../../atoms/UserPhoto";
-import RichTextContent from "../../atoms/RichTextContent";
+import RichTextContent from "../../ecosystems/RichTextContent";
 import { ReactionOverview } from "../../ecosystems/Reaction";
 import relativeTime from "../../utils/RelativeTime";
 import componentStyles from "./styles";

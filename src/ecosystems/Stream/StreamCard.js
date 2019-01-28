@@ -10,7 +10,7 @@ import StreamItem from "./StreamItem";
 import StreamComment from "./StreamComment";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import UserPhoto from "../../atoms/UserPhoto";
-import RichTextContent from "../../atoms/RichTextContent";
+import RichTextContent from "../../ecosystems/RichTextContent";
 import relativeTime from "../../utils/RelativeTime";
 import getSuitableImage from "../../utils/getSuitableImage";
 import componentStyles from "./styles";

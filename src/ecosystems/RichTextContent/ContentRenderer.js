@@ -1,17 +1,17 @@
 import React, { PureComponent } from "react";
 import { Text, View, StyleSheet, Image, Dimensions } from "react-native";
 import HTML from "react-native-render-html";
-import { iframe } from "react-native-render-html/src/HTMLRenderers";
+import { iframe, a } from "react-native-render-html/src/HTMLRenderers";
 import _ from "underscore";
 
-import Lang from "../utils/Lang";
-import relativeTime from "../utils/RelativeTime";
-import Lightbox from "../ecosystems/Lightbox";
-import Embed from "../ecosystems/Embed";
-import { styleVars, richTextStyles } from "../styles";
-import dom from "../utils/DOM";
+import Lang from "../../utils/Lang";
+import relativeTime from "../../utils/RelativeTime";
+import Lightbox from "../Lightbox";
+import { Mention, Embed } from "../RichTextContent";
+import { styleVars, richTextStyles } from "../../styles";
+import dom from "../../utils/DOM";
 
-export default class RichTextContent extends PureComponent {
+export default class ContentRenderer extends PureComponent {
 	constructor(props) {
 		super(props);
 		this._lightboxedImages = {};
@@ -147,17 +147,14 @@ export default class RichTextContent extends PureComponent {
 				}
 
 				return iframe(htmlAttribs, children, convertedCSSStyles, passProps);
-			}
-			/*a: (attribs, children) => {
-				// Track images that should be lightboxed so we can access them in our onLinkPress handler
-				// @todo This may need to be modified to account for lazy-loaded images
-				//console.log( attribs );
-				//console.log( children );
-				if( !_.isUndefined( attribs.class ) && attribs.class.indexOf('ipsAttachLink_image') !== -1 ) {
-					this._lightboxedImages[ attribs.href ] = true;
-					console.log( this._lightboxedImages );
+			},
+			a: (htmlAttribs, children, convertedCSSStyles, passProps) => {
+				if(!_.isUndefined(htmlAttribs['data-mentionid'])) {
+					return <Mention userid={parseInt(htmlAttribs['data-mentionid'])} name={passProps.rawChildren[0].data} key={passProps.key} />
 				}
-			}*/
+
+				return a(htmlAttribs, children, convertedCSSStyles, passProps);
+			}
 		};
 	}
 

@@ -9,7 +9,7 @@ import _ from "underscore";
 import getErrorMessage from '../../utils/getErrorMessage';
 import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
 import { PostFragment } from "../../ecosystems/Post";
-import RichTextContent from "../../atoms/RichTextContent";
+import RichTextContent from "../../ecosystems/RichTextContent";
 import UserPhoto from "../../atoms/UserPhoto";
 import relativeTime from "../../utils/RelativeTime";
 import styles from "../../styles";

@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "re
 
 import Lang from "../../utils/Lang";
 import UserPhoto from "../../atoms/UserPhoto";
-import RichTextContent from "../../atoms/RichTextContent";
+import RichTextContent from "../../ecosystems/RichTextContent";
 import { ReactionOverview } from "../../ecosystems/Reaction";
 import relativeTime from "../../utils/RelativeTime";
 import styles from "../../styles";

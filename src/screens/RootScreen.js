@@ -14,7 +14,7 @@ import introspectionQueryResultData from "../fragmentTypes.json";
 import _ from "underscore";
 
 import LoginScreen from "./core/LoginRegister/LoginScreen";
-import RichTextContent from "../atoms/RichTextContent";
+import RichTextContent from "../ecosystems/RichTextContent";
 import Lang from "../utils/Lang";
 import URL from "../utils/URL";
 import { refreshAuth } from "../redux/actions/auth";

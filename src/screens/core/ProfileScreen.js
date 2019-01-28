@@ -20,7 +20,7 @@ import relativeTime from "../../utils/RelativeTime";
 import UserPhoto from "../../atoms/UserPhoto";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
-import RichTextContent from "../../atoms/RichTextContent";
+import RichTextContent from "../../ecosystems/RichTextContent";
 import { ProfileContent, ProfileTab, ProfileFollowers, ProfilePlaceholder } from "../../ecosystems/Profile";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 import styles, { styleVars } from "../../styles";

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableHighlight } from 'react-native';
 
-import RichTextContent from './RichTextContent';
+import { ContentRenderer } from '../ecosystems/RichTextContent';
 import styles from '../styles';
 
 export default class ListItem extends Component {	
@@ -10,8 +10,6 @@ export default class ListItem extends Component {
 	}
 
 	render() {
-		console.log( this.props );
-
 		return (
 			<View style={componentStyles.listItemWrap}>
 				<View style={componentStyles.listItem}>

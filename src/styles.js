@@ -560,6 +560,9 @@ export const richTextStyles = (dark) => ({
 	tagStyles: {
 		'p': {
 			marginBottom: 15
+		},
+		'a': {
+			textDecorationLine: 'none'
 		}
 	},
 	classes: {
