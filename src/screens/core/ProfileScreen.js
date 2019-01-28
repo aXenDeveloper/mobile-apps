@@ -277,7 +277,7 @@ class ProfileScreen extends Component {
 						html: false
 					}
 				},
-				...(this.props.data.core.member.email && [
+				...(this.props.data.core.member.email ? [
 					{
 						key: "email",
 						data: {
@@ -287,7 +287,7 @@ class ProfileScreen extends Component {
 							html: false
 						}
 					}
-				])
+				] : [])
 			]
 		});
 
