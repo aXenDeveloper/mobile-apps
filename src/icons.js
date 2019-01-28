@@ -1,4 +1,5 @@
 const icons = {
+	ARCHIVED: require("../resources/archived.png"),
 	BELL: require("../resources/notification_settings.png"),
 	CHECKMARK2: require("../resources/checkmark_alt.png"),
 	CHECKMARK: require("../resources/checkmark.png"),

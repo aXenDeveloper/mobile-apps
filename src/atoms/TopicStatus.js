@@ -26,6 +26,10 @@ export default class TopicStatus extends Component {
 			locked: {
 				text: "Locked",
 				icon: <Image style={[componentStyles.statusIcon, componentStyles.lockedIcon]} resizeMode='stretch' source={icons.LOCKED} />	
+			},
+			archived: {
+				text: "Archived",
+				icon: <Image style={[componentStyles.statusIcon, componentStyles.lockedIcon]} resizeMode='stretch' source={icons.ARCHIVED} />
 			}
 		};
 
@@ -77,6 +81,12 @@ const componentStyles = StyleSheet.create({
 		color: styleVars.lightText
 	},
 	lockedIcon: {
+		tintColor: styleVars.lightText
+	},
+	archived: {
+		color: styleVars.lightText
+	},
+	archivedIcon: {
 		tintColor: styleVars.lightText
 	}
 });

@@ -58,6 +58,7 @@ const TopicViewQuery = gql`
 				started
 				updated
 				title
+				isArchived
 				isHot
 				isPinned
 				isFeatured
@@ -120,7 +121,7 @@ const MarkTopicRead = gql`
 `;
 
 const VoteQuestion = gql`
-	mutation VoteQuestion($id: ID!, $vote: forums_InputVoteQuestionType!) {
+	mutation VoteQuestion($id: ID!, $vote: forums_VoteType!) {
 		mutateForums {
 			voteQuestion(id: $id, vote: $vote) {
 				id
@@ -135,7 +136,7 @@ const VoteQuestion = gql`
 `;
 
 const VoteAnswer = gql`
-	mutation VoteAnswer($id: ID!, $vote: forums_InputVoteAnswerType!) {
+	mutation VoteAnswer($id: ID!, $vote: forums_VoteType!) {
 		mutateForums {
 			voteAnswer(id: $id, vote: $vote) {
 				id
@@ -394,13 +395,15 @@ class TopicViewScreen extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps, prevState) {
+		const topicData = this.props.data.forums.topic;
+
 		// If we're no longer loading, toggle the follow button if needed
 		if (prevProps.data.loading && !this.props.data.loading && !this.props.data.error) {
 			// If we mounted without the info we need to set the screen title, then set them now
 			if (!this.props.navigation.state.params.author) {
 				this.props.navigation.setParams({
-					author: this.props.data.forums.topic.author.name,
-					title: this.props.data.forums.topic.title
+					author: topicData.author.name,
+					title: topicData.title
 				});
 			}
 
@@ -408,10 +411,10 @@ class TopicViewScreen extends Component {
 			this.maybeMarkAsRead();
 
 			// If follow controls are available, show them
-			if (!this.props.data.forums.topic.passwordProtected) {
+			if (!topicData.passwordProtected && !topicData.isArchived && this.props.auth.authenticated) {
 				this.props.navigation.setParams({
 					showFollowControl: true,
-					isFollowed: this.props.data.forums.topic.follow.isFollowing
+					isFollowed: topicData.follow.isFollowing
 				});
 			}
 		} else if (!prevProps.data.error && this.props.data.error) {
@@ -423,23 +426,23 @@ class TopicViewScreen extends Component {
 		// Update our offset tracker, but only if we haven't done it before, otherwise
 		// we'll replace our offset with the initial offset every time the component updates
 		if (!this._initialOffsetDone && !this.props.data.loading && !this.props.data.error) {
-			if (this.props.data.variables.offsetPosition == "ID" && this.props.data.forums.topic.findCommentPosition) {
+			if (this.props.data.variables.offsetPosition == "ID" && topicData.findCommentPosition) {
 				// If we're starting at a specific post, then set the offset to that post's position
 				this.setState({
-					startingOffset: this.props.data.forums.topic.findCommentPosition
+					startingOffset: topicData.findCommentPosition
 				});
 				this._initialOffsetDone = true;
-			} else if (this.props.data.variables.offsetPosition == "UNREAD" && this.props.data.forums.topic.unreadCommentPosition) {
+			} else if (this.props.data.variables.offsetPosition == "UNREAD" && topicData.unreadCommentPosition) {
 				// If we're showing by unread, then the offset will be the last unread post position
 				this.setState({
-					startingOffset: this.props.data.forums.topic.unreadCommentPosition
+					startingOffset: topicData.unreadCommentPosition
 				});
 				this._initialOffsetDone = true;
 			} else if (this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0) {
 				// If we're showing the last post, the offset will be the total post count plus our adjustment
 				this.setState({
 					reachedEnd: true,
-					startingOffset: this.props.data.forums.topic.commentCount + this.props.data.variables.offsetAdjust
+					startingOffset: topicData.commentCount + this.props.data.variables.offsetAdjust
 				});
 				this.scrollToEnd();
 				this._initialOffsetDone = true;
@@ -814,6 +817,9 @@ class TopicViewScreen extends Component {
 							<View style={[styles.mtStandard, styles.ptStandard, componentStyles.metaInfo, topicData.isQuestion ? styles.plWide : null]}>
 								{topicData.tags.length && <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList>}
 								<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter]}>
+									{topicData.isArchived && (
+										<TopicStatus style={styles.mrStandard} type="archived" />
+									)}
 									{topicData.isLocked && (
 										<TopicStatus style={styles.mrStandard} type="locked" />
 									)}
@@ -1387,17 +1393,19 @@ class TopicViewScreen extends Component {
 							onChange={this.scrollToPost}
 							unreadIndicator={topicData.isUnread ? topicData.unreadCommentPosition : false}
 						/>
-						<FollowModal
-							isVisible={this.state.followModalVisible}
-							followData={topicData.follow}
-							onFollow={this.onFollow}
-							onUnfollow={this.onUnfollow}
-							close={this.toggleFollowModal}
-						/>
-						{this.props.data.forums.topic.poll !== null && (
-							<PollModal isVisible={this.state.pollModalVisible} data={this.props.data.forums.topic.poll} />
+						{!topicData.isArchived && (
+							<FollowModal
+								isVisible={this.state.followModalVisible}
+								followData={topicData.follow}
+								onFollow={this.onFollow}
+								onUnfollow={this.onUnfollow}
+								close={this.toggleFollowModal}
+							/>
 						)}
-						{this.props.data.forums.topic.itemPermissions.canComment && (
+						{topicData.poll !== null && (
+							<PollModal isVisible={this.state.pollModalVisible} data={topicData.poll} />
+						)}
+						{topicData.itemPermissions.canComment && !topicData.isArchived && (
 							<ActionBar light>
 								<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
 							</ActionBar>
@@ -1451,7 +1459,8 @@ export default compose(
 	}),
 	connect(state => ({
 		auth: state.auth,
-		site: state.site
+		site: state.site,
+		user: state.user
 	})),
 	withApollo
 )(TopicViewScreen);

@@ -99,7 +99,7 @@ class TopicListScreen extends Component {
 
 		if (this.props.auth.authenticated) {
 			this.props.navigation.setParams({
-				showFollowControl: false,
+				showFollowControl: true,
 				isFollowed: false,
 				onPressFollow: this.toggleFollowModal
 			});
@@ -132,7 +132,7 @@ class TopicListScreen extends Component {
 				});
 			}
 
-			if (!this.props.data.forums.forum.passwordProtected) {
+			if (!this.props.data.forums.forum.passwordProtected && this.props.auth.authenticated) {
 				this.props.navigation.setParams({
 					showFollowControl: true,
 					isFollowed: this.props.data.forums.forum.follow.isFollowing
