@@ -13,9 +13,12 @@ import { Text, View, FlatList, TouchableHighlight, StyleSheet } from "react-nati
  * @return 	array
  */
 export default function highlightTerms(content, term, highlightStyle) {
-	if( !term ){
+	if( !term || !content ){
 		return content;
 	}
+
+	console.log( words );
+	console.log( terms );
 
 	const words = content.split(' ');
 	const terms = term.split(' ').map(term => term.toLowerCase());
