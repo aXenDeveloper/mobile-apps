@@ -480,7 +480,7 @@ class SearchScreen extends Component {
 						<ScrollableTab
 							{...props}
 							renderTab={(name, page, active, onPress, onLayout) => (
-								<CustomTab key={name} name={name} page={page} active={active} onPress={onPress} onLayout={onLayout} />
+								<CustomTab key={`${name}_${page}`} name={name} page={page} active={active} onPress={onPress} onLayout={onLayout} />
 							)}
 						/>
 					)}
