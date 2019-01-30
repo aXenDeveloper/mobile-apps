@@ -88,7 +88,7 @@ const componentStyles = StyleSheet.create({
 	},
 	streamFooter: {
 		paddingHorizontal: 12,
-		paddingVertical: 12,
+		paddingBottom: 12,
 		flexGrow: 1,
 	}
 });

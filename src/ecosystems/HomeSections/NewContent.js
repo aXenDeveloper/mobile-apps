@@ -47,6 +47,14 @@ class NewContent extends Component {
 			)
 		}
 
+		if( _.isArray( data ) ){
+			return (
+				<View>
+					{data.map(item => this.getItemCard(item))}
+				</View>
+			);
+		}
+
 		const imageToUse = getSuitableImage( data.contentImages || null );
 		const cardPieces = {
 			header: (
@@ -59,10 +67,10 @@ class NewContent extends Component {
 			),
 			image: (
 				imageToUse ?
-					<FadeIn style={componentStyles.imageContainer} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
+					<FadeIn style={[componentStyles.imageContainer, styles.mbStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
 						<Image style={componentStyles.image} source={{ uri: imageToUse }} resizeMode='cover' />
 					</FadeIn>
-				: <View style={componentStyles.imageContainer}></View>
+				: null
 			),
 			content: (
 				<React.Fragment>
@@ -73,7 +81,7 @@ class NewContent extends Component {
 						</View>
 					</View>
 					<View style={componentStyles.snippetWrapper}>
-						<Text style={componentStyles.snippetText} numberOfLines={3}>
+						<Text style={componentStyles.snippetText} numberOfLines={imageToUse ? 4 : 3}>
 							{data.content}
 						</Text>
 					</View>
@@ -85,8 +93,10 @@ class NewContent extends Component {
 			<ContentCard
 				style={{
 					width: this.props.cardWidth,
-					marginLeft: styleVars.spacing.wide
+					marginLeft: styleVars.spacing.wide,
+					height: imageToUse ? 315 : 150
 				}}
+				key={data.indexID}
 				onPress={this.getPressHandler(data.indexID, data)}
 				header={cardPieces.header}
 				image={cardPieces.image}
@@ -108,6 +118,51 @@ class NewContent extends Component {
 		}
 
 		return this.pressHandlers[ id ];
+	}
+
+	/**
+	 * Build an array of items we'll show. We show one item per 'cell' if it has an image,
+	 * but one on top of the other if there's no image. So in this method, we search
+	 * through our available items to try and pair them up as needed.
+	 *
+	 * @return 	array
+	 */
+	getListData() {
+		const doneIDs = [];
+		const listData = [];
+		const items = this.props.data.core.newContent.items;
+
+		for( let i = 0; i < items.length; i++ ){
+			// If we've already used this item, skip it
+			if( doneIDs.indexOf( items[i].indexID ) !== -1 ){
+				continue;
+			}
+
+			// If we have an image, then we'll just show one item in this 'cell'
+			if( getSuitableImage( items[i].contentImages || null ) ){
+				doneIDs.push( items[i].indexID );
+				listData.push( items[i] );
+				continue;
+			}
+
+			// No image? we'll try and show two cards in this cell.
+			doneIDs.push( items[i].indexID );
+			const pair = [ items[i] ];
+
+			// Now find the next suitable card
+			for( let x = i+1; x < items.length; x++ ){
+				if( !getSuitableImage( items[x].contentImages || null ) ){
+					doneIDs.push( items[x].indexID );
+					pair.push( items[x] );
+					break;
+				}
+			}
+
+			// And add our card pair to the main list
+			listData.push( pair );
+		}
+
+		return listData;
 	}
 
 	/**
@@ -145,9 +200,9 @@ class NewContent extends Component {
 				data={
 					this.props.loading
 						? this.getDummyData()
-						: this.props.data.core.newContent.items
+						: this.getListData()
 				}
-				keyExtractor={item => this.props.loading ? item.key : item.indexID}
+				keyExtractor={item => this.props.loading ? item.key : ( _.isArray( item ) ? `pair_${item[0].indexID}` : item.indexID )}
 				renderItem={({ item }) => this.getItemCard(item)}
 			/>
 		);
