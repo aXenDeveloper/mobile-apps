@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, Image, Switch, StyleSheet, TouchableOpacity } from 'react-native';
 
+import { PlaceholderContainer, PlaceholderElement } from "../ecosystems/Placeholder";
 import Lang from '../utils/Lang';
 import styles, { styleVars } from '../styles';
 
@@ -11,6 +12,15 @@ export default class NotificationSettingRow extends Component {
 	}
 
 	render() {
+		if( this.props.loading ){
+			return (
+				<View style={[styles.row, { height: 40 }, componentStyles.menuItemWrap]}>
+					<PlaceholderElement width='60%' top={12} left={styleVars.spacing.wide} height={16} />
+					<PlaceholderElement width={40} top={6} right={styleVars.spacing.wide} height={26} />
+				</View>
+			);
+		}
+
 		return (
 			<View style={[styles.row, componentStyles.menuItemWrap]}>
 				<View style={componentStyles.menuItem}>

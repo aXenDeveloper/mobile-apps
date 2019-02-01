@@ -1,10 +1,34 @@
 import React, { Component } from "react";
 import { Text, View, FlatList, ScrollView, SectionList } from "react-native";
 import gql from "graphql-tag";
-import { graphql } from "react-apollo";
+import { graphql, withApollo, compose } from "react-apollo";
+import { connect } from "react-redux";
+import _ from "underscore";
 
+import Lang from "../../utils/Lang";
+import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import NotificationSettingRow from "../../atoms/NotificationSettingRow";
 import SectionHeader from "../../atoms/SectionHeader";
+import ErrorBox from "../../atoms/ErrorBox";
+
+/* Main query, passed as a HOC */
+const NotificationQuery = gql`
+	query NotificationTypeQuery {
+		core {
+			notificationTypes {
+				id
+				name
+				group
+				lang
+				inline {
+					disabled
+					default
+					value
+				}		
+			}
+		}
+	}
+`;
 
 class NotificationsSettingsScreen extends Component {
 	static navigationOptions = {
@@ -12,63 +36,62 @@ class NotificationsSettingsScreen extends Component {
 	};
 
 	getNotificationSections() {
-		return [
-			{
-				title: "General",
-				data: [
-					{
-						key: "new_content",
-						title: "New items in areas I follow",
-						on: true,
-						enabled: true
-					},
-					{
-						key: "new_comment",
-						title: "Comments on content I follow",
-						on: true,
-						enabled: true
-					},
-					{
-						key: "new_review",
-						title: "Reviews on content I follow",
-						on: false,
-						enabled: false
-					},
-					{
-						key: "followed_user_post",
-						title: "Posts by people I follow",
-						on: false,
-						enabled: true
-					}
-				]
-			},
-			{
-				title: "Clubs",
-				data: [
-					{
-						key: "club_invite",
-						title: "Invites to join a club",
-						on: true,
-						enabled: false
-					},
-					{
-						key: "club_request",
-						title: "Responses to my club join requests",
-						on: false,
-						enabled: true
-					}
-				]
+		const sections = {};
+		const types = this.props.data.core.notificationTypes;
+
+
+		types.forEach( type => {
+			if( _.isUndefined( sections[ type.group ] ) ){
+				sections[ type.group ] = {
+					title: type.group,
+					data: []
+				};
 			}
-		];
+
+			const langKey = `notifications__${type.id}`;
+
+			sections[ type.group ].data.push({
+				key: type.id,
+				title: Lang.get(langKey) !== langKey ? Lang.get(langKey) : type.lang,
+				on: type.inline.value,
+				enabled: !type.inline.disabled
+			});
+		});
+		
+		return Object.values(sections);
 	}
 
 	render() {
-		return <SectionList 
-			sections={this.getNotificationSections()}
-			renderItem={({item}) => <NotificationSettingRow data={item} />}
-			renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
-		/>;
+
+		if (this.props.data.loading) {
+			return (
+				<PlaceholderRepeater repeat={7}>
+					<NotificationSettingRow loading />
+				</PlaceholderRepeater>
+			);
+		} else if (this.props.data.error) {
+			return <ErrorBox message={Lang.get("notifications_error")} />;
+		} else {
+			const ListEmptyComponent = <ErrorBox message={Lang.get("notifications_error")} />;
+
+			return (
+				<View style={{ flex: 1 }}>
+					<SectionList 
+						sections={this.getNotificationSections()}
+						renderItem={({item}) => <NotificationSettingRow data={item} />}
+						renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
+					/>
+				</View>
+			);
+		}
 	}
 }
 
-export default NotificationsSettingsScreen;
+export default compose(
+	connect(state => ({
+		user: state.user
+	})),
+	withApollo,
+	graphql(NotificationQuery)
+)(NotificationsSettingsScreen);
+
