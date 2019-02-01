@@ -17,10 +17,7 @@ export default function highlightTerms(content, term, highlightStyle) {
 		return content;
 	}
 
-	console.log( words );
-	console.log( terms );
-
-	const words = content.split(' ');
+	const words = content.replace(/[\n\t\r]/g, '').split(' ');
 	const terms = term.split(' ').map(term => term.toLowerCase());
 	const finalContent = [];
 	let currentText = [];
