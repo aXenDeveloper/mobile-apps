@@ -128,26 +128,10 @@ class QuillComponent extends Component {
 				}
 			});
 
-			const format = this.state.quill.getFormat(range);
-
-			// If we're inside a link, get the props
-			/*if( range.length === 0 && source === 'user' ){
-				if (format["link"]) {
-					//let [link, offset] = this.state.quill.scroll.descendant(LinkBlot, range.index);
-					let [link, offset] = this.state.quill.getLeaf(range.index);
-
-					//if( link != null ){
-						let preview = LinkBlot.formats(link.domNode);
-						this.addDebug("Link content: " + preview);
-					//}
-
-					this.addDebug("Within link");
-				}
-			}*/
-
-			// If editor is focused, get the formatting at range and send it over
-			this.sendMessage("FORMATTING", {
-				formatState: format
+			this.sendMessage("EDITOR_STATUS", {
+				content: this.state.quill.container.querySelector('.ql-editor').innerHTML,
+				mention: this.mentionState(),
+				formatting: this.formattingState()
 			});
 		}
 	}
@@ -158,9 +142,50 @@ class QuillComponent extends Component {
 	 * @return 	void
 	 */
 	textChange() {
-		this.sendMessage("CONTENT", {
-			content: this.state.quill.container.querySelector('.ql-editor').innerHTML
+		this.sendMessage("EDITOR_STATUS", {
+			content: this.state.quill.container.querySelector('.ql-editor').innerHTML,
+			mention: this.mentionState(),
+			formatting: this.formattingState()
 		});
+	}
+
+	/**
+	 * Send current formatting message
+	 *
+	 * @return 	object
+	 */
+	formattingState() {
+		return this.state.quill.getFormat( this.state.quill.getSelection() );
+	}
+
+	/**
+	 * Return the current mention state, if any
+	 *
+	 * @return 	object|null
+	 */
+	mentionState() {
+		const maxLength = 20;
+		const range = this.state.quill.getSelection();
+		const cursorPos = range.index;
+		const startPos = Math.max(0, cursorPos - maxLength);
+		const beforeCursorPos = this.state.quill.getText(startPos, cursorPos - startPos);
+		const mentionCharPos = beforeCursorPos.lastIndexOf('@');
+
+		if( mentionCharPos !== -1 ){
+			if( !( mentionCharPos === 0 || !!beforeCursorPos[ mentionCharPos - 1 ].match(/\s/g) ) ){
+				return null;
+			}
+
+			const mentionText = beforeCursorPos.substring(mentionCharPos + 1);
+
+			if( mentionText.length ){
+				return {
+					text: mentionText
+				};
+			}
+		}		
+
+		return null;
 	}
 
 	/**
