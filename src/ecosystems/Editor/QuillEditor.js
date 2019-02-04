@@ -1,11 +1,13 @@
 import React, { Fragment, Component } from "react";
 import { View, TextInput, Text, KeyboardAvoidingView, Button, WebView, StyleSheet } from "react-native";
+import gql from "graphql-tag";
+import { graphql, compose, withApollo } from "react-apollo";
 import Modal from "react-native-modal";
 import { ImagePicker, Permissions } from "expo";
 import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 import _ from "lodash";
 import { connect } from "react-redux";
-import { setFocus, setFormatting, resetEditor, resetImagePicker, addImageToUpload } from "../../redux/actions/editor";
+import { setFocus, setFormatting, resetEditor, resetImagePicker, addImageToUpload, showMentionBar, hideMentionBar, loadingMentions, updateMentionResults } from "../../redux/actions/editor";
 import styles, { styleVars } from "../../styles";
 //import AdvancedWebView from 'react-native-advanced-webview';
 
@@ -20,6 +22,22 @@ const formattingOptions = {
 	list: ["bullet", "ordered"],
 	link: true
 };
+
+const MentionQuery = gql`
+	query MentionQuery($term: String) {
+		core {
+			search(term: $term, type: core_members, orderBy: name, limit: 10) {
+				results {
+					...on core_Member {
+						id
+						name
+						photo
+					}
+				}
+			}
+		}
+	}
+`;
 
 class QuillEditor extends Component {
 	constructor(props) {
@@ -128,6 +146,25 @@ class QuillEditor extends Component {
 		}
 	}
 
+	async fetchMentions(searchTerm) {
+		try {
+			console.log(`Fetching mentions for ${searchTerm}`);
+			this.props.dispatch(loadingMentions());
+
+			const { data } = await this.props.client.query({
+				query: MentionQuery,
+				variables: { term: searchTerm },
+			});
+
+			console.log("Found mentions...");
+			console.log( data.core.search.results );
+
+			this.props.dispatch(updateMentionResults( data.core.search.results ));
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
 	/**
 	 * Handle messages sent from the WebView
 	 *
@@ -137,7 +174,7 @@ class QuillEditor extends Component {
 	onMessage(e) {
 		try {
 			const messageData = JSON.parse(e.nativeEvent.data);
-			const supported = ["DEBUG", "READY", "EDITOR_BLUR", "FORMATTING", "CONTENT"];
+			const supported = ["DEBUG", "READY", "EDITOR_BLUR", "EDITOR_STATUS"];
 
 			if (messageData.hasOwnProperty("message") && messageData.message.startsWith(MESSAGE_PREFIX)) {
 				const messageType = messageData.message.replace(MESSAGE_PREFIX, "");
@@ -174,7 +211,33 @@ class QuillEditor extends Component {
 		);
 	}
 
-	FORMATTING(messageData) {
+	EDITOR_STATUS(messageData) {
+		for( let key in messageData ){
+			const handler = `handle${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+
+			if( _.isFunction( this[ handler ] ) ){
+				this[ handler ].call(this, messageData[ key ]);
+			}
+		}
+	}
+
+	DEBUG(messageData) {
+		console.log(`WEBVIEW DEBUG: ${messageData.debugMessage}`);
+	}
+
+
+	/**
+	 * ========================================================================
+	 * EDITOR STATUS HANDLERS
+	 * ========================================================================
+	 */
+	/**
+	 * Highlight appropriate formatting buttons
+	 *
+	 * @param 	object 	data 		Formatting data from Quill
+	 * @return 	void
+	 */
+	handleFormatting(data) {
 		// Set editor focus
 		this.props.dispatch(
 			setFocus({
@@ -183,7 +246,7 @@ class QuillEditor extends Component {
 		);
 
 		// Update current selection formatting
-		const formatState = messageData.formatState;
+		const formatState = data;
 		const newFormatting = {};
 
 		console.log('FORMAT STATE:');
@@ -205,24 +268,47 @@ class QuillEditor extends Component {
 		this.props.dispatch(setFormatting(newFormatting));
 	}
 
-	CONTENT(messageData) {
-		this.setState({
-			content: messageData.content
-		});
+	/**
+	 * Handle showing Mention list
+	 *
+	 * @param 	object 	data 		Mention data
+	 * @return 	void
+	 */
+	handleMention(data) {
+		if( data === null ){
+			if( this.props.editor.mentions.active ) {
+				this.props.dispatch(hideMentionBar());
+			}
+			return;
+		} else {
+			this.props.dispatch(showMentionBar());
 
-		this.props.update.call(null, messageData.content);
-	}
-
-	DEBUG(messageData) {
-		console.log(`WEBVIEW DEBUG: ${messageData.debugMessage}`);
+			if( data.text !== this.props.editor.mentions.searchText ){
+				this.fetchMentions( data.text );
+			}
+		}
 	}
 
 	/**
+	 * Handle receivig editor content, which we store in state so we can use it
+	 *
+	 * @param 	string 	data 	The editor contents
+	 * @return 	void
+	 */
+	handleContent(data) {
+		this.setState({
+			content: data
+		});
+
+		this.props.update.call(null, data);
+	}
+
+
+	/**
 	 * ========================================================================
-	 * END MESSAGE HANDLERS
+	 * / END EDITOR STATUS HANDLERS
 	 * ========================================================================
 	 */
-
 	/**
 	 * Send a message to WebView
 	 *
@@ -393,9 +479,12 @@ class QuillEditor extends Component {
 	}
 }
 
-export default connect(state => ({
-	editor: state.editor
-}))(QuillEditor);
+export default compose(
+	withApollo,
+	connect(state => ({
+		editor: state.editor
+	}))
+)(QuillEditor);
 
 const modalStyles = StyleSheet.create({
 	modal: {

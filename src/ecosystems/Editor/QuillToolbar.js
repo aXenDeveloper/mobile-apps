@@ -5,10 +5,12 @@ import { connect } from "react-redux";
 import _ from "underscore";
 import { QuillToolbarButton } from "./QuillToolbarButton";
 import { QuillToolbarSeparator } from "./QuillToolbarSeparator";
+import { MentionRow } from "./MentionRow";
 import { UploadedImage } from "./UploadedImage";
 import { setFocus, setButtonState, openLinkModal, openImagePicker } from "../../redux/actions/editor";
 import * as Animatable from "react-native-animatable";
 
+import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import icons from "../../icons";
 import styles, { styleVars } from "../../styles";
 
@@ -20,7 +22,8 @@ class QuillToolbar extends Component {
 
 		this.state = {
 			showToolbar: true,
-			showImageToolbar: false
+			showImageToolbar: false,
+			showMentionToolbar: false
 		};
 
 		this._formattingHandlers = {};
@@ -29,6 +32,29 @@ class QuillToolbar extends Component {
 		this.toggleFormatting = this.toggleFormatting.bind(this);
 		this.showImageToolbar = this.showImageToolbar.bind(this);
 		this.hideImageToolbar = this.hideImageToolbar.bind(this);
+		this.openMentionModal = this.openMentionModal.bind(this);
+	}
+
+	async componentDidUpdate(prevProps, prevState) {
+		if( this.props.editor.mentions.active && !prevProps.editor.mentions.active ){
+			this.setState({
+				showMentionToolbar: true
+			}, () => {
+				this._wrapper.transitionTo({ height: 130 });
+				this._toolbar.transitionTo({ opacity: 0 });
+				this._mentionToolbar.transitionTo({ opacity: 1 });
+			})
+		}
+
+		if( !this.props.editor.mentions.active && prevProps.editor.mentions.active ){
+			this._wrapper.transitionTo({ height: TOOLBAR_HEIGHT });
+			this._toolbar.transitionTo({ opacity: 1 });
+			await this._mentionToolbar.transitionTo({ opacity: 0 });
+			
+			this.setState({
+				showMentionToolbar: false
+			});
+		}
 	}
 
 	/**
@@ -66,7 +92,6 @@ class QuillToolbar extends Component {
 			() => {
 				this._wrapper.transitionTo({ height: 75 });
 				this._toolbar.transitionTo({ opacity: 0 });
-				this._imageToolbar.transitionTo({ opacity: 1 });
 			}
 		);
 	}
@@ -100,6 +125,15 @@ class QuillToolbar extends Component {
 	}
 
 	/**
+	 * Dispatch action to open the mention modal
+	 *
+	 * @return 	void
+	 */
+	openMentionModal() {
+		console.log("mention!");
+	}
+
+	/**
 	 * Memoization function that returns a formatting handler
 	 *
 	 * @return 	void
@@ -127,6 +161,11 @@ class QuillToolbar extends Component {
 									icon={require("../../../resources/link.png")}
 									onPress={this.openLinkModal}
 								/>
+								<QuillToolbarButton
+									active={this.props.editor.mentionModalActive}
+									icon={require("../../../resources/mention.png")}
+									onPress={this.openMentionModal}
+								/>
 								<QuillToolbarSeparator />
 								<QuillToolbarButton
 									active={this.props.editor.formatting.bold}
@@ -153,6 +192,28 @@ class QuillToolbar extends Component {
 									icon={require("../../../resources/list_ordered.png")}
 									onPress={this.getFormattingHandler("list", "ordered")}
 								/>
+							</Animatable.View>
+						)}
+						{this.state.showMentionToolbar && (
+							<Animatable.View
+								style={[styles.flex, componentStyles.mentionToolbar]}
+								ref={ref => (this._mentionToolbar = ref)}
+							>
+								<ScrollView style={[styles.ptVeryTight]}>
+									<View style={componentStyles.mentionContainer}>
+										{this.props.editor.mentions.loading && !this.props.editor.mentions.matches.length && (
+											<PlaceholderRepeater repeat={6}>
+												<MentionRow loading />
+											</PlaceholderRepeater>
+										)}
+										{this.props.editor.mentions.matches.length && this.props.editor.mentions.matches.map(mention => (
+											<MentionRow onPress={() => {}} name={mention.name} id={mention.id} photo={mention.photo} />
+										))}
+									</View>
+									<TouchableOpacity onPress={this.closeMentionBar} style={componentStyles.closeMentionBar}>
+										<Image source={icons.CROSS} resizeMode='contain' style={componentStyles.closeMentionBarIcon} />
+									</TouchableOpacity>
+								</ScrollView>
 							</Animatable.View>
 						)}
 						{this.state.showImageToolbar && (
@@ -206,6 +267,10 @@ const componentStyles = StyleSheet.create({
 		...StyleSheet.absoluteFillObject,
 		opacity: 0
 	},
+	mentionToolbar: {
+		...StyleSheet.absoluteFillObject,
+		opacity: 0
+	},
 	addImage: {
 		backgroundColor: "#fff",
 		borderWidth: 1,
@@ -224,6 +289,19 @@ const componentStyles = StyleSheet.create({
 		borderLeftColor: styleVars.greys.medium
 	},
 	closeIcon: {
+		width: 20,
+		height: 20,
+		tintColor: styleVars.greys.placeholder
+	},
+	mentionContainer: {
+		marginRight: 36
+	},
+	closeMentionBar: {
+		position: 'absolute',
+		right: 8,
+		top: 8
+	},
+	closeMentionBarIcon: {
 		width: 20,
 		height: 20,
 		tintColor: styleVars.greys.placeholder

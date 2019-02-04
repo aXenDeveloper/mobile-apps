@@ -6,6 +6,12 @@ const initialState = {
 	linkModalActive: false,
 	imagePickerOpened: false,
 	attachedImages: [],
+	mentions: {
+		active: false,
+		loading: false,
+		searchText: '',
+		matches: []
+	},
 	formatting: {
 		link: false,
 		bold: false,
@@ -45,6 +51,41 @@ export default function editor(state = initialState, { type, payload }) {
 				...state,
 				formatting:	{
 					...payload
+				}
+			};
+		case actions.SHOW_MENTION_BAR:
+			return {
+				...state,
+				mentions: {
+					...state.mentions,
+					active: true
+				}
+			};
+		case actions.HIDE_MENTION_BAR:
+			return {
+				...state,
+				mentions: {
+					...state.mentions,
+					active: false
+				}
+			};
+		case actions.LOADING_MENTIONS:
+			return {
+				...state,
+				mentions: {
+					...state.mentions,
+					loading: true
+				}
+			};
+		case actions.UPDATE_MENTION_RESULTS:
+			return {
+				...state,
+				mentions: {
+					...state.mentions,
+					loading: false,
+					matches: [
+						...payload
+					]
 				}
 			};
 		case actions.OPEN_LINK_MODAL:

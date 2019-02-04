@@ -54,3 +54,22 @@ export const addImageToUpload = data => ({
 		...data
 	}
 });
+
+// ------------------------------------------------------------
+export const SHOW_MENTION_BAR = "SHOW_MENTION_BAR";
+export const showMentionBar = data => ({
+	type: SHOW_MENTION_BAR,
+});
+export const HIDE_MENTION_BAR = "HIDE_MENTION_BAR";
+export const hideMentionBar = data => ({
+	type: HIDE_MENTION_BAR,
+});
+export const LOADING_MENTIONS = "LOADING_MENTIONS";
+export const loadingMentions = data => ({
+	type: LOADING_MENTIONS
+});
+export const UPDATE_MENTION_RESULTS = "UPDATE_MENTION_RESULTS";
+export const updateMentionResults = data => ({
+	type: UPDATE_MENTION_RESULTS,
+	payload: data
+});
