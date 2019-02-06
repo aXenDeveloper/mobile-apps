@@ -1,6 +1,6 @@
 # Installing the mobile app for development
 
-These are the instructions for installing the dev environment needed to run the mobile app for development. In addition, you'll need to 
+These are the instructions for installing the dev environment needed to run the mobile app for development. In addition, you'll need to set up your IPS4 install for use with the app. There's a readme in the `IPS4-Tools/graphql-browser` repo that covers that and installing a web app to play with the API.
 
 ### Step 1
 
