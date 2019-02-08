@@ -24,7 +24,10 @@ module.exports = {
 			},
 			{
 				test: /\.js$/,
-				include: __dirname + '/web',
+				include: [
+					__dirname + '/web',
+					/\/node_modules\/quill/,
+				],
 				exclude: /(node_modules|bower_components)/,
 				use: {
 					loader: 'babel-loader',

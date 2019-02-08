@@ -3,6 +3,7 @@ import "quill/dist/quill.core.css";
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import LinkBlot from "quill/formats/link";
+import _ from "underscore";
 
 const BROWSER = false;
 const DEBUG = false;
@@ -18,10 +19,12 @@ class QuillComponent extends Component {
 		this.state = {
 			quill: null,
 			debug: [],
+			mentionCharPos: -1,
 			range: {
 				index: 0,
 				length: 0
-			}
+			},
+			mentionRange: 0
 		};
 	}
 
@@ -141,12 +144,14 @@ class QuillComponent extends Component {
 	 *
 	 * @return 	void
 	 */
-	textChange() {
-		this.sendMessage("EDITOR_STATUS", {
-			content: this.state.quill.container.querySelector('.ql-editor').innerHTML,
-			mention: this.mentionState(),
-			formatting: this.formattingState()
-		});
+	textChange(delta, oldDelta, source) {
+		if( source === Quill.sources.USER ){
+			this.sendMessage("EDITOR_STATUS", {
+				content: this.state.quill.container.querySelector('.ql-editor').innerHTML,
+				mention: this.mentionState(),
+				formatting: this.formattingState()
+			});
+		}
 	}
 
 	/**
@@ -179,6 +184,11 @@ class QuillComponent extends Component {
 			const mentionText = beforeCursorPos.substring(mentionCharPos + 1);
 
 			if( mentionText.length ){
+				this.setState({
+					mentionCharPos,
+					mentionRange: range.index
+				});
+
 				return {
 					text: mentionText
 				};
@@ -204,6 +214,9 @@ class QuillComponent extends Component {
 				this.addDebug(`Received event: ${messageType}`);
 
 				switch (messageType) {
+					case "INSERT_STYLES":
+						this.insertStyles(messageData);
+						break;
 					case "SET_FORMAT":
 						this.setFormat(messageData);
 
@@ -215,8 +228,13 @@ class QuillComponent extends Component {
 					case "INSERT_LINK":
 						this.insertLink(messageData);
 						break;
+					case "INSERT_MENTION":
+						this.insertMention(messageData);
+						break;
+					case "INSERT_MENTION_SYMBOL":
+						this.insertMentionSymbol();
+						break;
 					case "FOCUS":
-						this.addDebug(`Focus event`);
 						setTimeout( () => {
 							this.state.quill.blur();
 							this.state.quill.focus();
@@ -229,6 +247,24 @@ class QuillComponent extends Component {
 			}
 		} catch (err) {
 			this.addDebug(err);
+		}
+	}
+
+	/**
+	 * Insert styles into our page, allowing the editor to inherit styles from the app
+	 *
+	 * @param 	string|array 		data 		Full CSS rule to insert - single as a string, multiple as an array
+	 * @return 	void
+	 */
+	insertStyles(data) {
+		const sheet = this.getCustomStylesheet();
+
+		if( _.isArray( data.style ) ){
+			for( let i = 0; i < data.style.length; i++ ){
+				sheet.insertRule( data.style[i], 1 );
+			}
+		} else {
+			sheet.insertRule( data.style );
 		}
 	}
 
@@ -279,6 +315,41 @@ class QuillComponent extends Component {
 				length: 0
 			}
 		});
+	}
+
+	/**
+	 * Insert a mention into the document at the current location
+	 *
+	 * @param 	object 		data 	Object containing mention data
+	 * @return 	void
+	 */
+	insertMention(data) {
+		this.state.quill.deleteText( this.state.mentionCharPos, this.state.mentionRange - this.state.mentionCharPos, Quill.sources.API);
+		this.state.quill.insertEmbed( this.state.mentionCharPos, 'mention', {
+			id: data.id,
+			name: data.name,
+			url: '#'
+		}, Quill.sources.API);
+		this.state.quill.insertText( this.state.mentionCharPos + 1, ' ', Quill.sources.API);
+		this.state.quill.setSelection(this.state.mentionCharPos + 2, Quill.sources.SILENT);
+	}
+
+	/**
+	 * Insert the @ symbol, to begin a mention
+	 *
+	 * @return 	void
+	 */
+	insertMentionSymbol() {
+		const range = this.state.quill.getSelection();
+		const previousCharacter = this.state.quill.getText( range.index - 1, 1);
+
+		let character = '@';
+
+		if( !previousCharacter.match(/\s/g) ){
+			character = ' ' + character;
+		}
+
+		this.state.quill.insertText( range.index, character, Quill.sources.API);
 	}
 
 	/**
@@ -341,6 +412,19 @@ class QuillComponent extends Component {
 		}
 	}
 
+	/**
+	 * Returns our custom stylesheet, creating it if it doesn't exist
+	 *
+	 * @return 	Element
+	 */
+	getCustomStylesheet() {
+		const newSheet = document.createElement('style');
+		newSheet.setAttribute('type', 'text/css');
+		newSheet.appendChild(document.createTextNode(''));
+		document.head.appendChild(newSheet);
+		return newSheet.sheet;
+	}
+
 	render() {
 		return (
 			<React.Fragment>
@@ -359,3 +443,34 @@ class QuillComponent extends Component {
 }
 
 export default QuillComponent;
+
+// ========================================================
+// MENTION BLOT
+// ========================================================
+const Embed = Quill.import('blots/embed'); // important, must import from quill rather than import as a JS module
+
+class MentionBlot extends Embed {
+	static create(data) {
+		let node = super.create(data.name);
+
+		node.setAttribute('class', 'ipsMention');
+		node.setAttribute('data-mentionid', data.id);
+		node.setAttribute('href', '#');
+		node.innerHTML = ' @' + data.name + ' ';
+
+		return node;
+	}
+
+	static value(domNode) {
+		return {
+			id: domNode.getAttribute('data-mentionid'),
+			name: domNode.innerText,
+			url: domNode.getAttribute('href')
+		};
+	}
+}
+
+MentionBlot.blotName = 'mention';
+MentionBlot.tagName = 'span';
+
+Quill.register(MentionBlot);
