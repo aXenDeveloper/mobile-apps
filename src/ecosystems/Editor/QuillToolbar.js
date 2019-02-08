@@ -7,7 +7,7 @@ import { QuillToolbarButton } from "./QuillToolbarButton";
 import { QuillToolbarSeparator } from "./QuillToolbarSeparator";
 import { MentionRow } from "./MentionRow";
 import { UploadedImage } from "./UploadedImage";
-import { setFocus, setButtonState, openLinkModal, openImagePicker } from "../../redux/actions/editor";
+import { setFocus, setButtonState, openLinkModal, openImagePicker, insertMentionSymbol } from "../../redux/actions/editor";
 import * as Animatable from "react-native-animatable";
 
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
@@ -23,7 +23,8 @@ class QuillToolbar extends Component {
 		this.state = {
 			showToolbar: true,
 			showImageToolbar: false,
-			showMentionToolbar: false
+			showMentionToolbar: false,
+			overrideMentionBar: false
 		};
 
 		this._formattingHandlers = {};
@@ -32,13 +33,16 @@ class QuillToolbar extends Component {
 		this.toggleFormatting = this.toggleFormatting.bind(this);
 		this.showImageToolbar = this.showImageToolbar.bind(this);
 		this.hideImageToolbar = this.hideImageToolbar.bind(this);
-		this.openMentionModal = this.openMentionModal.bind(this);
+		this.insertMention = this.insertMention.bind(this);
+		this.closeMentionBar = this.closeMentionBar.bind(this);
 	}
 
 	async componentDidUpdate(prevProps, prevState) {
-		if( this.props.editor.mentions.active && !prevProps.editor.mentions.active ){
+		// Check if we need to show the mention bar
+		if( !prevProps.editor.mentions.active && this.props.editor.mentions.active ){
 			this.setState({
-				showMentionToolbar: true
+				showMentionToolbar: true,
+				overrideMentionBar: false
 			}, () => {
 				this._wrapper.transitionTo({ height: 130 });
 				this._toolbar.transitionTo({ opacity: 0 });
@@ -46,13 +50,15 @@ class QuillToolbar extends Component {
 			})
 		}
 
-		if( !this.props.editor.mentions.active && prevProps.editor.mentions.active ){
+		// Check if we need to hide the mention bar
+		if( this.state.showMentionToolbar && ( ( !this.props.editor.mentions.active && prevProps.editor.mentions.active ) || ( !prevState.overrideMentionBar && this.state.overrideMentionBar ) ) ){
 			this._wrapper.transitionTo({ height: TOOLBAR_HEIGHT });
 			this._toolbar.transitionTo({ opacity: 1 });
 			await this._mentionToolbar.transitionTo({ opacity: 0 });
 			
 			this.setState({
-				showMentionToolbar: false
+				showMentionToolbar: false,
+				overrideMentionBar: false
 			});
 		}
 	}
@@ -129,8 +135,19 @@ class QuillToolbar extends Component {
 	 *
 	 * @return 	void
 	 */
-	openMentionModal() {
-		console.log("mention!");
+	insertMention() {
+		this.props.dispatch(insertMentionSymbol());
+	}
+
+	/**
+	 * The user has manually hidden the mention bar
+	 *
+	 * @return 	void
+	 */
+	closeMentionBar() {
+		this.setState({
+			overrideMentionBar: true
+		});
 	}
 
 	/**
@@ -164,7 +181,7 @@ class QuillToolbar extends Component {
 								<QuillToolbarButton
 									active={this.props.editor.mentionModalActive}
 									icon={require("../../../resources/mention.png")}
-									onPress={this.openMentionModal}
+									onPress={this.insertMention}
 								/>
 								<QuillToolbarSeparator />
 								<QuillToolbarButton
@@ -206,8 +223,11 @@ class QuillToolbar extends Component {
 												<MentionRow loading />
 											</PlaceholderRepeater>
 										)}
+										{!this.props.editor.mentions.loading && !this.props.editor.mentions.matches.length && (
+											<Text style={[styles.mvTight, styles.mhStandard, styles.veryLightText]}>{Lang.get('no_matching_members')}</Text>
+										)}
 										{this.props.editor.mentions.matches.length && this.props.editor.mentions.matches.map(mention => (
-											<MentionRow onPress={() => {}} name={mention.name} id={mention.id} photo={mention.photo} />
+											<MentionRow key={mention.id} onPress={mention.handler} name={mention.name} id={mention.id} photo={mention.photo} />
 										))}
 									</View>
 									<TouchableOpacity onPress={this.closeMentionBar} style={componentStyles.closeMentionBar}>

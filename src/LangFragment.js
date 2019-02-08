@@ -69,6 +69,7 @@ const LangFragment = gql`
 		delete_image: phrase(key: "app_delete_image")
 		cancel_upload: phrase(key: "app_cancel_upload")
 		attachment_options: phrase(key: "app_attachment_options")
+		no_matching_members: phrase(key: "app_no_matching_members")
 
 		followed_member: phrase(key: "app_followed_member")
 		unfollowed_member: phrase(key: "app_unfollowed_member")

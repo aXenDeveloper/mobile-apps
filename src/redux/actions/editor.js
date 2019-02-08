@@ -73,3 +73,11 @@ export const updateMentionResults = data => ({
 	type: UPDATE_MENTION_RESULTS,
 	payload: data
 });
+export const INSERT_MENTION_SYMBOL = "INSERT_MENTION_SYMBOL";
+export const insertMentionSymbol = data => ({
+	type: INSERT_MENTION_SYMBOL
+});
+export const INSERT_MENTION_SYMBOL_DONE = "INSERT_MENTION_SYMBOL_DONE";
+export const insertMentionSymbolDone = data => ({
+	type: INSERT_MENTION_SYMBOL_DONE
+});

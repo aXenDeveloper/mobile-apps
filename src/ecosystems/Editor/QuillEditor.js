@@ -7,7 +7,7 @@ import { ImagePicker, Permissions } from "expo";
 import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 import _ from "lodash";
 import { connect } from "react-redux";
-import { setFocus, setFormatting, resetEditor, resetImagePicker, addImageToUpload, showMentionBar, hideMentionBar, loadingMentions, updateMentionResults } from "../../redux/actions/editor";
+import { setFocus, setFormatting, resetEditor, resetImagePicker, addImageToUpload, showMentionBar, hideMentionBar, loadingMentions, updateMentionResults, insertMentionSymbolDone } from "../../redux/actions/editor";
 import styles, { styleVars } from "../../styles";
 //import AdvancedWebView from 'react-native-advanced-webview';
 
@@ -43,6 +43,7 @@ class QuillEditor extends Component {
 	constructor(props) {
 		super(props);
 		this.webview = null;
+		this._mentionHandlers = {};
 
 		// Set up initial state for our formatting options. Format types with options are
 		// created as camelCase keys in the state, e.g. listUnordered or listOrdered
@@ -106,6 +107,11 @@ class QuillEditor extends Component {
 			}
 		}
 
+		// Are we inserting the mention symbol?
+		if( !prevProps.editor.mentions.insertSymbol && this.props.editor.mentions.insertSymbol ){
+			this.insertMentionSymbol();
+		}
+
 		// Are we opening the link modal?
 		if( !prevProps.editor.linkModalActive && this.props.editor.linkModalActive ){
 			this.showLinkModal();
@@ -146,23 +152,77 @@ class QuillEditor extends Component {
 		}
 	}
 
+	/**
+	 * Get mentions from the server
+	 *
+	 * @param 	string 	searchTerm 		string used to match users
+	 * @return 	void
+	 */
 	async fetchMentions(searchTerm) {
 		try {
 			console.log(`Fetching mentions for ${searchTerm}`);
 			this.props.dispatch(loadingMentions());
 
+			let mentions = [];
 			const { data } = await this.props.client.query({
 				query: MentionQuery,
 				variables: { term: searchTerm },
 			});
 
-			console.log("Found mentions...");
-			console.log( data.core.search.results );
+			if( data.core.search.results.length ){
+				mentions = data.core.search.results.map( mention => {
+					return {
+						...mention,
+						handler: this.getMentionHandler(mention)
+					}
+				});
+			}
 
-			this.props.dispatch(updateMentionResults( data.core.search.results ));
+			this.props.dispatch(updateMentionResults( mentions ));
 		} catch (err) {
 			console.log(err);
 		}
+	}
+
+	/**
+	 * Memoization function that returns a handler for tapping on a mention
+	 *
+	 * @param 	object 		mention 	Data for a particular mention
+	 * @return 	function
+	 */
+	getMentionHandler(mention) {
+		if( _.isUndefined( this._mentionHandlers[ mention.id ] ) ){
+			this._mentionHandlers[ mention.id ] = () => this.onPressMention(mention);
+		}
+
+		return this._mentionHandlers[ mention.id ];
+	}
+
+	/**
+	 * Handler for tapping on a mention
+	 *
+	 * @param 	object 		mention 		Mention data
+	 * @return 	void
+	 */
+	onPressMention(mention) {
+		this.sendMessage("INSERT_MENTION", {
+			name: mention.name,
+			id: mention.id,
+			url: '#'
+		});
+
+		this.props.dispatch(hideMentionBar());
+	}
+
+	/**
+	 * Insert the mention 
+	 *
+	 * @param 	object 		mention 		Mention data
+	 * @return 	void
+	 */
+	insertMentionSymbol() {
+		this.sendMessage("INSERT_MENTION_SYMBOL");
+		this.props.dispatch(insertMentionSymbolDone());
 	}
 
 	/**
@@ -194,7 +254,9 @@ class QuillEditor extends Component {
 	 * ========================================================================
 	 */
 	READY() {
-		console.log( this.props );
+		this.sendMessage("INSERT_STYLES", {
+			style: this.buildCustomStyles()
+		});
 
 		if( this.props.autoFocus ){
 			setTimeout( () => {
@@ -309,6 +371,24 @@ class QuillEditor extends Component {
 	 * / END EDITOR STATUS HANDLERS
 	 * ========================================================================
 	 */
+
+	buildCustomStyles() {
+		const style = `
+			.ipsMention {
+				background: ${styleVars.accentColor};
+				color: ${styleVars.reverseText};
+				font-size: 14px;
+				margin-top: -2px;
+				border-radius: 3px;
+				padding-top: 2px;
+				padding-bottom: 2px;
+				vertical-align: middle;
+			}
+		`;
+
+		return style;
+	}
+
 	/**
 	 * Send a message to WebView
 	 *

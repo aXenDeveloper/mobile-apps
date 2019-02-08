@@ -10,7 +10,8 @@ const initialState = {
 		active: false,
 		loading: false,
 		searchText: '',
-		matches: []
+		matches: [],
+		insertSymbol: false
 	},
 	formatting: {
 		link: false,
@@ -86,6 +87,22 @@ export default function editor(state = initialState, { type, payload }) {
 					matches: [
 						...payload
 					]
+				}
+			};
+		case actions.INSERT_MENTION_SYMBOL:
+			return {
+				...state,
+				mentions: {
+					...state.mentions,
+					insertSymbol: true
+				}
+			};
+		case actions.INSERT_MENTION_SYMBOL_DONE:
+			return {
+				...state,
+				mentions: {
+					...state.mentions,
+					insertSymbol: false
 				}
 			};
 		case actions.OPEN_LINK_MODAL:
