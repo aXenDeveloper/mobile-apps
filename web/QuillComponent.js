@@ -328,7 +328,7 @@ class QuillComponent extends Component {
 		this.state.quill.insertEmbed( this.state.mentionCharPos, 'mention', {
 			id: data.id,
 			name: data.name,
-			url: '#'
+			url: data.url
 		}, Quill.sources.API);
 		this.state.quill.insertText( this.state.mentionCharPos + 1, ' ', Quill.sources.API);
 		this.state.quill.setSelection(this.state.mentionCharPos + 2, Quill.sources.SILENT);

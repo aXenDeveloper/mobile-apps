@@ -4,9 +4,12 @@
     "orientation": "portrait",
     "privacy": "unlisted",
     "extra": {
-		"oauth_client_id": "ca21723b69d04411468926e9ed3d356d",
-		"api_url": "http://192.168.1.33/ipsdev/Community/",
+    	"oauth_client_id": "ca21723b69d04411468926e9ed3d356d",
+		"api_url": "http://172.122.182.181/ipsdev/Community/",
 		"api_key": "NTU2ODhjOWQ2MDMwMWVlYmQ2Mjg5NjVjN2FhOGNiNDY=",
+		//"oauth_client_id": "d5f20f784ad0c7eb51e9b53f16ac370d",
+		//"api_url": "https://auto.invisionalpha.com/",
+		//"api_key": "M2ViZmI4ODUyNDcxOTBkZWRlOTg2MmE4OTMyYWFmYjA=",
 		"refresh_token_advance": 300000,
 		"message_prefix": "__IPS__",
 		"per_page": 10,
@@ -15,7 +18,5 @@
   }
 }
 /*
-"oauth_client_id": "e9a2ba72438fe656c678f41095a360ea",
-"api_url": "http://192.168.1.33/ipsdev/graphql-api/",
-"api_key": "NGVmNjdkZjA0OGExYTE1MzM5MjVmYmIxNWEyN2MwMjc=",
+
 */

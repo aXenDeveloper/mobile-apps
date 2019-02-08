@@ -32,6 +32,7 @@ const MentionQuery = gql`
 						id
 						name
 						photo
+						url
 					}
 				}
 			}
@@ -208,7 +209,7 @@ class QuillEditor extends Component {
 		this.sendMessage("INSERT_MENTION", {
 			name: mention.name,
 			id: mention.id,
-			url: '#'
+			url: mention.url
 		});
 
 		this.props.dispatch(hideMentionBar());
