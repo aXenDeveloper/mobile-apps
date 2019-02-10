@@ -4,12 +4,12 @@
         "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/layout/abc_action_bar_up_container.xml"
     },
     {
-        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev19/debug/layout/tooltip.xml",
-        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/layout/tooltip.xml"
-    },
-    {
         "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev19/debug/layout/notification_template_big_media_narrow_custom.xml",
         "source": "/Users/rikkitissier/.android/build-cache/af11c3ecefaf5652e1c8bedec255ae361dbee21f/output/res/layout/notification_template_big_media_narrow_custom.xml"
+    },
+    {
+        "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev19/debug/layout/tooltip.xml",
+        "source": "/Users/rikkitissier/.android/build-cache/3e4618f7bd71c3bfc9e0a7669829c142139a6efa/output/res/layout/tooltip.xml"
     },
     {
         "merged": "/Users/rikkitissier/Development/invision-community-app/android/app/build/intermediates/res/merged/dev19/debug/layout/notification_template_big_media_custom.xml",
