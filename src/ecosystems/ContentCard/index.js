@@ -18,7 +18,7 @@ export default class ContentCard extends Component {
 					<PlaceholderElement circle radius={20} left={12} top={12} />
 					<PlaceholderElement width={150} left={40} top={16} height={10} />
 					<PlaceholderElement width="100%" left={0} right={0} top={45} height={135} />
-					{this.props.image && <PlaceholderElement width={200} left={12} top={192} />}
+					{Boolean(this.props.image) && <PlaceholderElement width={200} left={12} top={192} />}
 					<PlaceholderElement width={150} left={12} top={215} height={12} />
 					<PlaceholderElement width={250} left={12} top={240} height={12} />
 					<PlaceholderElement width={250} left={12} top={256} height={12} />
@@ -34,15 +34,15 @@ export default class ContentCard extends Component {
 				onPress={this.props.onPress || null}
 			>
 				<View style={[componentStyles.contentCardInner]}>
-					{this.props.header && (
+					{Boolean(this.props.header) && (
 						<View style={componentStyles.streamHeader}>
 							<View style={componentStyles.streamMeta}>
 								<View style={componentStyles.streamMetaInner}>{this.props.header}</View>
 							</View>
 						</View>
 					)}
-					{this.props.image && this.props.image}
-					{this.props.content && <View style={[componentStyles.streamFooter]}>{this.props.content}</View>}
+					{Boolean(this.props.image) && this.props.image}
+					{Boolean(this.props.content) && <View style={[componentStyles.streamFooter]}>{this.props.content}</View>}
 				</View>
 			</TouchableOpacity>
 		);

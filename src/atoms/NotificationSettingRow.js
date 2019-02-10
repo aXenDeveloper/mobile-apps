@@ -25,7 +25,7 @@ export default class NotificationSettingRow extends Component {
 			<View style={[styles.row, componentStyles.menuItemWrap]}>
 				<View style={componentStyles.menuItem}>
 					<Text style={componentStyles.label}>{this.props.data.title}</Text>
-					{!this.props.data.enabled && <Text style={componentStyles.metaText}>{Lang.get('disabled_notification')}</Text>}
+					{!Boolean(this.props.data.enabled) && <Text style={componentStyles.metaText}>{Lang.get('disabled_notification')}</Text>}
 				</View>
 				<Switch onTintColor={styleVars.toggleTint} value={this.props.data.on} disabled={!this.props.data.enabled} style={componentStyles.switch} />
 			</View>

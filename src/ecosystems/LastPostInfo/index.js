@@ -9,7 +9,7 @@ export default class LastPostInfo extends Component {
 	}
 
 	render() {
-		if( this.props.photo && this.props.timestamp ){
+		if( Boolean(this.props.photo) && Boolean(this.props.timestamp) ){
 			return (
 				<View style={this.props.style}>
 					<UserPhoto url={this.props.photo} size={this.props.photoSize} />

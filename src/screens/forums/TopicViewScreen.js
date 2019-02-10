@@ -790,7 +790,7 @@ class TopicViewScreen extends Component {
 		return (
 			<ViewMeasure onLayout={this.onHeaderLayout} id="header">
 				<ShadowedArea style={[styles.flexRow, styles.flexAlignStretch, styles.pvStandard, styles.mbStandard]}>
-					{topicData.isQuestion && (
+					{Boolean(topicData.isQuestion) && (
 						<View style={styles.flexAlignSelfCenter}>
 							<QuestionVote
 								score={topicData.questionVotes}
@@ -811,15 +811,15 @@ class TopicViewScreen extends Component {
 							<ContentItemStat value={shortNumber(topicData.postCount)} name="Replies" />
 							<ContentItemStat value={shortNumber(topicData.views)} name="Views" />
 						</View>
-						{(topicData.tags.length || topicData.isLocked || topicData.isHot || topicData.isPinned || topicData.isFeatured) && (
+						{Boolean(topicData.tags.length || topicData.isLocked || topicData.isHot || topicData.isPinned || topicData.isFeatured) && (
 							<View style={[styles.mtStandard, styles.ptStandard, componentStyles.metaInfo, topicData.isQuestion ? styles.plWide : null]}>
-								{topicData.tags.length && <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList>}
+								{Boolean(topicData.tags.length) && <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList>}
 								<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter]}>
-									{topicData.isArchived && <TopicStatus style={styles.mrStandard} type="archived" />}
-									{topicData.isLocked && <TopicStatus style={styles.mrStandard} type="locked" />}
-									{topicData.isHot && <TopicStatus style={styles.mrStandard} type="hot" />}
-									{topicData.isPinned && <TopicStatus style={styles.mrStandard} type="pinned" />}
-									{topicData.isFeatured && <TopicStatus style={styles.mrStandard} type="featured" />}
+									{Boolean(topicData.isArchived) && <TopicStatus style={styles.mrStandard} type="archived" />}
+									{Boolean(topicData.isLocked) && <TopicStatus style={styles.mrStandard} type="locked" />}
+									{Boolean(topicData.isHot) && <TopicStatus style={styles.mrStandard} type="hot" />}
+									{Boolean(topicData.isPinned) && <TopicStatus style={styles.mrStandard} type="pinned" />}
+									{Boolean(topicData.isFeatured) && <TopicStatus style={styles.mrStandard} type="featured" />}
 								</View>
 							</View>
 						)}
@@ -1003,10 +1003,10 @@ class TopicViewScreen extends Component {
 					smaller
 				/>
 
-				{(post.isBestAnswer || topicData.canSetBestAnswer) && (
+				{Boolean(post.isBestAnswer || topicData.canSetBestAnswer) && (
 					<View style={[styles.flexRow, styles.flexJustifyCenter, styles.mvStandard]}>
 						<BestAnswer
-							setBestAnswer={topicData.canSetBestAnswer && !post.isBestAnswer ? this.getSetBestAnswerHandler(post.id) : null}
+							setBestAnswer={Boolean(topicData.canSetBestAnswer) && !Boolean(post.isBestAnswer) ? this.getSetBestAnswerHandler(post.id) : null}
 							isBestAnswer={post.isBestAnswer}
 						/>
 					</View>
@@ -1381,7 +1381,7 @@ class TopicViewScreen extends Component {
 							onChange={this.scrollToPost}
 							unreadIndicator={topicData.isUnread ? topicData.unreadCommentPosition : false}
 						/>
-						{!topicData.isArchived && (
+						{!Boolean(topicData.isArchived) && (
 							<FollowModal
 								isVisible={this.state.followModalVisible}
 								followData={topicData.follow}
@@ -1391,8 +1391,8 @@ class TopicViewScreen extends Component {
 							/>
 						)}
 						{topicData.poll !== null && <PollModal isVisible={this.state.pollModalVisible} data={topicData.poll} />}
-						{topicData.itemPermissions.canComment &&
-							!topicData.isArchived && (
+						{Boolean(topicData.itemPermissions.canComment) &&
+							!Boolean(topicData.isArchived) && (
 								<ActionBar light>
 									<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
 								</ActionBar>

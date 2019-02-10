@@ -26,6 +26,10 @@ class PollResultsChoice extends Component {
 	}
 
 	getPercentage() {
+		if( this.props.data.votes === 0 || parseInt(this.props.totalVotes) === 0 ){
+			return 0;
+		}
+		
 		return Math.round( this.props.data.votes / parseInt(this.props.totalVotes) * 100 );
 	}
 
@@ -93,7 +97,7 @@ class PollResultsChoice extends Component {
 			<View style={styles.mbStandard}>
 				<View style={[styles.flexRow, styles.flexJustifyBetween, styles.flexAlignEnd]}>
 					<Text style={[styles.contentText, styles.text]}>{this.props.data.title}</Text>
-					{this.props.data.votedFor && (
+					{Boolean(this.props.data.votedFor) && (
 						<Image source={icons.CHECKMARK_CIRCLE_SOLID} resizeMode="contain" style={[componentStyles.checkmark, styles.mlTight]} />
 					)}
 				</View>

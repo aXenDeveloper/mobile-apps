@@ -35,7 +35,7 @@ class PollVoteChoice extends Component {
 								styles.mrStandard
 							]}
 						>
-							{this.props.checked && <Image source={icons.CHECKMARK2} resizeMode="contain" style={componentStyles.tick} />}
+							{Boolean(this.props.checked) && <Image source={icons.CHECKMARK2} resizeMode="contain" style={componentStyles.tick} />}
 						</View>
 						<Text style={[styles.flexBasisZero, styles.flexGrow, styles.contentText, styles.text, componentStyles.choiceText]}>
 							{this.props.data.title}

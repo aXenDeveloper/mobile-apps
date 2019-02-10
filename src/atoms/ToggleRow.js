@@ -15,7 +15,7 @@ export default class ToggleRow extends Component {
 			<View style={[styles.row, componentStyles.menuItemWrap]}>
 				<View style={componentStyles.menuItem}>
 					<Text style={componentStyles.label}>{this.props.title}</Text>
-					{this.props.subText && <Text style={componentStyles.metaText}>{this.props.subText}</Text>}
+					{Boolean(this.props.subText) && <Text style={componentStyles.metaText}>{this.props.subText}</Text>}
 				</View>
 				<Switch
 					onTintColor={styleVars.toggleTint}

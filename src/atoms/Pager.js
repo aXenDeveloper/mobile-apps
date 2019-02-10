@@ -168,7 +168,7 @@ export default class Pager extends PureComponent {
 						})}
 					</Text>
 				</Animatable.View>
-				{unreadPosition && (
+				{Boolean(unreadPosition) && (
 					<View style={[componentStyles.unreadBar, { left: `${unreadPosition}%` }]}>
 						<Text>-</Text>
 					</View>

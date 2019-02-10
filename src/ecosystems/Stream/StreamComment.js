@@ -31,7 +31,7 @@ const StreamComment = (props) => (
 					{props.data.content}
 				</Text>
 			</View>
-			{props.data.reactions.length && (
+			{Boolean(props.data.reactions.length) && (
 				<View style={componentStyles.streamFooter}>
 					<ReactionOverview small style={componentStyles.reactionOverview} reactions={props.data.reactions} />
 				</View>

@@ -391,7 +391,7 @@ class SearchScreen extends Component {
 			<SectionList
 				renderItem={({ item }) => this.renderOverviewItem(item)}
 				renderSectionFooter={({ section }) => this.renderOverviewSectionFooter(section)}
-				renderSectionHeader={({ section }) => section.data.length && <SectionHeader title={section.title} />}
+				renderSectionHeader={({ section }) => Boolean(section.data.length) && <SectionHeader title={section.title} />}
 				sections={overviewData}
 				stickySectionHeadersEnabled={false}
 				keyExtractor={item => (item["__typename"] == "core_Member" ? "m" + item.id : "c" + item.indexID)}
@@ -563,7 +563,7 @@ class SearchScreen extends Component {
 						value={this.state.searchTerm}
 					/>
 				</View>
-				{(this.state.textInputActive || this.state.showingResults) && (
+				{Boolean(this.state.textInputActive || this.state.showingResults) && (
 					<TouchableOpacity style={componentStyles.cancelLink} onPress={this.goBack}>
 						<Text style={componentStyles.cancelLinkText}>{Lang.get("cancel")}</Text>
 					</TouchableOpacity>

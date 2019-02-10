@@ -73,11 +73,11 @@ class TopicRow extends Component {
 				<InfoComponent data={this.props.data} showAsUnread={showAsUnread} styles={componentStyles} />
 				<View style={componentStyles.topicStatusesWrap}>
 					<View style={componentStyles.topicMeta}>
-						{this.props.data.isHot && <TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="hot" />}
-						{this.props.data.isPinned && (
+						{Boolean(this.props.data.isHot) && <TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="hot" />}
+						{Boolean(this.props.data.isPinned) && (
 							<TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="pinned" />
 						)}
-						{this.props.data.isFeatured && (
+						{Boolean(this.props.data.isFeatured) && (
 							<TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="featured" />
 						)}
 

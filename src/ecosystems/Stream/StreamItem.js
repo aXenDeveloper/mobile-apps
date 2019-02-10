@@ -46,12 +46,12 @@ const StreamItem = (props) => {
 			</View>
 			{props.image || null}
 			<View style={componentStyles.streamContent}>
-				{props.data.content && (
+				{Boolean(props.data.content) && (
 					<Text style={componentStyles.snippetText} numberOfLines={3}>
 						{props.data.content}
 					</Text>
 				)}
-				{(replies || reactions) && (
+				{Boolean(replies || reactions) && (
 					<View style={componentStyles.streamFooter}>
 						{reactions} {replies}
 					</View>

@@ -22,19 +22,19 @@ export default class QuestionVote extends PureComponent {
 						resizeMode="contain"
 						style={[
 							componentStyles.voteArrow,
-							!this.props.canVoteUp && !this.props.hasVotedUp ? componentStyles.voteDisabled : null, // Disable arrow if they can't vote, and haven't voted
+							!Boolean(this.props.canVoteUp) && !Boolean(this.props.hasVotedUp) ? componentStyles.voteDisabled : null, // Disable arrow if they can't vote, and haven't voted
 						]}
 					/>
 				</TouchableOpacity>
 				<Text style={[this.props.smaller ? styles.standardText : styles.largeText, styles.mediumText, styles.centerText]}>{this.props.score}</Text>
-				{this.props.downvoteEnabled && (
+				{Boolean(this.props.downvoteEnabled) && (
 					<TouchableOpacity onPress={this.props.canVoteDown ? this.props.onVoteDown : null} style={this.props.smaller ? styles.mtVeryTight : null}>
 						<Image
 							source={voteDownIcon}
 							resizeMode="contain"
 							style={[
 								componentStyles.voteArrow,
-								!this.props.canVoteDown && !this.props.hasVotedDown ? componentStyles.voteDisabled : null, // Disable arrow if they can't vote, and haven't voted
+								!Boolean(this.props.canVoteDown) && !Boolean(this.props.hasVotedDown) ? componentStyles.voteDisabled : null, // Disable arrow if they can't vote, and haven't voted
 							]}
 						/>
 					</TouchableOpacity>

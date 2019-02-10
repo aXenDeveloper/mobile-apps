@@ -186,7 +186,7 @@ class ActiveUsers extends Component {
 		} else {
 			return (
 				<View style={[componentStyles.wrapper, styles.row]}>
-					{this.state.tickerReady && <View style={componentStyles.tickerWrapper}>{this.getTicker()}</View>}
+					{Boolean(this.state.tickerReady) && <View style={componentStyles.tickerWrapper}>{this.getTicker()}</View>}
 					<View style={componentStyles.cellContainer}>
 						{this.getCells()}
 						{this.getMoreBubble()}

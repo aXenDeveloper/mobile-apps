@@ -173,7 +173,7 @@ class LoginScreen extends Component {
 					) : (
 						<React.Fragment>
 							{_.isUndefined(this.props.hideClose) &&
-								!this.props.hideClose && (
+								!Boolean(this.props.hideClose) && (
 									<TouchableOpacity onPress={this.close} style={componentStyles.closeButton}>
 										<Image
 											source={require("../../../../resources/close.png")}
@@ -215,7 +215,7 @@ class LoginScreen extends Component {
 									</TouchableOpacity>
 								</View>
 
-								{!this.props.site.settings.disable_anonymous && (
+								{!Boolean(this.props.site.settings.disable_anonymous) && (
 									<View style={componentStyles.anonWrap}>
 										<Switch
 											value={this.state.anonymous}
@@ -232,7 +232,7 @@ class LoginScreen extends Component {
 								<Button style={styles.mtVeryWide} onPress={() => this._login()} title={Lang.get('sign_in')} rounded filled size="large" type="light" />
 								{this.buildRegistrationLink()}
 							</View>
-							{this.props.site.loginHandlers.length && (
+							{Boolean(this.props.site.loginHandlers.length) && (
 								<LinearGradient
 									start={[0.5, 0]}
 									end={[0.5, 1]}

@@ -26,7 +26,7 @@ export default class Button extends Component {
 				onPress={!this.props.disabled ? this.props.onPress : null}
 				disabled={this.props.disabled}
 			>
-				{this.props.icon &&	<Image style={[componentStyles.icon, componentStyles[imageType]]} resizeMode='stretch' source={this.props.icon} />}
+				{Boolean(this.props.icon) && <Image style={[componentStyles.icon, componentStyles[imageType]]} resizeMode='stretch' source={this.props.icon} />}
 				<View style={componentStyles.textWrapper}>
 					<Text style={[componentStyles[textType], componentStyles.text, componentStyles[textSize]]} numberOfLines={1}>
 						{this.props.title}

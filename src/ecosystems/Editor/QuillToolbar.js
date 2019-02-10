@@ -170,7 +170,7 @@ class QuillToolbar extends Component {
 			<KeyboardAccessoryView hideBorder alwaysVisible={this.props.editor.focused} visibleOpacity={this.props.editor.focused ? 1 : 0}>
 				<View style={componentStyles.toolbarOuter}>
 					<Animatable.View style={[componentStyles.toolbarInner]} ref={ref => (this._wrapper = ref)}>
-						{this.state.showToolbar && (
+						{Boolean(this.state.showToolbar) && (
 							<Animatable.View style={[styles.flexRow, styles.flexAlignCenter, componentStyles.toolbarIcons]} ref={ref => (this._toolbar = ref)}>
 								<QuillToolbarButton icon={require("../../../resources/image.png")} onPress={this.showImageToolbar} />
 								<QuillToolbarButton
@@ -211,22 +211,22 @@ class QuillToolbar extends Component {
 								/>
 							</Animatable.View>
 						)}
-						{this.state.showMentionToolbar && (
+						{Boolean(this.state.showMentionToolbar) && (
 							<Animatable.View
 								style={[styles.flex, componentStyles.mentionToolbar]}
 								ref={ref => (this._mentionToolbar = ref)}
 							>
 								<ScrollView style={[styles.ptVeryTight]}>
 									<View style={componentStyles.mentionContainer}>
-										{this.props.editor.mentions.loading && !this.props.editor.mentions.matches.length && (
+										{Boolean(this.props.editor.mentions.loading) && !Boolean(this.props.editor.mentions.matches.length) && (
 											<PlaceholderRepeater repeat={6}>
 												<MentionRow loading />
 											</PlaceholderRepeater>
 										)}
-										{!this.props.editor.mentions.loading && !this.props.editor.mentions.matches.length && (
+										{!Boolean(this.props.editor.mentions.loading) && !Boolean(this.props.editor.mentions.matches.length) && (
 											<Text style={[styles.mvTight, styles.mhStandard, styles.veryLightText]}>{Lang.get('no_matching_members')}</Text>
 										)}
-										{this.props.editor.mentions.matches.length && this.props.editor.mentions.matches.map(mention => (
+										{Boolean(this.props.editor.mentions.matches.length) && this.props.editor.mentions.matches.map(mention => (
 											<MentionRow key={mention.id} onPress={mention.handler} name={mention.name} id={mention.id} photo={mention.photo} />
 										))}
 									</View>
@@ -236,7 +236,7 @@ class QuillToolbar extends Component {
 								</ScrollView>
 							</Animatable.View>
 						)}
-						{this.state.showImageToolbar && (
+						{Boolean(this.state.showImageToolbar) && (
 							<Animatable.View
 								style={[styles.flexRow, styles.pvTight, styles.plTight, componentStyles.imageToolbar]}
 								ref={ref => (this._imageToolbar = ref)}

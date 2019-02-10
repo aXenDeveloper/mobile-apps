@@ -36,7 +36,7 @@ export default class TopicStatus extends Component {
 		return (
 			<View style={[componentStyles.wrapper, this.props.style || null ]}>
 				{statuses[this.props.type]['icon']}
-				{!this.props.noLabel && <Text style={[this.props.textStyle, componentStyles.status, componentStyles[this.props.type]]}>
+				{!Boolean(this.props.noLabel) && <Text style={[this.props.textStyle, componentStyles.status, componentStyles[this.props.type]]}>
 					{statuses[this.props.type]['text']}
 				</Text>}
 			</View>

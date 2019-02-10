@@ -36,7 +36,7 @@ const NotificationRow = props => {
 						</Text>
 						<Text style={[styles.smallText, styles.lightText]}>{relativeTime.short(props.data.updatedDate)}</Text>
 					</View>
-					{props.data.content && (
+					{Boolean(props.data.content) && (
 						<Text style={[styles.smallText, styles.lightText]} numberOfLines={2}>
 							{props.data.content}
 						</Text>

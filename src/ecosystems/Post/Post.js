@@ -449,7 +449,7 @@ class Post extends Component {
 		return (
 			<ViewMeasure onLayout={this.props.onLayout} id={parseInt(this.props.data.id)}>
 				<View style={styles.mbVeryTight}>
-					{this.props.data.isIgnored && this.state.ignoreOverride && this.renderIgnoreBar()}
+					{Boolean(this.props.data.isIgnored) && Boolean(this.state.ignoreOverride) && this.renderIgnoreBar()}
 					<ShadowedArea style={[styles.pvWide, componentStyles.post, this.props.style]}>
 						{this.props.topComponent}
 						<View style={styles.flexRow}>
@@ -472,7 +472,7 @@ class Post extends Component {
 								<View style={styles.mvWide}>
 									<RichTextContent>{this.props.data.content}</RichTextContent>
 									<Animatable.View ref={r => (this._reactionWrap = r)}>
-										{this.props.data.reputation.reactions.length && (
+										{Boolean(this.props.data.reputation.reactions.length) && (
 											<View style={[styles.mtWide, styles.flexRow, styles.flexJustifyEnd, styles.flexWrap]} testId="reactionList">
 												{this.props.data.reputation.reactions.map(reaction => {
 													return (
@@ -492,9 +492,9 @@ class Post extends Component {
 								</View>
 							</View>
 						</View>
-						{(repButton || this.props.canReply) && (
+						{Boolean(repButton || this.props.canReply) && (
 							<PostControls style={styles.mhWide}>
-								{this.props.canReply && (
+								{Boolean(this.props.canReply) && (
 									<PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />
 								)}
 								{repButton}

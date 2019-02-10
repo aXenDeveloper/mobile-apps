@@ -69,7 +69,7 @@ class PollQuestion extends Component {
 				</View>
 				<View>
 					{questionContent}
-					{this.props.data.isMultiChoice && (
+					{Boolean(this.props.data.isMultiChoice) && (
 						<Text style={[styles.lightText, styles.standardText, styles.mtStandard]}>{Lang.get("poll_multiple_choice")}</Text>
 					)}
 				</View>

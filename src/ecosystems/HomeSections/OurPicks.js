@@ -61,10 +61,10 @@ class OurPicks extends Component {
 							{data.description}
 						</Text>
 					</View>
-					{(data.reputation && ( data.reputation.reactions.length || ( data.dataCount && data.dataCount.count ) ) ) &&
+					{(data.reputation && ( Boolean(data.reputation.reactions.length) || ( Boolean(data.dataCount) && Boolean(data.dataCount.count) ) ) ) &&
 						<View style={componentStyles.infoFooter}>
-							{data.reputation.reactions.length && <ReactionOverview style={[styles.mtTight, componentStyles.reactionOverview]} reactions={data.reputation.reactions} />}
-							{data.dataCount && data.dataCount.count && <Text style={[componentStyles.dataCount, styles.lightText]}>{data.dataCount.words}</Text>}
+							{Boolean(data.reputation.reactions.length) && <ReactionOverview style={[styles.mtTight, componentStyles.reactionOverview]} reactions={data.reputation.reactions} />}
+							{Boolean(data.dataCount) && Boolean(data.dataCount.count) && <Text style={[componentStyles.dataCount, styles.lightText]}>{data.dataCount.words}</Text>}
 						</View>
 					}
 				</React.Fragment>

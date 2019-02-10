@@ -402,12 +402,12 @@ class RootScreen extends Component {
 							siteName: this.props.site.settings.board_name
 						})}
 					</Text>
-					{this.props.site.settings.site_offline_message && (
+					{Boolean(this.props.site.settings.site_offline_message) && (
 						<RichTextContent dark style={styles.offlineMessage}>
 							{this.props.site.settings.site_offline_message}
 						</RichTextContent>
 					)}
-					{!this.props.auth.authenticated && (
+					{!Boolean(this.props.auth.authenticated) && (
 						<TouchableHighlight style={styles.tryAgain} onPress={() => this.tryAfterNetworkError()}>
 							<Text style={styles.tryAgainText}>Sign In Now</Text>
 						</TouchableHighlight>

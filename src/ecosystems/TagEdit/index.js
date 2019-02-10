@@ -109,8 +109,8 @@ class TagEdit extends Component {
 
 		return (
 			<View style={[componentStyles.tagRequirements, styles.mhWide, styles.pvStandard]}>
-				{tagCountMessage && <Text style={[styles.veryLightText, styles.smallText, styles.centerText]}>{tagCountMessage}</Text>}
-				{tagLenMessage && <Text style={[styles.veryLightText, styles.smallText, styles.centerText]}>{tagLenMessage}</Text>}
+				{Boolean(tagCountMessage) && <Text style={[styles.veryLightText, styles.smallText, styles.centerText]}>{tagCountMessage}</Text>}
+				{Boolean(tagLenMessage) && <Text style={[styles.veryLightText, styles.smallText, styles.centerText]}>{tagLenMessage}</Text>}
 			</View>
 		);
 	}

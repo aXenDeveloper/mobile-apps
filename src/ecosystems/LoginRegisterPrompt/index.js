@@ -147,7 +147,7 @@ export default class LoginRegisterPrompt extends Component {
 								<View style={componentStyles.loginInner}>
 									<Text style={componentStyles.loginText}>{this.props.message}</Text>
 								</View>
-								{this.props.closable &&
+								{Boolean(this.props.closable) &&
 									<TouchableOpacity onPress={this.closeLoginBox} hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}>
 										<Image source={require("../../../resources/close.png")} style={componentStyles.closeButton} />
 									</TouchableOpacity>}

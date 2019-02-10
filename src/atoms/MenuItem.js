@@ -11,7 +11,7 @@ export default class MenuItem extends Component {
 	render() {
 		return (
 			<TouchableOpacity onPress={this.props.data.onPress || null} style={componentStyles.menuItemWrap}>
-				{this.props.data.icon && <Image source={this.props.data.icon} style={componentStyles.icon} />}
+				{Boolean(this.props.data.icon) && <Image source={this.props.data.icon} style={componentStyles.icon} />}
 				<Text style={componentStyles.menuItem}>{this.props.data.text}</Text>
 			</TouchableOpacity>
 		);

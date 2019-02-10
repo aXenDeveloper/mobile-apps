@@ -180,7 +180,7 @@ class CreateTopicScreen extends Component {
 			<React.Fragment>
 				<KeyboardAvoidingView style={styles.flex} enabled behavior="padding">
 					<TextInput style={[styles.field, styles.fieldText]} placeholder="Topic Title" onChangeText={text => this.setState({ title: text })} />
-					{this.props.site.settings.tags_enabled && this.props.user.group.canTag && (
+					{Boolean(this.props.site.settings.tags_enabled) && Boolean(this.props.user.group.canTag) && (
 						<TagEdit definedTags={this.props.navigation.state.params.definedTags || null} />
 					)}
 					<QuillEditor placeholder="Post" update={this.updateContentState.bind(this)} style={styles.flex} editorID={this.editorID} />

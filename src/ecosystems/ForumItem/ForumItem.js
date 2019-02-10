@@ -137,7 +137,7 @@ class ForumItem extends Component {
 							</Text>
 						</View>
 					</View>
-					{!this.props.data.isRedirectForum && (
+					{!Boolean(this.props.data.isRedirectForum) && (
 						<LastPostInfo style={componentStyles.lastPost} photo={lastPostInfo.photo} photoSize={30} timestamp={lastPostInfo.date} />
 					)}
 				</ContentRow>

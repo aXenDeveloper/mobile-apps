@@ -68,7 +68,7 @@ class PollPreview extends Component {
 					</Text>
 					<View style={[styles.mtVeryTight, styles.flexRow, styles.flexJustifyCenter]}>
 						<Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.pluralize( Lang.get('votes'), this.props.data.votes )}</Text>
-						{this.props.data.hasVoted && <Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.get('poll_you_voted')}</Text>}
+						{Boolean(this.props.data.hasVoted) && <Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.get('poll_you_voted')}</Text>}
 						{this.getCloseText()}
 					</View>
 					<PostControls style={styles.mtWide}>

@@ -436,7 +436,7 @@ class ProfileScreen extends Component {
 							}}
 							style={componentStyles.profileHeader}
 						>
-							{this.props.data.core.member.coverPhoto.image && (
+							{Boolean(this.props.data.core.member.coverPhoto.image) && (
 								<Animated.View style={[StyleSheet.absoluteFill, { transform: [{ scale: this.imgScale }] }]}>
 									<FadeIn style={StyleSheet.absoluteFill} placeholderStyle={{ backgroundColor: "#333" }}>
 										<Image
@@ -453,7 +453,7 @@ class ProfileScreen extends Component {
 									<Text style={componentStyles.usernameText}>{this.props.data.core.member.name}</Text>
 									<Text style={componentStyles.groupText}>{this.props.data.core.member.group.name}</Text>
 								</Animated.View>
-								{showFollowButton && (
+								{Boolean(showFollowButton) && (
 									<View style={[styles.mtWide, componentStyles.buttonBar]}>
 										<Button
 											filled
@@ -471,13 +471,13 @@ class ProfileScreen extends Component {
 										<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.contentCount}</Text>
 										<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_content_count')}</Text>
 									</View>
-									{this.props.site.settings.reputation_show_profile && (
+									{Boolean(this.props.site.settings.reputation_show_profile) && (
 										<View style={[componentStyles.profileStatSection, componentStyles.profileStatSectionBorder]}>
 											<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.reputationCount}</Text>
 											<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_reputation')}</Text>
 										</View>
 									)}
-									{this.props.data.core.member.allowFollow && (
+									{Boolean(this.props.data.core.member.allowFollow) && (
 										<View style={componentStyles.profileStatSection}>
 											<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.follow.followCount}</Text>
 											<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_followers')}</Text>
@@ -528,7 +528,7 @@ class ProfileScreen extends Component {
 									<RichTextContent style={componentStyles.editorField}>{tab.content}</RichTextContent>
 								</ProfileTab>
 							))}
-							{this.props.data.core.member.allowFollow && (
+							{Boolean(this.props.data.core.member.allowFollow) && (
 								<ProfileTab
 									key='followers'
 									tabIndex={additionalTabs.length + 2}
