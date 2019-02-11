@@ -220,7 +220,6 @@ const componentStyles = StyleSheet.create({
 		letterSpacing: -0.2
 	},
 	streamItemInfo: {
-		flex: 1,
 		flexDirection: "row"
 	},
 	streamItemInfoInnerWithPhoto: {
@@ -230,6 +229,7 @@ const componentStyles = StyleSheet.create({
 		color: "#8F8F8F"
 	},
 	snippetWrapper: {
+		flex: 1,
 		marginTop: 9
 	},
 	snippetText: {
