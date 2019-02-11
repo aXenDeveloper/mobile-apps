@@ -31,9 +31,50 @@ class ForumListScreen extends Component {
 	constructor(props) {
 		super(props);
 
+		this._onPressHandlers = {};
 		this.state = {
 			textPromptVisible: false
 		};
+	}
+
+	/**
+	 * Memoization function that returns an onpress handler for a given forum
+	 *
+	 * @param 	object 	item 	The forum item to render
+	 * @return 	void
+	 */
+	getOnPressHandler(forum) {
+		if( _.isUndefined( this._onPressHandlers[ forum.id ] ) ){
+			if( forum.isRedirectForum ) {
+				// Redirect forum - so open webview
+				this._onPressHandlers[ forum.id ] = () => {
+					this.props.navigation.navigate("WebView", {
+						url: forum.url.full
+					});
+				};
+			} else if( forum.passwordRequired && !_.isUndefined( this.props.forums[ forum.id ] ) ){
+				// Password-protected forum that we don't have a stored password for - show prompt
+				this._onPressHandlers[ forum.id ] = () => {
+					this.setState({
+						textPromptVisible: true,
+						textPromptParams: {
+							id: forum.id
+						}
+					});
+				};
+			} else {
+				// Other forums - just navigate
+				this._onPressHandlers[ forum.id ] = () => {
+					this.props.navigation.navigate("TopicList", {
+						id: forum.id,
+						title: forum.name,
+						subtitle: Lang.pluralize(Lang.get("topics"), forum.topicCount)
+					});
+				};				
+			}
+		}
+
+		return this._onPressHandlers[ forum.id ];
 	}
 
 	/**
@@ -43,37 +84,7 @@ class ForumListScreen extends Component {
 	 * @return 	void
 	 */
 	renderItem(item) {
-		const params = {
-			id: item.data.id,
-			title: item.data.title,
-			subtitle: Lang.pluralize(Lang.get("topics"), item.data.topics)
-		};
-
-		const regularNavigate = () => {
-			this.props.navigation.navigate("TopicList", params);
-		};
-
-		const passwordPrompt = () => {
-			this.setState({
-				textPromptVisible: true,
-				textPromptParams: params
-			});
-		};
-
-		const redirectNavigate = () => {
-			this.props.navigation.navigate("WebView", {
-				url: item.data.url.full
-			});
-		};
-
-		let handler;
-		if( item.data.isRedirectForum ) {
-			handler = redirectNavigate;
-		} else if( !item.data.passwordRequired || ( item.data.passwordRequired && !_.isUndefined( this.props.forums[ item.data.id ] ) ) ){
-			handler = regularNavigate;
-		} else {
-			handler = passwordPrompt;
-		}
+		const handler = this.getOnPressHandler(item.data);		
 
 		return (
 			<ForumItem key={item.key} data={item.data} onPress={handler} />
