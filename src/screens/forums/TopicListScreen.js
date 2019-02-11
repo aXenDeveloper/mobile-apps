@@ -96,14 +96,6 @@ class TopicListScreen extends Component {
 			reachedEnd: false,
 			followModalVisible: false
 		};
-
-		if (this.props.auth.authenticated) {
-			this.props.navigation.setParams({
-				showFollowControl: true,
-				isFollowed: false,
-				onPressFollow: this.toggleFollowModal
-			});
-		}
 	}
 
 	/**
@@ -116,6 +108,29 @@ class TopicListScreen extends Component {
 			followModalVisible: !this.state.followModalVisible
 		});
 	};
+
+	/**
+	 * Component mount
+	 * See if title params were passed, and if so, use those
+	 *
+	 * @return 	void
+	 */
+	componentDidMount() {
+		if( !_.isUndefined( this.props.navigation.state.params ) && !_.isUndefined( this.props.navigation.state.params.title ) ){
+			this.props.navigation.setParams({
+				title: this.props.navigation.state.params.title,
+				subtitle: this.props.navigation.state.params.subtitle
+			});
+		}
+
+		if (this.props.auth.authenticated) {
+			this.props.navigation.setParams({
+				showFollowControl: true,
+				isFollowed: false,
+				onPressFollow: this.toggleFollowModal
+			});
+		}
+	}
 
 	/**
 	 * Update the navigation params to set the title if we came direct, e.g. from search
