@@ -410,6 +410,12 @@ const styles = StyleSheet.create({
 	mediumText: {
 		fontWeight: "600"
 	},
+	positiveText: {
+		color: styleVars.positive
+	},
+	negativeText: {
+		color: styleVars.negative
+	},
 
 	/* Border styles */
 	bBorder: { borderBottomWidth: 1 },

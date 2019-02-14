@@ -33,6 +33,7 @@ const LangFragment = gql`
 		our_picks: phrase(key: "app_our_picks")
 		new_content: phrase(key: "app_new_content")
 		active_users: phrase(key: "app_active_users")
+		popular_contributors: phrase(key: "app_popular_contributors")
 		x_more: phrase(key: "app_x_more")
 		no_users_online: phrase(key: "app_no_users_online")
 		x_guests_online: phrase(key: "app_x_guests_online")
@@ -70,6 +71,7 @@ const LangFragment = gql`
 		cancel_upload: phrase(key: "app_cancel_upload")
 		attachment_options: phrase(key: "app_attachment_options")
 		no_matching_members: phrase(key: "app_no_matching_members")
+		rep: phrase(key: "app_rep")
 
 		followed_member: phrase(key: "app_followed_member")
 		unfollowed_member: phrase(key: "app_unfollowed_member")

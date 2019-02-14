@@ -1,6 +1,8 @@
 const icons = {
 	ARCHIVED: require("../resources/archived.png"),
 	BELL: require("../resources/notification_settings.png"),
+	CARET_UP_SOLID: require("../resources/caret_up_solid.png"),
+	CARET_DOWN_SOLID: require("../resources/caret_down_solid.png"),
 	CHECKMARK2: require("../resources/checkmark_alt.png"),
 	CHECKMARK: require("../resources/checkmark.png"),
 	CHECKMARK_CIRCLE_SOLID: require("../resources/checkmark_circle_solid.png"),

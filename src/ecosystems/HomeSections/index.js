@@ -5,6 +5,8 @@ import OurPicks from './OurPicks';
 import OurPicksFragment from './OurPicksFragment';
 import ActiveUsers from './ActiveUsers';
 import ActiveUsersFragment from './ActiveUsersFragment';
+import PopularContributors from './PopularContributors';
+import PopularContributorsFragment from './PopularContributorsFragment';
 
 //export { Post as Post };
 //export { NewContent as NewContent };
@@ -28,5 +30,11 @@ export const HomeSections = {
 		fragment: ActiveUsersFragment,
 		fragmentName: 'ActiveUsersFragment',
 		icon: require("../../../resources/home_activeusers.png")
-	}
+	},
+	popular_contributors: {
+		component: PopularContributors,
+		fragment: PopularContributorsFragment,
+		fragmentName: 'PopularContributorsFragment',
+		icon: require("../../../resources/home_new.png")
+	},
 };
