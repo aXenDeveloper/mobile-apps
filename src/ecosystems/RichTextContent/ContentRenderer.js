@@ -4,8 +4,10 @@ import HTML from "react-native-render-html";
 import { iframe, a } from "react-native-render-html/src/HTMLRenderers";
 import { compose } from "react-apollo";
 import { withNavigation } from "react-navigation";
+import { connect } from "react-redux";
 import _ from "underscore";
 
+import { openModalWebview } from "../../redux/actions/app";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import { mapUrlToRoute } from "../../utils/isSupportedType";
@@ -180,13 +182,18 @@ class ContentRenderer extends PureComponent {
 			return;
 		}
 
-		// Not an image, so open in webview
-		this.props.navigation.navigate({
+		// @todo check whether it's internal/external link
+		// internal links should navigate to webview screen
+		this.props.dispatch(openModalWebview({
+			url: data
+		}));
+		
+		/*this.props.navigation.navigate({
 			routeName: "WebView",
 			params: {
 				url: data
 			}
-		});
+		});*/
 	}
 
 	/**
@@ -246,5 +253,6 @@ class ContentRenderer extends PureComponent {
 }
 
 export default compose(
-	withNavigation
+	withNavigation,
+	connect()
 )(ContentRenderer);
