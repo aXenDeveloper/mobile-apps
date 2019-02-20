@@ -4,6 +4,7 @@ import FadeIn from "react-native-fade-in-image";
 import { withNavigation } from "react-navigation";
 import { graphql, compose, withApollo } from "react-apollo";
 
+import NavigationService from "../../utils/NavigationService";
 import Lang from "../../utils/Lang";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
 import StreamItem from "./StreamItem";
@@ -14,12 +15,12 @@ import RichTextContent from "../../ecosystems/RichTextContent";
 import relativeTime from "../../utils/RelativeTime";
 import getSuitableImage from "../../utils/getSuitableImage";
 import componentStyles from "./styles";
-import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import styles, { styleVars } from "../../styles";
 
 class StreamCard extends PureComponent {
 	constructor(props) {
 		super(props);
+		this.onPress = this.onPress.bind(this);
 	}
 
 	/**
@@ -75,21 +76,14 @@ class StreamCard extends PureComponent {
 	 * onPress handler for this stream item. Redirects to appropriate screen if supported,
 	 * or webview screen if not.
 	 *
+	 * @todo support reviews
 	 * @return 	void
 	 */
-	onPress = () => {
-		const isSupported = isSupportedUrl([this.props.data.url.app, this.props.data.url.module, this.props.data.url.controller]);
-
-		if (isSupported) {
-			this.props.navigation.navigate(isSupported, {
-				id: this.props.data.itemID,
-				...(this.props.data.isComment ? { findComment: this.props.data.objectID } : {})
-			});
-		} else {
-			this.props.navigation.navigate("WebView", {
-				url: this.props.data.url.full
-			});
-		}
+	onPress() {
+		NavigationService.navigate( this.props.data.url, {
+			id: this.props.data.itemID,
+			...(this.props.data.isComment ? { findComment: this.props.data.objectID } : {})
+		});
 	}
 
 	render() {

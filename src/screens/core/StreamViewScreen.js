@@ -15,7 +15,6 @@ import CheckList from "../../ecosystems/CheckList";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import getErrorMessage from "../../utils/getErrorMessage";
-import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import styles from "../../styles";
 
 const StreamViewQuery = gql`

@@ -5,7 +5,7 @@
     "privacy": "unlisted",
     "extra": {
 	"oauth_client_id": "ca21723b69d04411468926e9ed3d356d",
-	"api_url": "http://172.122.182.198/ipsdev/Community/",
+	"api_url": "http://192.168.1.33/ipsdev/Community/",
 	"api_key": "NTU2ODhjOWQ2MDMwMWVlYmQ2Mjg5NjVjN2FhOGNiNDY=",
       /*"oauth_client_id": "d5f20f784ad0c7eb51e9b53f16ac370d",
       "api_url": "https://auto.invisionalpha.com/",

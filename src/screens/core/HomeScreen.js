@@ -22,7 +22,6 @@ import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import ContentCard from "../../ecosystems/ContentCard";
 import getErrorMessage from "../../utils/getErrorMessage";
-import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import styles, { styleVars } from "../../styles";
 
 import { HomeSections } from "../../ecosystems/HomeSections";

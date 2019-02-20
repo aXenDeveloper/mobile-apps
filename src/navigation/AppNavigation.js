@@ -34,6 +34,7 @@ import CreateTopicScreen from "../screens/forums/CreateTopicScreen";
 import ReplyTopicScreen from "../screens/forums/ReplyTopicScreen";
 
 //import BrowserModal from "../ecosystems/BrowserModal";
+import NavigationService from "../utils/NavigationService";
 import { resetModalWebview } from "../redux/actions/app";
 import { NavigationTabIcon, NavigationTabNotification } from "../ecosystems/Navigation";
 import CustomHeader from "../ecosystems/CustomHeader";
@@ -403,10 +404,10 @@ class AppNavigation extends Component {
 		}
 
 		// Check whether we need to open the WebBrowser
-		if( this.props.app.webview.active && prevProps.app.webview.active !== this.props.app.webview.active ){
+		/*if( this.props.app.webview.active && prevProps.app.webview.active !== this.props.app.webview.active ){
 			let result = await WebBrowser.openBrowserAsync( this.props.app.webview.url );
 			this.props.dispatch(resetModalWebview());
-		}
+		}*/
 	}
 
 	/**
@@ -415,7 +416,7 @@ class AppNavigation extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<this.state.MasterNavigation />
+				<this.state.MasterNavigation ref={navigatorRef => { NavigationService.setTopLevelNavigator(navigatorRef) }} />
 			</React.Fragment>
 		);
 	}

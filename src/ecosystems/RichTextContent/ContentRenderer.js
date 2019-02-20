@@ -10,11 +10,11 @@ import _ from "underscore";
 import { openModalWebview } from "../../redux/actions/app";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
-import { mapUrlToRoute } from "../../utils/isSupportedType";
 import Lightbox from "../Lightbox";
 import { Mention, Embed } from "../RichTextContent";
 import { styleVars, richTextStyles } from "../../styles";
 import dom from "../../utils/DOM";
+import NavigationService from "../../utils/NavigationService";
 
 class ContentRenderer extends PureComponent {
 	constructor(props) {
@@ -182,18 +182,7 @@ class ContentRenderer extends PureComponent {
 			return;
 		}
 
-		// @todo check whether it's internal/external link
-		// internal links should navigate to webview screen
-		this.props.dispatch(openModalWebview({
-			url: data
-		}));
-		
-		/*this.props.navigation.navigate({
-			routeName: "WebView",
-			params: {
-				url: data
-			}
-		});*/
+		NavigationService.navigate( data );
 	}
 
 	/**

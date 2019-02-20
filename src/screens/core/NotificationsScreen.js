@@ -5,13 +5,13 @@ import { graphql, withApollo, compose } from "react-apollo";
 import { connect } from "react-redux";
 import _ from "underscore";
 
+import NavigationService from "../../utils/NavigationService";
 import Lang from "../../utils/Lang";
 import { NotificationRow, NotificationFragment } from "../../ecosystems/Notification";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SectionHeader from "../../atoms/SectionHeader";
 import ErrorBox from "../../atoms/ErrorBox";
 import HeaderButton from "../../atoms/HeaderButton";
-import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import { updateNotificationCount } from "../../redux/actions/user";
 import EndOfComments from "../../atoms/EndOfComments";
 
@@ -284,21 +284,12 @@ class NotificationsScreen extends Component {
 				// In this case, while the notification won't be marked as read we'll still
 				// take the user to the item, so ignore it.
 				console.error(err);
-				return;
 			}
 		}
 
-		const isSupported = isSupportedUrl([item.url.app, item.url.module, item.url.controller]);
-
-		if (isSupported) {
-			this.props.navigation.navigate(isSupported, {
-				id: item.itemID
-			});
-		} else {
-			this.props.navigation.navigate("WebView", {
-				url: item.url.full
-			});
-		}
+		NavigationService.navigate( item.url.app, {
+			id: item.itemID
+		});
 	}
 
 	render() {
