@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 
 class WebViewScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
-		headerTitle: "..."
+		headerTitle: "Internal Page"
 	});
 
 	constructor(props) {
@@ -13,11 +13,7 @@ class WebViewScreen extends Component {
 	}
 
 	render() {
-		let headers = {};
-
-		if( this.props.navigation.state.params.url.startsWith( this.props.site.settings.base_url ) ){
-			headers = { 'x-ips-app': 'true' };
-		}
+		let headers = { 'x-ips-app': 'true' };
 
 		return (
 			<View style={{ flex: 1 }}>

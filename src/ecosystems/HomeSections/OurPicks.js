@@ -3,11 +3,11 @@ import { Text, Image, View, FlatList, StyleSheet, TouchableHighlight } from 'rea
 import _ from "underscore";
 import FadeIn from 'react-native-fade-in-image';
 
+import NavigationService from "../../utils/NavigationService";
 import LargeTitle from "../../atoms/LargeTitle";
 import ContentCard from "../../ecosystems/ContentCard";
 import { ReactionOverview } from "../../ecosystems/Reaction";
 import getSuitableImage from "../../utils/getSuitableImage";
-import { isSupportedUrl } from "../../utils/isSupportedType";
 import Lang from "../../utils/Lang";
 import styles, { styleVars } from '../../styles';
 
@@ -106,36 +106,22 @@ class OurPicks extends Component {
 	 * @return 	void
 	 */
 	onPressItem(data) {
-		let isSupported;
-		let navigateParams = {
-			url: data.url.full
-		};
+		let params;
 
 		// Figure out if we support this type of view, based on the itemType
+		// @todo support review
 		if( data.itemType == 'COMMENT' ){
-			isSupported = isSupportedUrl([ data.item.item.url.app, data.item.item.url.module, data.item.item.url.controller ]);
-			navigateParams = {
+			params = {
 				id: data.item.item.id,
 				findComment: parseInt( data.item.id )
 			};
-		} else if( data.itemType == 'ITEM' ){
-			isSupported = isSupportedUrl([ data.item.url.app, data.item.url.module, data.item.url.controller ]);
-			navigateParams = {
-				id: data.item.id
-			};
 		} else {
-			isSupported = isSupportedUrl([ data.item.url.app, data.item.url.module, data.item.url.controller ]);
-			navigateParams = {
+			params = {
 				id: data.item.id
 			};
 		}
-		
-		// Now redirect to it
-		if( isSupported ){
-			this.props.navigation.navigate( isSupported, navigateParams);
-		} else {
-			this.props.navigation.navigate("WebView", navigateParams);
-		}
+
+		NavigationService.navigate( data.itemType === 'COMMENT' ? data.item.item.url : data.item.url, params );
 	}
 
 	render() {

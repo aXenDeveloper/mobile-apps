@@ -6,9 +6,9 @@ import { connect } from "react-redux";
 import _ from "underscore";
 import { transparentize } from "polished";
 
+import NavigationService from "../../../utils/NavigationService";
 import { receiveAuth, logIn } from "../../../redux/actions/auth";
 import Lang from "../../../utils/Lang";
-import URL from "../../../utils/URL";
 import { isIphoneX } from "../../../utils/isIphoneX";
 import Button from "../../../atoms/Button";
 import LoginButton from "../../../atoms/LoginButton";
@@ -78,7 +78,7 @@ class LoginScreen extends Component {
 		let url;
 
 		if (this.props.site.settings.allow_reg !== "REDIRECT") {
-			url = URL.getInternalUrl({
+			url = NavigationService.constructInternalUrl({
 				app: 'core',
 				module: 'system',
 				controller: 'register'
@@ -133,7 +133,7 @@ class LoginScreen extends Component {
 	forgotPasswordPress = () => {
 		this.props.navigation.navigate({
 			routeName: "AuthWebView", 
-			params: { url: URL.getInternalUrl({
+			params: { url: NavigationService.constructInternalUrl({
 				app: 'core',
 				module: 'system',
 				controller: 'lostpass'
@@ -153,7 +153,7 @@ class LoginScreen extends Component {
 			this.handlerPresses[ handler.id ] = () => {
 				this.props.navigation.navigate({
 					routeName: "AuthWebView", 
-					params: { url: URL.getInternalUrl({}, handler.url) },
+					params: { url: NavigationService.constructInternalUrl({}) },
 					key: `handler_${handler.id}`
 				});
 			};

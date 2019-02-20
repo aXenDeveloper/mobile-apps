@@ -6,10 +6,10 @@ import { withNavigation } from "react-navigation";
 import FadeIn from "react-native-fade-in-image";
 import _ from "underscore";
 
+import NavigationService from "../../utils/NavigationService";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
-import { isSupportedUrl } from "../../utils/isSupportedType";
 import getSuitableImage from "../../utils/getSuitableImage";
 import styles, { styleVars } from "../../styles";
 
@@ -87,22 +87,11 @@ class Embed extends Component {
 	onPressEmbed() {
 		// Get the correct data (item or comment)
 		const data = this._getNormalizedData();
-		const isSupported = isSupportedUrl([data.primary.url.app, data.primary.url.module, data.primary.url.controller]);
 
-		if (isSupported) {
-			this.props.navigation.navigate({
-				routeName: isSupported,
-				params: {
-					id: data.item.id,
-					findComment: data.comment !== null ? data.comment.id : null
-				},
-				key: isSupported + data.item.id // We could be redirecting to the same route we're already on, so make sure it's unique
-			});
-		} else {
-			this.props.navigation.navigate("WebView", {
-				url: data.primary.url.full
-			});
-		}
+		NavigationService.navigate( data.primary.url, {
+			id: data.item.id,
+			findComment: data.comment !== null ? data.comment.id : null
+		});
 	}
 
 	_getNormalizedData() {

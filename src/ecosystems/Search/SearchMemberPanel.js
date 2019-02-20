@@ -6,7 +6,6 @@ import { withNavigation } from "react-navigation";
 import PropTypes from "prop-types";
 
 import Lang from "../../utils/Lang";
-import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import ErrorBox from "../../atoms/ErrorBox";
 import MemberRow from "../../ecosystems/MemberRow";

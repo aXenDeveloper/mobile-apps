@@ -11,7 +11,6 @@ import { graphql, compose, withApollo } from "react-apollo";
 import { withNavigation } from "react-navigation";
 
 import Lang from "../../utils/Lang";
-import { isSupportedType, isSupportedUrl } from "../../utils/isSupportedType";
 import ErrorBox from "../../atoms/ErrorBox";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SearchResult from "./SearchResult";

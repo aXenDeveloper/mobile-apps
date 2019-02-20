@@ -4,15 +4,17 @@ import HTML from "react-native-render-html";
 import { iframe, a } from "react-native-render-html/src/HTMLRenderers";
 import { compose } from "react-apollo";
 import { withNavigation } from "react-navigation";
+import { connect } from "react-redux";
 import _ from "underscore";
 
+import { openModalWebview } from "../../redux/actions/app";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
-import { mapUrlToRoute } from "../../utils/isSupportedType";
 import Lightbox from "../Lightbox";
 import { Mention, Embed } from "../RichTextContent";
 import { styleVars, richTextStyles } from "../../styles";
 import dom from "../../utils/DOM";
+import NavigationService from "../../utils/NavigationService";
 
 class ContentRenderer extends PureComponent {
 	constructor(props) {
@@ -180,13 +182,7 @@ class ContentRenderer extends PureComponent {
 			return;
 		}
 
-		// Not an image, so open in webview
-		this.props.navigation.navigate({
-			routeName: "WebView",
-			params: {
-				url: data
-			}
-		});
+		NavigationService.navigate( data );
 	}
 
 	/**
@@ -246,5 +242,6 @@ class ContentRenderer extends PureComponent {
 }
 
 export default compose(
-	withNavigation
+	withNavigation,
+	connect()
 )(ContentRenderer);
