@@ -20,7 +20,15 @@ const supported = {
 	},
 	urls: [
 		{
-			test: new RegExp("\/profile/(.+?)-(.+?)", "i");
+			test: new RegExp("profile\/([0-9]+?)-([^\/]+)?", "i"),
+			matchCallback: (found) => {
+				return {
+					routeName: "Profile",
+					params: {
+						id: found[1]
+					}
+				};
+			}
 		}
 	]
 }
