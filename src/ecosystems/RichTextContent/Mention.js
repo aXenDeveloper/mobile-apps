@@ -4,6 +4,7 @@ import { compose } from "react-apollo";
 import { withNavigation } from "react-navigation";
 import _ from "underscore";
 
+import NavigationService from "../../utils/NavigationService";
 import styles, { styleVars } from "../../styles";
 
 class Mention extends Component {
@@ -15,7 +16,7 @@ class Mention extends Component {
 	}
 
 	onPress() {
-		this.props.navigation.navigate("Profile", {
+		NavigationService.navigateToScreen("Profile", {
 			id: this.props.userid,
 			name: this.props.name
 		});

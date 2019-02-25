@@ -76,6 +76,23 @@ class NavigationService {
 		// If we're still here, we don't have a screen to show for this URL, so we'll either
 		// open it in an external browser or in a webview screen
 		if( this.isInternalUrl(url) || options.forceInternal ){
+			const urlToCheck = url.replace( this._baseUrl, '' );
+
+			// Loop through each url pattern we have and see if any match
+			for( let i = 0; i < supported.urls.length; i++ ){
+				const urlType = supported.urls[i];
+
+				if( urlType.test.test(urlToCheck) ){
+					// URL matches, so feed it into .match to get the screen and params, if any
+					const result = urlType.matchCallback( urlToCheck.match(urlType.test) );
+
+					if( result ){
+						return this.navigateToScreen( result.routeName, Object.assign({}, params, result.params) );
+					}
+				}
+			}
+
+			// If we make it here, load in our webview screen
 			this.navigateToScreen("WebView", { 
 				...params,
 				url 
@@ -119,7 +136,7 @@ class NavigationService {
 	 * @return 	string|boolean		Route name if available, false otherwise
 	 */
 	getScreenFromUrlComponents(app, module, controller) {
-		let currentPiece = supported.urls;
+		let currentPiece = supported.appComponents;
 		let renderComponent = false;
 		let url = [app, module, controller];
 
