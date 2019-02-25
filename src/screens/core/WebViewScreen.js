@@ -113,8 +113,11 @@ class WebViewScreen extends Component {
 	}
 
 	DOCUMENT_TITLE(data) {
+		// Remove " - <board_name>" from title, no need to show it in-app
+		const fixedTitle = data.title.replace(` - ${this.props.site.settings.board_name}`, '');
+
 		this.props.navigation.setParams({
-			title: data.title
+			title: fixedTitle
 		});
 	}
 
