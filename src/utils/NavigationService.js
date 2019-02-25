@@ -119,7 +119,7 @@ class NavigationService {
 	 * @return 	string|boolean		Route name if available, false otherwise
 	 */
 	getScreenFromUrlComponents(app, module, controller) {
-		let currentPiece = supported.urls;
+		let currentPiece = supported.appComponents;
 		let renderComponent = false;
 		let url = [app, module, controller];
 

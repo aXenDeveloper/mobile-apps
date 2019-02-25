@@ -1,11 +1,12 @@
 // Keeps track of the types of content the app is able to display
 // If content types other than these are loaded, they'll be displayed in a WebView instead
+// There's a few ways we identify content: classnames, controller paths, and basic URLs.
 const supported = {
 	classes: [
 		"IPS\\forums\\Topic",
 		"IPS\\forums\\Topic\\Post"
 	],
-	urls: {
+	appComponents: {
 		forums: {
 			forums: {
 				topic: "TopicView"
@@ -16,7 +17,12 @@ const supported = {
 				profile: "Profile"
 			}
 		}
-	}
+	},
+	urls: [
+		{
+			test: new RegExp("\/profile/(.+?)-(.+?)", "i");
+		}
+	]
 }
 
 export default supported;
