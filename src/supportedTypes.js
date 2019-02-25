@@ -19,6 +19,10 @@ const supported = {
 		}
 	},
 	urls: [
+
+		// -------
+		// CORE SCREENS
+		// Profile view
 		{
 			test: new RegExp("profile\/([0-9]+?)-([^\/]+)?", "i"),
 			matchCallback: (found) => {
@@ -28,6 +32,33 @@ const supported = {
 						id: found[1]
 					}
 				};
+			}
+		},
+
+		// -------
+		// FORUMS SCREENS
+		// Forum view
+		{
+			test: new RegExp("forum/([0-9]+?)-([^\/]+)?", "i"),
+			matchCallback: (found) => {
+				return {
+					routeName: "TopicList",
+					params: {
+						id: found[1]
+					}
+				}
+			}
+		},
+		// Topic view
+		{
+			test: new RegExp("topic/([0-9]+?)-([^\/]+)?", "i"),
+			matchCallback: (found) => {
+				return {
+					routeName: "TopicView",
+					params: {
+						id: found[1]
+					}
+				}
 			}
 		}
 	]
