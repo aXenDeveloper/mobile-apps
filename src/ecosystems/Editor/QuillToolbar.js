@@ -42,6 +42,7 @@ class QuillToolbar extends Component {
 		if( !prevProps.editor.mentions.active && this.props.editor.mentions.active ){
 			this.setState({
 				showMentionToolbar: true,
+				showImageToolbar: false,
 				overrideMentionBar: false
 			}, () => {
 				this._wrapper.transitionTo({ height: 130 });
@@ -93,10 +94,12 @@ class QuillToolbar extends Component {
 	showImageToolbar() {
 		this.setState(
 			{
-				showImageToolbar: true
+				showImageToolbar: true,
+				showMentionToolbar: false
 			},
 			() => {
 				this._wrapper.transitionTo({ height: 75 });
+				this._imageToolbar.transitionTo({ opacity: 1 });
 				this._toolbar.transitionTo({ opacity: 0 });
 			}
 		);
@@ -157,7 +160,7 @@ class QuillToolbar extends Component {
 	 */
 	getFormattingHandler(button, option = null) {
 		if (_.isUndefined(this._formattingHandlers[button])) {
-			this._formattingHandlers = () => this.toggleFormatting(button, option);
+			this._formattingHandlers[button] = () => this.toggleFormatting(button, option);
 		}
 
 		return this._formattingHandlers[button];
