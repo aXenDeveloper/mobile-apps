@@ -7,6 +7,9 @@ import { connect } from "react-redux";
 import { LinearGradient, WebBrowser } from "expo";
 
 // ----
+// IPS screens
+import MultiHomeScreen from "../screens/ips/MultiHomeScreen";
+// ----
 // Core screens
 import HomeScreen from "../screens/core/HomeScreen";
 import BrowseCommunityScreen from "../screens/core/BrowseCommunityScreen";
@@ -46,7 +49,6 @@ class AppNavigation extends Component {
 	constructor(props) {
 		super(props);
 
-		this._ForumTabBar = this._getForumTabBar();
 		this._CommunityStack = this._getMainStack();
 		this._StreamStack = this._getMainStack({}, 'StreamView');
 		this._NotificationStack = this._getMainStack({}, 'NotificationsStack');
@@ -146,29 +148,6 @@ class AppNavigation extends Component {
 			}
 		});
 	}
-
-	/*_getStreamStack(options, initialRoute) {
-		return createStackNavigator(
-			{
-				StreamView: { screen: StreamViewScreen	},
-			},
-			{
-				initialRouteName: initialRoute || 'StreamView',
-				cardStyle: styles.stackCardStyle,
-				navigationOptions: Object.assign({
-					title: 'Streams',
-					header: props => {
-						return <CustomHeader {...props} title="Streams" />;
-					},
-					headerTitleStyle: styles.headerTitle,
-					headerStyle: styles.header,
-					headerBackTitleStyle: styles.headerBack,
-					headerTintColor: "white",
-					headerBackTitle: null
-				}, options || null)
-			}
-		);
-	}*/
 
 	/**
 	 * Return the overall master navigation component
@@ -321,12 +300,6 @@ class AppNavigation extends Component {
 		}
 
 		const TabBarComponent = (props) => (<BottomTabBar {...props} />);
-		/*
-		tabBarComponent: props =>
-				<TabBarComponent
-				{...props}
-				style={{ borderTopColor: '#605F60' }}
-			/>,*/
 
 		return createBottomTabNavigator(tabConfig, {
 			lazy: true,			
@@ -338,34 +311,6 @@ class AppNavigation extends Component {
 				style: styles.primaryTabBar
 			}
 		});
-	}
-
-	/**
-	 * Return the tab bar for forum view
-	 *
-	 * @return object
-	 */
-	_getForumTabBar() {
-		return createMaterialTopTabNavigator(
-			{
-				All: {
-					screen: ForumListScreen,
-					navigationOptions: {
-						tabBarLabel: "All Forums".toUpperCase(),
-					}
-				},
-				Followed: {
-					screen: ForumFollowedScreen,
-					navigationOptions: {
-						tabBarLabel: "Followed Forums".toUpperCase()
-					}
-				}
-			},
-			{
-				swipeEnabled: false,
-				tabBarOptions: tabStyles
-			}
-		);
 	}
 
 	/**
@@ -402,12 +347,6 @@ class AppNavigation extends Component {
 				MasterNavigation: this._getMasterNavigation()
 			});
 		}
-
-		// Check whether we need to open the WebBrowser
-		/*if( this.props.app.webview.active && prevProps.app.webview.active !== this.props.app.webview.active ){
-			let result = await WebBrowser.openBrowserAsync( this.props.app.webview.url );
-			this.props.dispatch(resetModalWebview());
-		}*/
 	}
 
 	/**
