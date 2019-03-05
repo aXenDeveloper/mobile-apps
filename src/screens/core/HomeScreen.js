@@ -13,7 +13,9 @@ import { graphql, withApollo } from "react-apollo";
 import _ from "underscore";
 import { connect } from "react-redux";
 
+import NavigationService from "../../utils/NavigationService";
 import Lang from "../../utils/Lang";
+import GoToMulti from "../../atoms/GoToMulti";
 import { Post } from "../../ecosystems/Post";
 import LargeTitle from "../../atoms/LargeTitle";
 import ErrorBox from "../../atoms/ErrorBox";
@@ -35,8 +37,11 @@ on the homepage widgets that have been configured on the site.
 const HomeSectionsToShow = ["new_content", "active_users", "our_picks", "popular_contributors"];
 
 class HomeScreen extends Component {
-	static navigationOptions = {
-		title: "Invision Community"
+	static navigationOptions = ({ navigation }) => {
+		return {
+			title: "Invision Community",
+			headerLeft: <GoToMulti />
+		}
 	};
 
 	static CARD_WIDTH = 285;

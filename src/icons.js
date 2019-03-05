@@ -1,5 +1,6 @@
 const icons = {
 	ARCHIVED: require("../resources/archived.png"),
+	BARS: require("../resources/bars.png"),
 	BELL: require("../resources/notification_settings.png"),
 	CARET_UP_SOLID: require("../resources/caret_up_solid.png"),
 	CARET_DOWN_SOLID: require("../resources/caret_down_solid.png"),

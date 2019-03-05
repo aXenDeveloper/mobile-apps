@@ -4,7 +4,7 @@ import configureStore from "./src/redux/configureStore";
 import { connect } from "react-redux";
 import { Font } from "expo";
 
-import RootScreen from "./src/screens/RootScreen";
+import CommunityRootScreen from "./src/screens/ips/CommunityRootScreen";
 
 const store = configureStore();
 
@@ -21,7 +21,7 @@ export default class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <RootScreen />
+        <CommunityRootScreen />
       </Provider>
     );
   }

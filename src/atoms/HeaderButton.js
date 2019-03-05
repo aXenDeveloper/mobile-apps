@@ -12,7 +12,7 @@ const HeaderButton = (props) => {
 	const imageToUse = !_.isUndefined(icons[ props.icon ]) ? icons[ props.icon ] : props.icon;
 
 	return (
-		<TouchableOpacity style={[componentStyles.wrapper, props.style]} onPress={props.onPress || null}>
+		<TouchableOpacity style={[componentStyles.wrapper, props.position == 'left' ? styles.mlWide : styles.mrWide, props.style]} onPress={props.onPress || null}>
 			<Image source={imageToUse} style={[ componentStyles.icon, { width: props.size || 26, height: props.size || 26 } ]} />
 		</TouchableOpacity>
 	);
@@ -21,9 +21,6 @@ const HeaderButton = (props) => {
 export default HeaderButton;
 
 const componentStyles = StyleSheet.create({
-	wrapper: {
-		marginRight: 12
-	},
 	icon: {
 		tintColor: styleVars.headerText,
 		width: 26,

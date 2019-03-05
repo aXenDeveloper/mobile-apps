@@ -203,6 +203,9 @@ class AppNavigation extends Component {
 
 		return createAppContainer(
 			createDrawerNavigator({
+				Multi: {
+					screen: MultiHomeScreen
+				},
 				Master: {
 					screen: masterStack
 				}
