@@ -105,45 +105,19 @@ class CommunityRootScreen extends Component {
 			offline: false
 		};
 
-		this.state = {
+		this.defaultState = {
 			loading: true,
 			siteOffline: false,
 			canAccess: false,
-			showOfflineBanner: false
+			showOfflineBanner: false,
 		};
 
-		this._notificationTimeout = null;
-
-		// In order for Apollo to use fragments with union types, as we do for generic core_Content
-		// queries, we need to pass it the schema definition in advance.
-		// See https://www.apollographql.com/docs/react/advanced/fragments.html#fragment-matcher
-		const fragmentMatcher = new IntrospectionFragmentMatcher({
-			introspectionQueryResultData
-		});
-
-		// Apollo config & setup
-		const authLink = (operation, next) => {
-			operation.setContext(context => ({
-				...context,
-				credentials: "same-origin",
-				headers: {
-					...context.headers,
-					Authorization: this.props.auth.access_token ? `Bearer ${this.props.auth.access_token}` : `Basic ${Expo.Constants.manifest.extra.api_key}`
-				}
-			}));
-			return next(operation);
+		this.state = {
+			...this.defaultState,
+			client: this.getClient()
 		};
 
-		const link = ApolloLink.from([
-			authLink,
-			new HttpLink({
-				uri: `${Expo.Constants.manifest.extra.api_url}/api/graphql/`
-			})
-		]);
-		this._client = new ApolloClient({
-			link: link,
-			cache: new InMemoryCache({ fragmentMatcher })
-		});
+		this._notificationTimeout = null;		
 	}
 
 	/**
@@ -164,13 +138,57 @@ class CommunityRootScreen extends Component {
 	 * @return 	void
 	 */
 	componentWillUnmount() {
-		if (this._refreshTimer) {
-			clearInterval(this._refreshTimer);
-		}
+		this.clearIntervals();	
+	}
 
-		if (this._notificationTimeout) {
-			clearInterval(this._notificationTimeout);
-		}
+	/**
+	 * Clears intervals we've set up in this component
+	 *
+	 * @return 	void
+	 */
+	clearIntervals() {
+		clearInterval(this._refreshTimer);
+		clearInterval(this._notificationTimeout);
+	}
+
+	/**
+	 * Gets an Apollo client instance
+	 *
+	 * @return 	void
+	 */
+	getClient() {
+		// In order for Apollo to use fragments with union types, as we do for generic core_Content
+		// queries, we need to pass it the schema definition in advance.
+		// See https://www.apollographql.com/docs/react/advanced/fragments.html#fragment-matcher
+		const fragmentMatcher = new IntrospectionFragmentMatcher({
+			introspectionQueryResultData
+		});
+
+		// Apollo config & setup
+		const authLink = (operation, next) => {
+			operation.setContext(context => ({
+				...context,
+				credentials: "same-origin",
+				headers: {
+					...context.headers,
+					Authorization: this.props.auth.access_token ? `Bearer ${this.props.auth.access_token}` : `Basic ${this.props.app.currentCommunity.apiKey}`
+				}
+			}));
+			return next(operation);
+		};
+
+		const link = ApolloLink.from([
+			authLink,
+			new HttpLink({
+				uri: `${this.props.app.currentCommunity.apiUrl}/api/graphql/`
+			})
+		]);
+		const client = new ApolloClient({
+			link: link,
+			cache: new InMemoryCache({ fragmentMatcher })
+		});
+
+		return client;
 	}
 
 	/**
@@ -217,6 +235,17 @@ class CommunityRootScreen extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps, prevState) {
+
+		// Has our site connection updated?
+		// If so, we need to tear down all existing connection and set up a new client with the new URL.
+		if( prevProps.app.currentCommunity.apiUrl !== this.props.app.currentCommunity.apiUrl || prevProps.app.currentCommunity.apiKey !== this.props.app.currentCommunity.apiKey ){
+			this.clearIntervals();
+			this.setState({
+				...this.defaultState,
+				client: this.getClient()
+			});
+		}
+
 		// If we're done checking authentication, run our boot query to get initial data
 		if (
 			// If prev auth state doesn't match current auth state...
@@ -256,7 +285,7 @@ class CommunityRootScreen extends Component {
 		});
 
 		try {
-			const { data } = await this._client.query({
+			const { data } = await this.state.client.query({
 				query: BootQuery,
 				variables: {}
 			});
@@ -308,7 +337,7 @@ class CommunityRootScreen extends Component {
 		const { dispatch } = this.props;
 
 		try {
-			const { data } = await this._client.query({
+			const { data } = await this.state.client.query({
 				query: NotificationQuery,
 				fetchPolicy: 'network-only'
 			});
@@ -433,7 +462,7 @@ class CommunityRootScreen extends Component {
 			appContent = <AppNavigation />;
 		}
 
-		return <ApolloProvider client={this._client}>{appContent}</ApolloProvider>;
+		return <ApolloProvider client={this.state.client}>{appContent}</ApolloProvider>;
 	}
 }
 
@@ -481,6 +510,7 @@ const styles = StyleSheet.create({
 });
 
 export default connect(state => ({
+	app: state.app,
 	auth: state.auth,
 	user: state.user,
 	site: state.site
