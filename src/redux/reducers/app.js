@@ -1,4 +1,4 @@
-import { OPEN_MODAL_WEBVIEW, RESET_MODAL_WEBVIEW } from "../actions/app";
+import { SET_ACTIVE_COMMUNITY, OPEN_MODAL_WEBVIEW, RESET_MODAL_WEBVIEW } from "../actions/app";
 
 const initialState = {
 	currentCommunity: {
@@ -13,6 +13,14 @@ const initialState = {
 
 export default function app(state = initialState, { type, payload }) {
 	switch (type) {
+		case SET_ACTIVE_COMMUNITY:
+			return {
+				...state,
+				currentCommunity: {
+					apiUrl: payload.apiUrl,
+					apiKey: payload.apiKey
+				}
+			};
 		case OPEN_MODAL_WEBVIEW:
 			return {
 				...state,

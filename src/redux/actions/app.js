@@ -13,3 +13,11 @@ export const resetModalWebview = data => ({
 		...data
 	}
 });
+
+export const SET_ACTIVE_COMMUNITY = "SET_ACTIVE_COMMUNITY";
+export const setActiveCommunity = data => ({
+	type: SET_ACTIVE_COMMUNITY,
+	payload: {
+		...data
+	}
+});
