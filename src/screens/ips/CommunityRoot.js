@@ -26,7 +26,7 @@ import LangFragment from "../../LangFragment";
 import { styleVars } from "../../styles";
 import icons from "../../icons";
 
-const NOTIFICATION_TIMEOUT = 30000;
+const NOTIFICATION_TIMEOUT = Expo.Constants.manifest.extra.notification_timeout || 30000;
 
 const NotificationQuery = gql`
 	query NotificationQuery {
@@ -58,66 +58,10 @@ class CommunityRoot extends Component {
 	 *
 	 * @return 	void
 	 */
-	componentDidMount() {}
-
-	/**
-	 * Stop our automatic refresh timer if we unmount for some reason
-	 *
-	 * @return 	void
-	 */
-	componentWillUnmount() {
-		//this.clearIntervals();
-	}
-
-	/**
-	 * Clears intervals we've set up in this component
-	 *
-	 * @return 	void
-	 */
-	clearIntervals() {
-		clearInterval(this._refreshTimer);
-		clearInterval(this._notificationTimeout);
-	}
-
-	/**
-	 * Try loading the community again
-	 *
-	 * @return 	void
-	 */
-	tryAfterNetworkError() {
-		this.setState({
-			loading: true
-		});
-
-		//this.props.dispatch(refreshAuth(this.props.app.currentCommunity));
-	}
-
-	/**
-	 * When we get new props, decide whether to show loading status to the user
-	 * We only need to do this if they aren't already logged in.
-	 *
-	 * @param 	object 		nextProps 		New props coming in
-	 * @return 	void
-	 */
-	componentWillReceiveProps(nextProps) {
-		/*if( !prevProps.auth.swapToken.loading &&  ){
-			this.setState({
-				
-			})
-		}*/
-		/*const { dispatch } = this.props;
-
-		if (nextProps.auth.error && nextProps.auth.networkError) {
-			this.showLoadError();
+	componentDidMount() {
+		if (this.props.auth.isAuthenticated) {
+			this.initializeNotificationInterval();
 		}
-
-		// If we're authenticated now, then start a timer so we can refresh the token before it expires
-		if (nextProps.auth.authenticated && !this.props.auth.authenticated) {
-			this._refreshTimer = setInterval(() => {
-				console.log("Refreshing accessToken");
-				dispatch(refreshAuth(this.props.app.currentCommunity));
-			}, nextProps.auth.expiresIn - Expo.Constants.manifest.extra.refresh_token_advance);
-		}*/
 	}
 
 	/**
@@ -128,18 +72,16 @@ class CommunityRoot extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps, prevState) {
-		// Has our site connection updated?
-		// If so, we need to tear down all existing connection and set up a new client with the new URL.
-		/*if (
-			prevProps.app.currentCommunity.apiUrl !== this.props.app.currentCommunity.apiUrl ||
-			prevProps.app.currentCommunity.apiKey !== this.props.app.currentCommunity.apiKey
-		) {
-			this.clearIntervals();
-			this.setState({
-				...this.defaultState,
-				client: this.getClient()
-			});
-		}*/
+		// If we're now authenticated, and weren't before, start checking notifications
+		if (!prevProps.auth.isAuthenticated && this.props.auth.isAuthenticated) {
+			this.initializeNotificationInterval();
+		}
+
+		// However, if we were authenticated but aren't now, then *stop* notifications
+		if (prevProps.auth.isAuthenticated && !this.props.auth.isAuthenticated) {
+			this.stopNotificationInterval();
+		}
+
 		// If we're done checking authentication, run our boot query to get initial data
 		/*if (
 			// If prev auth state doesn't match current auth state...
@@ -166,75 +108,41 @@ class CommunityRoot extends Component {
 	}
 
 	/**
-	 * Manually execute the boot query to fetch community data
+	 * When component unmounts, clear up our intervals
 	 *
 	 * @return 	void
 	 */
-	/*async runBootQuery() {
-		const { dispatch } = this.props;
+	componentWillUnmount() {
+		this.stopNotificationInterval();
+	}
 
-		this.setState({
-			loading: true
-		});
+	/**
+	 * Start checking for notifications
+	 *
+	 * @return 	void
+	 */
+	initializeNotificationInterval() {
+		this.stopNotificationInterval();
+		this._notificationTimeout = setInterval(() => this.runNotificationQuery(), NOTIFICATION_TIMEOUT);
+	}
 
-		try {
-			const { data } = await this.state.client.query({
-				query: BootQuery,
-				variables: {}
-			});
+	/**
+	 * Stop checking for notifications
+	 *
+	 * @return 	void
+	 */
+	stopNotificationInterval() {
+		clearInterval(this._notificationTimeout);
+	}
 
-			console.log(data);
-
-			// Send out our user info
-			if (this.props.auth.authenticated && data.core.me.group.groupType !== "GUEST") {
-				dispatch(userLoaded({ ...data.core.me }));
-				clearInterval(this._notificationTimeout);
-				this._notificationTimeout = setInterval(() => this.runNotificationQuery(), NOTIFICATION_TIMEOUT);
-			} else {
-				dispatch(guestLoaded({ ...data.core.me }));
-			}
-
-			dispatch(guestLoaded({ ...data.core.me }));
-
-			// Set our lang strings
-			if (_.size(data.core.language)) {
-				// We don't want __typename, so discard that
-				const { __typename, ...rest } = data.core.language;
-				Lang.setWords(rest);
-			}
-
-			// Set our system settings
-			dispatch(setSiteSettings(data.core.settings));
-			dispatch(setLoginHandlers(data.core.loginHandlers));
-			NavigationService.setBaseUrl(data.core.settings.base_url);
-
-			// Store our streams
-			dispatch(
-				setUserStreams([
-					{
-						id: "all",
-						title: "All Activity",
-						isDefault: true
-					},
-					...data.core.streams
-				])
-			);
-
-			// We can now proceed to show the home screen
-			this.setState({
-				loading: false
-			});
-		} catch (err) {
-			console.error(err);
-			return this.showLoadError();
-		}
-	}*/
-
+	/**
+	 * Run a query to check our notification count
+	 *
+	 * @return 	void
+	 */
 	async runNotificationQuery() {
-		const { dispatch } = this.props;
-
 		try {
-			const { data } = await this.state.client.query({
+			const { data } = await this.props.app.client.query({
 				query: NotificationQuery,
 				fetchPolicy: "network-only"
 			});
@@ -242,14 +150,26 @@ class CommunityRoot extends Component {
 			console.log(`Ran notification update, got count ${data.core.me.notificationCount}`);
 
 			if (parseInt(data.core.me.notificationCount) !== parseInt(this.props.user.notificationCount)) {
-				dispatch(updateNotificationCount(data.core.me.notificationCount));
+				this.props.dispatch(updateNotificationCount(data.core.me.notificationCount));
 			}
 		} catch (err) {
-			console.log(`Error running notification update: ${err}`);
-
 			// If this failed for some reason, stop checking from now on
-			clearInterval(this._notificationTimeout);
+			console.log(`Error running notification update: ${err}`);
+			this.stopNotificationInterval();
 		}
+	}
+
+	/**
+	 * Try loading the community again
+	 *
+	 * @return 	void
+	 */
+	tryAfterNetworkError() {
+		this.setState({
+			loading: true
+		});
+
+		//this.props.dispatch(refreshAuth(this.props.app.currentCommunity));
 	}
 
 	/**
