@@ -74,8 +74,6 @@ export default function auth(state = initialState, { type, payload }) {
 				}
 			};
 		case actions.REFRESH_TOKEN_ERROR:
-			console.log(`REFRESH_TOKEN_ERROR: ${payload.error || "error"}`);
-
 			return {
 				...state,
 				refreshToken: {

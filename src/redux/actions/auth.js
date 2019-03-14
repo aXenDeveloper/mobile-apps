@@ -283,10 +283,17 @@ export const swapToken = tokenInfo => {
  * @param 	string 	password
  * @param 	object 	apolloClient 	Instance of ApolloClient, so we can reset the store
  */
-export const logOut = apolloClient => {
-	return async dispatch => {
-		apolloClient.resetStore();
-		await AsyncStorage.removeItem("@authStore:auth");
-		dispatch(logOutSuccess());
+export const logOut = () => {
+	return async (dispatch, getState) => {
+		const {
+			app: {
+				client,
+				currentCommunity: { apiKey, apiUrl }
+			}
+		} = getState();
+
+		client.resetStore();
+		await AsyncStorage.removeItem(`@authStore:${apiUrl}`);
+		dispatch(removeAuth());
 	};
 };
