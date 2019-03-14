@@ -1,4 +1,5 @@
 import * as actions from "../actions/auth";
+import { SET_ACTIVE_COMMUNITY } from "../actions/app";
 
 const initialState = {
 	swapToken: {
@@ -21,6 +22,13 @@ const initialState = {
 
 export default function auth(state = initialState, { type, payload }) {
 	switch (type) {
+		// When we change the active community, we want to completely reset
+		// our auth state.
+		case SET_ACTIVE_COMMUNITY:
+			return {
+				...initialState
+			};
+
 		// ========================================================
 		// Swap token actions. This happens after logging in via
 		// oAuth, when we receive a code that must be exchanged for
