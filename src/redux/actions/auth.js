@@ -159,7 +159,13 @@ export const refreshToken = apiInfo => {
 
 			await AsyncStorage.setItem(`@authStore:${apiInfo.apiUrl}`, JSON.stringify(newAuthData));
 
-			dispatch(refreshTokenSuccess(newAuthData));
+			dispatch(refreshTokenSuccess());
+			dispatch(
+				receiveAuth({
+					...newAuthData,
+					isAuthenticated: true
+				})
+			);
 		} catch (err) {
 			// If this is true, we've already dispatched an error
 			if (timeoutCanceled) {
