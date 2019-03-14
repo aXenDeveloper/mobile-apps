@@ -1,5 +1,4 @@
-//import auth from '../utils/Auth';
-import { AsyncStorage } from "react-native";
+import { SecureStore } from "expo";
 import ToFormData from "../../utils/ToFormData";
 import _ from "underscore";
 
@@ -47,7 +46,7 @@ export const refreshToken = apiInfo => {
 	return async dispatch => {
 		dispatch(refreshTokenLoading());
 
-		const authData = await AsyncStorage.getItem(`@authStore:${apiInfo.apiUrl}`);
+		const authData = await SecureStore.getItemAsync(`authStore_${getSiteIdentifier(apiInfo.apiUrl)}`);
 
 		if (authData == null) {
 			dispatch(
@@ -154,10 +153,10 @@ export const refreshToken = apiInfo => {
 				expiresIn: data.expires_in
 			};
 
-			console.log(`Setting new auth data in @authStore:${apiInfo.apiUrl}`);
+			console.log(`Setting new auth data in authStore_${getSiteIdentifier(apiInfo.apiUrl)}`);
 			console.log(newAuthData);
 
-			await AsyncStorage.setItem(`@authStore:${apiInfo.apiUrl}`, JSON.stringify(newAuthData));
+			await SecureStore.setItemAsync(`authStore_${getSiteIdentifier(apiInfo.apiUrl)}`, JSON.stringify(newAuthData));
 
 			dispatch(refreshTokenSuccess());
 			dispatch(
@@ -255,7 +254,7 @@ export const swapToken = tokenInfo => {
 			};
 
 			client.resetStore();
-			await AsyncStorage.setItem(`@authStore:${apiUrl}`, JSON.stringify(authData));
+			await SecureStore.setItemAsync(`authStore_${getSiteIdentifier(apiUrl)}`, JSON.stringify(authData));
 
 			dispatch(swapTokenSuccess());
 			dispatch(
@@ -293,7 +292,28 @@ export const logOut = () => {
 		} = getState();
 
 		client.resetStore();
-		await AsyncStorage.removeItem(`@authStore:${apiUrl}`);
+		await SecureStore.deleteItemAsync(`authStore_${getSiteIdentifier(apiUrl)}`);
 		dispatch(removeAuth());
 	};
+};
+
+/**
+ * Utility method that takes an API url and returns a unique, alphanumeric (base64) string
+ * SecureStore only allows alphanums as keys, so we use this value to represent the site.
+ *
+ * @param 	string 	apiUrl 		URL to return identifier for
+ * @return	string
+ */
+const siteIdentifiers = {};
+const getSiteIdentifier = apiUrl => {
+	if (!_.isUndefined(siteIdentifiers[apiUrl])) {
+		return siteIdentifiers[apiUrl];
+	}
+
+	// Base 64 the URL, but remove any = because they aren't valid as SecureStore keys
+	let base64 = Buffer.from(apiUrl).toString("base64");
+	base64 = base64.replace(/\=/g, "");
+
+	siteIdentifiers[apiUrl] = base64;
+	return base64;
 };
