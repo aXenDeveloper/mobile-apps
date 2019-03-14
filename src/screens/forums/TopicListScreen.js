@@ -116,14 +116,14 @@ class TopicListScreen extends Component {
 	 * @return 	void
 	 */
 	componentDidMount() {
-		if( !_.isUndefined( this.props.navigation.state.params ) && !_.isUndefined( this.props.navigation.state.params.title ) ){
+		if (!_.isUndefined(this.props.navigation.state.params) && !_.isUndefined(this.props.navigation.state.params.title)) {
 			this.props.navigation.setParams({
 				title: this.props.navigation.state.params.title,
 				subtitle: this.props.navigation.state.params.subtitle
 			});
 		}
 
-		if (this.props.auth.authenticated) {
+		if (this.props.auth.isAuthenticated) {
 			this.props.navigation.setParams({
 				showFollowControl: true,
 				isFollowed: false,
@@ -147,7 +147,7 @@ class TopicListScreen extends Component {
 				});
 			}
 
-			if (!this.props.data.forums.forum.passwordProtected && this.props.auth.authenticated) {
+			if (!this.props.data.forums.forum.passwordProtected && this.props.auth.isAuthenticated) {
 				this.props.navigation.setParams({
 					showFollowControl: true,
 					isFollowed: this.props.data.forums.forum.follow.isFollowing
@@ -227,7 +227,7 @@ class TopicListScreen extends Component {
 
 	/**
 	 * Given a post and topic data, return an object with a more useful structure
-	 * 
+	 *
 	 * @todo this is stupid, so eliminate this
 	 * @param 	object 	post 		A raw post object from GraphQL
 	 * @param 	object 	topicData 	The topic data
@@ -255,7 +255,7 @@ class TopicListScreen extends Component {
 			canVoteUp: topic.canVoteUp,
 			canVoteDown: topic.canVoteDown,
 			vote: topic.vote,
-			hasBestAnswer: topic.hasBestAnswer,
+			hasBestAnswer: topic.hasBestAnswer
 		};
 	}
 
@@ -329,12 +329,7 @@ class TopicListScreen extends Component {
 				isFollowed: true
 			});
 		} catch (err) {
-			Alert.alert(
-				Lang.get('error'), 
-				Lang.get('error_following'),
-				[{ text: Lang.get('ok') }], 
-				{ cancelable: false }
-			);
+			Alert.alert(Lang.get("error"), Lang.get("error_following"), [{ text: Lang.get("ok") }], { cancelable: false });
 		}
 	};
 
@@ -363,12 +358,7 @@ class TopicListScreen extends Component {
 				isFollowed: false
 			});
 		} catch (err) {
-			Alert.alert(
-				Lang.get('error'), 
-				Lang.get('error_unfollowing'),
-				[{ text: Lang.get('ok') }], 
-				{ cancelable: false }
-			);
+			Alert.alert(Lang.get("error"), Lang.get("error_unfollowing"), [{ text: Lang.get("ok") }], { cancelable: false });
 		}
 	};
 
@@ -389,7 +379,7 @@ class TopicListScreen extends Component {
 
 	render() {
 		// status 3 == fetchMore, status 4 == refreshing
-		if ( ( this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4 ) ) {
+		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return (
 				<PlaceholderRepeater repeat={7}>
 					<TopicRow loading={true} />

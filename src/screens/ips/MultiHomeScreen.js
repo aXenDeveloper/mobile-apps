@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 
 import Button from "../../atoms/Button";
-import NavigationService from "../../utils/NavigationService";
 
 export default class MultiHomeScreen extends Component {
 	static navigationOptions = {
@@ -12,8 +11,8 @@ export default class MultiHomeScreen extends Component {
 	render() {
 		return (
 			<View>
-				<Text>Multihome</Text>
-				<Button filled title="Go to InvisionAlpha" onPress={() => NavigationService.navigateToScreen("HomeScreen", {}, 'home')} />
+				<Text>Multi home</Text>
+				<Button filled title="Browse a category" onPress={() => this.props.navigation.navigate("MultiCategory")} />
 			</View>
 		);
 	}

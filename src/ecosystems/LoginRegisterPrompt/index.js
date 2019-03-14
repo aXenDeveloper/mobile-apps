@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
-import { Text, Image, View, Animated, Easing, AsyncStorage, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { Component } from "react";
+import { Text, Image, View, Animated, Easing, AsyncStorage, TouchableOpacity, StyleSheet } from "react-native";
 
+import NavigationService from "../../utils/NavigationService";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import Button from "../../atoms/Button";
 import ViewMeasure from "../../atoms/ViewMeasure";
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from '../../styles';
+import styles, { styleVars } from "../../styles";
 
-export default class LoginRegisterPrompt extends Component {	
+export default class LoginRegisterPrompt extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -24,7 +25,7 @@ export default class LoginRegisterPrompt extends Component {
 	}
 
 	/**
-	 * Check if we have a 
+	 * Check if we have a
 	 *
 	 * @return 	void
 	 */
@@ -33,7 +34,7 @@ export default class LoginRegisterPrompt extends Component {
 			//const lastClosed = await AsyncStorage.getItem("@settingStore:loginPopupShown");
 			const lastClosed = null;
 			// If the time we last closed it is more than a day ago...
-			if( lastClosed == null || ( JSON.parse( lastClosed ) + 86400 ) < ( Date.now() / 1000 ) ){
+			if (lastClosed == null || JSON.parse(lastClosed) + 86400 < Date.now() / 1000) {
 				this.setState({
 					showPopup: true
 				});
@@ -45,7 +46,6 @@ export default class LoginRegisterPrompt extends Component {
 		}
 	}
 
-
 	/**
 	 * Handles tapping the X to close the prompt
 	 * Starts the animation that'll move it off screen
@@ -54,14 +54,11 @@ export default class LoginRegisterPrompt extends Component {
 	 * @return 	void
 	 */
 	async closeLoginBox() {
-		this._animation = Animated.timing(
-			this._animatedValue,
-			{
-				toValue: 0,
-				duration: 350,
-				easing: Easing.bezier(0.42,0,1,1)
-			}
-		);
+		this._animation = Animated.timing(this._animatedValue, {
+			toValue: 0,
+			duration: 350,
+			easing: Easing.bezier(0.42, 0, 1, 1)
+		});
 
 		this.setState({
 			hiding: true
@@ -73,7 +70,7 @@ export default class LoginRegisterPrompt extends Component {
 		try {
 			await AsyncStorage.setItem(
 				"@settingStore:loginPopupShown",
-				JSON.stringify( Date.now() / 1000 ) // seconds
+				JSON.stringify(Date.now() / 1000) // seconds
 			);
 		} catch (err) {
 			console.log("Couldn't store a loginPopupShown value");
@@ -99,7 +96,8 @@ export default class LoginRegisterPrompt extends Component {
 	 * @return 	void
 	 */
 	onLoginPress() {
-		this.props.navigation.navigate('LoginModal');
+		//this.props.navigation.navigate('LoginModal');
+		NavigationService.launchAuth();
 	}
 
 	/**
@@ -109,8 +107,8 @@ export default class LoginRegisterPrompt extends Component {
 	 * @return 	void
 	 */
 	onRegisterPress() {
-		if( this.props.registerUrl ){
-			this.props.navigation.navigate('WebView', {
+		if (this.props.registerUrl) {
+			this.props.navigation.navigate("WebView", {
 				url: this.props.registerUrl
 			});
 		} else {
@@ -133,28 +131,45 @@ export default class LoginRegisterPrompt extends Component {
 			outputRange: [0.5, 1]
 		});
 
-		if( height === 0 || !this.state.showPopup ){
+		if (height === 0 || !this.state.showPopup) {
 			return null;
 		}
 
 		return (
-			<ViewMeasure onLayout={this.props.onLayout} id='loginPrompt'>
+			<ViewMeasure onLayout={this.props.onLayout} id="loginPrompt">
 				<ShadowedArea style={[styles.row, this.props.style]} onLayout={this.onWrapperLayout}>
 					<Animated.View style={[componentStyles.outerWrapper, this.state.hiding ? { height, opacity } : null]}>
-						<View style={[ componentStyles.innerWrapper, this.state.hiding ? { position: 'absolute', left: 0, right: 0, bottom: 0 } : null ]}>
-							<View style={[ componentStyles.loginBox, this.props.closable ? componentStyles.loginBoxClosable : null ]}>
-								<Image source={require("../../../resources/register_prompt.png")} style={componentStyles.loginIcon} resizeMode='contain' />
+						<View style={[componentStyles.innerWrapper, this.state.hiding ? { position: "absolute", left: 0, right: 0, bottom: 0 } : null]}>
+							<View style={[componentStyles.loginBox, this.props.closable ? componentStyles.loginBoxClosable : null]}>
+								<Image source={require("../../../resources/register_prompt.png")} style={componentStyles.loginIcon} resizeMode="contain" />
 								<View style={componentStyles.loginInner}>
 									<Text style={componentStyles.loginText}>{this.props.message}</Text>
 								</View>
-								{Boolean(this.props.closable) &&
+								{Boolean(this.props.closable) && (
 									<TouchableOpacity onPress={this.closeLoginBox} hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}>
 										<Image source={require("../../../resources/close.png")} style={componentStyles.closeButton} />
-									</TouchableOpacity>}
+									</TouchableOpacity>
+								)}
 							</View>
 							<View style={componentStyles.buttonBar}>
-								<Button type='primary' filled rounded size='medium' title={Lang.get('register')} onPress={this.onRegisterPress} style={[componentStyles.button, styles.mrTight]} /> 
-								<Button type='primary' filled rounded size='medium' title={Lang.get('sign_in')} onPress={this.onLoginPress} style={[componentStyles.button, this.props.register ? styles.mlTight : null]} />
+								<Button
+									type="primary"
+									filled
+									rounded
+									size="medium"
+									title={Lang.get("register")}
+									onPress={this.onRegisterPress}
+									style={[componentStyles.button, styles.mrTight]}
+								/>
+								<Button
+									type="primary"
+									filled
+									rounded
+									size="medium"
+									title={Lang.get("sign_in")}
+									onPress={this.onLoginPress}
+									style={[componentStyles.button, this.props.register ? styles.mlTight : null]}
+								/>
 							</View>
 						</View>
 					</Animated.View>
@@ -165,21 +180,19 @@ export default class LoginRegisterPrompt extends Component {
 }
 
 const componentStyles = StyleSheet.create({
-	wrapper: {
-				
-	},
+	wrapper: {},
 	outerWrapper: {
-		overflow: 'hidden',
+		overflow: "hidden"
 	},
 	innerWrapper: {
 		paddingHorizontal: styleVars.spacing.wide,
-		paddingVertical: styleVars.spacing.wide,
+		paddingVertical: styleVars.spacing.wide
 	},
-	loginBox: {		
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'flex-start',
-		justifyContent: 'center',
+	loginBox: {
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "flex-start",
+		justifyContent: "center"
 	},
 	loginBoxClosable: {
 		paddingRight: 20
@@ -187,25 +200,25 @@ const componentStyles = StyleSheet.create({
 	loginInner: {
 		paddingLeft: styleVars.spacing.wide,
 		flexBasis: 0,
-		flexGrow: 1,
+		flexGrow: 1
 	},
 	loginText: {
 		fontSize: styleVars.fontSizes.standard
 	},
 	loginIcon: {
-		width: 40, 
-		height: 40 
+		width: 40,
+		height: 40
 	},
 	closeButton: {
 		width: 20,
 		height: 20,
-		position: 'absolute',
+		position: "absolute",
 		right: -20,
 		top: 0
 	},
 	buttonBar: {
-		display: 'flex',
-		flexDirection: 'row',
+		display: "flex",
+		flexDirection: "row",
 		marginTop: styleVars.spacing.standard
 	},
 	button: {

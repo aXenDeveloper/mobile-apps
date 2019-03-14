@@ -1,6 +1,10 @@
 //import auth from '../utils/Auth';
 import { AsyncStorage } from "react-native";
 import ToFormData from "../../utils/ToFormData";
+import _ from "underscore";
+
+// ====================================================================
+// General auth actions
 
 export const RECEIVE_AUTH = "RECEIVE_AUTH";
 export const receiveAuth = data => ({
@@ -10,76 +14,46 @@ export const receiveAuth = data => ({
 	}
 });
 
-export const LOGIN_ERROR = "LOGIN_ERROR";
-export const loginError = data => ({
-	type: LOGIN_ERROR,
-	payload: {
-		data
-	}
+export const REMOVE_AUTH = "REMOVE_AUTH";
+export const removeAuth = data => ({
+	type: REMOVE_AUTH
 });
 
-export const LOGIN_REQUEST = "LOGIN_REQUEST";
-export const loginRequest = data => ({
-	type: LOGIN_REQUEST,
-	payload: {
-		data
-	}
+// ====================================================================
+// Refresh token actions
+
+export const REFRESH_TOKEN_LOADING = "REFRESH_TOKEN_LOADING";
+export const refreshTokenLoading = data => ({
+	type: REFRESH_TOKEN_LOADING
 });
 
-export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
-export const loginSuccess = data => ({
-	type: LOGIN_SUCCESS,
-	payload: {
-		...data
-	}
+export const REFRESH_TOKEN_SUCCESS = "REFRESH_TOKEN_SUCCESS";
+export const refreshTokenSuccess = data => ({
+	type: REFRESH_TOKEN_SUCCESS
 });
 
-export const CHECK_AUTH_REQUEST = "CHECK_AUTH_REQUEST";
-export const checkAuthRequest = data => ({
-	type: CHECK_AUTH_REQUEST,
+export const REFRESH_TOKEN_ERROR = "REFRESH_TOKEN_ERROR";
+export const refreshTokenError = data => ({
+	type: REFRESH_TOKEN_ERROR,
 	payload: {
 		...data
 	}
 });
 
-export const CHECK_AUTH_REQUEST_ERROR = "CHECK_AUTH_REQUEST_ERROR";
-export const checkAuthRequestError = data => ({
-	type: CHECK_AUTH_REQUEST_ERROR,
-	payload: {
-		...data
-	}
-});
-
-export const CHECK_AUTH_REQUEST_SUCCESS = "CHECK_AUTH_REQUEST_SUCCESS";
-export const checkAuthRequestSuccess = data => ({
-	type: CHECK_AUTH_REQUEST_SUCCESS,
-	payload: {
-		...data
-	}
-});
-
-export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
-export const logOutSuccess = data => ({
-	type: LOGOUT_SUCCESS
-});
-
-/**
- * Refreshes the auth token, if available in AsyncStorage
- */
 var timeoutHandler;
 var timeoutCanceled = false;
 
-export const refreshAuth = () => {
+export const refreshToken = apiInfo => {
 	return async dispatch => {
-		dispatch(checkAuthRequest());
+		dispatch(refreshTokenLoading());
 
-		const authData = await AsyncStorage.getItem("@authStore:auth");
+		const authData = await AsyncStorage.getItem(`@authStore:${apiInfo.apiUrl}`);
 
 		if (authData == null) {
 			dispatch(
-				checkAuthRequestError({
+				refreshTokenError({
 					error: "empty_storage",
-					networkError: false,
+					isNetworkError: false
 				})
 			);
 			return;
@@ -88,86 +62,114 @@ export const refreshAuth = () => {
 		// Do the request
 		try {
 			// Set a timeout so we can show an error if we can't connect
-			
-			timeoutHandler = setTimeout( () => {
+
+			timeoutHandler = setTimeout(() => {
 				timeoutCanceled = true;
 				dispatch(
-					checkAuthRequestError({
-						error: 'timeout',
-						networkError: true,
+					refreshTokenError({
+						error: "timeout",
+						isNetworkError: true
 					})
 				);
 			}, 5000);
-			
+
 			// Now do the request
 			const authObj = JSON.parse(authData);
-			const response = await fetch(
-				`${Expo.Constants.manifest.extra.api_url}/oauth/token/index.php`,
-				{
-					method: "post",
-					headers: {
-						"Content-Type": "multipart/form-data"
-					},
-					body: ToFormData({
-						grant_type: "refresh_token",
-						response_type: "token",
-						client_id: Expo.Constants.manifest.extra.oauth_client_id,
-						refresh_token: authObj.refresh_token
-					})
-				}
-			);
 
-			if( timeoutCanceled ){
-				return;
-			}
-			
-			// Now clear the timeout so we can proceed
-			clearTimeout( timeoutHandler );
-
-			const data = await response.json();
-
-			if (data.error || !data.access_token) {
+			if (_.isUndefined(authObj)) {
 				dispatch(
-					checkAuthRequestError({
-						error: "invalid_token",
-						networkError: false
+					refreshTokenError({
+						error: "no_token",
+						isNetworkError: false
 					})
 				);
-			} else if (!response.ok) {
+				return;
+			}
+
+			const response = await fetch(`${apiInfo.apiUrl}/oauth/token/index.php`, {
+				method: "post",
+				headers: {
+					"Content-Type": "multipart/form-data"
+				},
+				body: ToFormData({
+					grant_type: "refresh_token",
+					response_type: "token",
+					client_id: apiInfo.apiKey,
+					refresh_token: authObj.refreshToken
+				})
+			});
+
+			if (timeoutCanceled) {
+				return;
+			}
+
+			// Now clear the timeout so we can proceed
+			clearTimeout(timeoutHandler);
+
+			if (!response.ok) {
+				console.log(response);
+				console.log(
+					ToFormData({
+						grant_type: "refresh_token",
+						response_type: "token",
+						client_id: authObj.apiKey,
+						refresh_token: authObj.refreshToken
+					})
+				);
+
 				dispatch(
-					checkAuthRequestError({
+					refreshTokenError({
 						error: "server_error",
 						networkError: true
 					})
 				);
-			} else {
-				await AsyncStorage.setItem(
-					"@authStore:auth",
-					JSON.stringify({
-						refresh_token: authObj.refresh_token,
-						access_token: data.access_token,
-						expires_in: data.expires_in
-					})
-				);
-
-				dispatch(
-					checkAuthRequestSuccess({
-						access_token: data.access_token,
-						expires_in: data.expires_in
-					})
-				);
-			}
-
-		} catch (err) {
-			// If this is true, we've already dispatched an error
-			if( timeoutCanceled ){
 				return;
 			}
 
-			clearTimeout( timeoutHandler );
+			const data = await response.json();
+
+			if (data.error) {
+				dispatch(
+					refreshTokenError({
+						error: data.error,
+						isNetworkError: false
+					})
+				);
+				return;
+			}
+
+			if (!data.access_token) {
+				dispatch(
+					refreshTokenError({
+						error: "invalid_token",
+						isNetworkError: false
+					})
+				);
+				return;
+			}
+
+			const newAuthData = {
+				refreshToken: authObj.refreshToken,
+				accessToken: data.access_token,
+				expiresIn: data.expires_in
+			};
+
+			console.log(`Setting new auth data in @authStore:${apiInfo.apiUrl}`);
+			console.log(newAuthData);
+
+			await AsyncStorage.setItem(`@authStore:${apiInfo.apiUrl}`, JSON.stringify(newAuthData));
+
+			dispatch(refreshTokenSuccess(newAuthData));
+		} catch (err) {
+			// If this is true, we've already dispatched an error
+			if (timeoutCanceled) {
+				return;
+			}
+
+			clearTimeout(timeoutHandler);
 
 			dispatch(
-				checkAuthRequestError({
+				refreshTokenError({
 					error: err.message,
 					networkError: true
 				})
@@ -176,67 +178,95 @@ export const refreshAuth = () => {
 	};
 };
 
-/**
- * Attempt to authenticate the user using given username, password
- *
- * @param 	string 	username
- * @param 	string 	password
- * @param 	object 	apolloClient 	Instance of ApolloClient, so we can reset the store
- */
-export const logIn = (username, password, apolloClient) => {
-	return async dispatch => {
-		dispatch(loginRequest());
+// ====================================================================
+// Swap token actions
 
-		const response = await fetch(
-			`${Expo.Constants.manifest.extra.api_url}oauth/token/index.php`,
-			{
+export const SWAP_TOKEN_LOADING = "SWAP_TOKEN_LOADING";
+export const swapTokenLoading = data => ({
+	type: SWAP_TOKEN_LOADING
+});
+
+export const SWAP_TOKEN_ERROR = "SWAP_TOKEN_ERROR";
+export const swapTokenError = data => ({
+	type: SWAP_TOKEN_ERROR
+});
+
+export const SWAP_TOKEN_SUCCESS = "SWAP_TOKEN_SUCCESS";
+export const swapTokenSuccess = data => ({
+	type: SWAP_TOKEN_SUCCESS
+});
+
+export const swapToken = tokenInfo => {
+	return async (dispatch, getState) => {
+		dispatch(swapTokenLoading());
+
+		const {
+			app: {
+				currentCommunity: { apiUrl, apiKey },
+				client
+			}
+		} = getState();
+
+		try {
+			const response = await fetch(`${apiUrl}/oauth/token/index.php`, {
 				method: "post",
 				headers: {
 					"Content-Type": "multipart/form-data"
 				},
 				body: ToFormData({
-					grant_type: "password",
-					response_type: "token",
-					client_id: Expo.Constants.manifest.extra.oauth_client_id,
-					redirect_uri: Expo.Constants.manifest.extra.api_url,
-					username: username,
-					password: password
+					client_id: apiKey,
+					grant_type: "authorization_code",
+					code: tokenInfo.token,
+					redirect_uri: tokenInfo.redirect_uri
 				})
+			});
+
+			if (!response.ok) {
+				dispatch(
+					swapTokenError({
+						isNetworkError: true
+					})
+				);
+				return;
 			}
-		);
 
-		const data = await response.json();
+			const data = await response.json();
 
-		// IPB errors
-		if (data.error && data.error === "invalid_grant") {
+			if (data.error) {
+				dispatch(
+					swapTokenError({
+						error: data.error,
+						isNetworkError: false
+					})
+				);
+				return;
+			}
+
+			const authData = {
+				accessToken: data.access_token,
+				expiresIn: data.expires_in,
+				refreshToken: data.refresh_token
+			};
+
+			client.resetStore();
+			await AsyncStorage.setItem(`@authStore:${apiUrl}`, JSON.stringify(authData));
+
+			dispatch(swapTokenSuccess());
 			dispatch(
-				loginError({
-					message: "login_failed"
+				receiveAuth({
+					...authData,
+					isAuthenticated: true
+				})
+			);
+		} catch (err) {
+			console.log(err);
+			dispatch(
+				swapTokenError({
+					isNetworkError: false
 				})
 			);
 			return;
 		}
-
-		// Other server errors
-		if (!response.ok) {
-			dispatch(
-				loginError({
-					message: "server_error"
-				})
-			);
-			return;
-		}
-
-		// Store and dispatch our tokens/data
-		const authData = {
-			access_token: data.access_token,
-			expires_in: data.expires_in,
-			refresh_token: data.refresh_token
-		};
-
-		apolloClient.resetStore();
-		await AsyncStorage.setItem("@authStore:auth", JSON.stringify(authData));
-		dispatch(loginSuccess(authData));
 	};
 };
 
@@ -252,6 +282,5 @@ export const logOut = apolloClient => {
 		apolloClient.resetStore();
 		await AsyncStorage.removeItem("@authStore:auth");
 		dispatch(logOutSuccess());
-		
 	};
 };

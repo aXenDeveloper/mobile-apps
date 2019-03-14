@@ -7,7 +7,7 @@ import _ from "underscore";
 import { transparentize } from "polished";
 
 import NavigationService from "../../../utils/NavigationService";
-import { receiveAuth, logIn } from "../../../redux/actions/auth";
+import { receiveAuth } from "../../../redux/actions/auth";
 import Lang from "../../../utils/Lang";
 import { isIphoneX } from "../../../utils/isIphoneX";
 import Button from "../../../atoms/Button";
@@ -19,7 +19,7 @@ class LoginScreen extends Component {
 	static navigationOptions = {
 		title: "Sign In",
 		header: null,
-		headerMode: 'screen'
+		headerMode: "screen"
 	};
 
 	constructor(props) {
@@ -40,12 +40,12 @@ class LoginScreen extends Component {
 	 */
 	_login() {
 		const { dispatch } = this.props;
-		dispatch(logIn(this.state.username, this.state.password, this.props.client));
+		//dispatch(logIn(this.props.app.currentCommunity, this.state.username, this.state.password, this.props.client));
 	}
 
 	close = () => {
 		this.props.navigation.goBack(null);
-	}
+	};
 
 	/**
 	 * If we're now authenticated, redirect to our Root component
@@ -79,18 +79,18 @@ class LoginScreen extends Component {
 
 		if (this.props.site.settings.allow_reg !== "REDIRECT") {
 			url = NavigationService.constructInternalUrl({
-				app: 'core',
-				module: 'system',
-				controller: 'register'
+				app: "core",
+				module: "system",
+				controller: "register"
 			});
 		} else {
 			url = this.props.site.settings.allow_reg_target;
 		}
 
 		this.props.navigation.navigate({
-			routeName: "AuthWebView", 
+			routeName: "AuthWebView",
 			params: { url },
-			key: 'register_full'
+			key: "register_full"
 		});
 	};
 
@@ -100,7 +100,7 @@ class LoginScreen extends Component {
 	 * @return 	Component|null
 	 */
 	buildRegistrationLink() {
-		if( this.props.site.settings.allow_reg === "DISABLED" ){
+		if (this.props.site.settings.allow_reg === "DISABLED") {
 			return null;
 		}
 
@@ -132,15 +132,17 @@ class LoginScreen extends Component {
 	 */
 	forgotPasswordPress = () => {
 		this.props.navigation.navigate({
-			routeName: "AuthWebView", 
-			params: { url: NavigationService.constructInternalUrl({
-				app: 'core',
-				module: 'system',
-				controller: 'lostpass'
-			}) },
-			key: 'lost_pass'
+			routeName: "AuthWebView",
+			params: {
+				url: NavigationService.constructInternalUrl({
+					app: "core",
+					module: "system",
+					controller: "lostpass"
+				})
+			},
+			key: "lost_pass"
 		});
-	}
+	};
 
 	/**
 	 * Return a memoized press handler for a social login button that navigates to our WebView
@@ -149,17 +151,17 @@ class LoginScreen extends Component {
 	 */
 	handlerPresses = {};
 	getLoginButtonHandler(handler) {
-		if( _.isUndefined( this.handlerPresses[ handler.id ] ) ){
-			this.handlerPresses[ handler.id ] = () => {
+		if (_.isUndefined(this.handlerPresses[handler.id])) {
+			this.handlerPresses[handler.id] = () => {
 				this.props.navigation.navigate({
-					routeName: "AuthWebView", 
+					routeName: "AuthWebView",
 					params: { url: NavigationService.constructInternalUrl({}) },
 					key: `handler_${handler.id}`
 				});
 			};
 		}
 
-		return this.handlerPresses[ handler.id ];
+		return this.handlerPresses[handler.id];
 	}
 
 	render() {
@@ -172,16 +174,11 @@ class LoginScreen extends Component {
 						</View>
 					) : (
 						<React.Fragment>
-							{_.isUndefined(this.props.hideClose) &&
-								!Boolean(this.props.hideClose) && (
-									<TouchableOpacity onPress={this.close} style={componentStyles.closeButton}>
-										<Image
-											source={require("../../../../resources/close.png")}
-											resizeMode="contain"
-											style={componentStyles.closeButtonImage}
-										/>
-									</TouchableOpacity>
-								)}
+							{_.isUndefined(this.props.hideClose) && !Boolean(this.props.hideClose) && (
+								<TouchableOpacity onPress={this.close} style={componentStyles.closeButton}>
+									<Image source={require("../../../../resources/close.png")} resizeMode="contain" style={componentStyles.closeButtonImage} />
+								</TouchableOpacity>
+							)}
 							<View style={componentStyles.pageWrapper}>
 								<View style={componentStyles.logoWrapper}>
 									<Image source={require("../../../../resources/logo_light.png")} resizeMode="contain" style={componentStyles.logo} />
@@ -193,7 +190,7 @@ class LoginScreen extends Component {
 										autoCorrect={false}
 										autoCapitalize="none"
 										placeholderTextColor={transparentize(0.7, styleVars.reverseText)}
-										placeholder={Lang.get('username')}
+										placeholder={Lang.get("username")}
 										onChangeText={username => this.setState({ username })}
 										value={this.state.username}
 									/>
@@ -205,13 +202,13 @@ class LoginScreen extends Component {
 										autoCorrect={false}
 										autoCapitalize="none"
 										placeholderTextColor={transparentize(0.7, styleVars.reverseText)}
-										placeholder={Lang.get('password')}
+										placeholder={Lang.get("password")}
 										onChangeText={password => this.setState({ password })}
 										value={this.state.password}
 										secureTextEntry={true}
 									/>
 									<TouchableOpacity style={styles.mlTight} onPress={this.forgotPasswordPress}>
-										<Text style={[styles.standardText, componentStyles.forgotPassword]}>{Lang.get('forgot_password')}</Text>
+										<Text style={[styles.standardText, componentStyles.forgotPassword]}>{Lang.get("forgot_password")}</Text>
 									</TouchableOpacity>
 								</View>
 
@@ -225,23 +222,16 @@ class LoginScreen extends Component {
 											ios_backgroundColor="rgba(0,0,0,0.1)"
 											style={{ transform: [{ scale: 0.8 }, { translateX: -4 }] }}
 										/>
-										<Text style={[styles.standardText, styles.reverseText]}>{Lang.get('sign_in_anon')}</Text>
+										<Text style={[styles.standardText, styles.reverseText]}>{Lang.get("sign_in_anon")}</Text>
 									</View>
 								)}
 
-								<Button style={styles.mtVeryWide} onPress={() => this._login()} title={Lang.get('sign_in')} rounded filled size="large" type="light" />
+								<Button style={styles.mtVeryWide} onPress={() => this._login()} title={Lang.get("sign_in")} rounded filled size="large" type="light" />
 								{this.buildRegistrationLink()}
 							</View>
 							{Boolean(this.props.site.loginHandlers.length) && (
-								<LinearGradient
-									start={[0.5, 0]}
-									end={[0.5, 1]}
-									colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.3)"]}
-									style={componentStyles.otherButtonsWrapper}
-								>
-									<Text style={[styles.reverseText, styles.standardText, styles.centerText, styles.mbStandard]}>
-										{Lang.get('sign_in_with_social')}
-									</Text>
+								<LinearGradient start={[0.5, 0]} end={[0.5, 1]} colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.3)"]} style={componentStyles.otherButtonsWrapper}>
+									<Text style={[styles.reverseText, styles.standardText, styles.centerText, styles.mbStandard]}>{Lang.get("sign_in_with_social")}</Text>
 
 									<View style={componentStyles.otherButtons}>
 										{this.props.site.loginHandlers.map((handler, idx) => (
@@ -263,6 +253,7 @@ class LoginScreen extends Component {
 export default compose(
 	withApollo,
 	connect(state => ({
+		app: state.app,
 		site: state.site,
 		auth: state.auth
 	}))
@@ -319,7 +310,7 @@ const componentStyles = StyleSheet.create({
 	otherButtonsWrapper: {
 		paddingHorizontal: styleVars.spacing.veryWide,
 		paddingTop: styleVars.spacing.veryWide,
-		paddingBottom: isIphoneX() ? ( styleVars.spacing.extraWide * 2 ) : styleVars.spacing.veryWide,
+		paddingBottom: isIphoneX() ? styleVars.spacing.extraWide * 2 : styleVars.spacing.veryWide
 	},
 	otherButtons: {
 		display: "flex",

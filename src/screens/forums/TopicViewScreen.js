@@ -237,7 +237,7 @@ class TopicViewScreen extends Component {
 		this.onPostLayout = this.onPostLayout.bind(this);
 		this.onHeaderLayout = this.onHeaderLayout.bind(this);
 
-		if (this.props.auth.authenticated) {
+		if (this.props.auth.isAuthenticated) {
 			this.props.navigation.setParams({
 				showFollowControl: false,
 				isFollowed: false,
@@ -409,7 +409,7 @@ class TopicViewScreen extends Component {
 			this.maybeMarkAsRead();
 
 			// If follow controls are available, show them
-			if (!this.props.data.forums.topic.passwordProtected && !this.props.data.forums.topic.isArchived && this.props.auth.authenticated) {
+			if (!this.props.data.forums.topic.passwordProtected && !this.props.data.forums.topic.isArchived && this.props.auth.isAuthenticated) {
 				this.props.navigation.setParams({
 					showFollowControl: true,
 					isFollowed: this.props.data.forums.topic.follow.isFollowing
@@ -813,7 +813,13 @@ class TopicViewScreen extends Component {
 						</View>
 						{Boolean(topicData.tags.length || topicData.isLocked || topicData.isHot || topicData.isPinned || topicData.isFeatured) && (
 							<View style={[styles.mtStandard, styles.ptStandard, componentStyles.metaInfo, topicData.isQuestion ? styles.plWide : null]}>
-								{Boolean(topicData.tags.length) && <TagList>{topicData.tags.map(tag => <Tag key={tag.name}>{tag.name}</Tag>)}</TagList>}
+								{Boolean(topicData.tags.length) && (
+									<TagList>
+										{topicData.tags.map(tag => (
+											<Tag key={tag.name}>{tag.name}</Tag>
+										))}
+									</TagList>
+								)}
 								<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter]}>
 									{Boolean(topicData.isArchived) && <TopicStatus style={styles.mrStandard} type="archived" />}
 									{Boolean(topicData.isLocked) && <TopicStatus style={styles.mrStandard} type="locked" />}
@@ -960,9 +966,7 @@ class TopicViewScreen extends Component {
 		if (post.isQuestion) {
 			return (
 				<View style={[styles.mhWide, styles.pbStandard, styles.mbStandard, styles.bBorder, styles.mediumBorder]}>
-					<Text style={[styles.standardText, styles.mediumText]}>
-						{Lang.get("question_asked_by", { name: this.props.data.forums.topic.author.name })}
-					</Text>
+					<Text style={[styles.standardText, styles.mediumText]}>{Lang.get("question_asked_by", { name: this.props.data.forums.topic.author.name })}</Text>
 				</View>
 			);
 		}
@@ -1194,7 +1198,7 @@ class TopicViewScreen extends Component {
 
 		// If they're a guest, insert an item so that a login prompt will show
 		// Only if we're at the start of the topic
-		if (!this.props.auth.authenticated && !topicData.isArchived && topicData.posts[0].isFirstPost && topicData.itemPermissions.canCommentIfSignedIn) {
+		if (!this.props.auth.isAuthenticated && !topicData.isArchived && topicData.posts[0].isFirstPost && topicData.itemPermissions.canCommentIfSignedIn) {
 			returnedData.splice(1, 0, {
 				id: "loginPrompt"
 			});
@@ -1202,7 +1206,7 @@ class TopicViewScreen extends Component {
 
 		// Figure out if we need to show the unread bar. Get the index of the first
 		// unread item and insert an unread object into our post array.
-		if (this.props.auth.authenticated && topicData.unreadCommentPosition && topicData.timeLastRead) {
+		if (this.props.auth.isAuthenticated && topicData.unreadCommentPosition && topicData.timeLastRead) {
 			let firstUnread = topicData.posts.findIndex(post => post.timestamp > topicData.timeLastRead);
 
 			if (firstUnread !== -1) {
@@ -1391,12 +1395,11 @@ class TopicViewScreen extends Component {
 							/>
 						)}
 						{topicData.poll !== null && <PollModal isVisible={this.state.pollModalVisible} data={topicData.poll} />}
-						{Boolean(topicData.itemPermissions.canComment) &&
-							!Boolean(topicData.isArchived) && (
-								<ActionBar light>
-									<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
-								</ActionBar>
-							)}
+						{Boolean(topicData.itemPermissions.canComment) && !Boolean(topicData.isArchived) && (
+							<ActionBar light>
+								<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
+							</ActionBar>
+						)}
 					</View>
 				</View>
 			);
