@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View } from "react-native";
+import { Text, View, Alert, StyleSheet, StatusBar, ActivityIndicator } from "react-native";
 import { Linking } from "expo";
 import { connect } from "react-redux";
 import { ApolloProvider } from "react-apollo";
@@ -11,9 +11,10 @@ import { onError } from "apollo-link-error";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { graphql, compose } from "react-apollo";
 import { IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
+import _ from "underscore";
 
 import introspectionQueryResultData from "../../fragmentTypes.json";
-import { setApolloClient, bootSite, switchAppView, setActiveCommunity, resetBootStatus } from "../../redux/actions/app";
+import { setApolloClient, bootSite, switchAppView, setActiveCommunity, resetActiveCommunity, resetBootStatus } from "../../redux/actions/app";
 import { refreshToken } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
 import CommunityRoot from "./CommunityRoot";
@@ -25,9 +26,28 @@ class AppRoot extends Component {
 	constructor(props) {
 		super(props);
 		this.handleOpenUrl.bind(this);
+
+		this._isSingleApp = !Expo.Constants.manifest.extra.multi;
+		this._alerts = {
+			offline: false
+		};
+
+		this.state = {
+			waitingForClient: this._isSingleApp
+		};
 	}
 
-	componentDidMount() {}
+	componentDidMount() {
+		// If we're running in single-site mode
+		if (this._isSingleApp) {
+			this.props.dispatch(
+				setActiveCommunity({
+					apiUrl: Expo.Constants.manifest.extra.api_url,
+					apiKey: Expo.Constants.manifest.extra.oauth_client_id
+				})
+			);
+		}
+	}
 
 	handleOpenUrl(event) {}
 
@@ -43,6 +63,12 @@ class AppRoot extends Component {
 			await dispatch(bootSite({ apiKey, apiUrl }));
 
 			NavigationService.setBaseUrl(this.props.site.settings.base_url);
+
+			if (this._isSingleApp) {
+				this.setState({
+					waitingForClient: false
+				});
+			}
 		}
 
 		// If our authenticated state has changed, we need to get a new client and reboot the community
@@ -52,13 +78,12 @@ class AppRoot extends Component {
 			await dispatch(bootSite({ apiKey, apiUrl }));
 		}
 
+		// --------------------------------------------------------------------
+		// Multi-community stuff
+
 		// If we were booting a community and that's finished, switch to our community
-		if (!prevProps.app.bootStatus.loaded && this.props.app.bootStatus.loaded) {
-			this.props.dispatch(
-				switchAppView({
-					view: "community"
-				})
-			);
+		if ((!prevProps.app.bootStatus.loaded && this.props.app.bootStatus.loaded) || (!prevProps.app.bootStatus.error && this.props.app.bootStatus.error)) {
+			this.multiCommunityCheckStatusAndRedirect();
 		}
 
 		// If we've switched back to the multi community, reset stuff
@@ -71,6 +96,94 @@ class AppRoot extends Component {
 			);
 			this.props.dispatch(resetBootStatus());
 		}
+	}
+
+	/**
+	 * Called once a community has loaded; checks whether we're actually able to access it,
+	 * and shows an alert if need be. If all is well, redirect to the community screen.
+	 *
+	 * @return 	void
+	 */
+	multiCommunityCheckStatusAndRedirect() {
+		// Did we have an error loading this community?
+		if (this.props.app.bootStatus.error) {
+			this.multiCommunityShowAlert("error", { title: "Error", body: `Sorry, there was a problem loading ${this.props.site.settings.board_name}.` });
+			return;
+		}
+
+		if (!this.props.site.settings.site_online) {
+			if (!this.props.user.group.canAccessOffline) {
+				this.multiCommunityShowAlert("offline", {
+					title: "Community Offline",
+					body: `${this.props.site.settings.board_name} is currently offline. Please try again later.`
+				});
+				return;
+			}
+		}
+
+		this.multiCommunitySwitchToCommunity();
+	}
+
+	/**
+	 * Show an alert to the user with the specific message
+	 *
+	 * @param 	string 		type 			The type of message. Used to prevent multiples of the same type appearing at once.
+	 * @param 	object 		message 		Object containing `title`: title of the alert, and `body`: message to show in it
+	 * @param 	boolean 	allowTryAgain	Whether the alert should show a button to allow the user to try again.
+	 * @return 	void
+	 */
+	multiCommunityShowAlert(type, message, allowTryAgain = false) {
+		// If the alert is already showing, don't show it again.
+		if (!_.isUndefined(this._alerts[type]) && this._alerts[type] === true) {
+			return;
+		}
+
+		const { apiUrl, apiKey } = this.props.app.currentCommunity;
+
+		this._alerts[type] = true;
+		this.props.dispatch(resetBootStatus());
+		this.props.dispatch(resetActiveCommunity());
+
+		const buttons = [
+			{
+				text: "OK",
+				onPress: () => {
+					this._alerts[type] = false;
+				}
+			}
+		];
+
+		if (allowTryAgain) {
+			buttons.push({
+				text: "Try Again",
+				onPress: () => {
+					this._alerts[type] = false;
+					this.props.dispatch(
+						setActiveCommunity({
+							apiKey,
+							apiUrl
+						})
+					);
+				}
+			});
+		}
+
+		Alert.alert(message.title, message.body, buttons, {
+			cancelable: false
+		});
+	}
+
+	/**
+	 * Switch the app status to show the community screen
+	 *
+	 * @return 	void
+	 */
+	multiCommunitySwitchToCommunity() {
+		this.props.dispatch(
+			switchAppView({
+				view: "community"
+			})
+		);
 	}
 
 	/**
@@ -134,6 +247,15 @@ class AppRoot extends Component {
 	}
 
 	render() {
+		if (this.state.waitingForClient) {
+			return (
+				<View style={styles.wrapper}>
+					<StatusBar barStyle="light-content" />
+					<ActivityIndicator size="large" color="#ffffff" />
+				</View>
+			);
+		}
+
 		let ScreenToRender = CommunityRoot;
 
 		if (Expo.Constants.manifest.extra.multi) {
@@ -153,5 +275,15 @@ class AppRoot extends Component {
 export default connect(state => ({
 	auth: state.auth,
 	app: state.app,
-	site: state.site
+	site: state.site,
+	user: state.user
 }))(AppRoot);
+
+const styles = StyleSheet.create({
+	wrapper: {
+		backgroundColor: "#333",
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center"
+	}
+});

@@ -24,6 +24,11 @@ export const setActiveCommunity = data => ({
 	}
 });
 
+export const RESET_ACTIVE_COMMUNITY = "RESET_ACTIVE_COMMUNITY";
+export const resetActiveCommunity = data => ({
+	type: RESET_ACTIVE_COMMUNITY
+});
+
 export const SWITCH_APP_VIEW = "SWITCH_APP_VIEW";
 export const switchAppView = data => ({
 	type: SWITCH_APP_VIEW,
@@ -44,18 +49,12 @@ export const setApolloClient = data => ({
 
 export const RESET_BOOT_STATUS = "RESET_BOOT_STATUS";
 export const resetBootStatus = data => ({
-	type: RESET_BOOT_STATUS,
-	payload: {
-		...data
-	}
+	type: RESET_BOOT_STATUS
 });
 
 export const BOOT_SITE_LOADING = "BOOT_SITE_LOADING";
 export const bootSiteLoading = data => ({
-	type: BOOT_SITE_LOADING,
-	payload: {
-		...data
-	}
+	type: BOOT_SITE_LOADING
 });
 
 export const BOOT_SITE_ERROR = "BOOT_SITE_ERROR";
@@ -68,10 +67,7 @@ export const bootSiteError = data => ({
 
 export const BOOT_SITE_SUCCESS = "BOOT_SITE_SUCCESS";
 export const bootSiteSuccess = data => ({
-	type: BOOT_SITE_SUCCESS,
-	payload: {
-		...data
-	}
+	type: BOOT_SITE_SUCCESS
 });
 
 import _ from "underscore";
@@ -132,12 +128,12 @@ export const bootSite = apiInfo => {
 
 			dispatch(bootSiteSuccess());
 		} catch (err) {
-			console.log(err);
 			dispatch(
 				bootSiteError({
-					networkError: true
+					error: err,
+					isNetworkError: true
 				})
-			); // @todo does this need to receive specific errors?
+			);
 		}
 	};
 };

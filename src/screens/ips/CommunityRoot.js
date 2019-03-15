@@ -221,7 +221,7 @@ class CommunityRoot extends Component {
 	render() {
 		let appContent;
 
-		if (this.props.app.bootStatus.loading) {
+		if (this.props.app.bootStatus.loading || this.props.app.client === null) {
 			appContent = (
 				<View style={styles.wrapper}>
 					<StatusBar barStyle="light-content" />
@@ -278,9 +278,7 @@ class CommunityRoot extends Component {
 		} else {
 			appContent = (
 				<React.Fragment>
-					<ApolloProvider client={this.props.app.client}>
-						<CommunityNavigation />
-					</ApolloProvider>
+					<CommunityNavigation />
 					{this.props.auth.swapToken.loading && (
 						<View style={styles.authLoading}>
 							<Text>Logging in...</Text>
@@ -290,7 +288,7 @@ class CommunityRoot extends Component {
 			);
 		}
 
-		return appContent;
+		return <ApolloProvider client={this.props.app.client}>{appContent}</ApolloProvider>;
 	}
 }
 
