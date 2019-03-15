@@ -105,18 +105,78 @@ class AppRoot extends Component {
 	 * @return 	void
 	 */
 	multiCommunityCheckStatusAndRedirect() {
+		const { apiUrl, apiKey } = this.props.app.currentCommunity;
+
 		// Did we have an error loading this community?
 		if (this.props.app.bootStatus.error) {
-			this.multiCommunityShowAlert("error", { title: "Error", body: `Sorry, there was a problem loading ${this.props.site.settings.board_name}.` });
+			this.multiCommunityShowAlert(
+				"error",
+				{ title: "Error", body: `Sorry, there was a problem loading ${this.props.site.settings.board_name}.` },
+				"Try Again",
+				() => {
+					this.props.dispatch(resetBootStatus());
+					this.props.dispatch(resetActiveCommunity());
+					this.props.dispatch(
+						setActiveCommunity({
+							apiKey,
+							apiUrl
+						})
+					);
+				},
+				true
+			);
 			return;
 		}
 
+		// If we can't access this community, we might either be banned or need to log in to see it
+		if (!this.props.user.group.canAccessSite) {
+			if (this.props.user.group.groupType !== "GUEST") {
+				this.multiCommunityShowAlert(
+					"banned",
+					{
+						title: "No Permission",
+						body: `Sorry, you do not have permission to access ${this.props.site.settings.board_name}.`
+					},
+					"OK",
+					() => {
+						this.props.dispatch(resetBootStatus());
+						this.props.dispatch(resetActiveCommunity());
+					}
+				);
+				return;
+			} else {
+				this.multiCommunityShowAlert(
+					"login",
+					{
+						title: "Sign In Required",
+						body: `${this.props.site.settings.board_name} requires you to sign in to view the community.`
+					},
+					"Sign In",
+					() => {
+						NavigationService.launchAuth();
+					},
+					true
+				);
+				return;
+			}
+		}
+
+		// If the site is offline, and we don't have permission to access it...
+		// @future Right now we don't give them to option to sign in in this situation
 		if (!this.props.site.settings.site_online) {
 			if (!this.props.user.group.canAccessOffline) {
-				this.multiCommunityShowAlert("offline", {
-					title: "Community Offline",
-					body: `${this.props.site.settings.board_name} is currently offline. Please try again later.`
-				});
+				this.multiCommunityShowAlert(
+					"offline",
+					{
+						title: "Community Offline",
+						body: `${this.props.site.settings.board_name} is currently offline. Please try again later.`
+					},
+					"OK",
+					() => {
+						this.props.dispatch(resetBootStatus());
+						this.props.dispatch(resetActiveCommunity());
+					}
+				);
 				return;
 			}
 		}
@@ -129,44 +189,40 @@ class AppRoot extends Component {
 	 *
 	 * @param 	string 		type 			The type of message. Used to prevent multiples of the same type appearing at once.
 	 * @param 	object 		message 		Object containing `title`: title of the alert, and `body`: message to show in it
-	 * @param 	boolean 	allowTryAgain	Whether the alert should show a button to allow the user to try again.
+	 * @param 	boolean 	enabledButtons	Pass a button config object. Merged with defaults.
 	 * @return 	void
 	 */
-	multiCommunityShowAlert(type, message, allowTryAgain = false) {
+	multiCommunityShowAlert(type, message, primaryText = "OK", primaryAction = () => {}, showCancel = false) {
 		// If the alert is already showing, don't show it again.
 		if (!_.isUndefined(this._alerts[type]) && this._alerts[type] === true) {
 			return;
 		}
 
-		const { apiUrl, apiKey } = this.props.app.currentCommunity;
-
 		this._alerts[type] = true;
-		this.props.dispatch(resetBootStatus());
-		this.props.dispatch(resetActiveCommunity());
 
-		const buttons = [
-			{
-				text: "OK",
-				onPress: () => {
-					this._alerts[type] = false;
-				}
-			}
-		];
+		const buttons = [];
 
-		if (allowTryAgain) {
+		// Cancel goes first since it should be on the left
+		if (showCancel) {
 			buttons.push({
-				text: "Try Again",
+				text: "Cancel",
+				style: "cancel",
 				onPress: () => {
 					this._alerts[type] = false;
-					this.props.dispatch(
-						setActiveCommunity({
-							apiKey,
-							apiUrl
-						})
-					);
+					this.props.dispatch(resetBootStatus());
+					this.props.dispatch(resetActiveCommunity());
 				}
 			});
 		}
+
+		buttons.push({
+			text: primaryText,
+			style: "default",
+			onPress: () => {
+				primaryAction();
+				this._alerts[type] = false;
+			}
+		});
 
 		Alert.alert(message.title, message.body, buttons, {
 			cancelable: false
