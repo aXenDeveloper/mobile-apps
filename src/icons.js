@@ -1,5 +1,6 @@
 const icons = {
 	ARCHIVED: require("../resources/archived.png"),
+	BANNED: require("../resources/banned.png"),
 	BARS: require("../resources/bars.png"),
 	BELL: require("../resources/notification_settings.png"),
 	CARET_UP_SOLID: require("../resources/caret_up_solid.png"),
@@ -10,15 +11,18 @@ const icons = {
 	COG: require("../resources/settings.png"),
 	CROSS: require("../resources/close.png"),
 	FIRE: require("../resources/hot.png"),
-	HEART: require('../resources/comment_like.png'),
-	HEART_SOLID: require('../resources/heart_solid.png'),
+	HEART: require("../resources/comment_like.png"),
+	HEART_SOLID: require("../resources/heart_solid.png"),
 	LOCKED: require("../resources/locked.png"),
+	LOGIN: require("../resources/login.png"),
+	LOGIN_SOLID: require("../resources/login_active.png"),
+	OFFLINE: require("../resources/offline.png"),
 	PENCIL: require("../resources/pencil.png"),
 	PINNED: require("../resources/pinned.png"),
 	PLUS_CIRCLE: require("../resources/plus.png"),
-	QUOTE: require('../resources/comment_quote.png'),
-	QUOTE_SOLID: require('../resources/comment_quote_solid.png'),
-	REPLY: require('../resources/reply.png'),
+	QUOTE: require("../resources/comment_quote.png"),
+	QUOTE_SOLID: require("../resources/comment_quote_solid.png"),
+	REPLY: require("../resources/reply.png"),
 	SEARCH: require("../resources/search.png"),
 	SIGN_OUT: require("../resources/signout.png"),
 	STAR_SOLID: require("../resources/star_solid.png"),
@@ -31,7 +35,7 @@ const icons = {
 	VOTE_UP: require("../resources/vote_up.png"),
 	VOTE_UP_SOLID: require("../resources/vote_up_solid.png"),
 	VOTE_DOWN: require("../resources/vote_down.png"),
-	VOTE_DOWN_SOLID: require("../resources/vote_down_solid.png"),
+	VOTE_DOWN_SOLID: require("../resources/vote_down_solid.png")
 };
 
 export default icons;

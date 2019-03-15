@@ -20,6 +20,7 @@ import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation"
 import CommunityRoot from "./CommunityRoot";
 import CommunityRootScreen from "./CommunityRootScreen";
 import Button from "../../atoms/Button";
+import AppLoading from "../../atoms/AppLoading";
 import NavigationService from "../../utils/NavigationService";
 
 class AppRoot extends Component {
@@ -81,20 +82,22 @@ class AppRoot extends Component {
 		// --------------------------------------------------------------------
 		// Multi-community stuff
 
-		// If we were booting a community and that's finished, switch to our community
-		if ((!prevProps.app.bootStatus.loaded && this.props.app.bootStatus.loaded) || (!prevProps.app.bootStatus.error && this.props.app.bootStatus.error)) {
-			this.multiCommunityCheckStatusAndRedirect();
-		}
+		if (!this._isSingleApp) {
+			// If we were booting a community and that's finished, switch to our community
+			if ((!prevProps.app.bootStatus.loaded && this.props.app.bootStatus.loaded) || (!prevProps.app.bootStatus.error && this.props.app.bootStatus.error)) {
+				this.multiCommunityCheckStatusAndRedirect();
+			}
 
-		// If we've switched back to the multi community, reset stuff
-		if (prevProps.app.view !== "multi" && this.props.app.view === "multi") {
-			this.props.dispatch(
-				setActiveCommunity({
-					apiKey: null,
-					apiUrl: null
-				})
-			);
-			this.props.dispatch(resetBootStatus());
+			// If we've switched back to the multi community, reset stuff
+			if (prevProps.app.view !== "multi" && this.props.app.view === "multi") {
+				this.props.dispatch(
+					setActiveCommunity({
+						apiKey: null,
+						apiUrl: null
+					})
+				);
+				this.props.dispatch(resetBootStatus());
+			}
 		}
 	}
 
@@ -304,12 +307,7 @@ class AppRoot extends Component {
 
 	render() {
 		if (this.state.waitingForClient) {
-			return (
-				<View style={styles.wrapper}>
-					<StatusBar barStyle="light-content" />
-					<ActivityIndicator size="large" color="#ffffff" />
-				</View>
-			);
+			return <AppLoading loading />;
 		}
 
 		let ScreenToRender = CommunityRoot;
@@ -334,12 +332,3 @@ export default connect(state => ({
 	site: state.site,
 	user: state.user
 }))(AppRoot);
-
-const styles = StyleSheet.create({
-	wrapper: {
-		backgroundColor: "#333",
-		flex: 1,
-		alignItems: "center",
-		justifyContent: "center"
-	}
-});

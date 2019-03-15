@@ -4,39 +4,39 @@ import { isIphoneX } from "./utils/isIphoneX";
 
 /* VARIABLES USED THROUGHOUT THE APP */
 export const styleVars = {
-	text: '#000000',
-	lightText: '#657686',
-	veryLightText: '#9ba3ab',
-	reverseText: '#fff',
-	accentColor: '#3370AA',
-	altAccentColor: '#009BA2',
-	popularColor: '#F58D23',
-	appBackground: '#e6e8eb',
-	tabActive: '#37454B',
-	tabInactive: '#6e797e',
+	text: "#000000",
+	lightText: "#657686",
+	veryLightText: "#9ba3ab",
+	reverseText: "#fff",
+	accentColor: "#3370AA",
+	altAccentColor: "#009BA2",
+	popularColor: "#F58D23",
+	appBackground: "#e6e8eb",
+	tabActive: "#37454B",
+	tabInactive: "#6e797e",
 	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`,
-	placeholderColors: ['#ededed', '#f5f5f5'],
-	touchColor: 'rgba(0,0,0,0.05)',
+	placeholderColors: ["#ededed", "#f5f5f5"],
+	touchColor: "rgba(0,0,0,0.05)",
 	touchOpacity: 0.7,
-	toggleTint: '#1888a7',
-	toggleTintInverse: '#a8dae8',
-	primaryBrand: ['#3370AA', '#009BA2'],
-	headerText: '#fff',
+	toggleTint: "#1888a7",
+	toggleTintInverse: "#a8dae8",
+	primaryBrand: ["#3370AA", "#009BA2"],
+	headerText: "#fff",
 	primaryButton: {
-		mainColor: '#3370AA',
-		inverseColor: '#fff'
+		mainColor: "#3370AA",
+		inverseColor: "#fff"
 	},
 	lightButton: {
-		mainColor: '#ecf0f3',
-		inverseColor: '#262b2f'
+		mainColor: "#ecf0f3",
+		inverseColor: "#262b2f"
 	},
 	darkButton: {
-		mainColor: '#1d2e3c',
-		inverseColor: '#fff'
+		mainColor: "#1d2e3c",
+		inverseColor: "#fff"
 	},
 	warningButton: {
-		mainColor: '#cc1e3a',
-		inverseColor: '#fff'
+		mainColor: "#cc1e3a",
+		inverseColor: "#fff"
 	},
 	spacing: {
 		veryTight: 4,
@@ -54,35 +54,35 @@ export const styleVars = {
 		large: 17,
 		extraLarge: 19
 	},
-	fontFamily: 'System',
+	fontFamily: "System",
 	lineHeight: {
 		standard: 18
 	},
-	positive: '#43A047',
-	negative: '#E53935',
+	positive: "#43A047",
+	negative: "#E53935",
 	borderColors: {
-		dark: '#CED6DB',
-		medium: '#e1e7eb',
-		light: '#f5f5f5',
+		dark: "#CED6DB",
+		medium: "#e1e7eb",
+		light: "#f5f5f5"
 	},
-	checkmarkColor: '#3370AA',
-	searchHighlight: '#fff4d4',
-	searchHighlightText: '#000',
+	checkmarkColor: "#3370AA",
+	searchHighlight: "#fff4d4",
+	searchHighlightText: "#000",
 	tabBar: {
-		active: '#3370AA',
-		inactive: '#657686',
-		underline: { 
-			height: 2, 
-			backgroundColor: '#3370AA'
+		active: "#3370AA",
+		inactive: "#657686",
+		underline: {
+			height: 2,
+			backgroundColor: "#3370AA"
 		}
 	},
-	badgeBackground: '#ff3b2f',
-	badgeText: '#fff',
+	badgeBackground: "#ff3b2f",
+	badgeText: "#fff",
 	greys: {
-		light: '#F7F9FA',
-		medium: '#F2F4F5',
-		darker: '#DADDE0',
-		placeholder: '#7E8387'
+		light: "#F7F9FA",
+		medium: "#F2F4F5",
+		darker: "#DADDE0",
+		placeholder: "#7E8387"
 	}
 };
 
@@ -124,14 +124,14 @@ const styles = StyleSheet.create({
 	primaryTabBar: {
 		/*backgroundColor: '#37454B',*/
 		//backgroundColor: "#252D31"
-		backgroundColor: '#fff',
+		backgroundColor: "#fff",
 		height: isIphoneX() ? 60 : 55,
 		paddingBottom: styleVars.spacing.veryTight,
 		paddingTop: styleVars.spacing.tight,
-		borderTopColor: 'rgba(0,0,0,0.1)'
+		borderTopColor: "rgba(0,0,0,0.1)"
 	},
 	swipeItemWrap: {
-		backgroundColor: styleVars.accentColor,
+		backgroundColor: styleVars.accentColor
 	},
 	swipeItem: {
 		width: 75
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
 		fontSize: styleVars.fontSizes.small
 	},
 	swipeItemIcon: {
-		tintColor: '#fff',
+		tintColor: "#fff",
 		width: 24,
 		height: 24,
 		marginBottom: styleVars.spacing.veryTight
@@ -151,22 +151,22 @@ const styles = StyleSheet.create({
 	},
 
 	field: {
-		backgroundColor: '#fff',
+		backgroundColor: "#fff",
 		paddingVertical: 15,
 		paddingHorizontal: 15,
 		borderBottomWidth: 1,
-		borderBottomColor: '#e5e5e5'
+		borderBottomColor: "#e5e5e5"
 	},
 	fieldText: {
-		fontSize: 16,
+		fontSize: 16
 	},
 	fieldTextPlaceholder: {
-		color: '#C7C7CD'
+		color: "#C7C7CD"
 	},
 	textInput: {
-		backgroundColor: '#fff',
+		backgroundColor: "#fff",
 		borderWidth: 1,
-		borderColor: '#d0d0d0',
+		borderColor: "#d0d0d0",
 		borderRadius: 3,
 		paddingHorizontal: 7,
 		paddingVertical: 7,
@@ -175,50 +175,50 @@ const styles = StyleSheet.create({
 
 	/* Flex styles */
 	flexRow: {
-		display: 'flex',
-		flexDirection: 'row',
+		display: "flex",
+		flexDirection: "row"
 	},
 	flexColumn: {
-		display: 'flex',
+		display: "flex"
 	},
 	flexAlignCenter: {
-		alignItems: 'center'
+		alignItems: "center"
 	},
 	flexAlignStart: {
-		alignItems: 'flex-start'
+		alignItems: "flex-start"
 	},
 	flexAlignEnd: {
-		alignItems: 'flex-end'
+		alignItems: "flex-end"
 	},
 	flexAlignContentCenter: {
-		alignContent: 'center'
+		alignContent: "center"
 	},
 	flexAlignStretch: {
-		alignItems: 'stretch'
+		alignItems: "stretch"
 	},
 	flexJustifyStart: {
-		justifyContent: 'flex-start'
+		justifyContent: "flex-start"
 	},
 	flexJustifyBetween: {
-		justifyContent: 'space-between'
+		justifyContent: "space-between"
 	},
 	flexJustifyAround: {
-		justifyContent: 'space-around'
+		justifyContent: "space-around"
 	},
 	flexJustifyCenter: {
-		justifyContent: 'center'
+		justifyContent: "center"
 	},
 	flexJustifyEnd: {
-		justifyContent: 'flex-end'
+		justifyContent: "flex-end"
 	},
 	flexAlignSelfStart: {
-		alignSelf: 'flex-start'
+		alignSelf: "flex-start"
 	},
 	flexAlignSelfCenter: {
-		alignSelf: 'center'
+		alignSelf: "center"
 	},
 	flexWrap: {
-		flexWrap: 'wrap'
+		flexWrap: "wrap"
 	},
 	flexGrow: {
 		flexGrow: 1
@@ -235,14 +235,14 @@ const styles = StyleSheet.create({
 
 	/* Rows */
 	row: {
-		backgroundColor: '#fff',
+		backgroundColor: "#fff",
 		borderBottomWidth: 1,
-		borderBottomColor: '#F2F4F7',
+		borderBottomColor: "#F2F4F7"
 	},
 
 	/* Modal styles */
 	modal: {
-		backgroundColor: '#f3f3f3',
+		backgroundColor: "#f3f3f3",
 		borderRadius: 5
 	},
 	modalAlignBottom: {
@@ -267,11 +267,11 @@ const styles = StyleSheet.create({
 		borderBottomColor: styleVars.greys.darker
 	},
 	modalHeaderBar: {
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		marginHorizontal: styleVars.spacing.wide,
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		marginHorizontal: styleVars.spacing.wide
 	},
 	modalHeaderLink: {
 		zIndex: 10
@@ -285,14 +285,14 @@ const styles = StyleSheet.create({
 		opacity: 0.5
 	},
 	modalTitle: {
-		textAlign: 'center',
-		fontWeight: '500',
-		color: '#000',
+		textAlign: "center",
+		fontWeight: "500",
+		color: "#000",
 		fontSize: styleVars.fontSizes.large,
-		marginHorizontal: styleVars.spacing.wide,
+		marginHorizontal: styleVars.spacing.wide
 	},
 	modalTitleWithLinks: {
-		position: 'absolute',
+		position: "absolute",
 		left: 0,
 		right: 0
 	},
@@ -300,74 +300,74 @@ const styles = StyleSheet.create({
 		width: 40,
 		height: 5,
 		borderRadius: 5,
-		backgroundColor: '#e0e0e0',
-		position: 'absolute',
+		backgroundColor: "#e0e0e0",
+		position: "absolute",
 		top: -10,
-		left: '50%',
+		left: "50%",
 		marginLeft: -20
 	},
 	modalClose: {
 		width: 20,
 		height: 20,
-		position: 'absolute',
+		position: "absolute",
 		top: -20,
 		right: styleVars.spacing.standard,
 		tintColor: styleVars.lightText
 	},
 
 	/* Toast */
-	toastText: { 
-		textAlign: 'center', 
-		color: 'white' 
+	toastText: {
+		textAlign: "center",
+		color: "white"
 	},
 
 	/* General purpose styles */
 	unreadBackground: {
-		backgroundColor: '#ffffff',
+		backgroundColor: "#ffffff"
 	},
 	readBackground: {
-		backgroundColor: '#ffffff', //'#f5f5f7'
+		backgroundColor: "#ffffff" //'#f5f5f7'
 	},
 	lightBackground: {
 		backgroundColor: styleVars.greys.light
 	},
 	text: {
-		color: '#000'
+		color: "#000"
 	},
 	textRead: {
-		color: '#8e8e8e'
+		color: "#8e8e8e"
 	},
 	title: {
-		color: '#000'
+		color: "#000"
 	},
 	titleRead: {
-		color: '#8e8e8e'
+		color: "#8e8e8e"
 	},
 	hidden: {
-		display: 'none'
+		display: "none"
 	},
-	flexReset: { 
-		flexBasis: 0, 
-		flexGrow: 1 
+	flexReset: {
+		flexBasis: 0,
+		flexGrow: 1
 	},
 
 	/* Typography */
 	contentTitle: {
 		fontSize: styleVars.fontSizes.extraLarge,
 		fontWeight: "600",
-		color: '#171717',
+		color: "#171717",
 		fontFamily: styleVars.fontFamily
 	},
 	itemTitle: {
 		fontSize: styleVars.fontSizes.large,
 		fontWeight: "600",
-		color: '#171717',
+		color: "#171717",
 		fontFamily: styleVars.fontFamily
 	},
 	smallItemTitle: {
 		fontSize: styleVars.fontSizes.content,
-		fontWeight: 'bold',
-		color: '#171717',
+		fontWeight: "bold",
+		color: "#171717",
 		fontFamily: styleVars.fontFamily
 	},
 	highlightedText: {
@@ -389,6 +389,9 @@ const styles = StyleSheet.create({
 	largeText: {
 		fontSize: styleVars.fontSizes.large
 	},
+	extraLargeText: {
+		fontSize: styleVars.fontSizes.extraLarge
+	},
 	lightText: {
 		color: styleVars.lightText
 	},
@@ -402,10 +405,10 @@ const styles = StyleSheet.create({
 		color: styleVars.accentColor
 	},
 	centerText: {
-		textAlign: 'center'
+		textAlign: "center"
 	},
 	italicText: {
-		fontStyle: 'italic'
+		fontStyle: "italic"
 	},
 	mediumText: {
 		fontWeight: "600"
@@ -432,7 +435,7 @@ const styles = StyleSheet.create({
 	/* Image styles */
 	tinyImage: {
 		width: 14,
-		height: 14,
+		height: 14
 	},
 	smallImage: {
 		width: 20,
@@ -540,15 +543,15 @@ const styles = StyleSheet.create({
 
 	/* HEADER STYLES */
 	headerTitle: {
-		color: 'white',
+		color: "white",
 		fontSize: 17,
 		fontWeight: "500",
-		textAlign: 'center'
+		textAlign: "center"
 	},
 	headerSubtitle: {
-		color: 'white',
+		color: "white",
 		fontSize: 12,
-		textAlign: 'center',
+		textAlign: "center",
 		fontWeight: "300",
 		opacity: 0.9
 	}
@@ -557,36 +560,36 @@ const styles = StyleSheet.create({
 export default styles;
 
 /* STYLES FOR THE RICH TEXT COMPONENT */
-export const richTextStyles = (dark) => ({
+export const richTextStyles = dark => ({
 	defaultTextStyle: {
-		color: dark ? '#fff' : '#222',
+		color: dark ? "#fff" : "#222",
 		fontSize: styleVars.fontSizes.content,
 		lineHeight: 21
 	},
 	tagStyles: {
-		'p': {
+		p: {
 			marginBottom: 15
 		},
-		'a': {
-			textDecorationLine: 'none'
+		a: {
+			textDecorationLine: "none"
 		}
 	},
 	classes: {
-		'ipsQuote': {
-			backgroundColor: '#fbfbfb', 
-			borderWidth: 1, 
-			borderStyle: 'solid', 
-			borderColor: '#f3f3f3', 
-			borderLeftWidth: 1, 
-			borderLeftColor: '#222',
+		ipsQuote: {
+			backgroundColor: "#fbfbfb",
+			borderWidth: 1,
+			borderStyle: "solid",
+			borderColor: "#f3f3f3",
+			borderLeftWidth: 1,
+			borderLeftColor: "#222",
 			marginBottom: 15
 		},
-		'ipsQuote_citation': {
-			backgroundColor: '#f3f3f3',
+		ipsQuote_citation: {
+			backgroundColor: "#f3f3f3",
 			paddingVertical: 7,
 			paddingHorizontal: 15
 		},
-		'ipsQuote_contents': {
+		ipsQuote_contents: {
 			paddingHorizontal: 15,
 			paddingVertical: 10
 		}
@@ -615,14 +618,14 @@ export const tabStyles = {
 		margin: 0,
 		display: "flex",
 		justifyContent: "center",
-		backgroundColor: '#fff'
+		backgroundColor: "#fff"
 	},
 	tabStyle: {
 		display: "flex",
 		justifyContent: "center",
-		backgroundColor: '#fff'
+		backgroundColor: "#fff"
 	},
 	indicatorStyle: {
-		backgroundColor: '#2080A7'
+		backgroundColor: "#2080A7"
 	}
 };

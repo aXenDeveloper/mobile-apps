@@ -14,6 +14,7 @@ import { IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
 import _ from "underscore";
 
 import introspectionQueryResultData from "../../fragmentTypes.json";
+import AppLoading from "../../atoms/AppLoading";
 import NavigationService from "../../utils/NavigationService";
 import LoginScreen from "../core/LoginRegister/LoginScreen";
 import RichTextContent from "../../ecosystems/RichTextContent";
@@ -43,14 +44,14 @@ class CommunityRoot extends Component {
 	constructor(props) {
 		super(props);
 
-		this._alerts = {
-			networkError: false,
-			offline: false
+		this.state = {
+			bypassOfflineMessage: false
 		};
-
-		this.state = {};
-
 		this._notificationTimeout = null;
+
+		this.tryAfterNetworkError = this.tryAfterNetworkError.bind(this);
+		this.bypassOfflineMessage = this.bypassOfflineMessage.bind(this);
+		this.launchAuth = this.launchAuth.bind(this);
 	}
 
 	/**
@@ -81,30 +82,6 @@ class CommunityRoot extends Component {
 		if (prevProps.auth.isAuthenticated && !this.props.auth.isAuthenticated) {
 			this.stopNotificationInterval();
 		}
-
-		// If we're done checking authentication, run our boot query to get initial data
-		/*if (
-			// If prev auth state doesn't match current auth state...
-			prevProps.auth.authenticated !== this.props.auth.authenticated ||
-			// or we've finished processing auth - but only if we aren't auehenticated (i.e. don't run if we're just refreshing the token)
-			(prevProps.auth.checkAuthProcessing && !this.props.auth.checkAuthProcessing && !this.props.auth.authenticated) ||
-			// or if our user is now a guest, or vice-versa
-			prevProps.user.isGuest !== this.props.user.isGuest
-		) {
-			this.runBootQuery();
-		}*/
-		// If we're no longer logged in, stop checking notifications
-		/*if ((!prevProps.user.isGuest && this.props.user.isGuest) || !this.props.auth.authenticated) {
-			clearInterval(this._notificationTimeout);
-		}
-
-		// If the site isn't online, but we can access the site, let the user know
-		if (!this.props.site.settings.site_online && this.props.user.group.canAccessOffline) {
-			if (!this._alerts.offline) {
-				this.showOfflineMessage();
-				this._alerts.offline = true;
-			}
-		}*/
 	}
 
 	/**
@@ -173,119 +150,99 @@ class CommunityRoot extends Component {
 	}
 
 	/**
-	 * Show an offline message to users who can access the site offline
+	 * Show the auth browser
 	 *
 	 * @return 	void
 	 */
-	showOfflineMessage(siteName) {
-		Alert.alert(
-			"Community Offline",
-			`${this.props.site.settings.board_name} is currently offline, but your permissions allow you to access it.`,
-			[
-				{
-					text: "OK"
-				}
-			],
-			{ cancelable: false }
-		);
+	launchAuth() {
+		NavigationService.launchAuth();
 	}
 
 	/**
-	 * Show an error alert. Called when we can't connect to the community.
+	 * Bypass the offline message and show community on next render
 	 *
 	 * @return 	void
 	 */
-	showLoadError() {
+	bypassOfflineMessage() {
 		this.setState({
-			loading: false
+			bypassOfflineMessage: true
 		});
-
-		// Track whether the alert is showing so we don't bombard the user
-		if (!this._alerts.networkError) {
-			Alert.alert(
-				"Network Error",
-				"Sorry, the community you are trying to access isn't available right now.",
-				[
-					{
-						text: "OK",
-						onPress: () => (this._alerts.networkError = false)
-					}
-				],
-				{ cancelable: false }
-			);
-
-			this._alerts.networkError = true;
-		}
 	}
 
 	render() {
 		let appContent;
 
 		if (this.props.app.bootStatus.loading || this.props.app.client === null) {
+			appContent = <AppLoading loading />;
+		} else if (this.props.app.bootStatus.error) {
 			appContent = (
-				<View style={styles.wrapper}>
-					<StatusBar barStyle="light-content" />
-					<ActivityIndicator size="large" color="#ffffff" />
-				</View>
+				<AppLoading
+					icon={icons.OFFLINE}
+					title="Network Error"
+					message="Sorry, there was a problem loading this community"
+					buttonText="Try Again"
+					buttonOnPress={this.tryAfterNetworkError}
+				/>
 			);
-		} else if (this.props.app.bootStatus.error && this.props.app.bootStatus.error == "network_error") {
-			appContent = (
-				<View style={styles.wrapper}>
-					<StatusBar barStyle="light-content" />
-					<TouchableHighlight style={styles.tryAgain} onPress={() => this.tryAfterNetworkError()}>
-						<Text style={styles.tryAgainText}>Try Again</Text>
-					</TouchableHighlight>
-				</View>
-			);
-		} else if (!this.props.site.settings.site_online && !this.props.user.group.canAccessOffline) {
-			// Site is offline and this user cannot access it
-			appContent = (
-				<View style={[styles.wrapper, styles.offlineWrapper]}>
-					<StatusBar barStyle="light-content" />
-					<Image source={require("../../../resources/offline.png")} resizeMode="contain" style={styles.icon} />
-					<Text style={styles.title}>
-						{Lang.get("offline", {
-							siteName: this.props.site.settings.board_name
-						})}
-					</Text>
-					{Boolean(this.props.site.settings.site_offline_message) && (
-						<RichTextContent dark style={styles.offlineMessage}>
-							{this.props.site.settings.site_offline_message}
-						</RichTextContent>
-					)}
-					{!Boolean(this.props.auth.authenticated) && (
-						<TouchableHighlight style={styles.tryAgain} onPress={() => this.tryAfterNetworkError()}>
-							<Text style={styles.tryAgainText}>Sign In Now</Text>
-						</TouchableHighlight>
-					)}
-				</View>
-			);
+		} else if (!this.props.site.settings.site_online && !this.state.bypassOfflineMessage) {
+			if (!this.props.user.group.canAccessOffline) {
+				// Site is offline and this user cannot access it
+				appContent = (
+					<AppLoading
+						icon={icons.OFFLINE}
+						title="Community Unavailable"
+						message={
+							// Only use this message if there's no offline message - otherwise we'll provide a RichTextContent
+							// component a few lines down.
+							!Boolean(this.props.site.settings.site_offline_message) &&
+							Lang.get("offline", {
+								siteName: this.props.site.settings.board_name
+							})
+						}
+						buttonText="Sign In"
+						buttonOnPress={!Boolean(this.props.auth.isAuthenticated) ? this.tryAfterNetworkError : null}
+					>
+						{Boolean(this.props.site.settings.site_offline_message) && <RichTextContent dark>{this.props.site.settings.site_offline_message}</RichTextContent>}
+					</AppLoading>
+				);
+			} else {
+				// Site is offline and this user cannot access it
+				appContent = (
+					<AppLoading
+						icon={icons.OFFLINE}
+						title="Community Offline"
+						message={`${this.props.site.settings.board_name} is offline, but your permissions allow you to access it.`}
+						buttonText="Go To Community"
+						buttonOnPress={this.bypassOfflineMessage}
+					/>
+				);
+			}
 		} else if (!this.props.user.group.canAccessSite) {
 			if (this.props.user.group.groupType !== "GUEST") {
 				// User is in a banned group
 				appContent = (
-					<View style={styles.wrapper}>
-						<StatusBar barStyle="light-content" />
-						<Image source={require("../../../resources/banned.png")} resizeMode="contain" style={styles.icon} />
-						<Text style={styles.title}>You are banned</Text>
-						<Text style={styles.offlineMessage}>Sorry, you do not have permission to access {this.props.site.settings.board_name}.</Text>
-					</View>
+					<AppLoading
+						icon={icons.BANNED}
+						title="No Permission"
+						message={`Sorry, you do not have permission to access ${this.props.site.settings.board_name}`}
+					/>
 				);
 			} else {
 				// User is a guest, so site requires a login to view anything
-				appContent = <LoginScreen hideClose />;
+				appContent = (
+					<AppLoading
+						icon={icons.LOGIN}
+						title="Sign In Required"
+						message={`Please sign in to access ${this.props.site.settings.board_name}`}
+						buttonText="Sign In"
+						buttonOnPress={this.launchAuth}
+					/>
+				);
 			}
+		} else if (this.props.auth.swapToken.loading) {
+			appContent = <AppLoading loading message={`Logging you in...`} />;
 		} else {
-			appContent = (
-				<React.Fragment>
-					<CommunityNavigation />
-					{this.props.auth.swapToken.loading && (
-						<View style={styles.authLoading}>
-							<Text>Logging in...</Text>
-						</View>
-					)}
-				</React.Fragment>
-			);
+			appContent = <CommunityNavigation />;
 		}
 
 		return <ApolloProvider client={this.props.app.client}>{appContent}</ApolloProvider>;
@@ -298,47 +255,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "center"
-	},
-	authLoading: {
-		backgroundColor: "#000",
-		borderRadius: 5,
-		position: "absolute",
-		left: 50,
-		top: 50
-	},
-	tryAgain: {
-		//backgroundColor: 'rgba(255,255,255,0.1)',
-		borderWidth: 1,
-		borderColor: "rgba(255,255,255,0.5)",
-		paddingVertical: 10,
-		paddingHorizontal: 20,
-		borderRadius: 4
-	},
-	tryAgainText: {
-		color: "rgba(255,255,255,0.5)",
-		fontSize: 15
-	},
-	title: {
-		fontSize: 19,
-		color: "#fff",
-		fontWeight: "500",
-		marginTop: styleVars.spacing.veryWide,
-		marginBottom: styleVars.spacing.standard
-	},
-	offlineWrapper: {
-		justifyContent: "flex-start",
-		alignItems: "flex-start",
-		paddingTop: 60,
-		paddingHorizontal: styleVars.spacing.veryWide
-	},
-	offlineMessage: {
-		marginBottom: styleVars.spacing.veryWide
-	},
-	icon: {
-		width: 60,
-		height: 60,
-		tintColor: "#fff",
-		opacity: 0.6
 	}
 });
 
