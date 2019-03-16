@@ -1,73 +1,119 @@
 import * as actions from "../actions/auth";
+import { SET_ACTIVE_COMMUNITY } from "../actions/app";
 
 const initialState = {
-	loginProcessing: false,
-	authenticated: false
+	swapToken: {
+		loading: false,
+		error: false,
+		isNetworkError: false
+	},
+	refreshToken: {
+		loading: false,
+		error: false,
+		isNetworkError: false
+	},
+	authData: {
+		refreshToken: null,
+		expiresIn: null,
+		accessToken: null
+	},
+	isAuthenticated: false
 };
 
 export default function auth(state = initialState, { type, payload }) {
 	switch (type) {
+		// When we change the active community, we want to completely reset
+		// our auth state.
+		case SET_ACTIVE_COMMUNITY:
+			return {
+				...initialState
+			};
+
+		// ========================================================
+		// Swap token actions. This happens after logging in via
+		// oAuth, when we receive a code that must be exchanged for
+		// an accessToken.
+		case actions.SWAP_TOKEN_LOADING:
+			return {
+				...state,
+				swapToken: {
+					loading: true,
+					error: false,
+					isNetworkError: false
+				}
+			};
+		case actions.SWAP_TOKEN_ERROR:
+			return {
+				...state,
+				swapToken: {
+					loading: false,
+					error: payload.error || true,
+					isNetworkError: payload.isNetworkError || false
+				}
+			};
+		case actions.SWAP_TOKEN_SUCCESS:
+			return {
+				...state,
+				swapToken: {
+					loading: false,
+					error: false,
+					isNetworkError: false
+				}
+			};
+
+		// ========================================================
+		// Refresh token actions. This happens automatically when we boot
+		// a community, and every so often before the accessToken expires.
+		case actions.REFRESH_TOKEN_LOADING:
+			return {
+				...state,
+				refreshToken: {
+					loading: true,
+					error: false,
+					isNetworkError: false
+				}
+			};
+		case actions.REFRESH_TOKEN_ERROR:
+			return {
+				...state,
+				refreshToken: {
+					loading: false,
+					error: payload.error || true,
+					isNetworkError: payload.isNetworkError || false
+				}
+			};
+		case actions.REFRESH_TOKEN_SUCCESS:
+			return {
+				...state,
+				refreshToken: {
+					loading: false,
+					error: false,
+					isNetworkError: false
+				}
+			};
+
+		// ========================================================
+		// Auth data actions. This is the data received from a community
+		// that is used in future requests to authorize the user.
 		case actions.RECEIVE_AUTH:
 			return {
 				...state,
-				loginProcessing: false,
-				refresh_token: payload.refresh_token,
-				expires_in: payload.expires_in,
-				access_token: payload.access_token,
-				authenticated: payload.userSession
+				authData: {
+					refreshToken: payload.refreshToken,
+					expiresIn: payload.expiresIn,
+					accessToken: payload.accessToken
+				},
+				isAuthenticated: payload.isAuthenticated
 			};
-		case actions.LOGIN_REQUEST:
+		case actions.REMOVE_AUTH:
 			return {
 				...state,
-				loginProcessing: true
+				authData: {
+					...initialState.authData
+				},
+				isAuthenticated: false
 			};
-		case actions.LOGIN_SUCCESS:
-			return {
-				...state,
-				loginProcessing: false,
-				refresh_token: payload.refresh_token,
-				expires_in: payload.expires_in,
-				access_token: payload.access_token,
-				authenticated: true,
-				networkError: false
-			};
-		case actions.LOGIN_ERROR:
-			return {
-				loginProcessing: false,
-				authenticated: false,
-				error: payload.error
-			};
-		case actions.CHECK_AUTH_REQUEST:
-			const { error, ...others } = state;
-			return {
-				...others,
-				checkAuthProcessing: true
-			};
-		case actions.CHECK_AUTH_REQUEST_SUCCESS:
-			return {
-				...state,
-				checkAuthProcessing: false,
-				authenticated: true,
-				expires_in: payload.expires_in,
-				access_token: payload.access_token,
-				networkError: false
-			};
-		case actions.CHECK_AUTH_REQUEST_ERROR:
-			// Return object that excludes access_token & expires_in
-			const { access_token, expires_in, ...rest } = state;
-			return {
-				...rest,
-				error: payload.error,
-				networkError: payload.networkError,
-				checkAuthProcessing: false,
-				authenticated: false
-			};
-		case actions.LOGOUT_SUCCESS:
-			return {
-				authenticated: false,
-				loginProcessing: false,
-				checkAuthProcessing: false
-			};
+
 		default:
 			return state;
 	}

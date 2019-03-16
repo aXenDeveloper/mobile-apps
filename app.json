@@ -1,23 +1,23 @@
 {
-  "expo": {
-    "sdkVersion": "30.0.0",
-    "orientation": "portrait",
-    "privacy": "unlisted",
-    "extra": {
-	"oauth_client_id": "ca21723b69d04411468926e9ed3d356d",
-	"api_url": "http://172.122.182.131/ipsdev/Community/",
-	"api_key": "NTU2ODhjOWQ2MDMwMWVlYmQ2Mjg5NjVjN2FhOGNiNDY=",
-      /*"oauth_client_id": "d5f20f784ad0c7eb51e9b53f16ac370d",
-      "api_url": "https://auto.invisionalpha.com/",
-      "api_key": "M2ViZmI4ODUyNDcxOTBkZWRlOTg2MmE4OTMyYWFmYjA=",*/
-      "refresh_token_advance": 300000,
-      "message_prefix": "__IPS__",
-      "per_page": 10,
-      "contentBehavior": "first"
-    },
-    "name": "project-rooster",
-    "slug": "project-rooster",
-    "version": "0.1.0",
-    "description": ""
-  }
+	"expo": {
+		"sdkVersion": "30.0.0",
+		"orientation": "portrait",
+		"privacy": "unlisted",
+		"extra": {
+			"multi": true,
+			"oauth_client_id": "ca21723b69d04411468926e9ed3d356d",
+			//"oauth_client_id": "Y2EyMTcyM2I2OWQwNDQxMTQ2ODkyNmU5ZWQzZDM1NmQ=",
+			"api_url": "http://192.168.1.33/ipsdev/Community/",
+			"refresh_token_advance": 300000,
+			"notification_timeout": 10000,
+			"message_prefix": "__IPS__",
+			"per_page": 10,
+			"contentBehavior": "first"
+		},
+		"name": "project-rooster",
+		"slug": "project-rooster",
+		"version": "0.1.0",
+		"description": "",
+		"scheme": "invision-community"
+	}
 }

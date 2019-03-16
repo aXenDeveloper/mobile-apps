@@ -39,8 +39,8 @@ class ContentRenderer extends PureComponent {
 	 * @return 	void
 	 */
 	closeLightbox() {
-		this.setState({ 
-			lightboxVisible: false 
+		this.setState({
+			lightboxVisible: false
 		});
 	}
 
@@ -125,12 +125,12 @@ class ContentRenderer extends PureComponent {
 	 * @return 	boolean
 	 */
 	ignoreNodesFunction(node) {
-		if( !this.props.removeQuotes ){
+		if (!this.props.removeQuotes) {
 			return false;
 		}
 
-		if( node.name === 'blockquote' ){
-			if( !_.isUndefined( node.attribs.class ) && node.attribs.class.indexOf('ipsQuote') !== -1 ) {
+		if (node.name === "blockquote") {
+			if (!_.isUndefined(node.attribs.class) && node.attribs.class.indexOf("ipsQuote") !== -1) {
 				return true;
 			}
 		}
@@ -154,8 +154,8 @@ class ContentRenderer extends PureComponent {
 				return iframe(htmlAttribs, children, convertedCSSStyles, passProps);
 			},
 			a: (htmlAttribs, children, convertedCSSStyles, passProps) => {
-				if(!_.isUndefined(htmlAttribs['data-mentionid'])) {
-					return <Mention userid={parseInt(htmlAttribs['data-mentionid'])} name={passProps.rawChildren[0].data} key={passProps.key} />
+				if (!_.isUndefined(htmlAttribs["data-mentionid"])) {
+					return <Mention userid={parseInt(htmlAttribs["data-mentionid"])} name={passProps.rawChildren[0].data} key={passProps.key} />;
 				}
 
 				return a(htmlAttribs, children, convertedCSSStyles, passProps);
@@ -182,7 +182,7 @@ class ContentRenderer extends PureComponent {
 			return;
 		}
 
-		NavigationService.navigate( data );
+		NavigationService.navigate(data);
 	}
 
 	/**
@@ -195,15 +195,15 @@ class ContentRenderer extends PureComponent {
 	buildCitation(quoteAttribs, defaultValue) {
 		let toReturn = defaultValue;
 
-		if( !_.isUndefined( quoteAttribs['data-ipsquote-username'] ) ){
-			if( !_.isUndefined( quoteAttribs['data-ipsquote-timestamp'] ) ){
-				toReturn = Lang.get('editor_quote_line_with_time', {
-					date: relativeTime.long( parseInt( quoteAttribs['data-ipsquote-timestamp'] ) ),
-					username: quoteAttribs['data-ipsquote-username']
+		if (!_.isUndefined(quoteAttribs["data-ipsquote-username"])) {
+			if (!_.isUndefined(quoteAttribs["data-ipsquote-timestamp"])) {
+				toReturn = Lang.get("editor_quote_line_with_time", {
+					date: relativeTime.long(parseInt(quoteAttribs["data-ipsquote-timestamp"])),
+					username: quoteAttribs["data-ipsquote-username"]
 				});
 			} else {
-				toReturn = Lang.get('editor_quote_line', {
-					username: quoteAttribs['data-ipsquote-username']
+				toReturn = Lang.get("editor_quote_line", {
+					username: quoteAttribs["data-ipsquote-username"]
 				});
 			}
 		}
@@ -225,7 +225,7 @@ class ContentRenderer extends PureComponent {
 					baseFontStyle={this.props.baseFontStyle || richTextStyles(this.props.dark).defaultTextStyle}
 					html={this.props.children}
 					imagesMaxWidth={parseInt(Dimensions.get("window").width) - 35}
-					staticContentMaxWidth	={parseInt(Dimensions.get("window").width) - 35}
+					staticContentMaxWidth={parseInt(Dimensions.get("window").width) - 35}
 					onLinkPress={this.props.onLinkPress || this.onLinkPress}
 					ignoreNodesFunction={this.ignoreNodesFunction}
 				/>
@@ -241,7 +241,4 @@ class ContentRenderer extends PureComponent {
 	}
 }
 
-export default compose(
-	withNavigation,
-	connect()
-)(ContentRenderer);
+export default compose(connect())(ContentRenderer);

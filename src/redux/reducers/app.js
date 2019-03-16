@@ -1,15 +1,98 @@
-import { OPEN_MODAL_WEBVIEW, RESET_MODAL_WEBVIEW } from "../actions/app";
+import * as actions from "../actions/app";
 
 const initialState = {
+	bootStatus: {
+		loading: false,
+		loaded: false,
+		error: false,
+		isNetworkError: false
+	},
+	client: null,
+	view: "multi",
+	currentCommunity: {
+		apiUrl: null,
+		apiKey: null
+	},
 	webview: {
 		active: false,
-		url: ''
+		url: ""
 	}
 };
 
 export default function app(state = initialState, { type, payload }) {
 	switch (type) {
-		case OPEN_MODAL_WEBVIEW:
+		// --------------------------------------------------------------
+		// Boot actions
+		case actions.RESET_BOOT_STATUS:
+			return {
+				...state,
+				bootStatus: {
+					...initialState.bootStatus
+				}
+			};
+		case actions.BOOT_SITE_LOADING:
+			return {
+				...state,
+				bootStatus: {
+					error: false,
+					isNetworkError: false,
+					loading: true,
+					loaded: false
+				}
+			};
+		case actions.BOOT_SITE_SUCCESS:
+			return {
+				...state,
+				bootStatus: {
+					error: false,
+					isNetworkError: false,
+					loading: false,
+					loaded: true
+				}
+			};
+		case actions.BOOT_SITE_ERROR:
+			return {
+				...state,
+				bootStatus: {
+					loading: false,
+					loaded: false,
+					error: payload.error || true,
+					isNetworkError: payload.isNetworkError
+				}
+			};
+
+		// --------------------------------------------------------------
+		// Actions to control the active community
+		case actions.SET_ACTIVE_COMMUNITY:
+			return {
+				...state,
+				currentCommunity: {
+					apiUrl: payload.apiUrl,
+					apiKey: payload.apiKey
+				}
+			};
+		case actions.RESET_ACTIVE_COMMUNITY:
+			return {
+				...state,
+				currentCommunity: {
+					...initialState.currentCommunity
+				}
+			};
+
+		// --------------------------------------------------------------
+		// Other app actions
+		case actions.SET_APOLLO_CLIENT:
+			return {
+				...state,
+				client: payload.client
+			};
+		case actions.SWITCH_APP_VIEW:
+			return {
+				...state,
+				view: payload.view
+			};
+
+		case actions.OPEN_MODAL_WEBVIEW:
 			return {
 				...state,
 				webview: {
@@ -17,12 +100,12 @@ export default function app(state = initialState, { type, payload }) {
 					url: payload.url
 				}
 			};
-		case RESET_MODAL_WEBVIEW:
+		case actions.RESET_MODAL_WEBVIEW:
 			return {
 				...state,
 				webview: {
 					active: false,
-					url: ''
+					url: ""
 				}
 			};
 		default:

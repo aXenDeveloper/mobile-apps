@@ -6,4 +6,5 @@ import site from './site';
 import user from './user';
 import { combineReducers } from 'redux';
 
-export default combineReducers({ app, auth, user, editor, site, forums });
+
+export default combineReducers({ app, auth, user, editor, site, forums });// app, auth, user, editor, site, forums });

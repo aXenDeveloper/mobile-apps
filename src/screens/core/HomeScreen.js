@@ -1,19 +1,13 @@
 import React, { Component } from "react";
-import {
-	Text,
-	Image,
-	ScrollView,
-	View,
-	StyleSheet,
-	FlatList,
-	TouchableOpacity
-} from "react-native";
+import { Text, Image, ScrollView, View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import gql from "graphql-tag";
 import { graphql, withApollo } from "react-apollo";
 import _ from "underscore";
 import { connect } from "react-redux";
 
+import NavigationService from "../../utils/NavigationService";
 import Lang from "../../utils/Lang";
+import GoToMulti from "../../atoms/GoToMulti";
 import { Post } from "../../ecosystems/Post";
 import LargeTitle from "../../atoms/LargeTitle";
 import ErrorBox from "../../atoms/ErrorBox";
@@ -35,8 +29,11 @@ on the homepage widgets that have been configured on the site.
 const HomeSectionsToShow = ["new_content", "active_users", "our_picks", "popular_contributors"];
 
 class HomeScreen extends Component {
-	static navigationOptions = {
-		title: "Invision Community"
+	static navigationOptions = ({ navigation }) => {
+		return {
+			title: "Invision Community",
+			headerLeft: <GoToMulti />
+		};
 	};
 
 	static CARD_WIDTH = 285;
@@ -96,6 +93,8 @@ class HomeScreen extends Component {
 				navConfig
 			});
 		} catch (err) {
+			console.log(err);
+
 			this.setState({
 				loading: false,
 				error: true
@@ -109,7 +108,7 @@ class HomeScreen extends Component {
 	 * @return 	Component|null
 	 */
 	getLoginRegPrompt() {
-		if( this.props.auth.authenticated ){
+		if (this.props.auth.isAuthenticated) {
 			return null;
 		}
 
@@ -119,7 +118,7 @@ class HomeScreen extends Component {
 				register={this.props.site.settings.allow_reg !== "DISABLED"}
 				registerUrl={this.props.site.settings.allow_reg_target || null}
 				navigation={this.props.navigation}
-				message={Lang.get( this.props.site.settings.allow_reg !== "DISABLED" ? 'login_register_prompt' : 'login_prompt', {
+				message={Lang.get(this.props.site.settings.allow_reg !== "DISABLED" ? "login_register_prompt" : "login_prompt", {
 					siteName: this.props.site.settings.board_name
 				})}
 			/>
@@ -136,55 +135,55 @@ class HomeScreen extends Component {
 	}
 
 	getNavConfig() {
-		return [			
+		return [
 			{
-				key: 'forums_all',
-				title: 'All Topics',
-				icon: require('../../../resources/browse/forums_all.png'),
+				key: "forums_all",
+				title: "All Topics",
+				icon: require("../../../resources/browse/forums_all.png"),
 				handler: () => {
-					console.log('all topics');
-					this.props.navigation.navigate('FluidForum');
+					console.log("all topics");
+					this.props.navigation.navigate("FluidForum");
 				}
 			},
 			{
-				key: 'forums_browse',
-				title: 'Forums',
-				icon: require('../../../resources/browse/forums_browse.png'),
+				key: "forums_browse",
+				title: "Forums",
+				icon: require("../../../resources/browse/forums_browse.png"),
 				handler: () => {
-					console.log('navigate!');
-					this.props.navigation.navigate('ForumIndex');
+					console.log("navigate!");
+					this.props.navigation.navigate("ForumIndex");
 				}
 			},
 			{
-				key: 'gallery_all',
-				title: 'All Images',
-				icon: require('../../../resources/browse/gallery_all.png'),
+				key: "gallery_all",
+				title: "All Images",
+				icon: require("../../../resources/browse/gallery_all.png"),
 				handler: () => {
-					console.log('albums');
+					console.log("albums");
 				}
 			},
 			{
-				key: 'gallery_browse',
-				title: 'Browse By Category',
-				icon: require('../../../resources/browse/gallery_browse.png'),
+				key: "gallery_browse",
+				title: "Browse By Category",
+				icon: require("../../../resources/browse/gallery_browse.png"),
 				handler: () => {
-					console.log('albums');
+					console.log("albums");
 				}
 			},
 			{
-				key: 'downloads_all',
-				title: 'All Files',
-				icon: require('../../../resources/browse/gallery_all.png'),
+				key: "downloads_all",
+				title: "All Files",
+				icon: require("../../../resources/browse/gallery_all.png"),
 				handler: () => {
-					console.log('albums');
+					console.log("albums");
 				}
 			},
 			{
-				key: 'downloads_browse',
-				title: 'Browse By Category',
-				icon: require('../../../resources/browse/gallery_browse.png'),
+				key: "downloads_browse",
+				title: "Browse By Category",
+				icon: require("../../../resources/browse/gallery_browse.png"),
 				handler: () => {
-					console.log('albums');
+					console.log("albums");
 				}
 			}
 		];
@@ -194,7 +193,7 @@ class HomeScreen extends Component {
 		return (
 			<TouchableOpacity style={componentStyles.navItem} onPress={item.handler}>
 				<React.Fragment>
-					<Image source={item.icon} resizeMode='contain' style={componentStyles.navItemIcon} />
+					<Image source={item.icon} resizeMode="contain" style={componentStyles.navItemIcon} />
 					<Text style={componentStyles.navItemText}>{item.title}</Text>
 				</React.Fragment>
 			</TouchableOpacity>
@@ -203,11 +202,11 @@ class HomeScreen extends Component {
 
 	render() {
 		if (this.state.error) {
-			return <ErrorBox message={Lang.get('home_view_error')} refresh={() => this.refreshAfterError()} />;
+			return <ErrorBox message={Lang.get("home_view_error")} refresh={() => this.refreshAfterError()} />;
 		} else {
 			let navigation;
-			
-			if( this.state.navConfig.length ){
+
+			if (this.state.navConfig.length) {
 				navigation = (
 					<FlatList
 						renderItem={({ item }) => this.renderNavItem(item)}
@@ -229,27 +228,15 @@ class HomeScreen extends Component {
 
 			return (
 				<React.Fragment>
-					<View style={componentStyles.navigator}>
-						{navigation}
-					</View>
+					<View style={componentStyles.navigator}>{navigation}</View>
 					{this.getLoginRegPrompt()}
 					<ScrollView style={componentStyles.browseWrapper}>
 						{HomeSectionsToShow.map(section => {
-							const SectionComponent =
-								HomeSections[section].component;
+							const SectionComponent = HomeSections[section].component;
 							return (
 								<React.Fragment key={section}>
-									<LargeTitle
-										icon={HomeSections[section].icon || null}
-									>
-										{Lang.get(section)}
-									</LargeTitle>
-									<SectionComponent
-										loading={this.state.loading}
-										data={this.state.data}
-										cardWidth={HomeScreen.CARD_WIDTH}
-										navigation={this.props.navigation}
-									/>
+									<LargeTitle icon={HomeSections[section].icon || null}>{Lang.get(section)}</LargeTitle>
+									<SectionComponent loading={this.state.loading} data={this.state.data} cardWidth={HomeScreen.CARD_WIDTH} navigation={this.props.navigation} />
 								</React.Fragment>
 							);
 						})}
@@ -268,25 +255,25 @@ export default connect(state => ({
 
 const componentStyles = StyleSheet.create({
 	navigator: {
-		backgroundColor: '#fff',
+		backgroundColor: "#fff",
 		borderBottomWidth: 1,
-		borderBottomColor: 'rgba(0,0,0,0.1)',
+		borderBottomColor: "rgba(0,0,0,0.1)",
 		paddingVertical: styleVars.spacing.standard,
 		height: 70
 	},
 	navItem: {
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
 		marginLeft: styleVars.spacing.standard,
-		backgroundColor: '#F5F5F5',
+		backgroundColor: "#F5F5F5",
 		paddingHorizontal: styleVars.spacing.wide,
 		paddingVertical: styleVars.spacing.standard,
 		borderRadius: 30
 	},
 	navItemText: {
 		fontSize: styleVars.fontSizes.small,
-		fontWeight: '500',
+		fontWeight: "500",
 		lineHeight: 13,
 		color: styleVars.tabActive
 	},

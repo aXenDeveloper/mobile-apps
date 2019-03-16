@@ -19,32 +19,40 @@ export default class Button extends Component {
 		const imageType = buttonType + "Image";
 		const colorStyle = this.props.color ? { backgroundColor: this.props.color } : null;
 		const disabledStyle = this.props.disabled ? { opacity: 0.2 } : null;
+		const fullWidth = this.props.fullWidth ? [styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter] : null;
 
 		return (
 			<TouchableOpacity
-				style={[componentStyles.button, componentStyles[buttonType], componentStyles[this.props.size], rounded, colorStyle, disabledStyle, this.props.style]}
+				style={[
+					componentStyles.button,
+					componentStyles[buttonType],
+					componentStyles[this.props.size],
+					fullWidth,
+					rounded,
+					colorStyle,
+					disabledStyle,
+					this.props.style
+				]}
 				onPress={!this.props.disabled ? this.props.onPress : null}
 				disabled={this.props.disabled}
 			>
-				{Boolean(this.props.icon) && <Image style={[componentStyles.icon, componentStyles[imageType]]} resizeMode='stretch' source={this.props.icon} />}
-				<View style={componentStyles.textWrapper}>
-					<Text style={[componentStyles[textType], componentStyles.text, componentStyles[textSize]]} numberOfLines={1}>
-						{this.props.title}
-					</Text>
+				<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter]}>
+					{Boolean(this.props.icon) && <Image style={[componentStyles.icon, componentStyles[imageType]]} resizeMode="stretch" source={this.props.icon} />}
+					<View style={componentStyles.textWrapper}>
+						<Text style={[componentStyles[textType], componentStyles.text, componentStyles[textSize]]} numberOfLines={1}>
+							{this.props.title}
+						</Text>
+					</View>
 				</View>
 			</TouchableOpacity>
 		);
 	}
 }
 
-// 
+//
 
 const componentStyles = StyleSheet.create({
 	button: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
 		borderRadius: 3
 	},
 	rounded: {
@@ -57,7 +65,7 @@ const componentStyles = StyleSheet.create({
 		marginRight: styleVars.spacing.tight
 	},
 	textWrapper: {
-		flexGrow: 1,
+		flexGrow: 1
 	},
 
 	// Sizes
@@ -77,7 +85,7 @@ const componentStyles = StyleSheet.create({
 	// Text styles
 	text: {
 		fontWeight: "500",
-		textAlign: 'center'
+		textAlign: "center"
 	},
 	smallText: {
 		fontSize: styleVars.fontSizes.small
@@ -146,7 +154,7 @@ const componentStyles = StyleSheet.create({
 		backgroundColor: styleVars.darkButton.mainColor
 	},
 	darkFilledText: {
-		color: styleVars.darkButton.inverseColor,
+		color: styleVars.darkButton.inverseColor
 	},
 	darkFilledImage: {
 		tintColor: styleVars.darkButton.inverseColor
@@ -178,6 +186,7 @@ Button.defaultProps = {
 	filled: false,
 	size: "medium",
 	type: "primary",
+	fullWidth: true,
 	onPress: null
 };
 
@@ -188,5 +197,6 @@ Button.propTypes = {
 	type: PropTypes.oneOf(["primary", "light", "warning", "dark"]),
 	onPress: PropTypes.func,
 	filled: PropTypes.bool,
+	fullWidth: PropTypes.bool,
 	style: ViewPropTypes.style
 };

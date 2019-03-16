@@ -65,7 +65,7 @@ class TopicRow extends Component {
 		}
 
 		// Only show as unread if we're a member and unread flag is true
-		const showAsUnread = this.props.auth.authenticated && this.props.data.unread;
+		const showAsUnread = this.props.auth.isAuthenticated && this.props.data.unread;
 		const InfoComponent = this.props.data.isQuestion ? QuestionInfo : TopicInfo;
 
 		return (

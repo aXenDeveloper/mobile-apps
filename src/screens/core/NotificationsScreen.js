@@ -7,6 +7,7 @@ import _ from "underscore";
 
 import NavigationService from "../../utils/NavigationService";
 import Lang from "../../utils/Lang";
+import GoToMulti from "../../atoms/GoToMulti";
 import { NotificationRow, NotificationFragment } from "../../ecosystems/Notification";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SectionHeader from "../../atoms/SectionHeader";
@@ -45,6 +46,7 @@ const MarkReadMutation = gql`
 class NotificationsScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
 		title: "Notifications",
+		headerLeft: <GoToMulti />,
 		headerRight: (
 			<HeaderButton
 				icon="settings"

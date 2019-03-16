@@ -22,7 +22,7 @@ import EndOfComments from "../../atoms/EndOfComments";
 const FluidForumQuery = gql`
 	query FluidForumQuery($offset: Int, $limit: Int) {
 		forums {
-			topics(offset: $offset, limit: $limit) {				
+			topics(offset: $offset, limit: $limit) {
 				id
 				title
 				postCount
@@ -47,20 +47,18 @@ const FluidForumQuery = gql`
 
 class FluidForumScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
-		headerTitle: <TwoLineHeader title='All Topics' subtitle='Showing all topics from all forums' />,
+		headerTitle: <TwoLineHeader title="All Topics" subtitle="Showing all topics from all forums" />
 	});
 
 	/**
 	 * GraphQL error types
 	 */
-	static errors = {
-		
-	};
+	static errors = {};
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			reachedEnd: false,
+			reachedEnd: false
 		};
 	}
 
@@ -70,9 +68,7 @@ class FluidForumScreen extends Component {
 	 * @param 	object 	prevProps 	Previous prop values
 	 * @return 	void
 	 */
-	componentDidUpdate(prevProps) {
-		
-	}
+	componentDidUpdate(prevProps) {}
 
 	/**
 	 * Handles infinite loading when user scrolls to end
@@ -174,7 +170,7 @@ class FluidForumScreen extends Component {
 		return (
 			<TopicRow
 				data={item}
-				isGuest={!this.props.auth.authenticated}
+				isGuest={!this.props.auth.isAuthenticated}
 				onPress={() =>
 					this.props.navigation.navigate("TopicView", {
 						id: item.id,
