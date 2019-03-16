@@ -9,6 +9,7 @@ import * as Animatable from "react-native-animatable";
 
 import Lang from "../../utils/Lang";
 import { Post } from "../../ecosystems/Post";
+import GoToMulti from "../../atoms/GoToMulti";
 import StreamHeader from "../../atoms/StreamHeader";
 import { StreamCard, StreamCardFragment } from "../../ecosystems/Stream";
 import CheckList from "../../ecosystems/CheckList";
@@ -49,6 +50,7 @@ const headerStyles = StyleSheet.create({
 
 class StreamViewScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
+		headerLeft: <GoToMulti />,
 		headerTitle: (
 			<TouchableOpacity
 				onPress={

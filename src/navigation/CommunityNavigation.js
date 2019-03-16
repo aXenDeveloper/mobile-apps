@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { createAppContainer, createBottomTabNavigator, createMaterialTopTabNavigator, createDrawerNavigator, createStackNavigator, NavigationActions } from "react-navigation";
+import {
+	createAppContainer,
+	createBottomTabNavigator,
+	createMaterialTopTabNavigator,
+	createDrawerNavigator,
+	createStackNavigator,
+	NavigationActions
+} from "react-navigation";
 import { BottomTabBar } from "react-navigation-tabs";
 import { View } from "react-native";
 import Image from "react-native-remote-svg";
@@ -7,10 +14,8 @@ import { connect } from "react-redux";
 import { LinearGradient, WebBrowser } from "expo";
 
 // ----
-// IPS screens
-import MultiHomeScreen from "../screens/ips/MultiHomeScreen";
-// ----
 // Core screens
+import TestScreen from "../screens/core/TestScreen";
 import HomeScreen from "../screens/core/HomeScreen";
 import BrowseCommunityScreen from "../screens/core/BrowseCommunityScreen";
 import SearchScreen from "../screens/core/SearchScreen";
@@ -42,17 +47,16 @@ import { resetModalWebview } from "../redux/actions/app";
 import { NavigationTabIcon, NavigationTabNotification } from "../ecosystems/Navigation";
 import CustomHeader from "../ecosystems/CustomHeader";
 import styles, { styleVars, tabStyles } from "../styles";
-import Lang from '../utils/Lang';
-
+import Lang from "../utils/Lang";
 
 class AppNavigation extends Component {
 	constructor(props) {
 		super(props);
 
 		this._CommunityStack = this._getMainStack();
-		this._StreamStack = this._getMainStack({}, 'StreamView');
-		this._NotificationStack = this._getMainStack({}, 'NotificationsStack');
-		this._SearchStack = this._getMainStack({}, 'SearchStack');
+		this._StreamStack = this._getMainStack({}, "StreamView");
+		this._NotificationStack = this._getMainStack({}, "NotificationsStack");
+		this._SearchStack = this._getMainStack({}, "SearchStack");
 		this._LoginRegisterStack = this._getLoginRegisterStack();
 
 		this.state = {
@@ -63,14 +67,14 @@ class AppNavigation extends Component {
 	_getMainStack(options, initialRoute) {
 		return createStackNavigator(
 			{
-				HomeScreen: { 
+				HomeScreen: {
 					screen: HomeScreen,
 					navigationOptions: {
 						title: this.props.site.settings.board_name
 					}
 				},
 				ForumIndex: { screen: ForumListScreen },
-				FluidForum: { 
+				FluidForum: {
 					screen: FluidForumScreen,
 					navigationOptions: {
 						title: "All Topics"
@@ -83,28 +87,31 @@ class AppNavigation extends Component {
 				SearchStack: { screen: SearchScreen },
 				NotificationsStack: { screen: NotificationsScreen },
 				NotificationsSettings: { screen: NotificationsSettingsScreen },
-				AccountSettings: { 
+				AccountSettings: {
 					screen: this._getSettingsStack(),
 					navigationOptions: {
-						title: 'Account Settings'
+						title: "Account Settings"
 					}
 				},
 				StreamView: { screen: StreamViewScreen },
 				WebView: { screen: WebViewScreen }
 			},
 			{
-				initialRouteName: initialRoute || 'HomeScreen',
+				initialRouteName: initialRoute || "HomeScreen",
 				cardStyle: styles.stackCardStyle,
-				defaultNavigationOptions: Object.assign({
-					header: props => {
-						return <CustomHeader {...props} />;
+				defaultNavigationOptions: Object.assign(
+					{
+						header: props => {
+							return <CustomHeader {...props} />;
+						},
+						headerTitleStyle: styles.headerTitle,
+						headerStyle: styles.header,
+						headerBackTitleStyle: styles.headerBack,
+						headerTintColor: "white",
+						headerBackTitle: null
 					},
-					headerTitleStyle: styles.headerTitle,
-					headerStyle: styles.header,
-					headerBackTitleStyle: styles.headerBack,
-					headerTintColor: "white",
-					headerBackTitle: null
-				}, options || null)
+					options || null
+				)
 			}
 		);
 	}
@@ -116,37 +123,41 @@ class AppNavigation extends Component {
 				CommentViewSettingsScreen: { screen: CommentViewSettingsScreen }
 			},
 			{
-				initialRouteName: 'AccountSettingsScreen',
+				initialRouteName: "AccountSettingsScreen",
 				cardStyle: styles.stackCardStyle,
-				defaultNavigationOptions: Object.assign({
-					title: 'Settings',
-					header: null
-				}, options || null)
+				defaultNavigationOptions: Object.assign(
+					{
+						title: "Settings",
+						header: null
+					},
+					options || null
+				)
 			}
 		);
 	}
 
 	_getLoginRegisterStack() {
 		return createStackNavigator(
-		{
-			LoginScreen: { screen: LoginScreen },
-			RegisterScreen: { screen: RegisterScreen },
-			AuthWebView: { screen: WebViewScreen }
-		},
-		{
-			initialRouteName: 'LoginScreen',
-			cardStyle: styles.stackCardStyle,
-			defaultNavigationOptions: {
-				header: props => {
-					return <CustomHeader {...props} />;
-				},
-				headerTitleStyle: styles.headerTitle,
-				headerStyle: styles.header,
-				headerBackTitleStyle: styles.headerBack,
-				headerTintColor: "white",
-				headerBackTitle: null
+			{
+				LoginScreen: { screen: LoginScreen },
+				RegisterScreen: { screen: RegisterScreen },
+				AuthWebView: { screen: WebViewScreen }
+			},
+			{
+				initialRouteName: "LoginScreen",
+				cardStyle: styles.stackCardStyle,
+				defaultNavigationOptions: {
+					header: props => {
+						return <CustomHeader {...props} />;
+					},
+					headerTitleStyle: styles.headerTitle,
+					headerStyle: styles.header,
+					headerBackTitleStyle: styles.headerBack,
+					headerTintColor: "white",
+					headerBackTitle: null
+				}
 			}
-		});
+		);
 	}
 
 	/**
@@ -165,14 +176,14 @@ class AppNavigation extends Component {
 				},
 				CreateTopic: {
 					screen: CreateTopicScreen,
-					headerMode: 'float',
+					headerMode: "float",
 					navigationOptions: {
-						title: "Create Topic",
+						title: "Create Topic"
 					}
 				},
 				ReplyTopic: {
 					screen: ReplyTopicScreen,
-					headerMode: 'screen',
+					headerMode: "screen",
 					navigationOptions: {
 						title: "Reply"
 					}
@@ -181,7 +192,7 @@ class AppNavigation extends Component {
 					screen: this._LoginRegisterStack,
 					navigationOptions: {
 						header: null,
-						headerMode: 'none'
+						headerMode: "none"
 					}
 				}
 			},
@@ -200,16 +211,18 @@ class AppNavigation extends Component {
 			}
 		);
 
-
 		return createAppContainer(
-			createDrawerNavigator({
-				Master: {
-					screen: masterStack
+			createDrawerNavigator(
+				{
+					Master: {
+						screen: masterStack
+					}
+				},
+				{
+					drawerPosition: "left",
+					contentComponent: UserScreen
 				}
-			}, {
-				drawerPosition: 'left',
-				contentComponent: UserScreen
-			})
+			)
 		);
 	}
 
@@ -218,21 +231,19 @@ class AppNavigation extends Component {
 	 *
 	 * @return TabNavigator
 	 */
-	_getPrimaryTabBar() {		
+	_getPrimaryTabBar() {
 		const Home = {
 			screen: this._CommunityStack,
 			navigationOptions: {
 				tabBarLabel: "Home",
-				tabBarIcon: (props) => (
-					<NavigationTabIcon {...props} active={require("../../resources/home_active.png")} inactive={require("../../resources/home.png")} />
-				)
+				tabBarIcon: props => <NavigationTabIcon {...props} active={require("../../resources/home_active.png")} inactive={require("../../resources/home.png")} />
 			}
 		};
 		const Search = {
 			screen: this._SearchStack,
 			navigationOptions: {
 				tabBarLabel: "Search",
-				tabBarIcon: (props) => (
+				tabBarIcon: props => (
 					<NavigationTabIcon {...props} active={require("../../resources/search_active.png")} inactive={require("../../resources/search.png")} />
 				)
 			}
@@ -244,7 +255,7 @@ class AppNavigation extends Component {
 				header: props => {
 					return <CustomHeader {...props} title="Forums" />;
 				},
-				tabBarIcon: (props) => (
+				tabBarIcon: props => (
 					<NavigationTabIcon {...props} active={require("../../resources/activity_active.png")} inactive={require("../../resources/activity.png")} />
 				)
 			}
@@ -253,8 +264,12 @@ class AppNavigation extends Component {
 			screen: this._NotificationStack,
 			navigationOptions: navigation => ({
 				tabBarLabel: "Notifications",
-				tabBarIcon: (props) => (
-					<NavigationTabNotification {...props} active={require("../../resources/notification_active.png")} inactive={require("../../resources/notification.png")} />
+				tabBarIcon: props => (
+					<NavigationTabNotification
+						{...props}
+						active={require("../../resources/notification_active.png")}
+						inactive={require("../../resources/notification.png")}
+					/>
 				)
 			})
 		};
@@ -273,11 +288,12 @@ class AppNavigation extends Component {
 			screen: this._LoginRegisterStack,
 			navigationOptions: navigation => ({
 				tabBarLabel: "Sign In/Up",
-				tabBarIcon: (props) => (
+				tabBarIcon: props => (
 					<NavigationTabIcon {...props} active={require("../../resources/login_active.png")} inactive={require("../../resources/login.png")} />
 				),
 				tabBarOnPress: (tab, jumpToIndex) => {
-					navigation.navigation.navigate("LoginModal");
+					NavigationService.launchAuth();
+					//navigation.navigation.navigate("LoginModal");
 				}
 			})
 		};
@@ -289,7 +305,7 @@ class AppNavigation extends Component {
 			Login
 		};
 
-		if (this.props.auth.authenticated && !this.props.user.isGuest) {
+		if (this.props.auth.isAuthenticated && !this.props.user.isGuest) {
 			tabConfig = {
 				Home,
 				Search,
@@ -299,10 +315,10 @@ class AppNavigation extends Component {
 			};
 		}
 
-		const TabBarComponent = (props) => (<BottomTabBar {...props} />);
+		const TabBarComponent = props => <BottomTabBar {...props} />;
 
 		return createBottomTabNavigator(tabConfig, {
-			lazy: true,			
+			lazy: true,
 			tabBarPosition: "bottom",
 			tabBarOptions: {
 				showLabel: true,
@@ -318,19 +334,21 @@ class AppNavigation extends Component {
 	 *
 	 * @return object|file resource
 	 */
-	_getUserPhoto(focused, tintColor) {		
-		if( !this.props.user.isGuest && this.props.user.photo ){
+	_getUserPhoto(focused, tintColor) {
+		if (!this.props.user.isGuest && this.props.user.photo) {
 			return (
-				<View style={{ borderRadius: 24, overflow: 'hidden' }}>
-					<Image
-						style={[styles.tabIcon, styles.userTabIcon]}
-						source={{ uri: unescape( this.props.user.photo ) }}
-					/>
+				<View style={{ borderRadius: 24, overflow: "hidden" }}>
+					<Image style={[styles.tabIcon, styles.userTabIcon]} source={{ uri: unescape(this.props.user.photo) }} />
 				</View>
 			);
 		} else {
 			return (
-				<NavigationTabIcon focused={focused} tintColor={tintColor} active={require("../../resources/login_active.png")} inactive={require("../../resources/login.png")} />
+				<NavigationTabIcon
+					focused={focused}
+					tintColor={tintColor}
+					active={require("../../resources/login_active.png")}
+					inactive={require("../../resources/login.png")}
+				/>
 			);
 		}
 	}
@@ -355,7 +373,11 @@ class AppNavigation extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<this.state.MasterNavigation ref={navigatorRef => { NavigationService.setTopLevelNavigator(navigatorRef) }} />
+				<this.state.MasterNavigation
+					ref={navigatorRef => {
+						NavigationService.setTopLevelNavigator(navigatorRef);
+					}}
+				/>
 			</React.Fragment>
 		);
 	}

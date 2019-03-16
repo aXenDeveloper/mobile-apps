@@ -114,11 +114,13 @@ class WebViewScreen extends Component {
 
 	DOCUMENT_TITLE(data) {
 		// Remove " - <board_name>" from title, no need to show it in-app
-		const fixedTitle = data.title.replace(` - ${this.props.site.settings.board_name}`, '');
+		const fixedTitle = data.title.replace(` - ${this.props.site.settings.board_name}`, "");
 
-		this.props.navigation.setParams({
-			title: fixedTitle
-		});
+		if (fixedTitle !== this.props.navigation.state.params.title) {
+			this.props.navigation.setParams({
+				title: fixedTitle
+			});
+		}
 	}
 
 	GO_TO_URL(data) {
@@ -126,14 +128,20 @@ class WebViewScreen extends Component {
 		NavigationService.navigate({
 			url: data.url
 		});
-
-		/*this.setState({
-			currentUrl: data.url
-		});*/
 	}
 
 	render() {
-		let headers = NavigationService.isInternalUrl(this.state.currentUrl) ? { "x-ips-app": "true" } : {};
+		let headers = {};
+
+		// If this is an internal URL, we set headers to authorize the user inside the webview
+		if (NavigationService.isInternalUrl(this.state.currentUrl)) {
+			headers["x-ips-app"] = "true";
+
+			if (this.props.auth.isAuthenticated) {
+				headers["x-ips-accesstokenmember"] = `${this.props.user.id}`;
+				headers["authorization"] = `Bearer ${this.props.auth.authData.accessToken}`;
+			}
+		}
 
 		return (
 			<View style={{ flex: 1 }}>
@@ -153,6 +161,8 @@ class WebViewScreen extends Component {
 
 export default compose(
 	connect(state => ({
-		site: state.site
+		auth: state.auth,
+		site: state.site,
+		user: state.user
 	}))
 )(WebViewScreen);

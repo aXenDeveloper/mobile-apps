@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Text, Alert, View, Image, TouchableHighlight, StyleSheet, ActivityIndicator, AsyncStorage, StatusBar } from "react-native";
 import { ApolloProvider } from "react-apollo";
+import apolloLogger from "apollo-link-logger";
 import { ApolloClient } from "apollo-client";
 import { HttpLink } from "apollo-link-http";
 import { ApolloLink } from "apollo-link";
@@ -10,21 +11,23 @@ import { connect } from "react-redux";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import { IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
-import introspectionQueryResultData from "../fragmentTypes.json";
 import _ from "underscore";
 
-import NavigationService from "../utils/NavigationService";
-import LoginScreen from "./core/LoginRegister/LoginScreen";
-import RichTextContent from "../ecosystems/RichTextContent";
-import Lang from "../utils/Lang";
-import { refreshAuth } from "../redux/actions/auth";
-import { userLoaded, guestLoaded, setUserStreams, updateNotificationCount } from "../redux/actions/user";
-import { setSiteSettings, setLoginHandlers } from "../redux/actions/site";
-import AppNavigation from "../navigation/AppNavigation";
-import ToFormData from "../utils/ToFormData";
-import LangFragment from "../LangFragment";
-import { styleVars } from "../styles";
-import icons from "../icons";
+import introspectionQueryResultData from "../../fragmentTypes.json";
+import NavigationService from "../../utils/NavigationService";
+import LoginScreen from "../core/LoginRegister/LoginScreen";
+import RichTextContent from "../../ecosystems/RichTextContent";
+import Lang from "../../utils/Lang";
+import { refreshAuth } from "../../redux/actions/auth";
+import { userLoaded, guestLoaded, setUserStreams, updateNotificationCount } from "../../redux/actions/user";
+import { setSiteSettings, setLoginHandlers } from "../../redux/actions/site";
+import CommunityNavigation from "../../navigation/CommunityNavigation";
+import ToFormData from "../../utils/ToFormData";
+import LangFragment from "../../LangFragment";
+import { styleVars } from "../../styles";
+import icons from "../../icons";
+
+global.Buffer = global.Buffer || require("buffer").Buffer;
 
 const NOTIFICATION_TIMEOUT = 30000;
 
@@ -96,7 +99,7 @@ const NotificationQuery = gql`
 	}
 `;
 
-class RootScreen extends Component {
+class CommunityRootScreen extends Component {
 	constructor(props) {
 		super(props);
 
@@ -105,15 +108,59 @@ class RootScreen extends Component {
 			offline: false
 		};
 
-		this.state = {
+		this.defaultState = {
 			loading: true,
 			siteOffline: false,
 			canAccess: false,
 			showOfflineBanner: false
 		};
 
-		this._notificationTimeout = null;
+		this.state = {
+			...this.defaultState,
+			client: this.getClient()
+		};
 
+		this._notificationTimeout = null;
+	}
+
+	/**
+	 * Always refresh the current auth session when we mount this screen
+	 *
+	 * @return 	void
+	 */
+	async componentDidMount() {
+		const { dispatch } = this.props;
+
+		// Trigger action to look for an access token, and verify it is valid
+		//dispatch(refreshAuth());
+		this.runBootQuery();
+	}
+
+	/**
+	 * Stop our automatic refresh timer if we unmount for some reason
+	 *
+	 * @return 	void
+	 */
+	componentWillUnmount() {
+		this.clearIntervals();
+	}
+
+	/**
+	 * Clears intervals we've set up in this component
+	 *
+	 * @return 	void
+	 */
+	clearIntervals() {
+		clearInterval(this._refreshTimer);
+		clearInterval(this._notificationTimeout);
+	}
+
+	/**
+	 * Gets an Apollo client instance
+	 *
+	 * @return 	void
+	 */
+	getClient() {
 		// In order for Apollo to use fragments with union types, as we do for generic core_Content
 		// queries, we need to pass it the schema definition in advance.
 		// See https://www.apollographql.com/docs/react/advanced/fragments.html#fragment-matcher
@@ -128,49 +175,42 @@ class RootScreen extends Component {
 				credentials: "same-origin",
 				headers: {
 					...context.headers,
-					Authorization: this.props.auth.access_token ? `Bearer ${this.props.auth.access_token}` : `Basic ${Expo.Constants.manifest.extra.api_key}`
+					//Authorization: this.props.auth.accessToken ? `Bearer ${this.props.auth.accessToken}` : `Basic ${this.props.app.currentCommunity.apiKey}`
+					Authorization: `Basic ${Buffer.from(this.props.app.currentCommunity.apiKey).toString("base64")}`
 				}
 			}));
 			return next(operation);
 		};
 
+		const errorLink = onError(({ graphQLErrors, networkError }) => {
+			if (graphQLErrors)
+				graphQLErrors.map(({ message, locations, path }) => console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`));
+
+			if (networkError) {
+				try {
+					const parsedError = JSON.parse(networkError);
+					console.log("[Network error]:");
+					console.log(parsedError);
+				} catch (err) {
+					console.log(`[Network error]: ${networkError}`);
+				}
+			}
+		});
+
 		const link = ApolloLink.from([
+			errorLink,
 			authLink,
+			apolloLogger,
 			new HttpLink({
-				uri: `${Expo.Constants.manifest.extra.api_url}/api/graphql/`
+				uri: `${this.props.app.currentCommunity.apiUrl}/api/graphql/`
 			})
 		]);
-		this._client = new ApolloClient({
+		const client = new ApolloClient({
 			link: link,
 			cache: new InMemoryCache({ fragmentMatcher })
 		});
-	}
 
-	/**
-	 * Always refresh the current auth session when we mount this screen
-	 *
-	 * @return 	void
-	 */
-	async componentDidMount() {
-		const { dispatch } = this.props;
-
-		// Trigger action to look for an access token, and verify it is valid
-		dispatch(refreshAuth());
-	}
-
-	/**
-	 * Stop our automatic refresh timer if we unmount for some reason
-	 *
-	 * @return 	void
-	 */
-	componentWillUnmount() {
-		if (this._refreshTimer) {
-			clearInterval(this._refreshTimer);
-		}
-
-		if (this._notificationTimeout) {
-			clearInterval(this._notificationTimeout);
-		}
+		return client;
 	}
 
 	/**
@@ -183,7 +223,7 @@ class RootScreen extends Component {
 			loading: true
 		});
 
-		this.props.dispatch(refreshAuth());
+		this.props.dispatch(refreshAuth(this.props.app.currentCommunity));
 	}
 
 	/**
@@ -203,9 +243,9 @@ class RootScreen extends Component {
 		// If we're authenticated now, then start a timer so we can refresh the token before it expires
 		if (nextProps.auth.authenticated && !this.props.auth.authenticated) {
 			this._refreshTimer = setInterval(() => {
-				console.log("Refreshing access_token");
-				dispatch(refreshAuth());
-			}, nextProps.auth.expires_in - Expo.Constants.manifest.extra.refresh_token_advance);
+				console.log("Refreshing accessToken");
+				dispatch(refreshAuth(this.props.app.currentCommunity));
+			}, nextProps.auth.expiresIn - Expo.Constants.manifest.extra.refresh_token_advance);
 		}
 	}
 
@@ -217,8 +257,21 @@ class RootScreen extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps, prevState) {
-		// If we're done checking authentication, run our boot query to get initial data
+		// Has our site connection updated?
+		// If so, we need to tear down all existing connection and set up a new client with the new URL.
 		if (
+			prevProps.app.currentCommunity.apiUrl !== this.props.app.currentCommunity.apiUrl ||
+			prevProps.app.currentCommunity.apiKey !== this.props.app.currentCommunity.apiKey
+		) {
+			this.clearIntervals();
+			this.setState({
+				...this.defaultState,
+				client: this.getClient()
+			});
+		}
+
+		// If we're done checking authentication, run our boot query to get initial data
+		/*if (
 			// If prev auth state doesn't match current auth state...
 			prevProps.auth.authenticated !== this.props.auth.authenticated ||
 			// or we've finished processing auth - but only if we aren't auehenticated (i.e. don't run if we're just refreshing the token)
@@ -227,7 +280,7 @@ class RootScreen extends Component {
 			prevProps.user.isGuest !== this.props.user.isGuest
 		) {
 			this.runBootQuery();
-		}
+		}*/
 
 		// If we're no longer logged in, stop checking notifications
 		if ((!prevProps.user.isGuest && this.props.user.isGuest) || !this.props.auth.authenticated) {
@@ -256,19 +309,23 @@ class RootScreen extends Component {
 		});
 
 		try {
-			const { data } = await this._client.query({
+			const { data } = await this.state.client.query({
 				query: BootQuery,
 				variables: {}
 			});
 
+			console.log(data);
+
 			// Send out our user info
-			if (this.props.auth.authenticated && data.core.me.group.groupType !== "GUEST") {
+			/*if (this.props.auth.authenticated && data.core.me.group.groupType !== "GUEST") {
 				dispatch(userLoaded({ ...data.core.me }));
 				clearInterval(this._notificationTimeout);
 				this._notificationTimeout = setInterval(() => this.runNotificationQuery(), NOTIFICATION_TIMEOUT);
 			} else {
 				dispatch(guestLoaded({ ...data.core.me }));
-			}
+			}*/
+
+			dispatch(guestLoaded({ ...data.core.me }));
 
 			// Set our lang strings
 			if (_.size(data.core.language)) {
@@ -308,14 +365,14 @@ class RootScreen extends Component {
 		const { dispatch } = this.props;
 
 		try {
-			const { data } = await this._client.query({
+			const { data } = await this.state.client.query({
 				query: NotificationQuery,
-				fetchPolicy: 'network-only'
+				fetchPolicy: "network-only"
 			});
 
 			console.log(`Ran notification update, got count ${data.core.me.notificationCount}`);
 
-			if( parseInt( data.core.me.notificationCount ) !== parseInt( this.props.user.notificationCount ) ){
+			if (parseInt(data.core.me.notificationCount) !== parseInt(this.props.user.notificationCount)) {
 				dispatch(updateNotificationCount(data.core.me.notificationCount));
 			}
 		} catch (err) {
@@ -396,7 +453,7 @@ class RootScreen extends Component {
 			appContent = (
 				<View style={[styles.wrapper, styles.offlineWrapper]}>
 					<StatusBar barStyle="light-content" />
-					<Image source={require("../../resources/offline.png")} resizeMode="contain" style={styles.icon} />
+					<Image source={require("../../../resources/offline.png")} resizeMode="contain" style={styles.icon} />
 					<Text style={styles.title}>
 						{Lang.get("offline", {
 							siteName: this.props.site.settings.board_name
@@ -420,7 +477,7 @@ class RootScreen extends Component {
 				appContent = (
 					<View style={styles.wrapper}>
 						<StatusBar barStyle="light-content" />
-						<Image source={require("../../resources/banned.png")} resizeMode="contain" style={styles.icon} />
+						<Image source={require("../../../resources/banned.png")} resizeMode="contain" style={styles.icon} />
 						<Text style={styles.title}>You are banned</Text>
 						<Text style={styles.offlineMessage}>Sorry, you do not have permission to access {this.props.site.settings.board_name}.</Text>
 					</View>
@@ -430,10 +487,10 @@ class RootScreen extends Component {
 				appContent = <LoginScreen hideClose />;
 			}
 		} else {
-			appContent = <AppNavigation />;
+			appContent = <CommunityNavigation />;
 		}
 
-		return <ApolloProvider client={this._client}>{appContent}</ApolloProvider>;
+		return <ApolloProvider client={this.state.client}>{appContent}</ApolloProvider>;
 	}
 }
 
@@ -481,7 +538,8 @@ const styles = StyleSheet.create({
 });
 
 export default connect(state => ({
+	app: state.app,
 	auth: state.auth,
 	user: state.user,
 	site: state.site
-}))(RootScreen);
+}))(CommunityRootScreen);

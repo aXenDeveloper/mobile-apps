@@ -28,7 +28,6 @@ If everything went well, open the `app.json` file and change the values:
 
 - `oauth_client_id`: An oAuth key you set up in IPS4. Follow the readme in _IPS4-Tools/graphql-browser_ - it's the same idea.
 - `api_url`: The URL to your IPS4 install. Slash at the end, don't include /api/.
-- `api_key`: An API key you set up in IPS4 - note it should be base64 encoded. See IPS4-Tools readme again.
 
 ### Step 6
 
