@@ -268,7 +268,7 @@ class AppRoot extends Component {
 				credentials: "same-origin",
 				headers: {
 					...context.headers,
-					Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey).toString("base64")}`
+					Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}:`
 				}
 			}));
 			return next(operation);
