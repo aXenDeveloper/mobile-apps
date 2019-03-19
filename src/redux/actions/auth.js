@@ -1,4 +1,4 @@
-import { SecureStore } from "expo";
+import { SecureStore, Linking, WebBrowser } from "expo";
 import ToFormData from "../../utils/ToFormData";
 import _ from "underscore";
 
@@ -193,7 +193,10 @@ export const swapTokenLoading = data => ({
 
 export const SWAP_TOKEN_ERROR = "SWAP_TOKEN_ERROR";
 export const swapTokenError = data => ({
-	type: SWAP_TOKEN_ERROR
+	type: SWAP_TOKEN_ERROR,
+	payload: {
+		...data
+	}
 });
 
 export const SWAP_TOKEN_SUCCESS = "SWAP_TOKEN_SUCCESS";
@@ -275,6 +278,85 @@ export const swapToken = tokenInfo => {
 	};
 };
 
+// ====================================================================
+// Launch authentication action
+
+export const launchAuth = () => {
+	return async (dispatch, getState) => {
+		const {
+			app: {
+				currentCommunity: { apiKey, apiUrl }
+			}
+		} = getState();
+
+		let urlToOpen = `${apiUrl}oauth/authorize/?`;
+		const urlQuery = [];
+		const urlParams = {};
+		const schemeUrl = Linking.makeUrl(`/auth`);
+
+		// Build basic request params
+		urlParams["client_id"] = apiKey;
+		urlParams["response_type"] = "code";
+		urlParams["state"] = Expo.Constants.sessionId;
+		urlParams["redirect_uri"] = schemeUrl;
+		//urlParams["community_uri"] = Buffer.from(apiUrl).toString("base64");
+
+		// Determine whether we need to force prompt=login in the URL
+		try {
+			const authData = await SecureStore.getItemAsync(`authStore_${getSiteIdentifier(apiUrl)}`);
+			const authObj = JSON.parse(authData);
+
+			if (!_.isUndefined(authObj.loggedOut) && authObj.loggedOut === true) {
+				urlParams["prompt"] = "login";
+			}
+		} catch (err) {
+			console.log("No existing auth data found, so won't force login prompt.");
+		}
+
+		// Build our final request URL
+		for (let param in urlParams) {
+			urlQuery.push(`${param}=${encodeURIComponent(urlParams[param])}`);
+		}
+
+		// Launch Expo's webbrowser authentication flow which will handle receiving the redirect for us
+		WebBrowser.openAuthSessionAsync(`${urlToOpen}${urlQuery.join("&")}`, schemeUrl).then(resolved => {
+			if (resolved.type !== "success") {
+				console.log("Browser closed without authenticating");
+				// The user either closed the browser or denied oauth, so no need to do anything.
+				return;
+			}
+
+			if (resolved.error) {
+				dispatch(
+					logInError({
+						error: resolved.error
+					})
+				);
+				return;
+			}
+
+			const parsed = Linking.parse(resolved.url);
+
+			// Check our state param to make sure it matches what we expect - mismatch could indicate tampering
+			if (_.isUndefined(parsed.queryParams.state) || parsed.queryParams.state !== Expo.Constants.sessionId) {
+				dispatch(
+					logInError({
+						error: "state_mismatch"
+					})
+				);
+				return;
+			}
+
+			dispatch(
+				swapToken({
+					token: parsed.queryParams.code,
+					redirect_uri: schemeUrl
+				})
+			);
+		});
+	};
+};
+
 /**
  * Attempt to authenticate the user using given username, password
  *
@@ -292,7 +374,11 @@ export const logOut = () => {
 		} = getState();
 
 		client.resetStore();
-		await SecureStore.deleteItemAsync(`authStore_${getSiteIdentifier(apiUrl)}`);
+
+		// We don't completely delete the authstore here. Instead, set a flag indicating the
+		// user has logged out. We'll use this to force the login screen if they try authenticating
+		// again.
+		await SecureStore.setItemAsync(`authStore_${getSiteIdentifier(apiUrl)}`, JSON.stringify({ loggedOut: true }));
 		dispatch(removeAuth());
 	};
 };

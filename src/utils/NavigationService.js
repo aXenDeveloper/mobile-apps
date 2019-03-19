@@ -7,7 +7,7 @@ import queryString from "query-string";
 import configureStore from "../redux/configureStore";
 import supported from "../supportedTypes";
 import { resetModalWebview } from "../redux/actions/app";
-import { swapToken } from "../redux/actions/auth";
+import { launchAuth } from "../redux/actions/auth";
 
 const store = configureStore();
 
@@ -43,71 +43,7 @@ class NavigationService {
 	 * @return 	void
 	 */
 	async launchAuth() {
-		const {
-			app: {
-				currentCommunity: { apiUrl, apiKey }
-			}
-		} = store.getState();
-
-		if (apiUrl) {
-			let urlToOpen = `${apiUrl}oauth/authorize/?`;
-			const urlQuery = [];
-			const urlParams = {};
-
-			urlParams["client_id"] = apiKey;
-			urlParams["response_type"] = "code";
-			urlParams["state"] = Expo.Constants.sessionId;
-			urlParams["redirect_uri"] = this.getSchemeUrl("auth");
-
-			console.log(`THIS URL NEEDS TO BE WHITELISTED: ${urlParams["redirect_uri"]}`);
-
-			for (let param in urlParams) {
-				urlQuery.push(`${param}=${encodeURIComponent(urlParams[param])}`);
-			}
-
-			WebBrowser.openAuthSessionAsync(`${urlToOpen}${urlQuery.join("&")}`, this.getSchemeUrl("auth")).then(resolved => {
-				if (resolved.type !== "success") {
-					console.log("Browser closed without authenticating");
-					// The user either closed the browser or denied oauth, so no need to do anything.
-					return;
-				}
-
-				if (resolved.error) {
-					store.dispatch(
-						logInError({
-							error: resolved.error
-						})
-					);
-					return;
-				}
-
-				const parsed = Linking.parse(resolved.url);
-				console.log(parsed);
-
-				// Check our state param to make sure it matches what we expect - mismatch could indicate tampering
-				if (_.isUndefined(parsed.queryParams.state) || parsed.queryParams.state !== Expo.Constants.sessionId) {
-					store.dispatch(
-						logInError({
-							error: "state_mismatch"
-						})
-					);
-					return;
-				}
-
-				console.log(`code: ${parsed.queryParams.code}`);
-
-				store.dispatch(
-					swapToken({
-						token: parsed.queryParams.code,
-						redirect_uri: this.getSchemeUrl("auth")
-					})
-				);
-			});
-		}
-	}
-
-	getSchemeUrl(path, params = {}) {
-		return Linking.makeUrl(`/${path}`, params);
+		store.dispatch(launchAuth());
 	}
 
 	/**

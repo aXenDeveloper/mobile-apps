@@ -25,7 +25,6 @@ import NavigationService from "../../utils/NavigationService";
 class AppRoot extends Component {
 	constructor(props) {
 		super(props);
-		this.handleOpenUrl.bind(this);
 
 		this._isSingleApp = !Expo.Constants.manifest.extra.multi;
 		this._alerts = {
@@ -35,9 +34,18 @@ class AppRoot extends Component {
 		this.state = {
 			waitingForClient: this._isSingleApp
 		};
+
+		this.handleOpenUrl = this.handleOpenUrl.bind(this);
+		Linking.addEventListener("url", this.handleOpenUrl);
 	}
 
-	componentDidMount() {
+	/**
+	 * Mount. If we're in a single-app environment, immediately switch to the
+	 * community.
+	 *
+	 * @return 	void
+	 */
+	async componentDidMount() {
 		// If we're running in single-site mode
 		if (this._isSingleApp) {
 			this.props.dispatch(
@@ -47,10 +55,50 @@ class AppRoot extends Component {
 				})
 			);
 		}
+
+		const initialUrl = await Linking.getInitialURL();
+		this.checkUrlForAuth(initialUrl);
 	}
 
-	handleOpenUrl(event) {}
+	/**
+	 * Handles incoming URLs. If it's an authentication url (e.g. post-registering), then
+	 * process it.
+	 *
+	 * @param 	string 		url 	The incoming URL
+	 * @return 	void
+	 */
+	checkUrlForAuth(url) {
+		console.log(`Initial URL: ${url}`);
 
+		let { path, queryParams } = Linking.parse(url);
+
+		if (_.isUndefined(path) || path !== "auth") {
+			return;
+		}
+
+		console.log(path);
+		console.log(queryParams);
+
+		// Do we have an authentication token to process?
+	}
+
+	/**
+	 * Event handling for the 'url' event, passes url to `this.checkUrlForAuth`
+	 *
+	 * @param 	{url: string} 		url 		The incoming URL
+	 * @return 	void
+	 */
+	handleOpenUrl({ url }) {
+		this.checkUrlForAuth(url);
+	}
+
+	/**
+	 * Component update. Handes booting a new community if the URL has changed, and switching
+	 * view if we're in the multi-community environment
+	 *
+	 * @param 	object 		prevProps 		Previous prop values
+	 * @return
+	 */
 	async componentDidUpdate(prevProps) {
 		const { dispatch } = this.props;
 		const { apiKey, apiUrl } = this.props.app.currentCommunity;
