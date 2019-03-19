@@ -45,6 +45,12 @@ class MyCommunitiesScreen extends Component {
 				title: "InvisionAlpha",
 				apiKey: "d5f20f784ad0c7eb51e9b53f16ac370d",
 				apiUrl: "https://auto.invisionalpha.com/"
+			},
+			{
+				id: "3",
+				title: "Invision Community",
+				apiKey: "4a1beb1022c920ac268e5d02df29f65b",
+				apiUrl: "https://invisioncommunity.com/"
 			}
 		];
 
@@ -53,12 +59,7 @@ class MyCommunitiesScreen extends Component {
 
 	renderCommunity(item) {
 		return (
-			<CommunityBox
-				onPress={this.pressCommunity({ apiUrl: Expo.Constants.manifest.extra.api_url, apiKey: Expo.Constants.manifest.extra.oauth_client_id })}
-				title={item.title}
-				apiKey={item.apiKey}
-				apiUrl={item.apiUrl}
-			/>
+			<CommunityBox onPress={this.pressCommunity({ apiUrl: item.apiUrl, apiKey: item.apiKey })} title={item.title} apiKey={item.apiKey} apiUrl={item.apiUrl} />
 		);
 	}
 	onPressAddCommunity() {}
