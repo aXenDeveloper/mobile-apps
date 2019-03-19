@@ -5,8 +5,7 @@
 		"privacy": "unlisted",
 		"extra": {
 			"multi": true,
-			"oauth_client_id": "ca21723b69d04411468926e9ed3d356d",
-			//"oauth_client_id": "Y2EyMTcyM2I2OWQwNDQxMTQ2ODkyNmU5ZWQzZDM1NmQ=",
+			"oauth_client_id": "b2933603cca1e025ed74153f7cd8f9c6",
 			"api_url": "http://192.168.1.33/ipsdev/Community/",
 			"refresh_token_advance": 300000,
 			"notification_timeout": 10000,

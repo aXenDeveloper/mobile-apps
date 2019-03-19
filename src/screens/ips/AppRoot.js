@@ -18,7 +18,6 @@ import { setApolloClient, bootSite, switchAppView, setActiveCommunity, resetActi
 import { refreshToken } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
 import CommunityRoot from "./CommunityRoot";
-import CommunityRootScreen from "./CommunityRootScreen";
 import Button from "../../atoms/Button";
 import AppLoading from "../../atoms/AppLoading";
 import NavigationService from "../../utils/NavigationService";
