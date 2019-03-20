@@ -76,8 +76,10 @@ class AppRoot extends Component {
 			return;
 		}
 
-		console.log(path);
-		console.log(queryParams);
+		if (!_.isUndefined(queryParams["state"])) {
+			// @todo handle incoming validation
+			//dispatch(incomingValidation(queryParams));
+		}
 
 		// Do we have an authentication token to process?
 	}

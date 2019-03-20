@@ -215,6 +215,19 @@ export const swapToken = tokenInfo => {
 			}
 		} = getState();
 
+		const authStore = await SecureStore.getItemAsync(`authStore`);
+		let allAuthData = {};
+		let authData = {};
+
+		// Try and get this site's data from the store
+		if (authStore !== null) {
+			try {
+				allAuthData = JSON.parse(authStore);
+			} catch (err) {
+				console.log("No existing auth store");
+			}
+		}
+
 		try {
 			const response = await fetch(`${apiUrl}/oauth/token/index.php`, {
 				method: "post",
@@ -256,8 +269,10 @@ export const swapToken = tokenInfo => {
 				refreshToken: data.refresh_token
 			};
 
+			allAuthData[apiUrl] = authData;
+
 			client.resetStore();
-			await SecureStore.setItemAsync(`authStore_${getSiteIdentifier(apiUrl)}`, JSON.stringify(authData));
+			await SecureStore.setItemAsync(`authStore`, JSON.stringify(allAuthData));
 
 			dispatch(swapTokenSuccess());
 			dispatch(
@@ -281,6 +296,8 @@ export const swapToken = tokenInfo => {
 // ====================================================================
 // Launch authentication action
 
+import getRandomString from "../../utils/getRandomString";
+
 export const launchAuth = () => {
 	return async (dispatch, getState) => {
 		const {
@@ -293,29 +310,52 @@ export const launchAuth = () => {
 		const urlQuery = [];
 		const urlParams = {};
 		const schemeUrl = Linking.makeUrl(`/auth`);
+		const stateString = getRandomString();
 
 		// Build basic request params
 		urlParams["client_id"] = apiKey;
 		urlParams["response_type"] = "code";
-		urlParams["state"] = Expo.Constants.sessionId;
+		urlParams["state"] = stateString;
 		urlParams["redirect_uri"] = schemeUrl;
-		//urlParams["community_uri"] = Buffer.from(apiUrl).toString("base64");
 
-		// Determine whether we need to force prompt=login in the URL
-		try {
-			const authData = await SecureStore.getItemAsync(`authStore_${getSiteIdentifier(apiUrl)}`);
-			const authObj = JSON.parse(authData);
+		console.log(`State string set to ${stateString}`);
 
-			if (!_.isUndefined(authObj.loggedOut) && authObj.loggedOut === true) {
-				urlParams["prompt"] = "login";
+		const authStore = await SecureStore.getItemAsync(`authStore`);
+		let allAuthData = {};
+		let authData = {};
+
+		// Try and get this site's data from the store
+		if (authStore !== null) {
+			try {
+				allAuthData = JSON.parse(authStore);
+
+				if (!_.isUndefined(allAuthData[apiUrl])) {
+					authData = allAuthData[apiUrl];
+				} else {
+					allAuthData[apiUrl] = {};
+				}
+			} catch (err) {
+				console.log("No existing auth store");
 			}
-		} catch (err) {
-			console.log("No existing auth data found, so won't force login prompt.");
+		}
+
+		// If we've stored a 'loggedOut' flag for this community, force a login prompt
+		if (!_.isUndefined(authData.loggedOut) && authData.loggedOut === true) {
+			urlParams["prompt"] = "login";
 		}
 
 		// Build our final request URL
 		for (let param in urlParams) {
 			urlQuery.push(`${param}=${encodeURIComponent(urlParams[param])}`);
+		}
+
+		// Update our SecureStore with the state string. We use this to identify the site if the user
+		// closes the app and comes back later via a validation link
+		try {
+			allAuthData[apiUrl]["state"] = stateString;
+			await SecureStore.setItemAsync("authStore", JSON.stringify(allAuthData));
+		} catch (err) {
+			console.log("Couldn't save updated authStore");
 		}
 
 		// Launch Expo's webbrowser authentication flow which will handle receiving the redirect for us
@@ -338,7 +378,7 @@ export const launchAuth = () => {
 			const parsed = Linking.parse(resolved.url);
 
 			// Check our state param to make sure it matches what we expect - mismatch could indicate tampering
-			if (_.isUndefined(parsed.queryParams.state) || parsed.queryParams.state !== Expo.Constants.sessionId) {
+			if (_.isUndefined(parsed.queryParams.state) || parsed.queryParams.state !== stateString) {
 				dispatch(
 					logInError({
 						error: "state_mismatch"
@@ -373,12 +413,35 @@ export const logOut = () => {
 			}
 		} = getState();
 
+		const authStore = await SecureStore.getItemAsync(`authStore`);
+		let allAuthData = {};
+		let authData = {};
+
+		// Try and get this site's data from the store
+		if (authStore !== null) {
+			try {
+				allAuthData = JSON.parse(authStore);
+
+				if (!_.isUndefined(allAuthData[apiUrl])) {
+					authData = allAuthData[apiUrl];
+				} else {
+					allAuthData[apiUrl] = {};
+				}
+			} catch (err) {
+				console.log("No existing auth store");
+			}
+		}
+
+		allAuthData[apiUrl] = {
+			loggedOut: true
+		};
+
 		client.resetStore();
 
 		// We don't completely delete the authstore here. Instead, set a flag indicating the
 		// user has logged out. We'll use this to force the login screen if they try authenticating
 		// again.
-		await SecureStore.setItemAsync(`authStore_${getSiteIdentifier(apiUrl)}`, JSON.stringify({ loggedOut: true }));
+		await SecureStore.setItemAsync(`authStore`, JSON.stringify(allAuthData));
 		dispatch(removeAuth());
 	};
 };
