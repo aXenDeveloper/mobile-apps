@@ -1,16 +1,5 @@
 import React, { Component } from "react";
-import {
-	Text,
-	View,
-	Button,
-	ScrollView,
-	FlatList,
-	StyleSheet,
-	TouchableOpacity,
-	Alert,
-	StatusBar,
-	Image
-} from "react-native";
+import { Text, View, Button, ScrollView, FlatList, StyleSheet, TouchableOpacity, Alert, StatusBar, Image } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import gql from "graphql-tag";
 import { graphql, withApollo } from "react-apollo";
@@ -20,6 +9,7 @@ import { logOut } from "../../redux/actions/auth";
 import MenuItem from "../../atoms/MenuItem";
 import Lang from "../../utils/Lang";
 import UserPhoto from "../../atoms/UserPhoto";
+import getImageUrl from "../../utils/getImageUrl";
 import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
 
@@ -52,18 +42,14 @@ class UserScreen extends Component {
 	_logOut() {
 		const { dispatch } = this.props;
 
-		Alert.alert(
-			"Confirm",
-			"Are you sure you want to log out on this device?",
-			[
-				{ text: "Cancel", onPress: () => console.log("Canceled") },
-				{
-					text: "Log Out",
-					onPress: () => dispatch(logOut(this.props.client)),
-					style: "destructive"
-				}
-			]
-		);
+		Alert.alert("Confirm", "Are you sure you want to log out on this device?", [
+			{ text: "Cancel", onPress: () => console.log("Canceled") },
+			{
+				text: "Log Out",
+				onPress: () => dispatch(logOut(this.props.client)),
+				style: "destructive"
+			}
+		]);
 	}
 
 	goToProfile() {
@@ -122,8 +108,8 @@ class UserScreen extends Component {
 					<Text>Loading</Text>
 				</View>
 			);
-		} else if ( this.props.data.error ) {
-			console.log( this.props.data.error );
+		} else if (this.props.data.error) {
+			console.log(this.props.data.error);
 		} else {
 			return (
 				<View style={componentStyles.container}>
@@ -133,8 +119,7 @@ class UserScreen extends Component {
 							{this.props.data.core.me.coverPhoto.image ? (
 								<Image
 									source={{
-										uri: this.props.data.core.me.coverPhoto
-											.image
+										uri: getImageUrl(this.props.data.core.me.coverPhoto.image)
 									}}
 									style={componentStyles.coverPhoto}
 									resizeMode="cover"
@@ -142,36 +127,17 @@ class UserScreen extends Component {
 							) : null}
 						</View>
 						<View style={componentStyles.mainArea}>
-							<UserPhoto
-								url={this.props.data.core.me.photo}
-								size={60}
-							/>
+							<UserPhoto url={this.props.data.core.me.photo} size={60} />
 							<TouchableOpacity onPress={() => this.goToProfile()}>
-								<Text style={componentStyles.username}>
-									{this.props.data.core.me.name}
-								</Text>
-								<Text style={componentStyles.meta}>
-									{Lang.get('your_profile')}
-								</Text>
+								<Text style={componentStyles.username}>{this.props.data.core.me.name}</Text>
+								<Text style={componentStyles.meta}>{Lang.get("your_profile")}</Text>
 							</TouchableOpacity>
 
-							<FlatList
-								style={componentStyles.profileMenu}
-								data={this.getMenuOptions()}
-								renderItem={({ item }) => (
-									<MenuItem data={item} />
-								)}
-							/>
+							<FlatList style={componentStyles.profileMenu} data={this.getMenuOptions()} renderItem={({ item }) => <MenuItem data={item} />} />
 						</View>
 						<View style={componentStyles.footer}>
-							<Image
-								source={require("../../../resources/info_filled.png")}
-								resizeMode="contain"
-								style={componentStyles.infoIcon}
-							/>
-							<Text style={[styles.veryLightText, componentStyles.footerText]}>
-								{Lang.get('legal_notices')}
-							</Text>
+							<Image source={require("../../../resources/info_filled.png")} resizeMode="contain" style={componentStyles.infoIcon} />
+							<Text style={[styles.veryLightText, componentStyles.footerText]}>{Lang.get("legal_notices")}</Text>
 						</View>
 					</SafeAreaView>
 				</View>
@@ -232,9 +198,9 @@ const componentStyles = StyleSheet.create({
 		marginTop: 20
 	},
 	footer: {
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
 		paddingHorizontal: styleVars.spacing.veryWide,
 		paddingVertical: styleVars.spacing.wide
 	},

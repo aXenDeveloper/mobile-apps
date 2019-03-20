@@ -1,17 +1,18 @@
-import React, { Component } from 'react';
-import { Text, Image, View, FlatList, StyleSheet, TouchableHighlight } from 'react-native';
+import React, { Component } from "react";
+import { Text, Image, View, FlatList, StyleSheet, TouchableHighlight } from "react-native";
 import _ from "underscore";
-import FadeIn from 'react-native-fade-in-image';
+import FadeIn from "react-native-fade-in-image";
 
 import NavigationService from "../../utils/NavigationService";
 import LargeTitle from "../../atoms/LargeTitle";
 import ContentCard from "../../ecosystems/ContentCard";
 import { ReactionOverview } from "../../ecosystems/Reaction";
+import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from '../../styles';
+import styles, { styleVars } from "../../styles";
 
-class OurPicks extends Component {	
+class OurPicks extends Component {
 	constructor(props) {
 		super(props);
 		this.pressHandlers = {};
@@ -28,7 +29,7 @@ class OurPicks extends Component {
 	 * @return 	Component
 	 */
 	getItemCard(data) {
-		if( this.props.loading ){
+		if (this.props.loading) {
 			return (
 				<ContentCard
 					style={{
@@ -37,23 +38,25 @@ class OurPicks extends Component {
 					}}
 					loading={this.props.loading}
 				/>
-			)
+			);
 		}
 
-		const imageToUse = getSuitableImage( data.images || null );
+		const imageToUse = getImageUrl(getSuitableImage(data.images || null));
 		const cardPieces = {
-			image: (
-				imageToUse ?
-					<FadeIn style={[componentStyles.imageContainer, styles.mbStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[1] }}>
-						<Image style={componentStyles.image} source={{ uri: imageToUse }} resizeMode='cover' />
-					</FadeIn>
-				: <View style={componentStyles.imageContainer}></View>
+			image: imageToUse ? (
+				<FadeIn style={[componentStyles.imageContainer, styles.mbStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[1] }}>
+					<Image style={componentStyles.image} source={{ uri: imageToUse }} resizeMode="cover" />
+				</FadeIn>
+			) : (
+				<View style={componentStyles.imageContainer} />
 			),
 			content: (
 				<React.Fragment>
 					<View style={componentStyles.streamItemInfo}>
 						<View style={componentStyles.streamItemInfoInner}>
-							<Text style={[ componentStyles.streamItemTitle, componentStyles.streamItemTitleSmall ]} numberOfLines={1}>{data.title}</Text>
+							<Text style={[componentStyles.streamItemTitle, componentStyles.streamItemTitleSmall]} numberOfLines={1}>
+								{data.title}
+							</Text>
 						</View>
 					</View>
 					<View style={componentStyles.snippetWrapper}>
@@ -61,12 +64,16 @@ class OurPicks extends Component {
 							{data.description}
 						</Text>
 					</View>
-					{(data.reputation && ( Boolean(data.reputation.reactions.length) || ( Boolean(data.dataCount) && Boolean(data.dataCount.count) ) ) ) &&
+					{data.reputation && (Boolean(data.reputation.reactions.length) || (Boolean(data.dataCount) && Boolean(data.dataCount.count))) && (
 						<View style={componentStyles.infoFooter}>
-							{Boolean(data.reputation.reactions.length) && <ReactionOverview style={[styles.mtTight, componentStyles.reactionOverview]} reactions={data.reputation.reactions} />}
-							{Boolean(data.dataCount) && Boolean(data.dataCount.count) && <Text style={[componentStyles.dataCount, styles.lightText]}>{data.dataCount.words}</Text>}
+							{Boolean(data.reputation.reactions.length) && (
+								<ReactionOverview style={[styles.mtTight, componentStyles.reactionOverview]} reactions={data.reputation.reactions} />
+							)}
+							{Boolean(data.dataCount) && Boolean(data.dataCount.count) && (
+								<Text style={[componentStyles.dataCount, styles.lightText]}>{data.dataCount.words}</Text>
+							)}
 						</View>
-					}
+					)}
 				</React.Fragment>
 			)
 		};
@@ -92,11 +99,11 @@ class OurPicks extends Component {
 	 * @return 	function
 	 */
 	getPressHandler(id, data) {
-		if( _.isUndefined( this.pressHandlers[ id ] ) ){
-			this.pressHandlers[ id ] = () => this.onPressItem(data);
+		if (_.isUndefined(this.pressHandlers[id])) {
+			this.pressHandlers[id] = () => this.onPressItem(data);
 		}
 
-		return this.pressHandlers[ id ];
+		return this.pressHandlers[id];
 	}
 
 	/**
@@ -110,10 +117,10 @@ class OurPicks extends Component {
 
 		// Figure out if we support this type of view, based on the itemType
 		// @todo support review
-		if( data.itemType == 'COMMENT' ){
+		if (data.itemType == "COMMENT") {
 			params = {
 				id: data.item.item.id,
-				findComment: parseInt( data.item.id )
+				findComment: parseInt(data.item.id)
 			};
 		} else {
 			params = {
@@ -121,28 +128,22 @@ class OurPicks extends Component {
 			};
 		}
 
-		NavigationService.navigate( data.itemType === 'COMMENT' ? data.item.item.url : data.item.url, params );
+		NavigationService.navigate(data.itemType === "COMMENT" ? data.item.item.url : data.item.url, params);
 	}
 
 	render() {
 		return (
 			<FlatList
 				horizontal
-				snapToInterval={
-					this.props.cardWidth + styleVars.spacing.wide
-				}
+				snapToInterval={this.props.cardWidth + styleVars.spacing.wide}
 				snapToAlignment="start"
 				decelerationRate="fast"
 				showsHorizontalScrollIndicator={false}
 				style={componentStyles.feed}
-				data={
-					this.props.loading
-						? this.getDummyData()
-						: this.props.data.core.ourPicks
-				}
-				keyExtractor={item => this.props.loading ? item.key : item.id}
+				data={this.props.loading ? this.getDummyData() : this.props.data.core.ourPicks}
+				keyExtractor={item => (this.props.loading ? item.key : item.id)}
 				renderItem={({ item }) => this.getItemCard(item)}
-			/>		
+			/>
 		);
 	}
 }
@@ -193,17 +194,17 @@ const componentStyles = StyleSheet.create({
 		width: "100%"
 	},
 	infoFooter: {
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
 		marginTop: styleVars.spacing.standard,
 		paddingTop: styleVars.spacing.veryTight,
 		borderTopWidth: 1,
-		borderTopColor: '#f0f0f0',
+		borderTopColor: "#f0f0f0"
 	},
 	reactionOverview: {
-		marginLeft: styleVars.spacing.wide,
+		marginLeft: styleVars.spacing.wide
 	},
 	dataCount: {
 		marginTop: 6

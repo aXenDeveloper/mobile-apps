@@ -46,6 +46,7 @@ import NavigationService from "../utils/NavigationService";
 import { resetModalWebview } from "../redux/actions/app";
 import { NavigationTabIcon, NavigationTabNotification } from "../ecosystems/Navigation";
 import CustomHeader from "../ecosystems/CustomHeader";
+import getImageUrl from "../utils/getImageUrl";
 import styles, { styleVars, tabStyles } from "../styles";
 import Lang from "../utils/Lang";
 
@@ -338,7 +339,7 @@ class AppNavigation extends Component {
 		if (!this.props.user.isGuest && this.props.user.photo) {
 			return (
 				<View style={{ borderRadius: 24, overflow: "hidden" }}>
-					<Image style={[styles.tabIcon, styles.userTabIcon]} source={{ uri: unescape(this.props.user.photo) }} />
+					<Image style={[styles.tabIcon, styles.userTabIcon]} source={{ uri: getImageUrl(unescape(this.props.user.photo)) }} />
 				</View>
 			);
 		} else {

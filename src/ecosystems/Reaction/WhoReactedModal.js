@@ -7,6 +7,7 @@ import Modal from "react-native-modal";
 import Lang from "../../utils/Lang";
 import MemberRow from "../../ecosystems/MemberRow";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
+import getImageUrl from "../../utils/getImageUrl";
 import ErrorBox from "../../atoms/ErrorBox";
 import styles, { styleVars } from "../../styles";
 
@@ -26,18 +27,21 @@ class WhoReactedModal extends Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		if( this.props.visible ){
+		if (this.props.visible) {
 			if (!prevProps.visible && this.state.results === null) {
 				this.fetchData();
 			} else if (prevProps.variables.reactionID !== this.props.variables.reactionID) {
-				this.setState({
-					results: null,
-					error: false,
-					offset: 0,
-					reachedEnd: false
-				}, () => {
-					this.fetchData()
-				});
+				this.setState(
+					{
+						results: null,
+						error: false,
+						offset: 0,
+						reachedEnd: false
+					},
+					() => {
+						this.fetchData();
+					}
+				);
 			}
 		}
 	}
@@ -78,7 +82,7 @@ class WhoReactedModal extends Component {
 	}
 
 	onEndReached() {
-		if( !this.state.loading && !this.state.reachedEnd ){
+		if (!this.state.loading && !this.state.reachedEnd) {
 			this.fetchData();
 		}
 	}
@@ -101,12 +105,21 @@ class WhoReactedModal extends Component {
 				</PlaceholderRepeater>
 			);
 		} else if (this.state.error) {
-			content = <ErrorBox message={Lang.get("cant_show_reactions")} showIcon={false} transparent />
+			content = <ErrorBox message={Lang.get("cant_show_reactions")} showIcon={false} transparent />;
 		} else if (this.state.results !== null && this.state.results.length) {
 			content = (
 				<FlatList
 					data={this.state.results}
-					renderItem={({item}) => <MemberRow key={item.id} id={parseInt(item.id)} name={item.name} photo={item.photo} groupName={item.group.name} preOnPressCallback={this.preOnPressCallback} />}
+					renderItem={({ item }) => (
+						<MemberRow
+							key={item.id}
+							id={parseInt(item.id)}
+							name={item.name}
+							photo={item.photo}
+							groupName={item.group.name}
+							preOnPressCallback={this.preOnPressCallback}
+						/>
+					)}
 					keyExtractor={item => item.id}
 					onEndReached={this.onEndReached}
 				/>
@@ -126,7 +139,7 @@ class WhoReactedModal extends Component {
 					<View style={styles.modalHeader}>
 						<View style={componentStyles.titleBar}>
 							<Text style={[styles.modalTitle, componentStyles.title]}>Who Reacted</Text>
-							<Image source={{ uri: this.props.reactionImage }} resizeMode='contain' style={componentStyles.reactionImage} />
+							<Image source={{ uri: getImageUrl(this.props.reactionImage) }} resizeMode="contain" style={componentStyles.reactionImage} />
 						</View>
 						<TouchableOpacity onPress={this.props.close}>
 							<Image source={require("../../../resources/close_circle.png")} resizeMode="contain" style={styles.modalClose} />
@@ -143,10 +156,10 @@ export default compose(withApollo)(WhoReactedModal);
 
 const componentStyles = StyleSheet.create({
 	titleBar: {
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center'
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center"
 	},
 	title: {
 		marginHorizontal: 0,

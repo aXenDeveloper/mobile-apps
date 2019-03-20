@@ -1,19 +1,13 @@
 import React, { Component } from "react";
-import {
-	Text,
-	View,
-	Image,
-	FlatList,
-	StyleSheet,
-	TouchableHighlight
-} from "react-native";
+import { Text, View, Image, FlatList, StyleSheet, TouchableHighlight } from "react-native";
 import _ from "underscore";
-import FadeIn from 'react-native-fade-in-image';
+import FadeIn from "react-native-fade-in-image";
 
 import NavigationService from "../../utils/NavigationService";
 import LargeTitle from "../../atoms/LargeTitle";
 import UserPhoto from "../../atoms/UserPhoto";
 import ContentCard from "../../ecosystems/ContentCard";
+import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
 import Lang from "../../utils/Lang";
 import styles, { styleVars } from "../../styles";
@@ -35,7 +29,7 @@ class NewContent extends Component {
 	 * @return 	Component
 	 */
 	getItemCard(data) {
-		if( this.props.loading ){
+		if (this.props.loading) {
 			return (
 				<ContentCard
 					style={{
@@ -44,18 +38,14 @@ class NewContent extends Component {
 					}}
 					loading={this.props.loading}
 				/>
-			)
-		}
-
-		if( _.isArray( data ) ){
-			return (
-				<View>
-					{data.map(item => this.getItemCard(item))}
-				</View>
 			);
 		}
 
-		const imageToUse = getSuitableImage( data.contentImages || null );
+		if (_.isArray(data)) {
+			return <View>{data.map(item => this.getItemCard(item))}</View>;
+		}
+
+		const imageToUse = getImageUrl(getSuitableImage(data.contentImages || null));
 		const cardPieces = {
 			header: (
 				<React.Fragment>
@@ -65,19 +55,21 @@ class NewContent extends Component {
 					</Text>
 				</React.Fragment>
 			),
-			image: (
-				imageToUse ?
-					<FadeIn style={[componentStyles.imageContainer, styles.mbStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
-						<Image style={componentStyles.image} source={{ uri: imageToUse }} resizeMode='cover' />
-					</FadeIn>
-				: null
-			),
+			image: imageToUse ? (
+				<FadeIn style={[componentStyles.imageContainer, styles.mbStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
+					<Image style={componentStyles.image} source={{ uri: imageToUse }} resizeMode="cover" />
+				</FadeIn>
+			) : null,
 			content: (
 				<React.Fragment>
 					<View style={componentStyles.streamItemInfo}>
 						<View style={componentStyles.streamItemInfoInner}>
-							<Text style={[ styles.itemTitle ]} numberOfLines={1}>{data.title}</Text>
-							<Text style={componentStyles.streamItemContainer} numberOfLines={1}>In {data.containerTitle}</Text>
+							<Text style={[styles.itemTitle]} numberOfLines={1}>
+								{data.title}
+							</Text>
+							<Text style={componentStyles.streamItemContainer} numberOfLines={1}>
+								In {data.containerTitle}
+							</Text>
 						</View>
 					</View>
 					<View style={componentStyles.snippetWrapper}>
@@ -113,11 +105,11 @@ class NewContent extends Component {
 	 * @return 	function
 	 */
 	getPressHandler(id, data) {
-		if( _.isUndefined( this.pressHandlers[ id ] ) ){
-			this.pressHandlers[ id ] = () => this.onPressItem(data);
+		if (_.isUndefined(this.pressHandlers[id])) {
+			this.pressHandlers[id] = () => this.onPressItem(data);
 		}
 
-		return this.pressHandlers[ id ];
+		return this.pressHandlers[id];
 	}
 
 	/**
@@ -132,34 +124,34 @@ class NewContent extends Component {
 		const listData = [];
 		const items = this.props.data.core.newContent.items;
 
-		for( let i = 0; i < items.length; i++ ){
+		for (let i = 0; i < items.length; i++) {
 			// If we've already used this item, skip it
-			if( doneIDs.indexOf( items[i].indexID ) !== -1 ){
+			if (doneIDs.indexOf(items[i].indexID) !== -1) {
 				continue;
 			}
 
 			// If we have an image, then we'll just show one item in this 'cell'
-			if( getSuitableImage( items[i].contentImages || null ) ){
-				doneIDs.push( items[i].indexID );
-				listData.push( items[i] );
+			if (getSuitableImage(items[i].contentImages || null)) {
+				doneIDs.push(items[i].indexID);
+				listData.push(items[i]);
 				continue;
 			}
 
 			// No image? we'll try and show two cards in this cell.
-			doneIDs.push( items[i].indexID );
-			const pair = [ items[i] ];
+			doneIDs.push(items[i].indexID);
+			const pair = [items[i]];
 
 			// Now find the next suitable card
-			for( let x = i+1; x < items.length; x++ ){
-				if( !getSuitableImage( items[x].contentImages || null ) ){
-					doneIDs.push( items[x].indexID );
-					pair.push( items[x] );
+			for (let x = i + 1; x < items.length; x++) {
+				if (!getSuitableImage(items[x].contentImages || null)) {
+					doneIDs.push(items[x].indexID);
+					pair.push(items[x]);
 					break;
 				}
 			}
 
 			// And add our card pair to the main list
-			listData.push( pair );
+			listData.push(pair);
 		}
 
 		return listData;
@@ -172,7 +164,7 @@ class NewContent extends Component {
 	 * @return 	void
 	 */
 	onPressItem(data) {
-		NavigationService.navigate( data.url, {
+		NavigationService.navigate(data.url, {
 			id: data.itemID,
 			findComment: data.isComment ? data.objectID : null
 		});
@@ -182,19 +174,13 @@ class NewContent extends Component {
 		return (
 			<FlatList
 				horizontal
-				snapToInterval={
-					this.props.cardWidth + styleVars.spacing.wide
-				}
+				snapToInterval={this.props.cardWidth + styleVars.spacing.wide}
 				snapToAlignment="start"
 				decelerationRate="fast"
 				showsHorizontalScrollIndicator={false}
 				style={componentStyles.feed}
-				data={
-					this.props.loading
-						? this.getDummyData()
-						: this.getListData()
-				}
-				keyExtractor={item => this.props.loading ? item.key : ( _.isArray( item ) ? `pair_${item[0].indexID}` : item.indexID )}
+				data={this.props.loading ? this.getDummyData() : this.getListData()}
+				keyExtractor={item => (this.props.loading ? item.key : _.isArray(item) ? `pair_${item[0].indexID}` : item.indexID)}
 				renderItem={({ item }) => this.getItemCard(item)}
 			/>
 		);
@@ -203,7 +189,7 @@ class NewContent extends Component {
 
 export default NewContent;
 
-const componentStyles = StyleSheet.create({	
+const componentStyles = StyleSheet.create({
 	streamMetaText: {
 		fontSize: styleVars.fontSizes.small
 	},

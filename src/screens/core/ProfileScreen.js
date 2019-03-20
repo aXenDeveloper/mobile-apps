@@ -8,7 +8,7 @@ import HeaderBackButton from "react-navigation";
 import { List, ListItem as Item, ScrollableTab, Tab, TabHeading, Tabs, Title } from "native-base";
 import { Header } from "react-navigation";
 import FadeIn from "react-native-fade-in-image";
-import Toast, {DURATION} from 'react-native-easy-toast'
+import Toast, { DURATION } from "react-native-easy-toast";
 
 import Lang from "../../utils/Lang";
 import CustomTab from "../../atoms/CustomTab";
@@ -23,6 +23,7 @@ import TwoLineHeader from "../../atoms/TwoLineHeader";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import { ProfileContent, ProfileTab, ProfileFollowers, ProfilePlaceholder } from "../../ecosystems/Profile";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
+import getImageUrl from "../../utils/getImageUrl";
 import styles, { styleVars } from "../../styles";
 
 const ProfileQuery = gql`
@@ -91,12 +92,12 @@ class ProfileScreen extends Component {
 			fullHeaderHeight: 250,
 			followModalVisible: false
 		};
-		
+
 		this.buildAnimations();
 	}
 
 	componentWillUnmount() {
-		clearTimeout( this._followTimeout );
+		clearTimeout(this._followTimeout);
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -127,7 +128,7 @@ class ProfileScreen extends Component {
 		// Put in a short timeout to allow the modal to hide, otherwise
 		// our optimisticResponse will cause the modal contents to switch while we
 		// can still see it
-		this._followTimeout = setTimeout( async () => {
+		this._followTimeout = setTimeout(async () => {
 			try {
 				await this.props.client.mutate({
 					mutation: FollowMutation,
@@ -147,14 +148,14 @@ class ProfileScreen extends Component {
 							}
 						}
 					},
-					refetchQueries: ['ProfileFollowersQuery']
+					refetchQueries: ["ProfileFollowersQuery"]
 				});
 
-				this.refs.toast.show(Lang.get('followed_member', { name: this.props.data.core.member.name }), DURATION.LENGTH_LONG);
+				this.refs.toast.show(Lang.get("followed_member", { name: this.props.data.core.member.name }), DURATION.LENGTH_LONG);
 			} catch (err) {
 				Alert.alert(Lang.get("error"), Lang.get("error_following"), [{ text: Lang.get("ok") }], { cancelable: false });
 			}
-		}, 300 );
+		}, 300);
 	};
 
 	/**
@@ -170,7 +171,7 @@ class ProfileScreen extends Component {
 		// Put in a short timeout to allow the modal to hide, otherwise
 		// our optimisticResponse will cause the modal contents to switch while we
 		// can still see it
-		this._followTimeout = setTimeout( async () => {
+		this._followTimeout = setTimeout(async () => {
 			try {
 				await this.props.client.mutate({
 					mutation: UnfollowMutation,
@@ -189,14 +190,14 @@ class ProfileScreen extends Component {
 							}
 						}
 					},
-					refetchQueries: ['ProfileFollowersQuery']
+					refetchQueries: ["ProfileFollowersQuery"]
 				});
 
-				this.refs.toast.show(Lang.get('unfollowed_member', { name: this.props.data.core.member.name }), DURATION.LENGTH_LONG);
+				this.refs.toast.show(Lang.get("unfollowed_member", { name: this.props.data.core.member.name }), DURATION.LENGTH_LONG);
 			} catch (err) {
 				Alert.alert(Lang.get("error"), Lang.get("error_unfollowing"), [{ text: Lang.get("ok") }], { cancelable: false });
 			}
-		}, 300 );
+		}, 300);
 	};
 
 	buildAnimations() {
@@ -266,34 +267,36 @@ class ProfileScreen extends Component {
 		const customFields = [];
 
 		customFields.push({
-			title: Lang.get('basic_information'),
+			title: Lang.get("basic_information"),
 			data: [
 				{
 					key: "joined",
 					data: {
 						id: "joined",
-						title: Lang.get('joined'),
+						title: Lang.get("joined"),
 						value: relativeTime.long(this.props.data.core.member.joined),
 						html: false
 					}
 				},
-				...(this.props.data.core.member.email ? [
-					{
-						key: "email",
-						data: {
-							id: "email",
-							title: Lang.get('email_address'),
-							value: this.props.data.core.member.email,
-							html: false
-						}
-					}
-				] : [])
+				...(this.props.data.core.member.email
+					? [
+							{
+								key: "email",
+								data: {
+									id: "email",
+									title: Lang.get("email_address"),
+									value: this.props.data.core.member.email,
+									html: false
+								}
+							}
+					  ]
+					: [])
 			]
 		});
 
 		if (this.props.data.core.member.customFieldGroups.length) {
 			this.props.data.core.member.customFieldGroups.forEach(group => {
-				if( !group.fields.length ){
+				if (!group.fields.length) {
 					return;
 				}
 
@@ -302,7 +305,7 @@ class ProfileScreen extends Component {
 				// Loop through each field, and only add it if it isn't an editor
 				// Editor fields will show in their own tab thanks to getAdditionalTabs()
 				group.fields.forEach(field => {
-					if( field.type !== 'Editor' ){
+					if (field.type !== "Editor") {
 						fields.push({
 							key: field.id,
 							data: {
@@ -315,7 +318,7 @@ class ProfileScreen extends Component {
 				});
 
 				// If we have any fields to show, add them to the result
-				if( fields.length ){
+				if (fields.length) {
 					customFields.push({
 						title: group.title,
 						data: fields
@@ -331,10 +334,10 @@ class ProfileScreen extends Component {
 		const additionalTabs = [];
 
 		if (this.props.data.core.member.customFieldGroups.length) {
-			this.props.data.core.member.customFieldGroups.forEach( (group) => {
-				if( group.fields.length ){
-					group.fields.forEach( (field) => {
-						if( field.type == 'Editor' ){
+			this.props.data.core.member.customFieldGroups.forEach(group => {
+				if (group.fields.length) {
+					group.fields.forEach(field => {
+						if (field.type == "Editor") {
 							additionalTabs.push({
 								title: field.title,
 								content: field.value,
@@ -349,7 +352,7 @@ class ProfileScreen extends Component {
 		return additionalTabs;
 	}
 
-	renderTabBar = (props) => {
+	renderTabBar = props => {
 		return (
 			<Animated.View style={{ transform: [{ translateY: this.tabY }], zIndex: 1 }}>
 				<ScrollableTab
@@ -361,7 +364,7 @@ class ProfileScreen extends Component {
 				/>
 			</Animated.View>
 		);
-	}
+	};
 	/*onTabLayout = ({height, tabIndex}) => {
 		const windowDims = Dimensions.get('window');
 		const HEADER_HEIGHT = Platform.OS === "ios" ? 76 : 50;
@@ -380,11 +383,8 @@ class ProfileScreen extends Component {
 	}*/
 
 	render() {
-
 		if (this.props.data.loading) {
-			return (
-				<ProfilePlaceholder />
-			);
+			return <ProfilePlaceholder />;
 		} else {
 			// Follow button
 			let showFollowButton = false;
@@ -412,7 +412,7 @@ class ProfileScreen extends Component {
 					<Toast ref="toast" textStyle={styles.toastText} />
 					<Animated.View
 						style={[componentStyles.fixedProfileHeader, { opacity: this.fixedHeaderOpacity }]}
-						onLayout={(e) => {
+						onLayout={e => {
 							this.setState({ smallHeaderHeight: e.nativeEvent.layout.height });
 						}}
 					>
@@ -431,7 +431,7 @@ class ProfileScreen extends Component {
 						onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: this._nScroll } } }], { useNativeDriver: true })}
 					>
 						<Animated.View
-							onLayout={(e) => {
+							onLayout={e => {
 								this.setState({ fullHeaderHeight: e.nativeEvent.layout.height });
 							}}
 							style={componentStyles.profileHeader}
@@ -439,11 +439,7 @@ class ProfileScreen extends Component {
 							{Boolean(this.props.data.core.member.coverPhoto.image) && (
 								<Animated.View style={[StyleSheet.absoluteFill, { transform: [{ scale: this.imgScale }] }]}>
 									<FadeIn style={StyleSheet.absoluteFill} placeholderStyle={{ backgroundColor: "#333" }}>
-										<Image
-											source={{ uri: this.props.data.core.member.coverPhoto.image }}
-											style={StyleSheet.absoluteFill}
-											resizeMode="cover"
-										/>
+										<Image source={{ uri: getImageUrl(this.props.data.core.member.coverPhoto.image) }} style={StyleSheet.absoluteFill} resizeMode="cover" />
 									</FadeIn>
 								</Animated.View>
 							)}
@@ -460,7 +456,7 @@ class ProfileScreen extends Component {
 											rounded
 											type="light"
 											size="medium"
-											title={this.props.data.core.member.follow.isFollowing ? Lang.get('unfollow') : Lang.get('follow')}
+											title={this.props.data.core.member.follow.isFollowing ? Lang.get("unfollow") : Lang.get("follow")}
 											onPress={this.toggleFollowModal}
 											style={componentStyles.button}
 										/>
@@ -469,18 +465,18 @@ class ProfileScreen extends Component {
 								<View style={[styles.mtWide, componentStyles.profileStats]}>
 									<View style={[componentStyles.profileStatSection, componentStyles.profileStatSectionBorder]}>
 										<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.contentCount}</Text>
-										<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_content_count')}</Text>
+										<Text style={componentStyles.profileStatTitle}>{Lang.get("profile_content_count")}</Text>
 									</View>
 									{Boolean(this.props.site.settings.reputation_show_profile) && (
 										<View style={[componentStyles.profileStatSection, componentStyles.profileStatSectionBorder]}>
 											<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.reputationCount}</Text>
-											<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_reputation')}</Text>
+											<Text style={componentStyles.profileStatTitle}>{Lang.get("profile_reputation")}</Text>
 										</View>
 									)}
 									{Boolean(this.props.data.core.member.allowFollow) && (
 										<View style={componentStyles.profileStatSection}>
 											<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.follow.followCount}</Text>
-											<Text style={componentStyles.profileStatTitle}>{Lang.get('profile_followers')}</Text>
+											<Text style={componentStyles.profileStatTitle}>{Lang.get("profile_followers")}</Text>
 										</View>
 									)}
 								</View>
@@ -496,12 +492,7 @@ class ProfileScreen extends Component {
 							}}
 							tabBarUnderlineStyle={styleVars.tabBar.underline}
 						>
-							<ProfileTab
-								tabIndex={0}
-								heading={Lang.get('profile_overview')}
-								active={this.state.activeTab == 0}
-								minHeight={this.state.minHeight}
-							>
+							<ProfileTab tabIndex={0} heading={Lang.get("profile_overview")} active={this.state.activeTab == 0} minHeight={this.state.minHeight}>
 								<SectionList
 									scrollEnabled={false}
 									renderItem={({ item }) => <ListItem key={item.key} data={item.data} />}
@@ -509,31 +500,20 @@ class ProfileScreen extends Component {
 									sections={this.getProfileFields()}
 								/>
 							</ProfileTab>
-							<ProfileTab
-								tabIndex={1}
-								heading={Lang.get('profile_content')}
-								active={this.state.activeTab == 1}
-								minHeight={this.state.minHeight}
-							>
+							<ProfileTab tabIndex={1} heading={Lang.get("profile_content")} active={this.state.activeTab == 1} minHeight={this.state.minHeight}>
 								<ProfileContent showResults={this.state.activeTab == 1} member={this.props.data.core.member.id} />
 							</ProfileTab>
-							{additionalTabs.map( (tab, idx) => (
-								<ProfileTab
-									key={tab.title}
-									tabIndex={idx + 2}
-									heading={tab.title}
-									active={this.state.activeTab == (idx + 2)}
-									minHeight={this.state.minHeight}
-								>
+							{additionalTabs.map((tab, idx) => (
+								<ProfileTab key={tab.title} tabIndex={idx + 2} heading={tab.title} active={this.state.activeTab == idx + 2} minHeight={this.state.minHeight}>
 									<RichTextContent style={componentStyles.editorField}>{tab.content}</RichTextContent>
 								</ProfileTab>
 							))}
 							{Boolean(this.props.data.core.member.allowFollow) && (
 								<ProfileTab
-									key='followers'
+									key="followers"
 									tabIndex={additionalTabs.length + 2}
-									heading='Followers'
-									active={this.state.activeTab == (additionalTabs.length + 2)}
+									heading="Followers"
+									active={this.state.activeTab == additionalTabs.length + 2}
 									minHeight={this.state.minHeight}
 								>
 									<ProfileFollowers id={this.props.data.core.member.id} />
@@ -620,7 +600,7 @@ const componentStyles = StyleSheet.create({
 		marginHorizontal: styleVars.spacing.tight
 	},
 	editorField: {
-		backgroundColor: '#fff',
+		backgroundColor: "#fff",
 		padding: styleVars.spacing.wide
 	}
 });
@@ -637,5 +617,5 @@ export default compose(
 		user: state.user,
 		site: state.site
 	})),
-	withApollo,
+	withApollo
 )(ProfileScreen);

@@ -13,6 +13,7 @@ import ShadowedArea from "../../atoms/ShadowedArea";
 import UserPhoto from "../../atoms/UserPhoto";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import relativeTime from "../../utils/RelativeTime";
+import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
 import componentStyles from "./styles";
 import styles, { styleVars } from "../../styles";
@@ -67,7 +68,7 @@ class StreamCard extends PureComponent {
 
 		return (
 			<FadeIn style={componentStyles.imageContainer} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
-				<Image style={componentStyles.image} source={{ uri: imageToUse }} resizeMode="cover" />
+				<Image style={componentStyles.image} source={{ uri: getImageUrl(imageToUse) }} resizeMode="cover" />
 			</FadeIn>
 		);
 	}
@@ -80,7 +81,7 @@ class StreamCard extends PureComponent {
 	 * @return 	void
 	 */
 	onPress() {
-		NavigationService.navigate( this.props.data.url, {
+		NavigationService.navigate(this.props.data.url, {
 			id: this.props.data.itemID,
 			...(this.props.data.isComment ? { findComment: this.props.data.objectID } : {})
 		});

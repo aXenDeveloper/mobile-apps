@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Text, View, StyleSheet, Image, TouchableHighlight } from "react-native";
 
+import getImageUrl from "../../utils/getImageUrl";
+
 const ReactionOverview = props => {
 	// Clone and reverse reaction data so that we can show them layered on top of each other
 	// Style uses row-reverse to put them back in the right order
@@ -11,7 +13,7 @@ const ReactionOverview = props => {
 		<View style={[componentStyles.wrapper, { height: size }, props.style]}>
 			{reactions.map((reaction, idx) => (
 				<Image
-					source={{ uri: reaction.image }}
+					source={{ uri: getImageUrl(reaction.image) }}
 					key={reaction.id}
 					style={[componentStyles.reaction, { width: size, height: size }, idx === 0 ? componentStyles.first : null]}
 				/>
@@ -26,7 +28,7 @@ const componentStyles = StyleSheet.create({
 	wrapper: {
 		display: "flex",
 		flexDirection: "row-reverse",
-		justifyContent: "flex-end",
+		justifyContent: "flex-end"
 	},
 	reaction: {
 		marginVertical: 0,

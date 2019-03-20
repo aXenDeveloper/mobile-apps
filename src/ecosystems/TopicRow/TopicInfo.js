@@ -5,6 +5,7 @@ import Lang from "../../utils/Lang";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
 import TopicIcon from "../../atoms/TopicIcon";
 import LockedIcon from "../../atoms/LockedIcon";
+import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
 import styles, { styleVars } from "../../styles";
 
@@ -22,7 +23,7 @@ class TopicInfo extends Component {
 		const suitableImage = getSuitableImage(this.props.data.contentImages);
 
 		if (suitableImage) {
-			return <Image source={{ url: suitableImage }} resizeMode="cover" style={this.props.styles.thumbnailImage} />;
+			return <Image source={{ url: getImageUrl(suitableImage) }} resizeMode="cover" style={this.props.styles.thumbnailImage} />;
 		}
 
 		return null;

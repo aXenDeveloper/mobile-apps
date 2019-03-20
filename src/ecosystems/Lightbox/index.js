@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import { Text, Image, View, StatusBar, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
 import ImageViewer from "react-native-image-zoom-viewer";
-import _ from 'underscore';
+import _ from "underscore";
 
 import Lang from "../../utils/Lang";
+import getImageUrl from "../../utils/getImageUrl";
 import styles, { styleVars } from "../../styles";
 
 export default class Lightbox extends Component {
@@ -20,7 +21,7 @@ export default class Lightbox extends Component {
 	 * @return 	void
 	 */
 	getImages() {
-		return Object.keys(this.props.data).map(url => ({ url }));
+		return Object.keys(this.props.data).map(url => ({ url: getImageUrl(url) }));
 	}
 
 	/**
@@ -29,8 +30,8 @@ export default class Lightbox extends Component {
 	 * @return 	int
 	 */
 	getInitialIndex() {
-		if( this.props.initialImage ){
-			const index = Object.keys(this.props.data).findIndex( (url) => url === this.props.initialImage );
+		if (this.props.initialImage) {
+			const index = Object.keys(this.props.data).findIndex(url => url === this.props.initialImage);
 
 			return index < 0 ? 0 : index;
 		}

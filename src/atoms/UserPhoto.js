@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import _ from "underscore";
 import Image from "react-native-remote-svg";
 
+import getImageUrl from "../utils/getImageUrl";
 import { styleVars } from "../styles";
 
 export default class UserPhoto extends Component {
@@ -20,14 +21,14 @@ export default class UserPhoto extends Component {
 
 		const wrap = {
 			borderRadius: size / 2,
-			overflow: 'hidden'
+			overflow: "hidden"
 		};
 
 		return (
 			<View style={this.props.style || null}>
 				<View style={wrap}>
 					<Image
-						source={{ uri: unescape( this.props.url ) }}
+						source={{ uri: getImageUrl(unescape(this.props.url)) }}
 						style={[photoSize, componentStyles.photo, !_.isUndefined(this.props.anon) && this.props.anon ? componentStyles.anonymous : null]}
 						resizeMode="cover"
 						testId="userPhoto"

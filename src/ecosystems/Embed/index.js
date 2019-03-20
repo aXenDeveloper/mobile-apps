@@ -10,6 +10,7 @@ import NavigationService from "../../utils/NavigationService";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
+import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
 import styles, { styleVars } from "../../styles";
 
@@ -88,7 +89,7 @@ class Embed extends Component {
 		// Get the correct data (item or comment)
 		const data = this._getNormalizedData();
 
-		NavigationService.navigate( data.primary.url, {
+		NavigationService.navigate(data.primary.url, {
 			id: data.item.id,
 			findComment: data.comment !== null ? data.comment.id : null
 		});
@@ -123,7 +124,7 @@ class Embed extends Component {
 		// Normalize the data
 		const data = this._getNormalizedData();
 
-		const imageToUse = getSuitableImage(data.item.contentImages);
+		const imageToUse = getImageUrl(getSuitableImage(data.item.contentImages));
 		const langString = Lang.buildActionString(
 			data.comment !== null,
 			data.review !== null,

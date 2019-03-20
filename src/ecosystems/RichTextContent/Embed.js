@@ -10,6 +10,7 @@ import NavigationService from "../../utils/NavigationService";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
+import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
 import styles, { styleVars } from "../../styles";
 
@@ -87,8 +88,8 @@ class Embed extends Component {
 	onPressEmbed() {
 		// Get the correct data (item or comment)
 		const data = this._getNormalizedData();
-		
-		NavigationService.navigate( data.primary.url, {
+
+		NavigationService.navigate(data.primary.url, {
 			id: data.item.id,
 			findComment: data.comment !== null ? data.comment.id : null
 		});
@@ -136,7 +137,7 @@ class Embed extends Component {
 			<React.Fragment>
 				{Boolean(imageToUse) && (
 					<FadeIn style={componentStyles.imageContainer} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
-						<Image style={componentStyles.image} source={{ uri: imageToUse }} resizeMode="cover" />
+						<Image style={componentStyles.image} source={{ uri: getImageUrl(imageToUse) }} resizeMode="cover" />
 					</FadeIn>
 				)}
 				<View style={componentStyles.body}>

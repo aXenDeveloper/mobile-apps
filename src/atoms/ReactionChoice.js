@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Image, Text, View, StyleSheet, TouchableHighlight } from "react-native";
 
+import getImageUrl from "../utils/getImageUrl";
+
 export default class ReactionChoice extends Component {
 	constructor(props) {
 		super(props);
@@ -10,7 +12,7 @@ export default class ReactionChoice extends Component {
 		return (
 			<TouchableHighlight activeOpacity={0.8} onPress={this.props.onPress} style={componentStyles.reaction}>
 				<React.Fragment>
-					<Image source={{ uri: this.props.image }} style={componentStyles.image} />
+					<Image source={{ uri: getImageUrl(this.props.image) }} style={componentStyles.image} />
 					<Text style={componentStyles.text}>{this.props.name}</Text>
 				</React.Fragment>
 			</TouchableHighlight>
@@ -18,17 +20,16 @@ export default class ReactionChoice extends Component {
 	}
 }
 
-
 const componentStyles = StyleSheet.create({
 	reaction: {
-		backgroundColor: '#f5f5f5',
+		backgroundColor: "#f5f5f5",
 		borderRadius: 50,
 		width: 200,
 		height: 40,
-		display: 'flex',
-		flexDirection: 'row',
-		justifyContent: 'flex-start',
-		alignItems: 'center',
+		display: "flex",
+		flexDirection: "row",
+		justifyContent: "flex-start",
+		alignItems: "center",
 		marginBottom: 5,
 		padding: 5
 	},
@@ -39,6 +40,6 @@ const componentStyles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 17,
-		fontWeight: '500'
+		fontWeight: "500"
 	}
 });
