@@ -47,9 +47,34 @@ export const refreshToken = apiInfo => {
 	return async dispatch => {
 		dispatch(refreshTokenLoading());
 
-		const authData = await SecureStore.getItemAsync(`authStore_${getSiteIdentifier(apiInfo.apiUrl)}`);
+		const { apiUrl, apiKey } = apiInfo;
+		const authStore = await SecureStore.getItemAsync(`authStore`);
+		let allAuthData = {};
+		let authData = {};
 
-		if (authData == null) {
+		console.log(apiUrl);
+		console.log(apiKey);
+
+		// Try and get this site's data from the store
+		if (authStore !== null) {
+			try {
+				allAuthData = JSON.parse(authStore);
+
+				if (!_.isUndefined(allAuthData[apiUrl])) {
+					authData = allAuthData[apiUrl];
+				} else {
+					allAuthData[apiUrl] = {};
+				}
+			} catch (err) {
+				dispatch(
+					refreshTokenError({
+						error: "empty_storage",
+						isNetworkError: false
+					})
+				);
+				return;
+			}
+		} else {
 			dispatch(
 				refreshTokenError({
 					error: "empty_storage",
@@ -74,9 +99,7 @@ export const refreshToken = apiInfo => {
 			}, 5000);
 
 			// Now do the request
-			const authObj = JSON.parse(authData);
-
-			if (_.isUndefined(authObj)) {
+			if (_.isUndefined(authData)) {
 				dispatch(
 					refreshTokenError({
 						error: "no_token",
@@ -86,17 +109,17 @@ export const refreshToken = apiInfo => {
 				return;
 			}
 
-			const response = await fetch(`${apiInfo.apiUrl}/oauth/token/index.php`, {
+			const response = await fetch(`${apiUrl}/oauth/token/index.php`, {
 				method: "post",
 				headers: {
-					"Content-Type": "multipart/form-data",
-					"User-Agent": getUserAgent()
+					"Content-Type": "multipart/form-data"
+					//"User-Agent": getUserAgent()
 				},
 				body: ToFormData({
 					grant_type: "refresh_token",
 					response_type: "token",
-					client_id: apiInfo.apiKey,
-					refresh_token: authObj.refreshToken
+					client_id: apiKey,
+					refresh_token: authData.refreshToken
 				})
 			});
 
@@ -107,21 +130,13 @@ export const refreshToken = apiInfo => {
 			// Now clear the timeout so we can proceed
 			clearTimeout(timeoutHandler);
 
+			// Handle response error
 			if (!response.ok) {
 				console.log(response);
-				console.log(
-					ToFormData({
-						grant_type: "refresh_token",
-						response_type: "token",
-						client_id: authObj.apiKey,
-						refresh_token: authObj.refreshToken
-					})
-				);
-
 				dispatch(
 					refreshTokenError({
 						error: "server_error",
-						networkError: true
+						isNetworkError: true
 					})
 				);
 				return;
@@ -129,6 +144,7 @@ export const refreshToken = apiInfo => {
 
 			const data = await response.json();
 
+			// Handle server error
 			if (data.error) {
 				dispatch(
 					refreshTokenError({
@@ -150,15 +166,22 @@ export const refreshToken = apiInfo => {
 			}
 
 			const newAuthData = {
-				refreshToken: authObj.refreshToken,
+				refreshToken: authData.refreshToken,
 				accessToken: data.access_token,
 				expiresIn: data.expires_in
 			};
 
-			console.log(`Setting new auth data in authStore_${getSiteIdentifier(apiInfo.apiUrl)}`);
+			// Ensure state is kept if it exists
+			if (authData.state) {
+				newAuthData.state = authData.state;
+			}
+
+			console.log(`Setting new auth data in authStore for ${apiUrl}`);
 			console.log(newAuthData);
 
-			await SecureStore.setItemAsync(`authStore_${getSiteIdentifier(apiInfo.apiUrl)}`, JSON.stringify(newAuthData));
+			allAuthData[apiUrl] = newAuthData;
+
+			await SecureStore.setItemAsync(`authStore`, JSON.stringify(allAuthData));
 
 			dispatch(refreshTokenSuccess());
 			dispatch(
@@ -178,7 +201,7 @@ export const refreshToken = apiInfo => {
 			dispatch(
 				refreshTokenError({
 					error: err.message,
-					networkError: true
+					isNetworkError: true
 				})
 			);
 		}
