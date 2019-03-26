@@ -21,6 +21,7 @@ import CommunityRoot from "./CommunityRoot";
 import Button from "../../atoms/Button";
 import AppLoading from "../../atoms/AppLoading";
 import NavigationService from "../../utils/NavigationService";
+import getUserAgent from "../../utils/getUserAgent";
 
 class AppRoot extends Component {
 	constructor(props) {
@@ -317,7 +318,8 @@ class AppRoot extends Component {
 				credentials: "same-origin",
 				headers: {
 					...context.headers,
-					Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}:`
+					Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}:`,
+					"User-Agent": getUserAgent()
 				}
 			}));
 			return next(operation);

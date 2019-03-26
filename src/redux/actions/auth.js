@@ -1,5 +1,6 @@
 import { SecureStore, Linking, WebBrowser } from "expo";
 import ToFormData from "../../utils/ToFormData";
+import getUserAgent from "../../utils/getUserAgent";
 import _ from "underscore";
 
 // ====================================================================
@@ -17,14 +18,6 @@ export const REMOVE_AUTH = "REMOVE_AUTH";
 export const removeAuth = data => ({
 	type: REMOVE_AUTH
 });
-
-export default function getUserAgent() {
-	if ( Expo.Constants.platform.ios ) {
-		return `InvisionCommunityApp/${Expo.Constants.manifest.version} (iOS|${Expo.Constants.deviceName}|${Expo.Constants.platform.ios.platform}|${Expo.Constants.platform.ios.systemVersion})`;
-	} else {
-		return `InvisionCommunityApp/${Expo.Constants.manifest.version} (Android|${Expo.Constants.deviceName})`;
-	}
-}
 
 // ====================================================================
 // Refresh token actions
@@ -237,7 +230,7 @@ export const swapToken = tokenInfo => {
 			}
 		}
 
-		try {						
+		try {
 			const response = await fetch(`${apiUrl}/oauth/token/index.php`, {
 				method: "post",
 				headers: {
