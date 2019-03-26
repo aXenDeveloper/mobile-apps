@@ -18,6 +18,14 @@ export const removeAuth = data => ({
 	type: REMOVE_AUTH
 });
 
+export default function getUserAgent() {
+	if ( Expo.Constants.platform.ios ) {
+		return `InvisionCommunityApp/${Expo.Constants.manifest.version} (iOS|${Expo.Constants.deviceName}|${Expo.Constants.platform.ios.platform}|${Expo.Constants.platform.ios.systemVersion})`;
+	} else {
+		return `InvisionCommunityApp/${Expo.Constants.manifest.version} (Android|${Expo.Constants.deviceName})`;
+	}
+}
+
 // ====================================================================
 // Refresh token actions
 
@@ -88,7 +96,8 @@ export const refreshToken = apiInfo => {
 			const response = await fetch(`${apiInfo.apiUrl}/oauth/token/index.php`, {
 				method: "post",
 				headers: {
-					"Content-Type": "multipart/form-data"
+					"Content-Type": "multipart/form-data",
+					"User-Agent": getUserAgent()
 				},
 				body: ToFormData({
 					grant_type: "refresh_token",
@@ -228,11 +237,12 @@ export const swapToken = tokenInfo => {
 			}
 		}
 
-		try {
+		try {						
 			const response = await fetch(`${apiUrl}/oauth/token/index.php`, {
 				method: "post",
 				headers: {
-					"Content-Type": "multipart/form-data"
+					"Content-Type": "multipart/form-data",
+					"User-Agent": getUserAgent()
 				},
 				body: ToFormData({
 					client_id: apiKey,
