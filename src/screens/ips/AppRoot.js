@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { Text, View, Alert, StyleSheet, StatusBar, ActivityIndicator } from "react-native";
-import { Linking } from "expo";
+import { Text, View, Alert, StyleSheet, StatusBar, ActivityIndicator, AsyncStorage } from "react-native";
+import { Linking, Permissions, Notifications } from "expo";
 import { connect } from "react-redux";
 import { ApolloProvider } from "react-apollo";
 import apolloLogger from "apollo-link-logger";
@@ -17,6 +17,7 @@ import introspectionQueryResultData from "../../fragmentTypes.json";
 import { setApolloClient, bootSite, switchAppView, setActiveCommunity, resetActiveCommunity, resetBootStatus } from "../../redux/actions/app";
 import { refreshToken } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
+import { PromptModal } from "../../ecosystems/PushNotifications";
 import CommunityRoot from "./CommunityRoot";
 import Button from "../../atoms/Button";
 import AppLoading from "../../atoms/AppLoading";
@@ -33,10 +34,13 @@ class AppRoot extends Component {
 		};
 
 		this.state = {
-			waitingForClient: this._isSingleApp
+			waitingForClient: this._isSingleApp,
+			showNotificationPrompt: false
 		};
 
 		this.handleOpenUrl = this.handleOpenUrl.bind(this);
+		this.closeNotificationPrompt = this.closeNotificationPrompt.bind(this);
+
 		Linking.addEventListener("url", this.handleOpenUrl);
 	}
 
@@ -47,6 +51,8 @@ class AppRoot extends Component {
 	 * @return 	void
 	 */
 	async componentDidMount() {
+		this.maybeDoNotificationPrompt();
+
 		// If we're running in single-site mode
 		if (this._isSingleApp) {
 			this.props.dispatch(
@@ -93,6 +99,47 @@ class AppRoot extends Component {
 	 */
 	handleOpenUrl({ url }) {
 		this.checkUrlForAuth(url);
+	}
+
+	/**
+	 * If necessary, show the notification prompt
+	 *
+	 * @param 	{url: string} 		url 		The incoming URL
+	 * @return 	void
+	 */
+	async maybeDoNotificationPrompt() {
+		// We only need to prompt for this on iOS - android handles notifications
+		// on app install.
+		if (!Expo.Constants.platform.ios) {
+			return;
+		}
+
+		// Have we already been granted permission?
+		const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+		console.log(`Notification status: ${status}`);
+		if (status == "granted") {
+			return;
+		}
+
+		// Only show the prompt if there's no previous prompt data, or there is and the status is 'later'.
+		// We can't show the prompt again if the user previously choose 'enable', even if they didn't actually
+		// enable them when asked.
+		try {
+			const promptData = await AsyncStorage.getItem("@notificationPrompt");
+			const promptJson = promptData !== null ? JSON.parse(promptData) : null;
+
+			console.log(promptJson);
+
+			if (promptData === null || (promptJson.status == "later" && promptJson.timestamp < Math.floor(Date.now() / 1000) - 604800)) {
+				this._notificationPromptTimeout = setTimeout(() => {
+					this.setState({
+						showNotificationPrompt: true
+					});
+				}, 3000);
+			}
+		} catch (err) {
+			console.log(err);
+		}
 	}
 
 	/**
@@ -296,6 +343,17 @@ class AppRoot extends Component {
 	}
 
 	/**
+	 * Close the prompt for notifications
+	 *
+	 * @return 	void
+	 */
+	closeNotificationPrompt() {
+		this.setState({
+			showNotificationPrompt: false
+		});
+	}
+
+	/**
 	 * Gets an Apollo client instance
 	 *
 	 * @return 	void
@@ -372,6 +430,7 @@ class AppRoot extends Component {
 		return (
 			<View style={{ flex: 1 }}>
 				<ScreenToRender />
+				<PromptModal isVisible={this.state.showNotificationPrompt} close={this.closeNotificationPrompt} />
 			</View>
 		);
 	}

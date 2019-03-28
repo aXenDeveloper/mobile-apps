@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Text, Alert, View, Image, TouchableHighlight, StyleSheet, ActivityIndicator, AsyncStorage, StatusBar } from "react-native";
+import { Permissions, Notifications } from "expo";
 import { ApolloProvider } from "react-apollo";
 import apolloLogger from "apollo-link-logger";
 import { ApolloClient } from "apollo-client";
@@ -40,6 +41,16 @@ const NotificationQuery = gql`
 	}
 `;
 
+const PushTokenMutation = gql`
+	mutation PushTokenMutation($token: String!) {
+		mutateCore {
+			registerPushToken(token: $token) {
+				id
+			}
+		}
+	}
+`;
+
 class CommunityRoot extends Component {
 	constructor(props) {
 		super(props);
@@ -62,6 +73,7 @@ class CommunityRoot extends Component {
 	componentDidMount() {
 		if (this.props.auth.isAuthenticated) {
 			this.initializeNotificationInterval();
+			this.maybeSendPushToken();
 		}
 	}
 
@@ -76,6 +88,7 @@ class CommunityRoot extends Component {
 		// If we're now authenticated, and weren't before, start checking notifications
 		if (!prevProps.auth.isAuthenticated && this.props.auth.isAuthenticated) {
 			this.initializeNotificationInterval();
+			this.maybeSendPushToken();
 		}
 
 		// However, if we were authenticated but aren't now, then *stop* notifications
@@ -133,6 +146,43 @@ class CommunityRoot extends Component {
 			// If this failed for some reason, stop checking from now on
 			console.log(`Error running notification update: ${err}`);
 			this.stopNotificationInterval();
+		}
+	}
+
+	/**
+	 * Sends the user's push token to the community if they're logged in,
+	 * and have accepted notifications.
+	 *
+	 * @return 	void
+	 */
+	async maybeSendPushToken() {
+		if (!this.props.auth.isAuthenticated) {
+			return;
+		}
+
+		const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+
+		console.log(status);
+
+		// If they haven't granted access then we don't need to do anything here
+		if (status !== "granted") {
+			return;
+		}
+
+		// Get the token that uniquely identifies this device
+		try {
+			const token = await Notifications.getExpoPushTokenAsync();
+			console.log(`token: ${token}`);
+
+			const { data } = await this.props.app.client.mutate({
+				mutation: PushTokenMutation,
+				variables: {
+					token
+				}
+			});
+		} catch (err) {
+			console.log(`Couldn't send push token: ${err}`);
+			return;
 		}
 	}
 

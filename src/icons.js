@@ -44,4 +44,8 @@ const icons = {
 	VOTE_DOWN_SOLID: require("../resources/vote_down_solid.png")
 };
 
+export const illustrations = {
+	NOTIFICATIONS: require("../resources/illustration_notifications.png")
+};
+
 export default icons;
