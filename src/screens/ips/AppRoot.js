@@ -29,6 +29,7 @@ class AppRoot extends Component {
 		super(props);
 
 		this._isSingleApp = !Expo.Constants.manifest.extra.multi;
+		this._notificationSubscription = null;
 		this._alerts = {
 			offline: false
 		};
@@ -40,6 +41,7 @@ class AppRoot extends Component {
 
 		this.handleOpenUrl = this.handleOpenUrl.bind(this);
 		this.closeNotificationPrompt = this.closeNotificationPrompt.bind(this);
+		this.handleNotification = this.handleNotification.bind(this);
 
 		Linking.addEventListener("url", this.handleOpenUrl);
 	}
@@ -51,7 +53,9 @@ class AppRoot extends Component {
 	 * @return 	void
 	 */
 	async componentDidMount() {
+		// Push notification stuff
 		this.maybeDoNotificationPrompt();
+		this._notificationSubscription = Notifications.addListener(this.handleNotification);
 
 		// If we're running in single-site mode
 		if (this._isSingleApp) {
@@ -65,6 +69,27 @@ class AppRoot extends Component {
 
 		const initialUrl = await Linking.getInitialURL();
 		this.checkUrlForAuth(initialUrl);
+	}
+
+	handleNotification(notification) {
+		console.log(notification);
+
+		if (notification.origin == "received") {
+			Alert.alert("In-app notification!", "App was foregrounded", [{ text: "OK", onPress: () => console.log("OK Pressed") }], { cancelable: false });
+		} else {
+			Alert.alert("Selected notification", "Fringilla Malesuada Ultricies Dapibus", [{ text: "OK", onPress: () => console.log("OK Pressed") }], {
+				cancelable: false
+			});
+		}
+	}
+
+	/**
+	 * Unmount; clear up our timer.
+	 *
+	 * @return 	void
+	 */
+	componentWillUnmount() {
+		clearTimeout(this._notificationPromptTimeout);
 	}
 
 	/**
