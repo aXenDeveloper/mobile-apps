@@ -84,6 +84,17 @@ export const refreshToken = apiInfo => {
 			return;
 		}
 
+		// Do we have a refresh token stored for this site?
+		if (_.isUndefined(authData.refreshToken)) {
+			dispatch(
+				refreshTokenError({
+					error: "empty_storage",
+					isNetworkError: false
+				})
+			);
+			return;
+		}
+
 		// Do the request
 		try {
 			// Set a timeout so we can show an error if we can't connect
@@ -112,8 +123,8 @@ export const refreshToken = apiInfo => {
 			const response = await fetch(`${apiUrl}/oauth/token/index.php`, {
 				method: "post",
 				headers: {
-					"Content-Type": "multipart/form-data"
-					//"User-Agent": getUserAgent()
+					"Content-Type": "multipart/form-data",
+					"User-Agent": getUserAgent()
 				},
 				body: ToFormData({
 					grant_type: "refresh_token",
