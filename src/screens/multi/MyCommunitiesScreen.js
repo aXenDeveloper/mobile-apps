@@ -49,7 +49,7 @@ class MyCommunitiesScreen extends Component {
 			{
 				id: "3",
 				title: "Invision Community",
-				apiKey: "4a1beb1022c920ac268e5d02df29f65b",
+				apiKey: "e79f36dc890d5c6b01fa0dc25e52ad0e",
 				apiUrl: "https://invisioncommunity.com/"
 			}
 		];
