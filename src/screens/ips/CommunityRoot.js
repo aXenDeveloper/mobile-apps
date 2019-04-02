@@ -41,10 +41,10 @@ const NotificationQuery = gql`
 	}
 `;
 
-const PushTokenMutation = gql`
-	mutation PushTokenMutation($token: String!) {
+const SessionStartMutation = gql`
+	mutation SessionStartMutation($token: String) {
 		mutateCore {
-			registerPushToken(token: $token) {
+			sessionStart(token: $token) {
 				id
 			}
 		}
@@ -161,27 +161,27 @@ class CommunityRoot extends Component {
 		}
 
 		const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-
-		console.log(status);
+		let token = null;
 
 		// If they haven't granted access then we don't need to do anything here
-		if (status !== "granted") {
-			return;
+		if (status === "granted") {
+			try {
+				token = await Notifications.getExpoPushTokenAsync();
+			} catch (err) {}
 		}
 
 		// Get the token that uniquely identifies this device
 		try {
-			const token = await Notifications.getExpoPushTokenAsync();
-			console.log(`token: ${token}`);
-
+			console.log(`COMMUNITY_ROOT: Starting session...`);
 			const { data } = await this.props.app.client.mutate({
-				mutation: PushTokenMutation,
+				mutation: SessionStartMutation,
 				variables: {
 					token
 				}
 			});
+			console.log(`COMMUNITY_ROOT: Session start sent.`);
 		} catch (err) {
-			console.log(`Couldn't send push token: ${err}`);
+			console.log(`COMMUNITY_ROOT: Couldn't send push token: ${err}`);
 			return;
 		}
 	}
