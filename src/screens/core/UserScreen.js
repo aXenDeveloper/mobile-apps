@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Text, View, Button, ScrollView, FlatList, StyleSheet, TouchableOpacity, Alert, StatusBar, Image } from "react-native";
+import { Permissions, Notifications } from "expo";
 import { SafeAreaView } from "react-navigation";
 import gql from "graphql-tag";
 import { graphql, withApollo } from "react-apollo";
@@ -30,6 +31,16 @@ const UserQuery = gql`
 	}
 `;
 
+const SessionEndMutation = gql`
+	mutation SessionEnd($token: String) {
+		mutateCore {
+			sessionEnd(token: $token) {
+				id
+			}
+		}
+	}
+`;
+
 class UserScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
 		headerTitle: "Account"
@@ -37,21 +48,68 @@ class UserScreen extends Component {
 
 	constructor(props) {
 		super(props);
+
+		this.confirmLogOut = this.confirmLogOut.bind(this);
+		this.doLogOut = this.doLogOut.bind(this);
 	}
 
-	_logOut() {
-		const { dispatch } = this.props;
-
+	/**
+	 * Promps the user to confirm their logout
+	 *
+	 * @return 	void
+	 */
+	confirmLogOut() {
 		Alert.alert("Confirm", "Are you sure you want to log out on this device?", [
-			{ text: "Cancel", onPress: () => console.log("Canceled") },
+			{ text: "Cancel", onPress: () => console.log("USERSCREEN: Canceled logout") },
 			{
 				text: "Log Out",
-				onPress: () => dispatch(logOut(this.props.client)),
+				onPress: this.doLogOut,
 				style: "destructive"
 			}
 		]);
 	}
 
+	/**
+	 * Actually does the logout. Sends a session end request, and then triggers an action
+	 * to log the user out.
+	 *
+	 * @return 	void
+	 */
+	async doLogOut() {
+		// Get the user's push token so we can de-register with the community
+		const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+		let token = null;
+
+		// If they haven't granted access then we don't need to do anything here
+		if (status === "granted") {
+			// Get the token that uniquely identifies this device
+			try {
+				token = await Notifications.getExpoPushTokenAsync();
+			} catch (err) {
+				console.log("USERSCREEN: No token to deregister");
+			}
+		}
+
+		// Call the session end mutation, and pass token if we have one
+		console.log(`USERSCREEN: Ending session, sending token ${token}...`);
+
+		const { data } = await this.props.client.mutate({
+			mutation: SessionEndMutation,
+			variables: {
+				token
+			}
+		});
+
+		console.log("USERSCREEN: Session ended.");
+
+		this.props.dispatch(logOut());
+	}
+
+	/**
+	 * Takes the user to their profile
+	 *
+	 * @return 	void
+	 */
 	goToProfile() {
 		this.props.navigation.navigate({
 			routeName: "Profile",
@@ -62,6 +120,11 @@ class UserScreen extends Component {
 		});
 	}
 
+	/**
+	 * Return the menu options for the user
+	 *
+	 * @return 	array
+	 */
 	getMenuOptions() {
 		return [
 			{
@@ -95,7 +158,7 @@ class UserScreen extends Component {
 				icon: icons.SIGN_OUT,
 				text: Lang.get("sign_out"),
 				onPress: () => {
-					this._logOut();
+					this.confirmLogOut();
 				}
 			}
 		];

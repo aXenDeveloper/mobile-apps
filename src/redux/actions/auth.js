@@ -1,4 +1,4 @@
-import { SecureStore, Linking, WebBrowser } from "expo";
+import { SecureStore, Linking, WebBrowser, Permissions } from "expo";
 import ToFormData from "../../utils/ToFormData";
 import getUserAgent from "../../utils/getUserAgent";
 import _ from "underscore";
@@ -52,8 +52,7 @@ export const refreshToken = apiInfo => {
 		let allAuthData = {};
 		let authData = {};
 
-		console.log(apiUrl);
-		console.log(apiKey);
+		console.log(`REFRESH_TOKEN: Url: ${apiUrl}    Token: ${apiKey}`);
 
 		// Try and get this site's data from the store
 		if (authStore !== null) {
@@ -143,7 +142,9 @@ export const refreshToken = apiInfo => {
 
 			// Handle response error
 			if (!response.ok) {
+				console.log("REFRESH_TOKEN: Request failed:");
 				console.log(response);
+
 				dispatch(
 					refreshTokenError({
 						error: "server_error",
@@ -187,7 +188,7 @@ export const refreshToken = apiInfo => {
 				newAuthData.state = authData.state;
 			}
 
-			console.log(`Setting new auth data in authStore for ${apiUrl}`);
+			console.log(`REFRESH_TOKEN: Setting new auth data in authStore for ${apiUrl}`);
 			console.log(newAuthData);
 
 			allAuthData[apiUrl] = newAuthData;
@@ -260,7 +261,7 @@ export const swapToken = tokenInfo => {
 			try {
 				allAuthData = JSON.parse(authStore);
 			} catch (err) {
-				console.log("No existing auth store");
+				console.log("SWAP_TOKEN: No existing auth store");
 			}
 		}
 
@@ -319,7 +320,7 @@ export const swapToken = tokenInfo => {
 				})
 			);
 		} catch (err) {
-			console.log(err);
+			console.log(`SWAP_TOKEN: Token exchange failed: ${err}`);
 			dispatch(
 				swapTokenError({
 					isNetworkError: false
@@ -355,7 +356,7 @@ export const launchAuth = () => {
 		urlParams["state"] = stateString;
 		urlParams["redirect_uri"] = schemeUrl;
 
-		console.log(`State string set to ${stateString}`);
+		console.log(`LAUNCH_AUTH: State string set to ${stateString}`);
 
 		const authStore = await SecureStore.getItemAsync(`authStore`);
 		let allAuthData = {};
@@ -372,7 +373,7 @@ export const launchAuth = () => {
 					allAuthData[apiUrl] = {};
 				}
 			} catch (err) {
-				console.log("No existing auth store");
+				console.log("LAUNCH_AUTH: No existing auth store");
 			}
 		}
 
@@ -392,13 +393,13 @@ export const launchAuth = () => {
 			allAuthData[apiUrl]["state"] = stateString;
 			await SecureStore.setItemAsync("authStore", JSON.stringify(allAuthData));
 		} catch (err) {
-			console.log("Couldn't save updated authStore");
+			console.log("LAUNCH_AUTH: Couldn't save updated authStore");
 		}
 
 		// Launch Expo's webbrowser authentication flow which will handle receiving the redirect for us
 		WebBrowser.openAuthSessionAsync(`${urlToOpen}${urlQuery.join("&")}`, schemeUrl).then(resolved => {
 			if (resolved.type !== "success") {
-				console.log("Browser closed without authenticating");
+				console.log("LAUNCH_AUTH: Browser closed without authenticating");
 				// The user either closed the browser or denied oauth, so no need to do anything.
 				return;
 			}
@@ -441,12 +442,15 @@ export const launchAuth = () => {
  * @param 	string 	password
  * @param 	object 	apolloClient 	Instance of ApolloClient, so we can reset the store
  */
-export const logOut = () => {
+export const logOut = (requireReauth = true) => {
 	return async (dispatch, getState) => {
 		const {
 			app: {
 				client,
 				currentCommunity: { apiKey, apiUrl }
+			},
+			auth: {
+				authData: { accessToken }
 			}
 		} = getState();
 
@@ -465,19 +469,21 @@ export const logOut = () => {
 					allAuthData[apiUrl] = {};
 				}
 			} catch (err) {
-				console.log("No existing auth store");
+				console.log("LOGOUT: No existing auth store");
 			}
 		}
 
-		allAuthData[apiUrl] = {
-			loggedOut: true
-		};
+		// If we require reauth, then set a flag in our site object to force a true login next time
+		if (requireReauth) {
+			allAuthData[apiUrl] = {
+				loggedOut: true
+			};
+		}
 
+		console.log("LOGOUT: Resetting store...");
 		client.resetStore();
+		console.log("LOGOUT: Store reset.");
 
-		// We don't completely delete the authstore here. Instead, set a flag indicating the
-		// user has logged out. We'll use this to force the login screen if they try authenticating
-		// again.
 		await SecureStore.setItemAsync(`authStore`, JSON.stringify(allAuthData));
 		dispatch(removeAuth());
 	};
