@@ -5,19 +5,26 @@
     "privacy": "unlisted",
     "extra": {
       "multi": true,
-      "oauth_client_id": "b2933603cca1e025ed74153f7cd8f9c6",
-      "api_url": "http://192.168.1.33/ipsdev/Community/",
+      "oauth_client_id": "aee7877a18fc628eec81c024e8c1ca4a",
+      "api_url": "http://localhost.122.148.32.47.xip.io/community/",
       "refresh_token_advance": 300000,
       "notification_timeout": 10000,
       "message_prefix": "__IPS__",
       "per_page": 10,
       "contentBehavior": "first"
     },
-    "name": "project-rooster",
+    "name": "Invision Community",
     "slug": "project-rooster",
     "version": "0.1.0",
+    "icon": "./resources/app-icon.png",
     "description": "",
     "scheme": "invision-community",
+    "ios": {
+      "bundleIdentifier": "com.invisioncommunity.app"
+    },
+    "android": {
+      "package": "com.invisioncommunity.app"
+    },
     "hooks": {
       "postPublish": [
         {
