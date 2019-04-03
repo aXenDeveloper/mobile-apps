@@ -137,14 +137,14 @@ class CommunityRoot extends Component {
 				fetchPolicy: "network-only"
 			});
 
-			console.log(`Ran notification update, got count ${data.core.me.notificationCount}`);
+			console.log(`COMMUNITY_ROOT: Ran notification update, got count ${data.core.me.notificationCount}`);
 
 			if (parseInt(data.core.me.notificationCount) !== parseInt(this.props.user.notificationCount)) {
 				this.props.dispatch(updateNotificationCount(data.core.me.notificationCount));
 			}
 		} catch (err) {
 			// If this failed for some reason, stop checking from now on
-			console.log(`Error running notification update: ${err}`);
+			console.log(`COMMUNITY_ROOT: Error running notification update: ${err}`);
 			this.stopNotificationInterval();
 		}
 	}
@@ -292,6 +292,7 @@ class CommunityRoot extends Component {
 		} else if (this.props.auth.swapToken.loading) {
 			appContent = <AppLoading loading message={`Logging you in...`} />;
 		} else {
+			console.log("COMMUNITY_ROOT: Rendering new navigation...");
 			appContent = <CommunityNavigation />;
 		}
 

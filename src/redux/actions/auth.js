@@ -435,6 +435,12 @@ export const launchAuth = () => {
 	};
 };
 
+export const voidAuth = () => {
+	return async (dispatch, getState) => {
+		console.log("VOID_AUTH: Here");
+	};
+};
+
 /**
  * Attempt to authenticate the user using given username, password
  *

@@ -82,6 +82,7 @@ export default function app(state = initialState, { type, payload }) {
 		// --------------------------------------------------------------
 		// Other app actions
 		case actions.SET_APOLLO_CLIENT:
+			console.log("APP_ACTION: Set new client.");
 			return {
 				...state,
 				client: payload.client

@@ -14,8 +14,8 @@ import { IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
 import _ from "underscore";
 
 import introspectionQueryResultData from "../../fragmentTypes.json";
-import { setApolloClient, bootSite, switchAppView, setActiveCommunity, resetActiveCommunity, resetBootStatus } from "../../redux/actions/app";
-import { refreshToken } from "../../redux/actions/auth";
+import { setApolloClient, bootSite, bootSiteLoading, switchAppView, setActiveCommunity, resetActiveCommunity, resetBootStatus } from "../../redux/actions/app";
+import { refreshToken, logOut, voidAuth } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
 import { PromptModal } from "../../ecosystems/PushNotifications";
 import CommunityRoot from "./CommunityRoot";
@@ -72,7 +72,7 @@ class AppRoot extends Component {
 	}
 
 	handleNotification(notification) {
-		console.log(notification);
+		console.log(`APP_ROOT: Received notification data: ${notification}`);
 
 		if (notification.origin == "received") {
 			Alert.alert("In-app notification!", "App was foregrounded", [{ text: "OK", onPress: () => console.log("OK Pressed") }], { cancelable: false });
@@ -100,7 +100,7 @@ class AppRoot extends Component {
 	 * @return 	void
 	 */
 	checkUrlForAuth(url) {
-		console.log(`Initial URL: ${url}`);
+		console.log(`APP_ROOT: Initial URL: ${url}`);
 
 		let { path, queryParams } = Linking.parse(url);
 
@@ -141,7 +141,8 @@ class AppRoot extends Component {
 
 		// Have we already been granted permission?
 		const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-		console.log(`Notification status: ${status}`);
+		console.log(`APP_ROOT: Notification status: ${status}`);
+
 		if (status == "granted") {
 			return;
 		}
@@ -153,6 +154,7 @@ class AppRoot extends Component {
 			const promptData = await AsyncStorage.getItem("@notificationPrompt");
 			const promptJson = promptData !== null ? JSON.parse(promptData) : null;
 
+			console.log(`APP_ROOT: Notification prompt JSON:`);
 			console.log(promptJson);
 
 			if (promptData === null || (promptJson.status == "later" && promptJson.timestamp < Math.floor(Date.now() / 1000) - 604800)) {
@@ -163,7 +165,7 @@ class AppRoot extends Component {
 				}, 3000);
 			}
 		} catch (err) {
-			console.log(err);
+			console.log(`APP_ROOT: Failed to show notification prompt: ${err}`);
 		}
 	}
 
@@ -197,7 +199,9 @@ class AppRoot extends Component {
 		// If our authenticated state has changed, we need to get a new client and reboot the community
 		// We only want to do this if we're still using the same community URL
 		if (prevApiUrl === apiUrl && prevProps.auth.isAuthenticated !== this.props.auth.isAuthenticated) {
+			console.log("APP_ROOT: Getting new client instance...");
 			await dispatch(setApolloClient({ client: this.getClient() }));
+			console.log("APP_ROOT: Rebooting site after authentication change.");
 			await dispatch(bootSite({ apiKey, apiUrl }));
 		}
 
@@ -394,23 +398,48 @@ class AppRoot extends Component {
 		const accessToken = this.props.auth.authData.accessToken;
 		const apiKey = this.props.app.currentCommunity.apiKey;
 
-		// Apollo config & setup
-		const authLink = (operation, next) => {
-			operation.setContext(context => ({
-				...context,
-				credentials: "same-origin",
-				headers: {
-					...context.headers,
-					Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}:`,
-					"User-Agent": getUserAgent()
-				}
-			}));
-			return next(operation);
-		};
+		console.log(`APP_ROOT: When getting client instance, accessToken is ${accessToken}`);
 
-		const errorLink = onError(({ graphQLErrors, networkError }) => {
-			if (graphQLErrors)
-				graphQLErrors.map(({ message, locations, path }) => console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`));
+		// Apollo config & setup
+		const authLink = new ApolloLink((operation, next) => {
+			console.log(`APP_ROOT: in authLink, access token is ${accessToken}`);
+			operation.setContext(context => {
+				console.log(`APP_ROOT: in setContext:`);
+				console.log({
+					headers: {
+						...context.headers,
+						Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}:`,
+						"User-Agent": getUserAgent()
+					}
+				});
+
+				return {
+					...context,
+					credentials: "same-origin",
+					headers: {
+						...context.headers,
+						Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}:`,
+						"User-Agent": getUserAgent()
+					}
+				};
+			});
+			return next(operation);
+		});
+
+		const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+			if (graphQLErrors) {
+				for (let i = 0; i < graphQLErrors.length; i++) {
+					const error = graphQLErrors[i];
+					console.log(error.message);
+
+					if (error.message === "INVALID_ACCESS_TOKEN") {
+						console.log("APP_ROOT: INVALID_ACCESS_TOKEN");
+						console.log(operation);
+						this.props.dispatch(voidAuth());
+						return;
+					}
+				}
+			}
 
 			if (networkError) {
 				try {
@@ -424,13 +453,14 @@ class AppRoot extends Component {
 		});
 
 		const link = ApolloLink.from([
-			errorLink,
-			authLink,
 			//apolloLogger,
+			authLink,
+			errorLink,
 			new HttpLink({
 				uri: `${this.props.app.currentCommunity.apiUrl}/api/graphql/`
 			})
 		]);
+
 		const client = new ApolloClient({
 			link: link,
 			cache: new InMemoryCache({ fragmentMatcher })
