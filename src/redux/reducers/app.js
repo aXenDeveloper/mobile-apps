@@ -51,6 +51,8 @@ export default function app(state = initialState, { type, payload }) {
 				}
 			};
 		case actions.BOOT_SITE_ERROR:
+			console.log("Boot status error");
+			console.log(payload);
 			return {
 				...state,
 				bootStatus: {

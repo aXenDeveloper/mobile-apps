@@ -132,7 +132,7 @@ class CommunityRoot extends Component {
 	 */
 	async runNotificationQuery() {
 		try {
-			const { data } = await this.props.app.client.query({
+			const { data } = await this.props.auth.client.query({
 				query: NotificationQuery,
 				fetchPolicy: "network-only"
 			});
@@ -173,7 +173,7 @@ class CommunityRoot extends Component {
 		// Get the token that uniquely identifies this device
 		try {
 			console.log(`COMMUNITY_ROOT: Starting session...`);
-			const { data } = await this.props.app.client.mutate({
+			const { data } = await this.props.auth.client.mutate({
 				mutation: SessionStartMutation,
 				variables: {
 					token
@@ -222,7 +222,7 @@ class CommunityRoot extends Component {
 	render() {
 		let appContent;
 
-		if (this.props.app.bootStatus.loading || this.props.app.client === null) {
+		if (this.props.app.bootStatus.loading || this.props.auth.client === null) {
 			appContent = <AppLoading loading />;
 		} else if (this.props.app.bootStatus.error) {
 			appContent = (
@@ -292,11 +292,10 @@ class CommunityRoot extends Component {
 		} else if (this.props.auth.swapToken.loading) {
 			appContent = <AppLoading loading message={`Logging you in...`} />;
 		} else {
-			console.log("COMMUNITY_ROOT: Rendering new navigation...");
 			appContent = <CommunityNavigation />;
 		}
 
-		return <ApolloProvider client={this.props.app.client}>{appContent}</ApolloProvider>;
+		return <ApolloProvider client={this.props.auth.client}>{appContent}</ApolloProvider>;
 	}
 }
 

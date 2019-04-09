@@ -3,17 +3,8 @@ import { Text, View, Alert, StyleSheet, StatusBar, ActivityIndicator, AsyncStora
 import { Linking, Permissions, Notifications } from "expo";
 import { connect } from "react-redux";
 import { ApolloProvider } from "react-apollo";
-import apolloLogger from "apollo-link-logger";
-import { ApolloClient } from "apollo-client";
-import { HttpLink } from "apollo-link-http";
-import { ApolloLink } from "apollo-link";
-import { onError } from "apollo-link-error";
-import { InMemoryCache } from "apollo-cache-inmemory";
 import { graphql, compose } from "react-apollo";
-import { IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
 import _ from "underscore";
-
-import introspectionQueryResultData from "../../fragmentTypes.json";
 import { setApolloClient, bootSite, bootSiteLoading, switchAppView, setActiveCommunity, resetActiveCommunity, resetBootStatus } from "../../redux/actions/app";
 import { refreshToken, logOut, voidAuth } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
@@ -183,8 +174,9 @@ class AppRoot extends Component {
 
 		// If we have a new API url in our store, authorize and boot that community
 		if (prevApiUrl !== apiUrl && apiUrl !== null) {
-			await dispatch(setApolloClient({ client: this.getClient() }));
+			//await dispatch(setApolloClient({ client: this.getClient() }));
 			await dispatch(refreshToken({ apiKey, apiUrl }));
+			console.log("About to run bootsite:");
 			await dispatch(bootSite({ apiKey, apiUrl }));
 
 			NavigationService.setBaseUrl(this.props.site.settings.base_url);
@@ -199,8 +191,8 @@ class AppRoot extends Component {
 		// If our authenticated state has changed, we need to get a new client and reboot the community
 		// We only want to do this if we're still using the same community URL
 		if (prevApiUrl === apiUrl && prevProps.auth.isAuthenticated !== this.props.auth.isAuthenticated) {
-			console.log("APP_ROOT: Getting new client instance...");
-			await dispatch(setApolloClient({ client: this.getClient() }));
+			//console.log("APP_ROOT: Getting new client instance...");
+			//await dispatch(setApolloClient({ client: this.getClient() }));
 			console.log("APP_ROOT: Rebooting site after authentication change.");
 			await dispatch(bootSite({ apiKey, apiUrl }));
 		}
@@ -380,93 +372,6 @@ class AppRoot extends Component {
 		this.setState({
 			showNotificationPrompt: false
 		});
-	}
-
-	/**
-	 * Gets an Apollo client instance
-	 *
-	 * @return 	void
-	 */
-	getClient() {
-		// In order for Apollo to use fragments with union types, as we do for generic core_Content
-		// queries, we need to pass it the schema definition in advance.
-		// See https://www.apollographql.com/docs/react/advanced/fragments.html#fragment-matcher
-		const fragmentMatcher = new IntrospectionFragmentMatcher({
-			introspectionQueryResultData
-		});
-
-		const accessToken = this.props.auth.authData.accessToken;
-		const apiKey = this.props.app.currentCommunity.apiKey;
-
-		console.log(`APP_ROOT: When getting client instance, accessToken is ${accessToken}`);
-
-		// Apollo config & setup
-		const authLink = new ApolloLink((operation, next) => {
-			console.log(`APP_ROOT: in authLink, access token is ${accessToken}`);
-			operation.setContext(context => {
-				console.log(`APP_ROOT: in setContext:`);
-				console.log({
-					headers: {
-						...context.headers,
-						Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}:`,
-						"User-Agent": getUserAgent()
-					}
-				});
-
-				return {
-					...context,
-					credentials: "same-origin",
-					headers: {
-						...context.headers,
-						Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}:`,
-						"User-Agent": getUserAgent()
-					}
-				};
-			});
-			return next(operation);
-		});
-
-		const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
-			if (graphQLErrors) {
-				for (let i = 0; i < graphQLErrors.length; i++) {
-					const error = graphQLErrors[i];
-					console.log(error.message);
-
-					if (error.message === "INVALID_ACCESS_TOKEN") {
-						console.log("APP_ROOT: INVALID_ACCESS_TOKEN");
-						console.log(operation);
-						this.props.dispatch(voidAuth());
-						return;
-					}
-				}
-			}
-
-			if (networkError) {
-				try {
-					const parsedError = JSON.parse(networkError);
-					console.log("[Network error]:");
-					console.log(parsedError);
-				} catch (err) {
-					console.log(`[Network error]: ${networkError}`);
-				}
-			}
-		});
-
-		const link = ApolloLink.from([
-			//apolloLogger,
-			authLink,
-			errorLink,
-			new HttpLink({
-				uri: `${this.props.app.currentCommunity.apiUrl}/api/graphql/`
-			})
-		]);
-
-		const client = new ApolloClient({
-			link: link,
-			cache: new InMemoryCache({ fragmentMatcher })
-		});
-
-		return client;
 	}
 
 	render() {

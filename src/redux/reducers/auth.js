@@ -17,7 +17,8 @@ const initialState = {
 		expiresIn: null,
 		accessToken: null
 	},
-	isAuthenticated: false
+	isAuthenticated: false,
+	client: null
 };
 
 export default function auth(state = initialState, { type, payload }) {
@@ -49,7 +50,9 @@ export default function auth(state = initialState, { type, payload }) {
 					loading: false,
 					error: payload.error || true,
 					isNetworkError: payload.isNetworkError || false
-				}
+				},
+				isAuthenticated: false,
+				client: payload.client
 			};
 		case actions.SWAP_TOKEN_SUCCESS:
 			return {
@@ -58,7 +61,9 @@ export default function auth(state = initialState, { type, payload }) {
 					loading: false,
 					error: false,
 					isNetworkError: false
-				}
+				},
+				isAuthenticated: true,
+				client: payload.client
 			};
 
 		// ========================================================
@@ -74,15 +79,18 @@ export default function auth(state = initialState, { type, payload }) {
 				}
 			};
 		case actions.REFRESH_TOKEN_ERROR:
-			console.log(`Refresh error: ${payload.error || none}`);
-
 			return {
 				...state,
 				refreshToken: {
 					loading: false,
 					error: payload.error || true,
 					isNetworkError: payload.isNetworkError || false
-				}
+				},
+				authData: {
+					...initialState.authData
+				},
+				isAuthenticated: false,
+				client: payload.client
 			};
 		case actions.REFRESH_TOKEN_SUCCESS:
 			return {
@@ -91,7 +99,14 @@ export default function auth(state = initialState, { type, payload }) {
 					loading: false,
 					error: false,
 					isNetworkError: false
-				}
+				},
+				authData: {
+					refreshToken: payload.refreshToken,
+					expiresIn: payload.expiresIn,
+					accessToken: payload.accessToken
+				},
+				isAuthenticated: true,
+				client: payload.client
 			};
 
 		// ========================================================
@@ -105,7 +120,8 @@ export default function auth(state = initialState, { type, payload }) {
 					expiresIn: payload.expiresIn,
 					accessToken: payload.accessToken
 				},
-				isAuthenticated: payload.isAuthenticated
+				isAuthenticated: payload.isAuthenticated,
+				client: payload.client
 			};
 		case actions.REMOVE_AUTH:
 			return {
@@ -113,7 +129,8 @@ export default function auth(state = initialState, { type, payload }) {
 				authData: {
 					...initialState.authData
 				},
-				isAuthenticated: false
+				isAuthenticated: false,
+				client: payload.client
 			};
 
 		default:

@@ -213,7 +213,7 @@ class AppNavigation extends Component {
 			}
 		);
 
-		/*if (this.props.auth.isAuthenticated) {
+		if (this.props.auth.isAuthenticated) {
 			console.log("NAVIGATION: Rendering app with UserScreen");
 			return createAppContainer(
 				createDrawerNavigator(
@@ -228,10 +228,10 @@ class AppNavigation extends Component {
 					}
 				)
 			);
-		} else {*/
-		console.log("NAVIGATION: Rendering app WITHOUT UserScreen");
-		return createAppContainer(masterStack);
-		//}
+		} else {
+			console.log("NAVIGATION: Rendering app WITHOUT UserScreen");
+			return createAppContainer(masterStack);
+		}
 	}
 
 	/**
@@ -282,14 +282,14 @@ class AppNavigation extends Component {
 			})
 		};
 		const User = {
-			screen: UserScreen,
+			screen: NoopScreen,
 			navigationOptions: navigation => ({
 				tabBarLabel: "You",
-				tabBarIcon: ({ focused, tintColor }) => this._getUserPhoto(focused, tintColor)
-				/*tabBarOnPress: (tab, jumpToIndex) => {
+				tabBarIcon: ({ focused, tintColor }) => this._getUserPhoto(focused, tintColor),
+				tabBarOnPress: (tab, jumpToIndex) => {
 					navigation.navigation.openDrawer();
 					//navigation.navigation.navigate("UserScreen");
-				}*/
+				}
 			})
 		};
 		const Login = {

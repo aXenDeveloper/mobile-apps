@@ -72,7 +72,6 @@ export const bootSiteSuccess = data => ({
 
 import _ from "underscore";
 import Lang from "../../utils/Lang";
-import { refreshToken } from "./auth";
 import { guestLoaded, userLoaded, setUserStreams } from "./user";
 import { setSiteSettings, setLoginHandlers } from "./site";
 import gql from "graphql-tag";
@@ -81,7 +80,7 @@ import { graphql } from "react-apollo";
 export const bootSite = apiInfo => {
 	return async (dispatch, getState) => {
 		const {
-			app: { client }
+			auth: { client }
 		} = getState();
 
 		// Set state to loading
