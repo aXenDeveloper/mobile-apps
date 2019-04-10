@@ -22,6 +22,8 @@ import RichTextContent from "../../ecosystems/RichTextContent";
 import Lang from "../../utils/Lang";
 import { userLoaded, guestLoaded, setUserStreams, updateNotificationCount } from "../../redux/actions/user";
 import { setSiteSettings, setLoginHandlers } from "../../redux/actions/site";
+import { bootSite } from "../../redux/actions/app";
+import { refreshToken } from "../../redux/actions/auth";
 import CommunityNavigation from "../../navigation/CommunityNavigation";
 import ToFormData from "../../utils/ToFormData";
 import LangFragment from "../../LangFragment";
@@ -191,12 +193,16 @@ class CommunityRoot extends Component {
 	 *
 	 * @return 	void
 	 */
-	tryAfterNetworkError() {
+	async tryAfterNetworkError() {
+		const { apiKey, apiUrl } = this.props.app.currentCommunity;
+		const { dispatch } = this.props;
+
 		this.setState({
 			loading: true
 		});
 
-		//this.props.dispatch(refreshAuth(this.props.app.currentCommunity));
+		await dispatch(refreshToken({ apiKey, apiUrl }));
+		await dispatch(bootSite({ apiKey, apiUrl }));
 	}
 
 	/**
