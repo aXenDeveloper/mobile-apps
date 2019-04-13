@@ -77,6 +77,10 @@ class CommunityRoot extends Component {
 			this.initializeNotificationInterval();
 			this.maybeSendPushToken();
 		}
+
+		if (this.props.redirect !== null) {
+			this.handleRedirectProp();
+		}
 	}
 
 	/**
@@ -97,6 +101,10 @@ class CommunityRoot extends Component {
 		if (prevProps.auth.isAuthenticated && !this.props.auth.isAuthenticated) {
 			this.stopNotificationInterval();
 		}
+
+		if (prevProps.redirect !== this.props.redirect && this.props.redirect !== null) {
+			this.handleRedirectProp();
+		}
 	}
 
 	/**
@@ -106,6 +114,36 @@ class CommunityRoot extends Component {
 	 */
 	componentWillUnmount() {
 		this.stopNotificationInterval();
+		clearTimeout(this._redirectTimeout);
+	}
+
+	/**
+	 * If a `redirect` prop is passed to this component, this method will redirect
+	 * the nav to the appropriate screen
+	 *
+	 * @return 	void
+	 */
+	handleRedirectProp() {
+		const { app, module, controller } = this.props.redirect;
+		const params = {};
+
+		["id", "findComment", "findReview"].forEach(param => {
+			if (!_.isUndefined(this.props.redirect[param])) {
+				params[param] = this.props.redirect[param];
+			}
+		});
+
+		console.log("In CommunityRoot mount, we'll redirect");
+		this._redirectTimeout = setTimeout(() => {
+			NavigationService.navigate(
+				{
+					app,
+					module,
+					controller
+				},
+				params
+			);
+		}, 1000);
 	}
 
 	/**

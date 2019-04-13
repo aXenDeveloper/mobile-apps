@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import _ from "underscore";
 
 import configureStore from "../../redux/configureStore";
-import { setActiveCommunity, switchAppView } from "../../redux/actions/app";
+import { setActiveCommunity, switchAppView, setCommunities } from "../../redux/actions/app";
 import { CommunityBox } from "../../ecosystems/MultiCommunity";
 import Button from "../../atoms/Button";
 import HeaderButton from "../../atoms/HeaderButton";
@@ -30,6 +30,28 @@ class MyCommunitiesScreen extends Component {
 		this.props.navigation.setParams({
 			onPressAddCommunity: this.onPressAddCommunity.bind(this)
 		});
+	}
+
+	componentDidMount() {
+		this.props.dispatch(
+			setCommunities({
+				1: {
+					name: "Local",
+					apiKey: Expo.Constants.manifest.extra.oauth_client_id,
+					apiUrl: Expo.Constants.manifest.extra.api_url
+				},
+				2: {
+					name: "InvisionAlpha",
+					apiKey: "d5f20f784ad0c7eb51e9b53f16ac370d",
+					apiUrl: "https://auto.invisionalpha.com/"
+				},
+				3: {
+					name: "Invision Community",
+					apiKey: "e79f36dc890d5c6b01fa0dc25e52ad0e",
+					apiUrl: "https://invisioncommunity.com/"
+				}
+			})
+		);
 	}
 
 	getListData() {
@@ -88,4 +110,6 @@ class MyCommunitiesScreen extends Component {
 	}
 }
 
-export default MyCommunitiesScreen;
+export default connect(state => ({
+	app: state.app
+}))(MyCommunitiesScreen);

@@ -79,6 +79,7 @@ export default function auth(state = initialState, { type, payload }) {
 				}
 			};
 		case actions.REFRESH_TOKEN_ERROR:
+			console.log("refresh token error");
 			return {
 				...state,
 				refreshToken: {
@@ -93,6 +94,7 @@ export default function auth(state = initialState, { type, payload }) {
 				client: payload.client
 			};
 		case actions.REFRESH_TOKEN_SUCCESS:
+			console.log("refresh token success");
 			return {
 				...state,
 				refreshToken: {

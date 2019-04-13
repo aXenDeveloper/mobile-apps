@@ -4,7 +4,7 @@
 		"orientation": "portrait",
 		"privacy": "unlisted",
 		"extra": {
-			"multi": false,
+			"multi": true,
 			"oauth_client_id": "b2933603cca1e025ed74153f7cd8f9c6",
 			"api_url": "http://192.168.1.33/ipsdev/Community/",
 			"refresh_token_advance": 300000,

@@ -16,7 +16,9 @@ const initialState = {
 	webview: {
 		active: false,
 		url: ""
-	}
+	},
+	notification: null,
+	communities: {}
 };
 
 export default function app(state = initialState, { type, payload }) {
@@ -64,6 +66,24 @@ export default function app(state = initialState, { type, payload }) {
 			};
 
 		// --------------------------------------------------------------
+		// Notification actions
+		case actions.RECEIVE_NOTIFICATION:
+			console.log("Notification reducer");
+			console.log(payload);
+			return {
+				...state,
+				notification: {
+					...payload
+				}
+			};
+
+		case actions.CLEAR_CURRENT_NOTIFICATION:
+			return {
+				...state,
+				notification: null
+			};
+
+		// --------------------------------------------------------------
 		// Actions to control the active community
 		case actions.SET_ACTIVE_COMMUNITY:
 			return {
@@ -82,13 +102,16 @@ export default function app(state = initialState, { type, payload }) {
 			};
 
 		// --------------------------------------------------------------
-		// Other app actions
-		case actions.SET_APOLLO_CLIENT:
-			console.log("APP_ACTION: Set new client.");
+		// Multi-community
+		case actions.SET_COMMUNITIES:
 			return {
 				...state,
-				client: payload.client
+				communities: {
+					...payload
+				}
 			};
+		// --------------------------------------------------------------
+		// Other app actions
 		case actions.SWITCH_APP_VIEW:
 			return {
 				...state,

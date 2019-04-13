@@ -37,9 +37,27 @@ export const switchAppView = data => ({
 	}
 });
 
-export const SET_APOLLO_CLIENT = "SET_APOLLO_CLIENT";
-export const setApolloClient = data => ({
-	type: SET_APOLLO_CLIENT,
+export const SET_COMMUNITIES = "SET_COMMUNITIES";
+export const setCommunities = data => ({
+	type: SET_COMMUNITIES,
+	payload: {
+		...data
+	}
+});
+
+// =================================================================
+
+export const RECEIVE_NOTIFICATION = "RECEIVE_NOTIFICATION";
+export const receiveNotification = data => ({
+	type: RECEIVE_NOTIFICATION,
+	payload: {
+		...data
+	}
+});
+
+export const CLEAR_CURRENT_NOTIFICATION = "CLEAR_CURRENT_NOTIFICATION";
+export const clearCurrentNotification = data => ({
+	type: CLEAR_CURRENT_NOTIFICATION,
 	payload: {
 		...data
 	}
@@ -83,6 +101,9 @@ export const bootSite = apiInfo => {
 			auth: { client }
 		} = getState();
 
+		console.log(`BOOT SITE: ${apiInfo.apiUrl}`);
+		console.log(`BOOT SITE: ${client}`);
+
 		// Set state to loading
 		dispatch(bootSiteLoading());
 
@@ -94,10 +115,11 @@ export const bootSite = apiInfo => {
 				variables: {}
 			});
 
+			console.log(`BOOT SITE:`);
+			console.log(data);
+
 			if (auth.isAuthenticated && data.core.me.group.groupType !== "GUEST") {
 				dispatch(userLoaded({ ...data.core.me }));
-				//	clearInterval(this._notificationTimeout);
-				//	this._notificationTimeout = setInterval(() => this.runNotificationQuery(), NOTIFICATION_TIMEOUT);
 			} else {
 				dispatch(guestLoaded({ ...data.core.me }));
 			}

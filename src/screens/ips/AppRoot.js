@@ -1,19 +1,29 @@
 import React, { Component } from "react";
-import { Text, View, Alert, StyleSheet, StatusBar, ActivityIndicator, AsyncStorage } from "react-native";
+import { Text, View, Alert, StyleSheet, StatusBar, ActivityIndicator, AsyncStorage, Platform, PushNotificationIOS } from "react-native";
 import { Linking, Permissions, Notifications } from "expo";
 import { connect } from "react-redux";
 import { ApolloProvider } from "react-apollo";
 import { graphql, compose } from "react-apollo";
 import _ from "underscore";
-import { setApolloClient, bootSite, bootSiteLoading, switchAppView, setActiveCommunity, resetActiveCommunity, resetBootStatus } from "../../redux/actions/app";
+
+import {
+	bootSite,
+	switchAppView,
+	setActiveCommunity,
+	resetActiveCommunity,
+	resetBootStatus,
+	receiveNotification,
+	clearCurrentNotification
+} from "../../redux/actions/app";
 import { refreshToken, logOut, voidAuth } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
-import { PromptModal } from "../../ecosystems/PushNotifications";
+import { PromptModal, LocalNotification } from "../../ecosystems/PushNotifications";
 import CommunityRoot from "./CommunityRoot";
 import Button from "../../atoms/Button";
 import AppLoading from "../../atoms/AppLoading";
 import NavigationService from "../../utils/NavigationService";
 import getUserAgent from "../../utils/getUserAgent";
+import Toast, { DURATION } from "react-native-easy-toast";
 
 class AppRoot extends Component {
 	constructor(props) {
@@ -27,7 +37,8 @@ class AppRoot extends Component {
 
 		this.state = {
 			waitingForClient: this._isSingleApp,
-			showNotificationPrompt: false
+			showNotificationPrompt: false,
+			redirectToNotification: null
 		};
 
 		this.handleOpenUrl = this.handleOpenUrl.bind(this);
@@ -63,15 +74,15 @@ class AppRoot extends Component {
 	}
 
 	handleNotification(notification) {
-		console.log(`APP_ROOT: Received notification data: ${notification}`);
+		console.log(`APP_ROOT: Received notification data`);
+		console.log(notification.data);
 
-		if (notification.origin == "received") {
-			Alert.alert("In-app notification!", "App was foregrounded", [{ text: "OK", onPress: () => console.log("OK Pressed") }], { cancelable: false });
-		} else {
-			Alert.alert("Selected notification", "Fringilla Malesuada Ultricies Dapibus", [{ text: "OK", onPress: () => console.log("OK Pressed") }], {
-				cancelable: false
-			});
-		}
+		//if (notification.origin == "received" && Platform.OS == "ios") {
+		//Alert.alert("In-app notification!", "App was foregrounded", [{ text: "OK", onPress: () => console.log("OK Pressed") }], { cancelable: false });
+		//this.refs.notificationToast.show(<LocalNotification title="Just a test" />, 3000);
+		//} else {
+		this.props.dispatch(receiveNotification(notification.data));
+		//}
 	}
 
 	/**
@@ -172,29 +183,34 @@ class AppRoot extends Component {
 		const { apiKey, apiUrl } = this.props.app.currentCommunity;
 		const prevApiUrl = prevProps.app.currentCommunity.apiUrl;
 
+		// --------------------------------------------------------------------
+		// Authentication/site changing stuff
 		// If we have a new API url in our store, authorize and boot that community
+		// This can happen when a user chooses to launch a community, or when a notification
+		// is tapped and we automatically switch community.
 		if (prevApiUrl !== apiUrl && apiUrl !== null) {
-			//await dispatch(setApolloClient({ client: this.getClient() }));
 			await dispatch(refreshToken({ apiKey, apiUrl }));
-			console.log("About to run bootsite:");
 			await dispatch(bootSite({ apiKey, apiUrl }));
 
 			NavigationService.setBaseUrl(this.props.site.settings.base_url);
 
-			if (this._isSingleApp) {
-				this.setState({
-					waitingForClient: false
-				});
-			}
+			this.setState({
+				waitingForClient: this._isSingleApp ? false : null,
+				redirectToNotification: null // reset to null in case we loaded this community via a notification
+			});
 		}
 
 		// If our authenticated state has changed, we need to get a new client and reboot the community
 		// We only want to do this if we're still using the same community URL
 		if (prevApiUrl === apiUrl && prevProps.auth.isAuthenticated !== this.props.auth.isAuthenticated) {
-			//console.log("APP_ROOT: Getting new client instance...");
-			//await dispatch(setApolloClient({ client: this.getClient() }));
 			console.log("APP_ROOT: Rebooting site after authentication change.");
 			await dispatch(bootSite({ apiKey, apiUrl }));
+		}
+
+		// --------------------------------------------------------------------
+		// Handle incoming notifications
+		if (prevProps.app.notification !== this.props.app.notification && this.props.app.notification !== null) {
+			this.redirectFromNotification();
 		}
 
 		// --------------------------------------------------------------------
@@ -217,6 +233,57 @@ class AppRoot extends Component {
 				this.props.dispatch(resetBootStatus());
 			}
 		}
+	}
+
+	async redirectFromNotification() {
+		const { community } = this.props.app.notification;
+
+		// We need to find the community info associated with this notification
+		const communityToLoad = _.find(this.props.app.communities, current => {
+			return current.apiUrl === community;
+		});
+
+		// If we didn't find a matching community, let the user know
+		if (_.isUndefined(communityToLoad)) {
+			Alert.alert(
+				"Couldn't load content",
+				"We aren't able to load this content right now.",
+				[
+					{
+						text: "OK",
+						style: "default",
+						onPress: () => {}
+					}
+				],
+				{
+					cancelable: false
+				}
+			);
+
+			return;
+		}
+
+		const { apiKey, apiUrl } = communityToLoad;
+
+		// Is this community already loaded?
+		if (this.props.app.currentCommunity.apiUrl === apiUrl) {
+			console.log("This community is already loaded");
+		} else {
+			// Otherwise, we can load the community
+			console.log("APP_ROOT: Switching community...");
+			this.props.dispatch(resetBootStatus());
+			this.props.dispatch(resetActiveCommunity());
+			await this.props.dispatch(setActiveCommunity({ apiKey, apiUrl }));
+			// From here, componentDidUpdate will see the change and load the community
+		}
+
+		this.setState({
+			redirectToNotification: {
+				...this.props.app.notification
+			}
+		});
+
+		this.props.dispatch(clearCurrentNotification());
 	}
 
 	/**
@@ -379,18 +446,20 @@ class AppRoot extends Component {
 			return <AppLoading loading />;
 		}
 
-		let ScreenToRender = CommunityRoot;
-
-		if (Expo.Constants.manifest.extra.multi) {
-			if (this.props.app.view === "multi") {
-				ScreenToRender = MultiCommunityNavigation;
-			}
-		}
-
 		return (
 			<View style={{ flex: 1 }}>
-				<ScreenToRender />
+				{Expo.Constants.manifest.extra.multi && this.props.app.view === "multi" ? (
+					<MultiCommunityNavigation />
+				) : (
+					<CommunityRoot redirect={this.state.redirectToNotification} />
+				)}
 				<PromptModal isVisible={this.state.showNotificationPrompt} close={this.closeNotificationPrompt} />
+				<Toast
+					ref="notificationToast"
+					position="top"
+					positionValue={0}
+					style={{ backgroundColor: "#fff", position: "absolute", left: 10, right: 10, top: 10 }}
+				/>
 			</View>
 		);
 	}
