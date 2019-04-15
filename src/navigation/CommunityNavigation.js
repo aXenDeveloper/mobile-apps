@@ -344,7 +344,7 @@ class AppNavigation extends Component {
 	 * @return object|file resource
 	 */
 	_getUserPhoto(focused, tintColor) {
-		if (!this.props.user.isGuest && this.props.user.photo) {
+		if (this.props.auth.isAuthenticated && this.props.user.photo) {
 			return (
 				<View style={{ borderRadius: 24, overflow: "hidden" }}>
 					<Image style={[styles.tabIcon, styles.userTabIcon]} source={{ uri: getImageUrl(unescape(this.props.user.photo)) }} />
