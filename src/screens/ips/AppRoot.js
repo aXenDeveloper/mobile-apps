@@ -71,6 +71,8 @@ class AppRoot extends Component {
 
 		const initialUrl = await Linking.getInitialURL();
 		this.checkUrlForAuth(initialUrl);
+
+		console.log(`Add this URL for auth: ${Linking.makeUrl("auth")}`);
 	}
 
 	handleNotification(notification) {
@@ -235,48 +237,59 @@ class AppRoot extends Component {
 		}
 	}
 
+	/**
+	 * Handles redirecting the app to the correct community, loading it
+	 * if it isn't the currently-loaded one. Then sets the notification in state
+	 * which will be passed into CommunityRoot to do the redirect.
+	 *
+	 * @return
+	 */
 	async redirectFromNotification() {
-		const { community } = this.props.app.notification;
+		// If we're in the multi-app, we need to figure out which community this notification is for,
+		// and then boot it if it isn't already loaded.
+		if (Expo.Constants.manifest.extra.multi) {
+			const { community } = this.props.app.notification;
+			// We need to find the community info associated with this notification
+			const communityToLoad = _.find(this.props.app.communities, current => {
+				return current.apiUrl === community;
+			});
 
-		// We need to find the community info associated with this notification
-		const communityToLoad = _.find(this.props.app.communities, current => {
-			return current.apiUrl === community;
-		});
-
-		// If we didn't find a matching community, let the user know
-		if (_.isUndefined(communityToLoad)) {
-			Alert.alert(
-				"Couldn't load content",
-				"We aren't able to load this content right now.",
-				[
+			// If we didn't find a matching community, let the user know
+			if (_.isUndefined(communityToLoad)) {
+				Alert.alert(
+					"Couldn't Load Content",
+					"Sorry, we aren't able to load this content right now.",
+					[
+						{
+							text: "OK",
+							style: "default",
+							onPress: () => {}
+						}
+					],
 					{
-						text: "OK",
-						style: "default",
-						onPress: () => {}
+						cancelable: false
 					}
-				],
-				{
-					cancelable: false
-				}
-			);
+				);
 
-			return;
+				return;
+			}
+
+			const { apiKey, apiUrl } = communityToLoad;
+
+			// Is this community already loaded?
+			if (this.props.app.currentCommunity.apiUrl === apiUrl) {
+				console.log("This community is already loaded");
+			} else {
+				// Otherwise, we can load the community
+				console.log("APP_ROOT: Switching community...");
+				this.props.dispatch(resetBootStatus());
+				this.props.dispatch(resetActiveCommunity());
+				await this.props.dispatch(setActiveCommunity({ apiKey, apiUrl }));
+				// From here, componentDidUpdate will see the change and load the community
+			}
 		}
 
-		const { apiKey, apiUrl } = communityToLoad;
-
-		// Is this community already loaded?
-		if (this.props.app.currentCommunity.apiUrl === apiUrl) {
-			console.log("This community is already loaded");
-		} else {
-			// Otherwise, we can load the community
-			console.log("APP_ROOT: Switching community...");
-			this.props.dispatch(resetBootStatus());
-			this.props.dispatch(resetActiveCommunity());
-			await this.props.dispatch(setActiveCommunity({ apiKey, apiUrl }));
-			// From here, componentDidUpdate will see the change and load the community
-		}
-
+		// Set the notification data in state so we can pass it into CommunityRoot
 		this.setState({
 			redirectToNotification: {
 				...this.props.app.notification
