@@ -18,7 +18,11 @@ const initialState = {
 		url: ""
 	},
 	notification: null,
-	communities: {}
+	communities: {
+		loading: false,
+		error: false,
+		data: []
+	}
 };
 
 export default function app(state = initialState, { type, payload }) {
@@ -103,13 +107,35 @@ export default function app(state = initialState, { type, payload }) {
 
 		// --------------------------------------------------------------
 		// Multi-community
-		case actions.SET_COMMUNITIES:
+		case actions.COMMUNITY_LIST_LOADING:
 			return {
 				...state,
 				communities: {
-					...payload
+					...state.communities,
+					loading: true,
+					error: false
 				}
 			};
+		case actions.COMMUNITY_LIST_ERROR:
+			return {
+				...state,
+				communities: {
+					...state.communities,
+					loading: false,
+					error: true
+				}
+			};
+		case actions.COMMUNITY_LIST_SUCCESS:
+			return {
+				...state,
+				communities: {
+					...state.communities,
+					loading: false,
+					error: false,
+					data: payload.communities
+				}
+			};
+
 		// --------------------------------------------------------------
 		// Other app actions
 		case actions.SWITCH_APP_VIEW:

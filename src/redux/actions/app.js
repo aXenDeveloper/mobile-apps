@@ -37,14 +37,6 @@ export const switchAppView = data => ({
 	}
 });
 
-export const SET_COMMUNITIES = "SET_COMMUNITIES";
-export const setCommunities = data => ({
-	type: SET_COMMUNITIES,
-	payload: {
-		...data
-	}
-});
-
 // =================================================================
 
 export const RECEIVE_NOTIFICATION = "RECEIVE_NOTIFICATION";
@@ -216,3 +208,104 @@ const BootQuery = gql`
 	}
 	${LangFragment}
 `;
+
+// =================================================================
+
+export const COMMUNITY_LIST_LOADING = "COMMUNITY_LIST_LOADING";
+export const communityListLoading = data => ({
+	type: COMMUNITY_LIST_LOADING
+});
+
+export const COMMUNITY_LIST_ERROR = "COMMUNITY_LIST_ERROR";
+export const communityListError = data => ({
+	type: COMMUNITY_LIST_ERROR,
+	payload: {
+		...data
+	}
+});
+
+export const COMMUNITY_LIST_SUCCESS = "COMMUNITY_LIST_SUCCESS";
+export const communityListSuccess = data => ({
+	type: COMMUNITY_LIST_SUCCESS,
+	payload: {
+		...data
+	}
+});
+
+import { AsyncStorage } from "react-native";
+import getUserAgent from "../../utils/getUserAgent";
+export const loadCommunities = () => {
+	return async (dispatch, getState) => {
+		dispatch(communityListLoading());
+
+		try {
+			// Get our saved community IDs from storage
+			const communityData = await AsyncStorage.getItem("@savedCommunities");
+			const communityJson = communityData !== null ? JSON.parse(communityData) : null;
+
+			if (communityJson === null) {
+				dispatch(
+					communityListSuccess({
+						communities: []
+					})
+				);
+				return;
+			}
+
+			// Fetch the community data from remoteservices
+			const communityIDs = communityJson.join(",");
+			const response = await fetch(`${Expo.Constants.manifest.extra.remoteServicesUrl}directory/?id=${communityIDs}`, {
+				method: "get",
+				headers: {
+					"Content-Type": "application/json",
+					"User-Agent": getUserAgent()
+				}
+			});
+
+			if (!response.ok) {
+				dispatch(communityListError());
+				return;
+			}
+
+			const data = await response.json();
+
+			// Process the returned data into an object
+			const receivedCommunities = {};
+			for (let i = 0; i < data.length; i++) {
+				receivedCommunities[data[i].id] = data[i];
+			}
+
+			// Now loop through each of our stored communities and build a final object that we'll store in redux
+			const communities = [];
+			for (let k = 0; k < communityJson.length; k++) {
+				if (!_.isUndefined(receivedCommunities[communityJson[k]])) {
+					communities.push({
+						...receivedCommunities[communityJson[k]],
+						status: "ok"
+					});
+				} else {
+					communities.push({
+						id: communityJson[k],
+						status: "missing"
+					});
+				}
+			}
+
+			dispatch(
+				communityListSuccess({
+					communities
+				})
+			);
+		} catch (err) {
+			dispatch(communityListError());
+		}
+	};
+};
+
+export const _devStoreCommunities = async () => {
+	const communities = ["b8159ddfb42729ad9120567c862e197a", "4c422840184708ffcea278fcccd43dae", "1fe6bc7815de0244c70a2544f8d0adf2", "test_missing"];
+
+	await AsyncStorage.setItem("@savedCommunities", JSON.stringify(communities));
+
+	console.log("Saved communities");
+};
