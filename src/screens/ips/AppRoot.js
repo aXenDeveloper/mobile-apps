@@ -13,7 +13,8 @@ import {
 	resetActiveCommunity,
 	resetBootStatus,
 	receiveNotification,
-	clearCurrentNotification
+	clearCurrentNotification,
+	loadCommunities
 } from "../../redux/actions/app";
 import { refreshToken, logOut, voidAuth } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
@@ -75,15 +76,16 @@ class AppRoot extends Component {
 		console.log(`Add this URL for auth: ${Linking.makeUrl("auth")}`);
 	}
 
-	handleNotification(notification) {
+	async handleNotification(notification) {
 		console.log(`APP_ROOT: Received notification data`);
-		console.log(notification.data);
+		console.log(notification);
 
 		//if (notification.origin == "received" && Platform.OS == "ios") {
 		//Alert.alert("In-app notification!", "App was foregrounded", [{ text: "OK", onPress: () => console.log("OK Pressed") }], { cancelable: false });
 		//this.refs.notificationToast.show(<LocalNotification title="Just a test" />, 3000);
 		//} else {
-		this.props.dispatch(receiveNotification(notification.data));
+		await this.props.dispatch(loadCommunities());
+		await this.props.dispatch(receiveNotification(notification.data));
 		//}
 	}
 
@@ -242,16 +244,18 @@ class AppRoot extends Component {
 	 * if it isn't the currently-loaded one. Then sets the notification in state
 	 * which will be passed into CommunityRoot to do the redirect.
 	 *
-	 * @return
+	 * @return void
 	 */
 	async redirectFromNotification() {
 		// If we're in the multi-app, we need to figure out which community this notification is for,
 		// and then boot it if it isn't already loaded.
 		if (Expo.Constants.manifest.extra.multi) {
-			const { community } = this.props.app.notification;
+			const {
+				community: { url }
+			} = this.props.app.notification;
 			// We need to find the community info associated with this notification
-			const communityToLoad = _.find(this.props.app.communities, current => {
-				return current.apiUrl === community;
+			const communityToLoad = _.find(this.props.app.communities.data, current => {
+				return current.url === url;
 			});
 
 			// If we didn't find a matching community, let the user know
@@ -274,7 +278,7 @@ class AppRoot extends Component {
 				return;
 			}
 
-			const { apiKey, apiUrl } = communityToLoad;
+			const { client_id: apiKey, url: apiUrl } = communityToLoad;
 
 			// Is this community already loaded?
 			if (this.props.app.currentCommunity.apiUrl === apiUrl) {
