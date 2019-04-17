@@ -35,7 +35,15 @@ class CommunityBox extends Component {
 
 	render() {
 		if (this.props.loading) {
-			return <Text>Loading</Text>;
+			return (
+				<ShadowedArea style={[componentStyles.communityBox, styles.mbStandard]}>
+					<PlaceholderContainer style={[styles.flex, styles.pStandard]} onPress={this.props.onPress}>
+						<PlaceholderElement width={50} height={50} left={0} top={0} />
+						<PlaceholderElement width={200} height={17} left={62} top={8} />
+						<PlaceholderElement width={150} height={13} left={62} top={30} />
+					</PlaceholderContainer>
+				</ShadowedArea>
+			);
 		}
 
 		const displayUrl = this.getDisplayUrl();
@@ -70,7 +78,8 @@ export default compose(
 
 const componentStyles = StyleSheet.create({
 	communityBox: {
-		borderRadius: 4
+		borderRadius: 4,
+		minHeight: 74
 	},
 	image: {
 		width: 50,
