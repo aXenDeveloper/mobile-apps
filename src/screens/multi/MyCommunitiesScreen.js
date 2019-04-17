@@ -4,8 +4,9 @@ import { connect } from "react-redux";
 import _ from "underscore";
 
 import configureStore from "../../redux/configureStore";
-import { setActiveCommunity, switchAppView, setCommunities } from "../../redux/actions/app";
+import { setActiveCommunity, switchAppView, setCommunities, loadCommunities, _devStoreCommunities } from "../../redux/actions/app";
 import { CommunityBox } from "../../ecosystems/MultiCommunity";
+import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import Button from "../../atoms/Button";
 import HeaderButton from "../../atoms/HeaderButton";
 import NavigationService from "../../utils/NavigationService";
@@ -24,6 +25,11 @@ class MyCommunitiesScreen extends Component {
 
 	constructor(props) {
 		super(props);
+
+		this.state = {
+			loading: true
+		};
+
 		this._pressHandlers = {};
 		this.pressCommunity = this.pressCommunity.bind(this);
 
@@ -32,60 +38,52 @@ class MyCommunitiesScreen extends Component {
 		});
 	}
 
+	/**
+	 * Mount point. Dispatch action to load our saved community list
+	 *
+	 * @return void
+	 */
 	componentDidMount() {
-		this.props.dispatch(
-			setCommunities({
-				1: {
-					name: "Local",
-					apiKey: Expo.Constants.manifest.extra.oauth_client_id,
-					apiUrl: Expo.Constants.manifest.extra.api_url
-				},
-				2: {
-					name: "InvisionAlpha",
-					apiKey: "d5f20f784ad0c7eb51e9b53f16ac370d",
-					apiUrl: "https://auto.invisionalpha.com/"
-				},
-				3: {
-					name: "Invision Community",
-					apiKey: "e79f36dc890d5c6b01fa0dc25e52ad0e",
-					apiUrl: "https://invisioncommunity.com/"
-				}
-			})
-		);
+		this.props.dispatch(loadCommunities());
 	}
 
+	/**
+	 * Modifies data coming in from redux to filter only communities we can currently
+	 * load in the app.
+	 *
+	 * @return array
+	 */
 	getListData() {
-		const data = [
-			{
-				id: "1",
-				title: "Local",
-				apiKey: Expo.Constants.manifest.extra.oauth_client_id,
-				apiUrl: Expo.Constants.manifest.extra.api_url
-			},
-			{
-				id: "2",
-				title: "InvisionAlpha",
-				apiKey: "d5f20f784ad0c7eb51e9b53f16ac370d",
-				apiUrl: "https://auto.invisionalpha.com/"
-			},
-			{
-				id: "3",
-				title: "Invision Community",
-				apiKey: "e79f36dc890d5c6b01fa0dc25e52ad0e",
-				apiUrl: "https://invisioncommunity.com/"
-			}
-		];
+		const communities = this.props.app.communities.data;
+		const activeCommunities = _.filter(communities, community => community.status === "ok");
 
-		return data;
+		return activeCommunities;
 	}
 
+	/**
+	 * Render a community in the flatlist
+	 *
+	 * @param  	object 		item 		Object containing item data to render
+	 * @return 	Component
+	 */
 	renderCommunity(item) {
-		return (
-			<CommunityBox onPress={this.pressCommunity({ apiUrl: item.apiUrl, apiKey: item.apiKey })} title={item.title} apiKey={item.apiKey} apiUrl={item.apiUrl} />
-		);
+		const { url: apiUrl, client_id: apiKey, name } = item;
+		return <CommunityBox onPress={this.pressCommunity({ apiUrl, apiKey })} name={name} apiKey={apiKey} apiUrl={apiUrl} />;
 	}
+
+	/**
+	 * Handler for tapping the + button to add a new community to the app
+	 *
+	 * @return void
+	 */
 	onPressAddCommunity() {}
 
+	/**
+	 * Memoization function that returns an onPress handler for a community
+	 *
+	 * @param 	object 		Object with apiUrl and apiKey values
+	 * @return 	function
+	 */
 	pressCommunity(apiInfo) {
 		if (_.isUndefined(this._pressHandlers[apiInfo.apiUrl])) {
 			this._pressHandlers[apiInfo.apiUrl] = () => {
@@ -102,11 +100,29 @@ class MyCommunitiesScreen extends Component {
 	}
 
 	render() {
-		return (
-			<View style={[styles.flex, styles.pStandard]}>
-				<FlatList data={this.getListData()} keyExtractor={item => item.id} renderItem={({ item }) => this.renderCommunity(item)} style={styles.flex} />
-			</View>
-		);
+		if (this.props.app.communities.loading) {
+			return (
+				<React.Fragment>
+					<PlaceholderRepeater repeat={4}>
+						<CommunityBox loading />
+					</PlaceholderRepeater>
+				</React.Fragment>
+			);
+		} else if (this.props.app.communities.error) {
+			return <Text>Sorry, we can't load your saved communities right now. Please try again later.</Text>;
+		} else {
+			return (
+				<View style={[styles.flex]}>
+					<FlatList
+						data={this.getListData()}
+						keyExtractor={item => item.id}
+						renderItem={({ item }) => this.renderCommunity(item)}
+						style={styles.flex}
+						contentContainerStyle={styles.pStandard}
+					/>
+				</View>
+			);
+		}
 	}
 }
 

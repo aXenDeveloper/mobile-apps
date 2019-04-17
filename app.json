@@ -5,13 +5,14 @@
 		"privacy": "unlisted",
 		"extra": {
 			"multi": true,
-			"oauth_client_id": "b2933603cca1e025ed74153f7cd8f9c6",
+			"oauth_client_id": "a9d7300a352d3964f04de3c5613f83fc",
 			"api_url": "http://192.168.1.33/ipsdev/Community/",
 			"refresh_token_advance": 300000,
 			"notification_timeout": 10000,
 			"message_prefix": "__IPS__",
 			"per_page": 10,
-			"contentBehavior": "first"
+			"contentBehavior": "first",
+			"remoteServicesUrl": "https://remoteservices.invisionpower.com/mobile/"
 		},
 		"name": "project-rooster",
 		"slug": "project-rooster",
