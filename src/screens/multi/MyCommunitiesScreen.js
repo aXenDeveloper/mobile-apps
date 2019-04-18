@@ -111,6 +111,7 @@ class MyCommunitiesScreen extends Component {
 		} else if (this.props.app.communities.error) {
 			return <Text>Sorry, we can't load your saved communities right now. Please try again later.</Text>;
 		} else {
+			// @todo empty list
 			return (
 				<View style={[styles.flex]}>
 					<FlatList

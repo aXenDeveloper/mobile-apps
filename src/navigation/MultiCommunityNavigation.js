@@ -15,7 +15,8 @@ import { LinearGradient, WebBrowser } from "expo";
 
 // IPS Screens
 import MyCommunitiesScreen from "../screens/multi/MyCommunitiesScreen";
-import MultiCategoryScreen from "../screens/ips/MultiCategoryScreen";
+import MultiCategoryListScreen from "../screens/multi/MultiCategoryListScreen";
+import MultiCategoryScreen from "../screens/multi/MultiCategoryScreen";
 
 //import BrowserModal from "../ecosystems/BrowserModal";
 import NavigationService from "../utils/NavigationService";
@@ -56,7 +57,7 @@ export default class MultiCommunityNavigation extends Component {
 					navigationOptions: {
 						tabBarLabel: "My Communities",
 						header: props => {
-							return <CustomHeader {...props} title="Forums" />;
+							return <CustomHeader {...props} title="My Communities" />;
 						},
 						tabBarIcon: props => <NavigationTabIcon {...props} active={icons.MULTI_MINE_SOLID} inactive={icons.MULTI_MINE} />
 					}
@@ -64,6 +65,9 @@ export default class MultiCommunityNavigation extends Component {
 				MultiCategory: {
 					screen: createStackNavigator(
 						{
+							List: {
+								screen: MultiCategoryListScreen
+							},
 							Category: {
 								screen: MultiCategoryScreen
 							}
@@ -83,9 +87,9 @@ export default class MultiCommunityNavigation extends Component {
 						}
 					),
 					navigationOptions: {
-						tabBarLabel: "Browse",
+						tabBarLabel: "Discover",
 						header: props => {
-							return <CustomHeader {...props} title="Forums" />;
+							return <CustomHeader {...props} title="Discover Communities" />;
 						},
 						tabBarIcon: props => <NavigationTabIcon {...props} active={icons.MULTI_BROWSE_SOLID} inactive={icons.MULTI_BROWSE} />
 					}
@@ -94,7 +98,7 @@ export default class MultiCommunityNavigation extends Component {
 					screen: createStackNavigator(
 						{
 							Category: {
-								screen: MultiCategoryScreen
+								screen: MultiCategoryListScreen
 							}
 						},
 						{

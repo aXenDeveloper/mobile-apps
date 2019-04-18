@@ -1,3 +1,4 @@
-import CommunityBox from './CommunityBox';
+import CommunityBox from "./CommunityBox";
+import CategoryBox from "./CategoryBox";
 
-export { CommunityBox as CommunityBox };
+export { CommunityBox, CategoryBox };

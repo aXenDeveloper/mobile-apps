@@ -309,3 +309,118 @@ export const _devStoreCommunities = async () => {
 
 	console.log("Saved communities");
 };
+
+// =================================================================
+
+export const COMMUNITY_CATEGORIES_LOADING = "COMMUNITY_CATEGORIES_LOADING";
+export const communityCategoriesLoading = data => ({
+	type: COMMUNITY_CATEGORIES_LOADING
+});
+
+export const COMMUNITY_CATEGORIES_ERROR = "COMMUNITY_CATEGORIES_ERROR";
+export const communityCategoriesError = data => ({
+	type: COMMUNITY_CATEGORIES_ERROR,
+	payload: {
+		...data
+	}
+});
+
+export const COMMUNITY_CATEGORIES_SUCCESS = "COMMUNITY_CATEGORIES_SUCCESS";
+export const communityCategoriesSuccess = data => ({
+	type: COMMUNITY_CATEGORIES_SUCCESS,
+	payload: {
+		...data
+	}
+});
+
+export const loadCommunityCategories = () => {
+	return async (dispatch, getState) => {
+		dispatch(communityCategoriesLoading());
+
+		try {
+			// Fetch the community data from remoteservices
+			const response = await fetch(`${Expo.Constants.manifest.extra.remoteServicesUrl}categories`, {
+				method: "get",
+				headers: {
+					"Content-Type": "application/json",
+					"User-Agent": getUserAgent()
+				}
+			});
+
+			if (!response.ok) {
+				dispatch(communityCategoriesError());
+				return;
+			}
+
+			const data = await response.json();
+
+			dispatch(communityCategoriesSuccess(data));
+		} catch (err) {
+			dispatch(communityCategoriesError());
+		}
+	};
+};
+
+// =================================================================
+
+export const COMMUNITY_CATEGORY_LOADING = "COMMUNITY_CATEGORY_LOADING";
+export const communityCategoryLoading = data => ({
+	type: COMMUNITY_CATEGORY_LOADING,
+	payload: {
+		id: data
+	}
+});
+
+export const COMMUNITY_CATEGORY_ERROR = "COMMUNITY_CATEGORY_ERROR";
+export const communityCategoryError = data => ({
+	type: COMMUNITY_CATEGORY_ERROR,
+	payload: {
+		id: data
+	}
+});
+
+export const COMMUNITY_CATEGORY_SUCCESS = "COMMUNITY_CATEGORY_SUCCESS";
+export const communityCategorySuccess = data => ({
+	type: COMMUNITY_CATEGORY_SUCCESS,
+	payload: {
+		...data
+	}
+});
+
+export const loadCommunityCategory = (id, offset = 0) => {
+	return async (dispatch, getState) => {
+		console.log("Loading category...");
+		dispatch(communityCategoryLoading(id));
+
+		try {
+			// Fetch the community data from remoteservices
+			const response = await fetch(`${Expo.Constants.manifest.extra.remoteServicesUrl}directory/?category=${id}&st=${offset}`, {
+				method: "get",
+				headers: {
+					"Content-Type": "application/json",
+					"User-Agent": getUserAgent()
+				}
+			});
+
+			if (!response.ok) {
+				dispatch(communityCategoryError(id));
+				return;
+			}
+
+			const items = await response.json();
+
+			console.log(items);
+
+			dispatch(
+				communityCategorySuccess({
+					id,
+					offset,
+					items
+				})
+			);
+		} catch (err) {
+			console.log(err);
+			dispatch(communityCategoryError(id));
+		}
+	};
+};

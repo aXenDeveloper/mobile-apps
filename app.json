@@ -6,7 +6,7 @@
 		"extra": {
 			"multi": true,
 			"oauth_client_id": "a9d7300a352d3964f04de3c5613f83fc",
-			"api_url": "http://192.168.1.33/ipsdev/Community/",
+			"api_url": "http://172.122.182.120/ipsdev/Community/",
 			"refresh_token_advance": 300000,
 			"notification_timeout": 10000,
 			"message_prefix": "__IPS__",

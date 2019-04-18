@@ -50,3 +50,9 @@ export const illustrations = {
 };
 
 export default icons;
+
+export const categoryIcons = {
+	_default: require("../resources/category_icons/general.png"),
+	general: require("../resources/category_icons/general.png"),
+	gaming: require("../resources/category_icons/gaming.png")
+};

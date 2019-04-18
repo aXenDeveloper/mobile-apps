@@ -629,3 +629,9 @@ export const tabStyles = {
 		backgroundColor: "#2080A7"
 	}
 };
+
+export const categoryStyles = {
+	_default: "#DE751F",
+	general: "#DE751F",
+	gaming: "#1F9D55"
+};
