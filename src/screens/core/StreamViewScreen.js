@@ -53,23 +53,15 @@ class StreamViewScreen extends Component {
 		headerLeft: <GoToMulti />,
 		headerTitle: (
 			<TouchableOpacity
-				onPress={
-					!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.onPressTitle)
-						? navigation.state.params.onPressTitle
-						: null
-				}
+				onPress={!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.onPressTitle) ? navigation.state.params.onPressTitle : null}
 			>
 				<View style={headerStyles.row}>
 					<Text style={[styles.headerTitle, headerStyles.title]} numberOfLines={1}>
-						{!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.streamTitle)
-							? navigation.state.params.streamTitle
-							: ""}
+						{!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.streamTitle) ? navigation.state.params.streamTitle : ""}
 					</Text>
-					{!_.isUndefined(navigation.state.params) &&
-						!_.isUndefined(navigation.state.params.moreAvailable) &&
-						navigation.state.params.moreAvailable && (
-							<Image source={require("../../../resources/arrow_down.png")} resizeMode="contain" style={headerStyles.dropdownArrow} />
-						)}
+					{!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.moreAvailable) && navigation.state.params.moreAvailable && (
+						<Image source={require("../../../resources/arrow_down.png")} resizeMode="contain" style={headerStyles.dropdownArrow} />
+					)}
 				</View>
 			</TouchableOpacity>
 		)
@@ -91,14 +83,14 @@ class StreamViewScreen extends Component {
 		this._list = null;
 		this._mainView = null;
 		this.state = {
-			viewingStream: null, 		// Currently active stream
-			results: [],				// Simple array of results from GraphQL
-			sectionData: [],			// The formatted sections resdy for Sectionlist
-			loading: false,				// Are we loading data?
-			error: null,				// Was there an error?
-			streamListVisible: false,	// Is the stream list modal visible?
-			reachedEnd: false,			// Have we reached the end of the results list?
-			offset: 0					// What offset are we loading from?
+			viewingStream: null, // Currently active stream
+			results: [], // Simple array of results from GraphQL
+			sectionData: [], // The formatted sections resdy for Sectionlist
+			loading: false, // Are we loading data?
+			error: null, // Was there an error?
+			streamListVisible: false, // Is the stream list modal visible?
+			reachedEnd: false, // Have we reached the end of the results list?
+			offset: 0 // What offset are we loading from?
 		};
 	}
 
@@ -388,9 +380,7 @@ class StreamViewScreen extends Component {
 							ref={list => (this._list = list)}
 							keyExtractor={item => item.indexID}
 							renderItem={({ item }) => <StreamCard data={item} />}
-							renderSectionHeader={({ section }) => (
-								<StreamHeader title={this.sectionTitles[section.title]} style={componentStyles.header} />
-							)}
+							renderSectionHeader={({ section }) => <StreamHeader title={this.sectionTitles[section.title]} style={componentStyles.header} />}
 							stickySectionHeadersEnabled={true}
 							onEndReached={this.onEndReached}
 							ListFooterComponent={this.getFooterComponent}

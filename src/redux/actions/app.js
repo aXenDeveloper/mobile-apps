@@ -37,9 +37,19 @@ export const switchAppView = data => ({
 	}
 });
 
-export const SET_APOLLO_CLIENT = "SET_APOLLO_CLIENT";
-export const setApolloClient = data => ({
-	type: SET_APOLLO_CLIENT,
+// =================================================================
+
+export const RECEIVE_NOTIFICATION = "RECEIVE_NOTIFICATION";
+export const receiveNotification = data => ({
+	type: RECEIVE_NOTIFICATION,
+	payload: {
+		...data
+	}
+});
+
+export const CLEAR_CURRENT_NOTIFICATION = "CLEAR_CURRENT_NOTIFICATION";
+export const clearCurrentNotification = data => ({
+	type: CLEAR_CURRENT_NOTIFICATION,
 	payload: {
 		...data
 	}
@@ -72,7 +82,6 @@ export const bootSiteSuccess = data => ({
 
 import _ from "underscore";
 import Lang from "../../utils/Lang";
-import { refreshToken } from "./auth";
 import { guestLoaded, userLoaded, setUserStreams } from "./user";
 import { setSiteSettings, setLoginHandlers } from "./site";
 import gql from "graphql-tag";
@@ -81,8 +90,11 @@ import { graphql } from "react-apollo";
 export const bootSite = apiInfo => {
 	return async (dispatch, getState) => {
 		const {
-			app: { client }
+			auth: { client }
 		} = getState();
+
+		console.log(`BOOT SITE: ${apiInfo.apiUrl}`);
+		console.log(`BOOT SITE: ${client}`);
 
 		// Set state to loading
 		dispatch(bootSiteLoading());
@@ -95,10 +107,11 @@ export const bootSite = apiInfo => {
 				variables: {}
 			});
 
+			console.log(`BOOT SITE:`);
+			console.log(data);
+
 			if (auth.isAuthenticated && data.core.me.group.groupType !== "GUEST") {
 				dispatch(userLoaded({ ...data.core.me }));
-				//	clearInterval(this._notificationTimeout);
-				//	this._notificationTimeout = setInterval(() => this.runNotificationQuery(), NOTIFICATION_TIMEOUT);
 			} else {
 				dispatch(guestLoaded({ ...data.core.me }));
 			}
@@ -195,3 +208,219 @@ const BootQuery = gql`
 	}
 	${LangFragment}
 `;
+
+// =================================================================
+
+export const COMMUNITY_LIST_LOADING = "COMMUNITY_LIST_LOADING";
+export const communityListLoading = data => ({
+	type: COMMUNITY_LIST_LOADING
+});
+
+export const COMMUNITY_LIST_ERROR = "COMMUNITY_LIST_ERROR";
+export const communityListError = data => ({
+	type: COMMUNITY_LIST_ERROR,
+	payload: {
+		...data
+	}
+});
+
+export const COMMUNITY_LIST_SUCCESS = "COMMUNITY_LIST_SUCCESS";
+export const communityListSuccess = data => ({
+	type: COMMUNITY_LIST_SUCCESS,
+	payload: {
+		...data
+	}
+});
+
+import { AsyncStorage } from "react-native";
+import getUserAgent from "../../utils/getUserAgent";
+export const loadCommunities = () => {
+	return async (dispatch, getState) => {
+		dispatch(communityListLoading());
+
+		try {
+			// Get our saved community IDs from storage
+			const communityData = await AsyncStorage.getItem("@savedCommunities");
+			const communityJson = communityData !== null ? JSON.parse(communityData) : null;
+
+			if (communityJson === null) {
+				dispatch(
+					communityListSuccess({
+						communities: []
+					})
+				);
+				return;
+			}
+
+			// Fetch the community data from remoteservices
+			const communityIDs = communityJson.join(",");
+			const response = await fetch(`${Expo.Constants.manifest.extra.remoteServicesUrl}directory/?id=${communityIDs}`, {
+				method: "get",
+				headers: {
+					"Content-Type": "application/json",
+					"User-Agent": getUserAgent()
+				}
+			});
+
+			if (!response.ok) {
+				dispatch(communityListError());
+				return;
+			}
+
+			const data = await response.json();
+
+			// Process the returned data into an object
+			const receivedCommunities = {};
+			for (let i = 0; i < data.length; i++) {
+				receivedCommunities[data[i].id] = data[i];
+			}
+
+			// Now loop through each of our stored communities and build a final object that we'll store in redux
+			const communities = [];
+			for (let k = 0; k < communityJson.length; k++) {
+				if (!_.isUndefined(receivedCommunities[communityJson[k]])) {
+					communities.push({
+						...receivedCommunities[communityJson[k]],
+						status: "ok"
+					});
+				} else {
+					communities.push({
+						id: communityJson[k],
+						status: "missing"
+					});
+				}
+			}
+
+			dispatch(
+				communityListSuccess({
+					communities
+				})
+			);
+		} catch (err) {
+			dispatch(communityListError());
+		}
+	};
+};
+
+export const _devStoreCommunities = async () => {
+	const communities = ["b8159ddfb42729ad9120567c862e197a", "4c422840184708ffcea278fcccd43dae", "1fe6bc7815de0244c70a2544f8d0adf2", "test_missing"];
+
+	await AsyncStorage.setItem("@savedCommunities", JSON.stringify(communities));
+
+	console.log("Saved communities");
+};
+
+// =================================================================
+
+export const COMMUNITY_CATEGORIES_LOADING = "COMMUNITY_CATEGORIES_LOADING";
+export const communityCategoriesLoading = data => ({
+	type: COMMUNITY_CATEGORIES_LOADING
+});
+
+export const COMMUNITY_CATEGORIES_ERROR = "COMMUNITY_CATEGORIES_ERROR";
+export const communityCategoriesError = data => ({
+	type: COMMUNITY_CATEGORIES_ERROR,
+	payload: {
+		...data
+	}
+});
+
+export const COMMUNITY_CATEGORIES_SUCCESS = "COMMUNITY_CATEGORIES_SUCCESS";
+export const communityCategoriesSuccess = data => ({
+	type: COMMUNITY_CATEGORIES_SUCCESS,
+	payload: {
+		...data
+	}
+});
+
+export const loadCommunityCategories = () => {
+	return async (dispatch, getState) => {
+		dispatch(communityCategoriesLoading());
+
+		try {
+			// Fetch the community data from remoteservices
+			const response = await fetch(`${Expo.Constants.manifest.extra.remoteServicesUrl}categories`, {
+				method: "get",
+				headers: {
+					"Content-Type": "application/json",
+					"User-Agent": getUserAgent()
+				}
+			});
+
+			if (!response.ok) {
+				dispatch(communityCategoriesError());
+				return;
+			}
+
+			const data = await response.json();
+
+			dispatch(communityCategoriesSuccess(data));
+		} catch (err) {
+			dispatch(communityCategoriesError());
+		}
+	};
+};
+
+// =================================================================
+
+export const COMMUNITY_CATEGORY_LOADING = "COMMUNITY_CATEGORY_LOADING";
+export const communityCategoryLoading = data => ({
+	type: COMMUNITY_CATEGORY_LOADING,
+	payload: {
+		id: data
+	}
+});
+
+export const COMMUNITY_CATEGORY_ERROR = "COMMUNITY_CATEGORY_ERROR";
+export const communityCategoryError = data => ({
+	type: COMMUNITY_CATEGORY_ERROR,
+	payload: {
+		id: data
+	}
+});
+
+export const COMMUNITY_CATEGORY_SUCCESS = "COMMUNITY_CATEGORY_SUCCESS";
+export const communityCategorySuccess = data => ({
+	type: COMMUNITY_CATEGORY_SUCCESS,
+	payload: {
+		...data
+	}
+});
+
+export const loadCommunityCategory = (id, offset = 0) => {
+	return async (dispatch, getState) => {
+		console.log("Loading category...");
+		dispatch(communityCategoryLoading(id));
+
+		try {
+			// Fetch the community data from remoteservices
+			const response = await fetch(`${Expo.Constants.manifest.extra.remoteServicesUrl}directory/?category=${id}&st=${offset}`, {
+				method: "get",
+				headers: {
+					"Content-Type": "application/json",
+					"User-Agent": getUserAgent()
+				}
+			});
+
+			if (!response.ok) {
+				dispatch(communityCategoryError(id));
+				return;
+			}
+
+			const items = await response.json();
+
+			console.log(items);
+
+			dispatch(
+				communityCategorySuccess({
+					id,
+					offset,
+					items
+				})
+			);
+		} catch (err) {
+			console.log(err);
+			dispatch(communityCategoryError(id));
+		}
+	};
+};

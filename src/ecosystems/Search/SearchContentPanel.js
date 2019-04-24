@@ -1,11 +1,5 @@
 import React, { Component } from "react";
-import {
-	Text,
-	View,
-	FlatList,
-	StyleSheet,
-	ActivityIndicator
-} from "react-native";
+import { Text, View, FlatList, StyleSheet, ActivityIndicator } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { withNavigation } from "react-navigation";
@@ -49,7 +43,7 @@ class SearchContentPanel extends Component {
 
 	componentDidMount() {
 		// If showResults is true on first mount, kick off the request immediately
-		if( this.props.showResults ){
+		if (this.props.showResults) {
 			this.fetchResults();
 		}
 	}
@@ -65,10 +59,7 @@ class SearchContentPanel extends Component {
 		// so they can be displayed when loaded
 		if (!prevProps.showResults && this.props.showResults) {
 			// If the term hasn't changed, then just rebuild the results from what we already had
-			if (
-				prevProps.term !== this.props.term ||
-				(this.state.results === null && !this.state.loading)
-			) {
+			if (prevProps.term !== this.props.term || (this.state.results === null && !this.state.loading)) {
 				this.fetchResults();
 			}
 		}
@@ -80,7 +71,7 @@ class SearchContentPanel extends Component {
 	 * @return 	void
 	 */
 	async fetchResults() {
-		if( this.state.loading || this.state.reachedEnd ){
+		if (this.state.loading || this.state.reachedEnd) {
 			return;
 		}
 
@@ -93,12 +84,12 @@ class SearchContentPanel extends Component {
 				term: this.props.term,
 				offset: this.state.offset,
 				limit: LIMIT,
-				orderBy: 'relevancy'
+				orderBy: "relevancy"
 			};
 
 			// Type is optional, so only add it if we aren't showing all
-			if( this.props.type !== 'all' ){
-				variables['type'] = this.props.type;
+			if (this.props.type !== "all") {
+				variables["type"] = this.props.type;
 			}
 
 			const { data } = await this.props.client.query({
@@ -117,7 +108,7 @@ class SearchContentPanel extends Component {
 				offset: updatedResults.length
 			});
 		} catch (err) {
-			console.log( err );
+			console.log(err);
 
 			this.setState({
 				error: true,
@@ -133,12 +124,7 @@ class SearchContentPanel extends Component {
 	 * @return 	Component
 	 */
 	renderItem(item) {
-		return (
-			<SearchResult
-				data={item}
-				term={this.props.term}
-			/>
-		);
+		return <SearchResult data={item} term={this.props.term} />;
 	}
 
 	/**
@@ -148,10 +134,10 @@ class SearchContentPanel extends Component {
 	 * @return 	void
 	 */
 	onEndReached = () => {
-		if( !this.state.loading && !this.state.reachedEnd ){
+		if (!this.state.loading && !this.state.reachedEnd) {
 			this.fetchResults();
 		}
-	}
+	};
 
 	/**
 	 * Shows placeholder loading elements if we're loading new items
@@ -159,7 +145,7 @@ class SearchContentPanel extends Component {
 	 * @return 	Component|null
 	 */
 	getFooterComponent = () => {
-		if( this.state.loading && !this.state.reachedEnd ){
+		if (this.state.loading && !this.state.reachedEnd) {
 			return (
 				<PlaceholderRepeater repeat={this.state.offset > 0 ? 1 : 6}>
 					<SearchResult loading={true} />
@@ -168,7 +154,7 @@ class SearchContentPanel extends Component {
 		}
 
 		return null;
-	}
+	};
 
 	/**
 	 * Return the list empty component
@@ -184,7 +170,7 @@ class SearchContentPanel extends Component {
 				showIcon={false}
 			/>
 		);
-	}
+	};
 
 	render() {
 		if (this.state.loading && this.state.results == null) {
@@ -216,7 +202,10 @@ class SearchContentPanel extends Component {
 	}
 }
 
-export default compose(withApollo, withNavigation)(SearchContentPanel);
+export default compose(
+	withApollo,
+	withNavigation
+)(SearchContentPanel);
 
 const componentStyles = StyleSheet.create({
 	panel: {

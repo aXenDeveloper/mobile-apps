@@ -1,31 +1,31 @@
-import React, { Component } from 'react';
-import { Text, Image, View, FlatList, StyleSheet, TouchableHighlight } from 'react-native';
+import React, { Component } from "react";
+import { Text, Image, View, FlatList, StyleSheet, TouchableHighlight } from "react-native";
 import _ from "underscore";
 
 import UserPhoto from "../../atoms/UserPhoto";
 import LargeTitle from "../../atoms/LargeTitle";
 import ContentRow from "../../ecosystems/ContentRow";
-import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from '../../ecosystems/Placeholder';
+import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import Lang from "../../utils/Lang";
-import icons from '../../icons';
-import styles, { styleVars } from '../../styles';
+import icons from "../../icons";
+import styles, { styleVars } from "../../styles";
 
-class PopularContributors extends Component {	
+class PopularContributors extends Component {
 	constructor(props) {
 		super(props);
 		this._pressHandlers = {};
 	}
 
 	getOnPressHandler(user) {
-		if( _.isUndefined( this._pressHandlers[ user.id ] ) ){
-			this._pressHandlers[ user.id ] = () => {
+		if (_.isUndefined(this._pressHandlers[user.id])) {
+			this._pressHandlers[user.id] = () => {
 				this.props.navigation.navigate("Profile", {
 					id: user.id
 				});
-			}
+			};
 		}
 
-		return this._pressHandlers[ user.id ];
+		return this._pressHandlers[user.id];
 	}
 
 	/**
@@ -36,17 +36,39 @@ class PopularContributors extends Component {
 	 */
 	getRow(data, idx) {
 		return (
-			<ContentRow style={[styles.flexRow, styles.flexAlignCenter, styles.phWide, styles.pvTight]} key={data.user.id} onPress={this.getOnPressHandler(data.user)}>
-				<Text style={[styles.contentText, styles.lightText, styles.mediumText, componentStyles.number]}>{idx+1}</Text>
+			<ContentRow
+				style={[styles.flexRow, styles.flexAlignCenter, styles.phWide, styles.pvTight]}
+				key={data.user.id}
+				onPress={this.getOnPressHandler(data.user)}
+			>
+				<Text style={[styles.contentText, styles.lightText, styles.mediumText, componentStyles.number]}>{idx + 1}</Text>
 				<UserPhoto url={data.user.photo} size={36} style={componentStyles.userPhoto} />
 				<View style={[styles.flexGrow, componentStyles.data, styles.mlStandard]}>
-					<Text style={styles.smallItemTitle} numberOfLines={1}>{data.user.name}</Text>
-					<Text style={[styles.lightText, styles.standardText]} numberOfLines={1}>{data.user.group.name}</Text>
+					<Text style={styles.smallItemTitle} numberOfLines={1}>
+						{data.user.name}
+					</Text>
+					<Text style={[styles.lightText, styles.standardText]} numberOfLines={1}>
+						{data.user.group.name}
+					</Text>
 				</View>
-				<View style={componentStyles.repWrapper}>
-					<View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, styles.phTight, componentStyles.rep, parseInt(data.rep) > 0 ? componentStyles.positiveRep : componentStyles.negativeRep]}>
+				<View style={[styles.mlWide, componentStyles.repWrapper]}>
+					<View
+						style={[
+							styles.flex,
+							styles.flexAlignCenter,
+							styles.flexJustifyCenter,
+							styles.phTight,
+							componentStyles.rep,
+							parseInt(data.rep) > 0 ? componentStyles.positiveRep : componentStyles.negativeRep
+						]}
+					>
 						<Text style={[styles.centerText, styles.smallText, styles.mediumText, parseInt(data.rep) > 0 ? styles.positiveText : styles.negativeText]}>
-							<Image source={parseInt(data.rep) > 0 ? icons.CARET_UP_SOLID : icons.CARET_DOWN_SOLID} resizeMode='contain' style={[componentStyles.repIcon, parseInt(data.rep) > 0 ? componentStyles.repIconUp : componentStyles.repIconDown]} /> {data.rep} {Lang.get('rep')}
+							<Image
+								source={parseInt(data.rep) > 0 ? icons.CARET_UP_SOLID : icons.CARET_DOWN_SOLID}
+								resizeMode="contain"
+								style={[componentStyles.repIcon, parseInt(data.rep) > 0 ? componentStyles.repIconUp : componentStyles.repIconDown]}
+							/>{" "}
+							{data.rep} {Lang.get("rep")}
 						</Text>
 					</View>
 				</View>
@@ -55,7 +77,7 @@ class PopularContributors extends Component {
 	}
 
 	render() {
-		if( this.props.loading ){
+		if (this.props.loading) {
 			return (
 				<View style={[componentStyles.wrapper, styles.row, styles.pvTight]}>
 					<PlaceholderRepeater repeat={5}>
@@ -73,7 +95,7 @@ class PopularContributors extends Component {
 
 		return (
 			<View style={[componentStyles.wrapper, styles.row, styles.pvTight]}>
-				{this.props.data.core.popularContributors.map( (row, idx) => this.getRow(row, idx) )}
+				{this.props.data.core.popularContributors.map((row, idx) => this.getRow(row, idx))}
 			</View>
 		);
 	}
@@ -93,13 +115,13 @@ const componentStyles = StyleSheet.create({
 		height: styleVars.spacing.extraWide
 	},
 	rep: {
-		borderRadius: 20,
+		borderRadius: 20
 	},
 	positiveRep: {
-		backgroundColor: '#EFFCF0'
+		backgroundColor: "#EFFCF0"
 	},
 	negativeRep: {
-		backgroundColor: '#FCF2F1'
+		backgroundColor: "#FCF2F1"
 	},
 	repIcon: {
 		width: 12,

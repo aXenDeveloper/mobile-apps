@@ -3,10 +3,11 @@ import { Text, View, Button, ScrollView, FlatList, StyleSheet, TouchableOpacity,
 import { Permissions, Notifications } from "expo";
 import { SafeAreaView } from "react-navigation";
 import gql from "graphql-tag";
-import { graphql, withApollo } from "react-apollo";
+import { graphql, withApollo, compose } from "react-apollo";
 import { connect } from "react-redux";
 
 import { logOut } from "../../redux/actions/auth";
+import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
 import MenuItem from "../../atoms/MenuItem";
 import Lang from "../../utils/Lang";
 import UserPhoto from "../../atoms/UserPhoto";
@@ -49,8 +50,56 @@ class UserScreen extends Component {
 	constructor(props) {
 		super(props);
 
+		this._mounted = false;
+		this.state = {
+			loading: true
+		};
+
 		this.confirmLogOut = this.confirmLogOut.bind(this);
 		this.doLogOut = this.doLogOut.bind(this);
+	}
+
+	componentDidMount() {
+		this._mounted = true;
+		this.updateDrawer();
+	}
+
+	componentWillUnmount() {
+		this._mounted = false;
+	}
+
+	componentDidUpdate(prevProps) {
+		if (this.props.auth.isAuthenticated !== prevProps.auth.isAuthenticated) {
+			this.updateDrawer();
+		}
+	}
+
+	/**
+	 * Query the site for the user's info which we'll store in state
+	 *
+	 * @return 	void
+	 */
+	async updateDrawer() {
+		this.setState({
+			loading: true
+		});
+
+		try {
+			const { data } = await this.props.auth.client.query({
+				query: UserQuery
+			});
+
+			if (!this._mounted) {
+				return;
+			}
+
+			this.setState({
+				loading: false,
+				userData: data.core.me
+			});
+		} catch (err) {
+			console.log(err);
+		}
 	}
 
 	/**
@@ -93,7 +142,7 @@ class UserScreen extends Component {
 		// Call the session end mutation, and pass token if we have one
 		console.log(`USERSCREEN: Ending session, sending token ${token}...`);
 
-		const { data } = await this.props.client.mutate({
+		const { data } = await this.props.auth.client.mutate({
 			mutation: SessionEndMutation,
 			variables: {
 				token
@@ -114,9 +163,9 @@ class UserScreen extends Component {
 		this.props.navigation.navigate({
 			routeName: "Profile",
 			params: {
-				id: this.props.data.core.me.id
+				id: this.state.userData.id
 			},
-			key: this.props.data.core.me.id
+			key: this.state.userData.id
 		});
 	}
 
@@ -164,58 +213,87 @@ class UserScreen extends Component {
 		];
 	}
 
-	render() {
-		if (this.props.data.loading) {
-			return (
-				<View repeat={7}>
-					<Text>Loading</Text>
-				</View>
-			);
-		} else if (this.props.data.error) {
-			console.log(this.props.data.error);
-		} else {
-			return (
-				<View style={componentStyles.container}>
-					<StatusBar barStyle="light-content" translucent />
-					<SafeAreaView style={componentStyles.innerContainer}>
-						<View style={componentStyles.profileHeader}>
-							{this.props.data.core.me.coverPhoto.image ? (
-								<Image
-									source={{
-										uri: getImageUrl(this.props.data.core.me.coverPhoto.image)
-									}}
-									style={componentStyles.coverPhoto}
-									resizeMode="cover"
-								/>
-							) : null}
-						</View>
-						<View style={componentStyles.mainArea}>
-							<UserPhoto url={this.props.data.core.me.photo} size={60} />
-							<TouchableOpacity onPress={() => this.goToProfile()}>
-								<Text style={componentStyles.username}>{this.props.data.core.me.name}</Text>
-								<Text style={componentStyles.meta}>{Lang.get("your_profile")}</Text>
-							</TouchableOpacity>
+	/**
+	 * Build the draw components
+	 *
+	 * @return 	Component
+	 */
+	buildDrawContents() {
+		if (!this.props.auth.isAuthenticated) {
+			return null;
+		}
 
-							<FlatList style={componentStyles.profileMenu} data={this.getMenuOptions()} renderItem={({ item }) => <MenuItem data={item} />} />
-						</View>
-						<View style={componentStyles.footer}>
-							<Image source={require("../../../resources/info_filled.png")} resizeMode="contain" style={componentStyles.infoIcon} />
-							<Text style={[styles.veryLightText, componentStyles.footerText]}>{Lang.get("legal_notices")}</Text>
-						</View>
-					</SafeAreaView>
+		return (
+			<View style={componentStyles.container}>
+				<StatusBar barStyle="light-content" translucent />
+				<SafeAreaView style={componentStyles.innerContainer}>
+					<View style={componentStyles.profileHeader}>
+						{this.state.userData.coverPhoto.image ? (
+							<Image
+								source={{
+									uri: getImageUrl(this.state.userData.coverPhoto.image)
+								}}
+								style={componentStyles.coverPhoto}
+								resizeMode="cover"
+							/>
+						) : null}
+					</View>
+					<View style={componentStyles.mainArea}>
+						<UserPhoto url={this.state.userData.photo} size={60} />
+						<TouchableOpacity onPress={() => this.goToProfile()}>
+							<Text style={componentStyles.username}>{this.state.userData.name}</Text>
+							<Text style={componentStyles.meta}>{Lang.get("your_profile")}</Text>
+						</TouchableOpacity>
+
+						<FlatList style={componentStyles.profileMenu} data={this.getMenuOptions()} renderItem={({ item }) => <MenuItem data={item} />} />
+					</View>
+					<View style={componentStyles.footer}>
+						<Image source={icons.INFO_SOLID} resizeMode="contain" style={componentStyles.infoIcon} />
+						<Text style={[styles.veryLightText, componentStyles.footerText]}>{Lang.get("legal_notices")}</Text>
+					</View>
+				</SafeAreaView>
+			</View>
+		);
+	}
+
+	render() {
+		if (this.state.loading) {
+			return (
+				<View style={styles.flex}>
+					<PlaceholderContainer>
+						<PlaceholderElement top={0} left={0} right={0} height={90} style={{ width: "100%" }} />
+						<PlaceholderElement circle radius={60} top={70} left={20} />
+						<PlaceholderElement top={140} left={20} width={80} height={17} />
+						<PlaceholderElement top={163} left={20} width={150} />
+
+						<PlaceholderElement circle radius={20} top={240} left={20} />
+						<PlaceholderElement top={243} left={45} width={150} height={12} />
+						<PlaceholderElement circle radius={20} top={270} left={20} />
+						<PlaceholderElement top={273} left={45} width={150} height={12} />
+						<PlaceholderElement circle radius={20} top={300} left={20} />
+						<PlaceholderElement top={303} left={45} width={150} height={12} />
+						<PlaceholderElement circle radius={20} top={330} left={20} />
+						<PlaceholderElement top={333} left={45} width={150} height={12} />
+					</PlaceholderContainer>
 				</View>
 			);
+		} else if (this.state.error) {
+			return (
+				<View>
+					<Text>Error</Text>
+				</View>
+			);
+		} else {
+			return this.buildDrawContents();
 		}
 	}
 }
 
-// <Button onPress={() => this._logOut()} style={componentStyles.button} title="Sign Out" />
-
-export default graphql(UserQuery)(
-	connect(state => {
-		return state;
-	})(withApollo(UserScreen))
-);
+export default compose(
+	connect(state => ({
+		auth: state.auth
+	}))
+)(UserScreen);
 
 const componentStyles = StyleSheet.create({
 	container: {

@@ -22,6 +22,8 @@ import RichTextContent from "../../ecosystems/RichTextContent";
 import Lang from "../../utils/Lang";
 import { userLoaded, guestLoaded, setUserStreams, updateNotificationCount } from "../../redux/actions/user";
 import { setSiteSettings, setLoginHandlers } from "../../redux/actions/site";
+import { bootSite } from "../../redux/actions/app";
+import { refreshToken } from "../../redux/actions/auth";
 import CommunityNavigation from "../../navigation/CommunityNavigation";
 import ToFormData from "../../utils/ToFormData";
 import LangFragment from "../../LangFragment";
@@ -75,6 +77,10 @@ class CommunityRoot extends Component {
 			this.initializeNotificationInterval();
 			this.maybeSendPushToken();
 		}
+
+		if (this.props.redirect !== null) {
+			this.handleRedirectProp();
+		}
 	}
 
 	/**
@@ -95,6 +101,10 @@ class CommunityRoot extends Component {
 		if (prevProps.auth.isAuthenticated && !this.props.auth.isAuthenticated) {
 			this.stopNotificationInterval();
 		}
+
+		if (prevProps.redirect !== this.props.redirect && this.props.redirect !== null) {
+			this.handleRedirectProp();
+		}
 	}
 
 	/**
@@ -104,6 +114,36 @@ class CommunityRoot extends Component {
 	 */
 	componentWillUnmount() {
 		this.stopNotificationInterval();
+		clearTimeout(this._redirectTimeout);
+	}
+
+	/**
+	 * If a `redirect` prop is passed to this component, this method will redirect
+	 * the nav to the appropriate screen
+	 *
+	 * @return 	void
+	 */
+	handleRedirectProp() {
+		const { app, module, controller } = this.props.redirect;
+		const params = {};
+
+		["id", "findComment", "findReview"].forEach(param => {
+			if (!_.isUndefined(this.props.redirect[param])) {
+				params[param] = this.props.redirect[param];
+			}
+		});
+
+		console.log("In CommunityRoot mount, we'll redirect");
+		this._redirectTimeout = setTimeout(() => {
+			NavigationService.navigate(
+				{
+					app,
+					module,
+					controller
+				},
+				params
+			);
+		}, 1000);
 	}
 
 	/**
@@ -132,19 +172,19 @@ class CommunityRoot extends Component {
 	 */
 	async runNotificationQuery() {
 		try {
-			const { data } = await this.props.app.client.query({
+			const { data } = await this.props.auth.client.query({
 				query: NotificationQuery,
 				fetchPolicy: "network-only"
 			});
 
-			console.log(`Ran notification update, got count ${data.core.me.notificationCount}`);
+			console.log(`COMMUNITY_ROOT: Ran notification update, got count ${data.core.me.notificationCount}`);
 
 			if (parseInt(data.core.me.notificationCount) !== parseInt(this.props.user.notificationCount)) {
 				this.props.dispatch(updateNotificationCount(data.core.me.notificationCount));
 			}
 		} catch (err) {
 			// If this failed for some reason, stop checking from now on
-			console.log(`Error running notification update: ${err}`);
+			console.log(`COMMUNITY_ROOT: Error running notification update: ${err}`);
 			this.stopNotificationInterval();
 		}
 	}
@@ -173,7 +213,7 @@ class CommunityRoot extends Component {
 		// Get the token that uniquely identifies this device
 		try {
 			console.log(`COMMUNITY_ROOT: Starting session...`);
-			const { data } = await this.props.app.client.mutate({
+			const { data } = await this.props.auth.client.mutate({
 				mutation: SessionStartMutation,
 				variables: {
 					token
@@ -191,12 +231,16 @@ class CommunityRoot extends Component {
 	 *
 	 * @return 	void
 	 */
-	tryAfterNetworkError() {
+	async tryAfterNetworkError() {
+		const { apiKey, apiUrl } = this.props.app.currentCommunity;
+		const { dispatch } = this.props;
+
 		this.setState({
 			loading: true
 		});
 
-		//this.props.dispatch(refreshAuth(this.props.app.currentCommunity));
+		await dispatch(refreshToken({ apiKey, apiUrl }));
+		await dispatch(bootSite({ apiKey, apiUrl }));
 	}
 
 	/**
@@ -222,7 +266,7 @@ class CommunityRoot extends Component {
 	render() {
 		let appContent;
 
-		if (this.props.app.bootStatus.loading || this.props.app.client === null) {
+		if (this.props.app.bootStatus.loading || this.props.auth.client === null) {
 			appContent = <AppLoading loading />;
 		} else if (this.props.app.bootStatus.error) {
 			appContent = (
@@ -295,7 +339,7 @@ class CommunityRoot extends Component {
 			appContent = <CommunityNavigation />;
 		}
 
-		return <ApolloProvider client={this.props.app.client}>{appContent}</ApolloProvider>;
+		return <ApolloProvider client={this.props.auth.client}>{appContent}</ApolloProvider>;
 	}
 }
 

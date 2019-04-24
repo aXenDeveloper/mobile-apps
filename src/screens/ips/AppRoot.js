@@ -1,28 +1,30 @@
 import React, { Component } from "react";
-import { Text, View, Alert, StyleSheet, StatusBar, ActivityIndicator, AsyncStorage } from "react-native";
+import { Text, View, Alert, StyleSheet, StatusBar, ActivityIndicator, AsyncStorage, Platform, PushNotificationIOS } from "react-native";
 import { Linking, Permissions, Notifications } from "expo";
 import { connect } from "react-redux";
 import { ApolloProvider } from "react-apollo";
-import apolloLogger from "apollo-link-logger";
-import { ApolloClient } from "apollo-client";
-import { HttpLink } from "apollo-link-http";
-import { ApolloLink } from "apollo-link";
-import { onError } from "apollo-link-error";
-import { InMemoryCache } from "apollo-cache-inmemory";
 import { graphql, compose } from "react-apollo";
-import { IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
 import _ from "underscore";
 
-import introspectionQueryResultData from "../../fragmentTypes.json";
-import { setApolloClient, bootSite, switchAppView, setActiveCommunity, resetActiveCommunity, resetBootStatus } from "../../redux/actions/app";
-import { refreshToken } from "../../redux/actions/auth";
+import {
+	bootSite,
+	switchAppView,
+	setActiveCommunity,
+	resetActiveCommunity,
+	resetBootStatus,
+	receiveNotification,
+	clearCurrentNotification,
+	loadCommunities
+} from "../../redux/actions/app";
+import { refreshToken, logOut, voidAuth } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
-import { PromptModal } from "../../ecosystems/PushNotifications";
+import { PromptModal, LocalNotification } from "../../ecosystems/PushNotifications";
 import CommunityRoot from "./CommunityRoot";
 import Button from "../../atoms/Button";
 import AppLoading from "../../atoms/AppLoading";
 import NavigationService from "../../utils/NavigationService";
 import getUserAgent from "../../utils/getUserAgent";
+import Toast, { DURATION } from "react-native-easy-toast";
 
 class AppRoot extends Component {
 	constructor(props) {
@@ -36,7 +38,8 @@ class AppRoot extends Component {
 
 		this.state = {
 			waitingForClient: this._isSingleApp,
-			showNotificationPrompt: false
+			showNotificationPrompt: false,
+			redirectToNotification: null
 		};
 
 		this.handleOpenUrl = this.handleOpenUrl.bind(this);
@@ -69,18 +72,21 @@ class AppRoot extends Component {
 
 		const initialUrl = await Linking.getInitialURL();
 		this.checkUrlForAuth(initialUrl);
+
+		console.log(`Add this URL for auth: ${Linking.makeUrl("auth")}`);
 	}
 
-	handleNotification(notification) {
+	async handleNotification(notification) {
+		console.log(`APP_ROOT: Received notification data`);
 		console.log(notification);
 
-		if (notification.origin == "received") {
-			Alert.alert("In-app notification!", "App was foregrounded", [{ text: "OK", onPress: () => console.log("OK Pressed") }], { cancelable: false });
-		} else {
-			Alert.alert("Selected notification", "Fringilla Malesuada Ultricies Dapibus", [{ text: "OK", onPress: () => console.log("OK Pressed") }], {
-				cancelable: false
-			});
-		}
+		//if (notification.origin == "received" && Platform.OS == "ios") {
+		//Alert.alert("In-app notification!", "App was foregrounded", [{ text: "OK", onPress: () => console.log("OK Pressed") }], { cancelable: false });
+		//this.refs.notificationToast.show(<LocalNotification title="Just a test" />, 3000);
+		//} else {
+		await this.props.dispatch(loadCommunities());
+		await this.props.dispatch(receiveNotification(notification.data));
+		//}
 	}
 
 	/**
@@ -100,7 +106,7 @@ class AppRoot extends Component {
 	 * @return 	void
 	 */
 	checkUrlForAuth(url) {
-		console.log(`Initial URL: ${url}`);
+		console.log(`APP_ROOT: Initial URL: ${url}`);
 
 		let { path, queryParams } = Linking.parse(url);
 
@@ -141,7 +147,8 @@ class AppRoot extends Component {
 
 		// Have we already been granted permission?
 		const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-		console.log(`Notification status: ${status}`);
+		console.log(`APP_ROOT: Notification status: ${status}`);
+
 		if (status == "granted") {
 			return;
 		}
@@ -153,6 +160,7 @@ class AppRoot extends Component {
 			const promptData = await AsyncStorage.getItem("@notificationPrompt");
 			const promptJson = promptData !== null ? JSON.parse(promptData) : null;
 
+			console.log(`APP_ROOT: Notification prompt JSON:`);
 			console.log(promptJson);
 
 			if (promptData === null || (promptJson.status == "later" && promptJson.timestamp < Math.floor(Date.now() / 1000) - 604800)) {
@@ -163,7 +171,7 @@ class AppRoot extends Component {
 				}, 3000);
 			}
 		} catch (err) {
-			console.log(err);
+			console.log(`APP_ROOT: Failed to show notification prompt: ${err}`);
 		}
 	}
 
@@ -179,26 +187,34 @@ class AppRoot extends Component {
 		const { apiKey, apiUrl } = this.props.app.currentCommunity;
 		const prevApiUrl = prevProps.app.currentCommunity.apiUrl;
 
+		// --------------------------------------------------------------------
+		// Authentication/site changing stuff
 		// If we have a new API url in our store, authorize and boot that community
+		// This can happen when a user chooses to launch a community, or when a notification
+		// is tapped and we automatically switch community.
 		if (prevApiUrl !== apiUrl && apiUrl !== null) {
-			await dispatch(setApolloClient({ client: this.getClient() }));
 			await dispatch(refreshToken({ apiKey, apiUrl }));
 			await dispatch(bootSite({ apiKey, apiUrl }));
 
 			NavigationService.setBaseUrl(this.props.site.settings.base_url);
 
-			if (this._isSingleApp) {
-				this.setState({
-					waitingForClient: false
-				});
-			}
+			this.setState({
+				waitingForClient: this._isSingleApp ? false : null,
+				redirectToNotification: null // reset to null in case we loaded this community via a notification
+			});
 		}
 
 		// If our authenticated state has changed, we need to get a new client and reboot the community
 		// We only want to do this if we're still using the same community URL
 		if (prevApiUrl === apiUrl && prevProps.auth.isAuthenticated !== this.props.auth.isAuthenticated) {
-			await dispatch(setApolloClient({ client: this.getClient() }));
+			console.log("APP_ROOT: Rebooting site after authentication change.");
 			await dispatch(bootSite({ apiKey, apiUrl }));
+		}
+
+		// --------------------------------------------------------------------
+		// Handle incoming notifications
+		if (prevProps.app.notification !== this.props.app.notification && this.props.app.notification !== null) {
+			this.redirectFromNotification();
 		}
 
 		// --------------------------------------------------------------------
@@ -221,6 +237,70 @@ class AppRoot extends Component {
 				this.props.dispatch(resetBootStatus());
 			}
 		}
+	}
+
+	/**
+	 * Handles redirecting the app to the correct community, loading it
+	 * if it isn't the currently-loaded one. Then sets the notification in state
+	 * which will be passed into CommunityRoot to do the redirect.
+	 *
+	 * @return void
+	 */
+	async redirectFromNotification() {
+		// If we're in the multi-app, we need to figure out which community this notification is for,
+		// and then boot it if it isn't already loaded.
+		if (Expo.Constants.manifest.extra.multi) {
+			const {
+				community: { url }
+			} = this.props.app.notification;
+			// We need to find the community info associated with this notification
+			const communityToLoad = _.find(this.props.app.communities.data, current => {
+				return current.url === url;
+			});
+
+			// If we didn't find a matching community, let the user know
+			if (_.isUndefined(communityToLoad)) {
+				Alert.alert(
+					"Couldn't Load Content",
+					"Sorry, we aren't able to load this content right now.",
+					[
+						{
+							text: "OK",
+							style: "default",
+							onPress: () => {}
+						}
+					],
+					{
+						cancelable: false
+					}
+				);
+
+				return;
+			}
+
+			const { client_id: apiKey, url: apiUrl } = communityToLoad;
+
+			// Is this community already loaded?
+			if (this.props.app.currentCommunity.apiUrl === apiUrl) {
+				console.log("This community is already loaded");
+			} else {
+				// Otherwise, we can load the community
+				console.log("APP_ROOT: Switching community...");
+				this.props.dispatch(resetBootStatus());
+				this.props.dispatch(resetActiveCommunity());
+				await this.props.dispatch(setActiveCommunity({ apiKey, apiUrl }));
+				// From here, componentDidUpdate will see the change and load the community
+			}
+		}
+
+		// Set the notification data in state so we can pass it into CommunityRoot
+		this.setState({
+			redirectToNotification: {
+				...this.props.app.notification
+			}
+		});
+
+		this.props.dispatch(clearCurrentNotification());
 	}
 
 	/**
@@ -378,84 +458,25 @@ class AppRoot extends Component {
 		});
 	}
 
-	/**
-	 * Gets an Apollo client instance
-	 *
-	 * @return 	void
-	 */
-	getClient() {
-		// In order for Apollo to use fragments with union types, as we do for generic core_Content
-		// queries, we need to pass it the schema definition in advance.
-		// See https://www.apollographql.com/docs/react/advanced/fragments.html#fragment-matcher
-		const fragmentMatcher = new IntrospectionFragmentMatcher({
-			introspectionQueryResultData
-		});
-
-		const accessToken = this.props.auth.authData.accessToken;
-		const apiKey = this.props.app.currentCommunity.apiKey;
-
-		// Apollo config & setup
-		const authLink = (operation, next) => {
-			operation.setContext(context => ({
-				...context,
-				credentials: "same-origin",
-				headers: {
-					...context.headers,
-					Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}:`,
-					"User-Agent": getUserAgent()
-				}
-			}));
-			return next(operation);
-		};
-
-		const errorLink = onError(({ graphQLErrors, networkError }) => {
-			if (graphQLErrors)
-				graphQLErrors.map(({ message, locations, path }) => console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`));
-
-			if (networkError) {
-				try {
-					const parsedError = JSON.parse(networkError);
-					console.log("[Network error]:");
-					console.log(parsedError);
-				} catch (err) {
-					console.log(`[Network error]: ${networkError}`);
-				}
-			}
-		});
-
-		const link = ApolloLink.from([
-			errorLink,
-			authLink,
-			//apolloLogger,
-			new HttpLink({
-				uri: `${this.props.app.currentCommunity.apiUrl}/api/graphql/`
-			})
-		]);
-		const client = new ApolloClient({
-			link: link,
-			cache: new InMemoryCache({ fragmentMatcher })
-		});
-
-		return client;
-	}
-
 	render() {
 		if (this.state.waitingForClient) {
 			return <AppLoading loading />;
 		}
 
-		let ScreenToRender = CommunityRoot;
-
-		if (Expo.Constants.manifest.extra.multi) {
-			if (this.props.app.view === "multi") {
-				ScreenToRender = MultiCommunityNavigation;
-			}
-		}
-
 		return (
 			<View style={{ flex: 1 }}>
-				<ScreenToRender />
+				{Expo.Constants.manifest.extra.multi && this.props.app.view === "multi" ? (
+					<MultiCommunityNavigation />
+				) : (
+					<CommunityRoot redirect={this.state.redirectToNotification} />
+				)}
 				<PromptModal isVisible={this.state.showNotificationPrompt} close={this.closeNotificationPrompt} />
+				<Toast
+					ref="notificationToast"
+					position="top"
+					positionValue={0}
+					style={{ backgroundColor: "#fff", position: "absolute", left: 10, right: 10, top: 10 }}
+				/>
 			</View>
 		);
 	}

@@ -7,7 +7,6 @@ import _ from "underscore";
 import { transparentize } from "polished";
 
 import NavigationService from "../../../utils/NavigationService";
-import { receiveAuth } from "../../../redux/actions/auth";
 import Lang from "../../../utils/Lang";
 import { isIphoneX } from "../../../utils/isIphoneX";
 import Button from "../../../atoms/Button";

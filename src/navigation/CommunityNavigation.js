@@ -16,6 +16,7 @@ import { LinearGradient, WebBrowser } from "expo";
 // ----
 // Core screens
 import TestScreen from "../screens/core/TestScreen";
+import NoopScreen from "../screens/core/NoopScreen";
 import HomeScreen from "../screens/core/HomeScreen";
 import BrowseCommunityScreen from "../screens/core/BrowseCommunityScreen";
 import SearchScreen from "../screens/core/SearchScreen";
@@ -212,19 +213,25 @@ class AppNavigation extends Component {
 			}
 		);
 
-		return createAppContainer(
-			createDrawerNavigator(
-				{
-					Master: {
-						screen: masterStack
+		if (this.props.auth.isAuthenticated) {
+			console.log("NAVIGATION: Rendering app with UserScreen");
+			return createAppContainer(
+				createDrawerNavigator(
+					{
+						Master: {
+							screen: masterStack
+						}
+					},
+					{
+						drawerPosition: "left",
+						contentComponent: UserScreen
 					}
-				},
-				{
-					drawerPosition: "left",
-					contentComponent: UserScreen
-				}
-			)
-		);
+				)
+			);
+		} else {
+			console.log("NAVIGATION: Rendering app WITHOUT UserScreen");
+			return createAppContainer(masterStack);
+		}
 	}
 
 	/**
@@ -275,7 +282,7 @@ class AppNavigation extends Component {
 			})
 		};
 		const User = {
-			screen: UserScreen,
+			screen: NoopScreen,
 			navigationOptions: navigation => ({
 				tabBarLabel: "You",
 				tabBarIcon: ({ focused, tintColor }) => this._getUserPhoto(focused, tintColor),
@@ -306,7 +313,8 @@ class AppNavigation extends Component {
 			Login
 		};
 
-		if (this.props.auth.isAuthenticated && !this.props.user.isGuest) {
+		if (this.props.auth.isAuthenticated) {
+			console.log("NAVIGATION: Tab config including User");
 			tabConfig = {
 				Home,
 				Search,
@@ -336,7 +344,7 @@ class AppNavigation extends Component {
 	 * @return object|file resource
 	 */
 	_getUserPhoto(focused, tintColor) {
-		if (!this.props.user.isGuest && this.props.user.photo) {
+		if (this.props.auth.isAuthenticated && this.props.user.photo) {
 			return (
 				<View style={{ borderRadius: 24, overflow: "hidden" }}>
 					<Image style={[styles.tabIcon, styles.userTabIcon]} source={{ uri: getImageUrl(unescape(this.props.user.photo)) }} />
@@ -360,8 +368,9 @@ class AppNavigation extends Component {
 	 * Update master navigation component depending on guest status
 	 * We use this to show appropriate tabs to guests vs. members
 	 */
-	async componentDidUpdate(prevProps) {
-		if (this.props.user.isGuest !== prevProps.user.isGuest) {
+	componentDidUpdate(prevProps) {
+		if (this.props.auth.isAuthenticated !== prevProps.auth.isAuthenticated) {
+			console.log("NAVIGATION: Building new nav");
 			this.setState({
 				MasterNavigation: this._getMasterNavigation()
 			});

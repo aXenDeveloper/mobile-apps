@@ -26,7 +26,7 @@ this.props.client.query on mount. This allows us to build a dynamic query based
 on the homepage widgets that have been configured on the site.
 */
 
-const HomeSectionsToShow = ["active_users", "our_picks", "popular_contributors"];
+const HomeSectionsToShow = ["new_content", "active_users", "our_picks", "popular_contributors"];
 
 class HomeScreen extends Component {
 	static navigationOptions = ({ navigation }) => {

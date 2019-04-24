@@ -13,6 +13,7 @@ const icons = {
 	FIRE: require("../resources/hot.png"),
 	HEART: require("../resources/comment_like.png"),
 	HEART_SOLID: require("../resources/heart_solid.png"),
+	INFO_SOLID: require("../resources/info_filled.png"),
 	LOCKED: require("../resources/locked.png"),
 	LOGIN: require("../resources/login.png"),
 	LOGIN_SOLID: require("../resources/login_active.png"),
@@ -49,3 +50,9 @@ export const illustrations = {
 };
 
 export default icons;
+
+export const categoryIcons = {
+	_default: require("../resources/category_icons/general.png"),
+	general: require("../resources/category_icons/general.png"),
+	gaming: require("../resources/category_icons/gaming.png")
+};

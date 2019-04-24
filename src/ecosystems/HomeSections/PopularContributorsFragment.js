@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 const PopularContributorsFragment = `
 	fragment PopularContributorsFragment on core {
 		__typename
-		popularContributors(period: YEAR) {
+		popularContributors(period: WEEK) {
 			__typename
 			rep
 			user {

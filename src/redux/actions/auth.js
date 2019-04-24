@@ -1,23 +1,41 @@
 import { SecureStore, Linking, WebBrowser, Permissions } from "expo";
+import apolloLogger from "apollo-link-logger";
+import { ApolloClient } from "apollo-client";
+import { HttpLink } from "apollo-link-http";
+import { ApolloLink } from "apollo-link";
+import { onError } from "apollo-link-error";
+import { InMemoryCache } from "apollo-cache-inmemory";
+import { IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
+import _ from "underscore";
+
 import ToFormData from "../../utils/ToFormData";
 import getUserAgent from "../../utils/getUserAgent";
-import _ from "underscore";
+import introspectionQueryResultData from "../../fragmentTypes.json";
 
 // ====================================================================
 // General auth actions
 
-export const RECEIVE_AUTH = "RECEIVE_AUTH";
-export const receiveAuth = data => ({
-	type: RECEIVE_AUTH,
-	payload: {
-		...data
-	}
-});
-
 export const REMOVE_AUTH = "REMOVE_AUTH";
-export const removeAuth = data => ({
-	type: REMOVE_AUTH
-});
+export const removeAuth = data => {
+	return (dispatch, getState) => {
+		const {
+			app: {
+				currentCommunity: { apiUrl, apiKey }
+			}
+		} = getState();
+
+		dispatch({
+			type: REMOVE_AUTH,
+			payload: {
+				client: getNewClient({
+					apiUrl,
+					apiKey,
+					accessToken: null
+				})
+			}
+		});
+	};
+};
 
 // ====================================================================
 // Refresh token actions
@@ -28,17 +46,47 @@ export const refreshTokenLoading = data => ({
 });
 
 export const REFRESH_TOKEN_SUCCESS = "REFRESH_TOKEN_SUCCESS";
-export const refreshTokenSuccess = data => ({
-	type: REFRESH_TOKEN_SUCCESS
-});
+export const refreshTokenSuccess = data => {
+	return (dispatch, getState) => {
+		const {
+			app: {
+				currentCommunity: { apiUrl, apiKey }
+			}
+		} = getState();
+
+		const { refreshToken, expiresIn, accessToken } = data;
+		dispatch({
+			type: REFRESH_TOKEN_SUCCESS,
+			payload: {
+				refreshToken,
+				expiresIn,
+				accessToken,
+				client: getNewClient({
+					apiUrl,
+					apiKey,
+					accessToken
+				})
+			}
+		});
+	};
+};
 
 export const REFRESH_TOKEN_ERROR = "REFRESH_TOKEN_ERROR";
-export const refreshTokenError = data => ({
-	type: REFRESH_TOKEN_ERROR,
-	payload: {
-		...data
-	}
-});
+export const refreshTokenError = data => {
+	const { error, isNetworkError, apiUrl, apiKey } = data;
+	return {
+		type: REFRESH_TOKEN_ERROR,
+		payload: {
+			error,
+			isNetworkError,
+			client: getNewClient({
+				apiUrl,
+				apiKey,
+				accessToken: null
+			})
+		}
+	};
+};
 
 var timeoutHandler;
 var timeoutCanceled = false;
@@ -68,7 +116,9 @@ export const refreshToken = apiInfo => {
 				dispatch(
 					refreshTokenError({
 						error: "empty_storage",
-						isNetworkError: false
+						isNetworkError: false,
+						apiUrl,
+						apiKey
 					})
 				);
 				return;
@@ -77,7 +127,9 @@ export const refreshToken = apiInfo => {
 			dispatch(
 				refreshTokenError({
 					error: "empty_storage",
-					isNetworkError: false
+					isNetworkError: false,
+					apiUrl,
+					apiKey
 				})
 			);
 			return;
@@ -88,7 +140,9 @@ export const refreshToken = apiInfo => {
 			dispatch(
 				refreshTokenError({
 					error: "empty_storage",
-					isNetworkError: false
+					isNetworkError: false,
+					apiUrl,
+					apiKey
 				})
 			);
 			return;
@@ -103,7 +157,9 @@ export const refreshToken = apiInfo => {
 				dispatch(
 					refreshTokenError({
 						error: "timeout",
-						isNetworkError: true
+						isNetworkError: true,
+						apiUrl,
+						apiKey
 					})
 				);
 			}, 5000);
@@ -113,7 +169,9 @@ export const refreshToken = apiInfo => {
 				dispatch(
 					refreshTokenError({
 						error: "no_token",
-						isNetworkError: false
+						isNetworkError: false,
+						apiUrl,
+						apiKey
 					})
 				);
 				return;
@@ -148,7 +206,9 @@ export const refreshToken = apiInfo => {
 				dispatch(
 					refreshTokenError({
 						error: "server_error",
-						isNetworkError: true
+						isNetworkError: true,
+						apiUrl,
+						apiKey
 					})
 				);
 				return;
@@ -161,7 +221,9 @@ export const refreshToken = apiInfo => {
 				dispatch(
 					refreshTokenError({
 						error: data.error,
-						isNetworkError: false
+						isNetworkError: false,
+						apiUrl,
+						apiKey
 					})
 				);
 				return;
@@ -171,7 +233,9 @@ export const refreshToken = apiInfo => {
 				dispatch(
 					refreshTokenError({
 						error: "invalid_token",
-						isNetworkError: false
+						isNetworkError: false,
+						apiUrl,
+						apiKey
 					})
 				);
 				return;
@@ -188,18 +252,14 @@ export const refreshToken = apiInfo => {
 				newAuthData.state = authData.state;
 			}
 
-			console.log(`REFRESH_TOKEN: Setting new auth data in authStore for ${apiUrl}`);
-			console.log(newAuthData);
-
 			allAuthData[apiUrl] = newAuthData;
 
+			console.log(`REFRESH_TOKEN: Setting new auth data in authStore for ${apiUrl}`);
 			await SecureStore.setItemAsync(`authStore`, JSON.stringify(allAuthData));
 
-			dispatch(refreshTokenSuccess());
 			dispatch(
-				receiveAuth({
-					...newAuthData,
-					isAuthenticated: true
+				refreshTokenSuccess({
+					...newAuthData
 				})
 			);
 		} catch (err) {
@@ -213,7 +273,9 @@ export const refreshToken = apiInfo => {
 			dispatch(
 				refreshTokenError({
 					error: err.message,
-					isNetworkError: true
+					isNetworkError: true,
+					apiUrl,
+					apiKey
 				})
 			);
 		}
@@ -229,17 +291,53 @@ export const swapTokenLoading = data => ({
 });
 
 export const SWAP_TOKEN_ERROR = "SWAP_TOKEN_ERROR";
-export const swapTokenError = data => ({
-	type: SWAP_TOKEN_ERROR,
-	payload: {
-		...data
-	}
-});
+export const swapTokenError = data => {
+	return (dispatch, getState) => {
+		const {
+			app: {
+				currentCommunity: { apiUrl, apiKey }
+			}
+		} = getState();
+
+		dispatch({
+			type: SWAP_TOKEN_ERROR,
+			payload: {
+				...data,
+				client: getNewClient({
+					apiUrl,
+					apiKey,
+					accessToken: null
+				})
+			}
+		});
+	};
+};
 
 export const SWAP_TOKEN_SUCCESS = "SWAP_TOKEN_SUCCESS";
-export const swapTokenSuccess = data => ({
-	type: SWAP_TOKEN_SUCCESS
-});
+export const swapTokenSuccess = data => {
+	return (dispatch, getState) => {
+		const {
+			app: {
+				currentCommunity: { apiUrl, apiKey }
+			}
+		} = getState();
+		const { refreshToken, expiresIn, accessToken } = data;
+
+		dispatch({
+			type: SWAP_TOKEN_SUCCESS,
+			payload: {
+				refreshToken,
+				expiresIn,
+				accessToken,
+				client: getNewClient({
+					apiUrl,
+					apiKey,
+					accessToken
+				})
+			}
+		});
+	};
+};
 
 export const swapToken = tokenInfo => {
 	return async (dispatch, getState) => {
@@ -247,10 +345,12 @@ export const swapToken = tokenInfo => {
 
 		const {
 			app: {
-				currentCommunity: { apiUrl, apiKey },
-				client
-			}
+				currentCommunity: { apiUrl, apiKey }
+			},
+			auth: { client }
 		} = getState();
+
+		console.log("SWAP_TOKEN: Starting swap token process");
 
 		const authStore = await SecureStore.getItemAsync(`authStore`);
 		let allAuthData = {};
@@ -312,11 +412,11 @@ export const swapToken = tokenInfo => {
 			client.resetStore();
 			await SecureStore.setItemAsync(`authStore`, JSON.stringify(allAuthData));
 
-			dispatch(swapTokenSuccess());
+			console.log("SWAP_TOKEN: swapping done.");
+
 			dispatch(
-				receiveAuth({
-					...authData,
-					isAuthenticated: true
+				swapTokenSuccess({
+					...authData
 				})
 			);
 		} catch (err) {
@@ -446,11 +546,11 @@ export const logOut = (requireReauth = true) => {
 	return async (dispatch, getState) => {
 		const {
 			app: {
-				client,
 				currentCommunity: { apiKey, apiUrl }
 			},
 			auth: {
-				authData: { accessToken }
+				authData: { accessToken },
+				client: client
 			}
 		} = getState();
 
@@ -489,23 +589,76 @@ export const logOut = (requireReauth = true) => {
 	};
 };
 
-/**
- * Utility method that takes an API url and returns a unique, alphanumeric (base64) string
- * SecureStore only allows alphanums as keys, so we use this value to represent the site.
- *
- * @param 	string 	apiUrl 		URL to return identifier for
- * @return	string
- */
-const siteIdentifiers = {};
-const getSiteIdentifier = apiUrl => {
-	if (!_.isUndefined(siteIdentifiers[apiUrl])) {
-		return siteIdentifiers[apiUrl];
-	}
+import configureStore from "../configureStore";
+const getNewClient = connectData => {
+	// In order for Apollo to use fragments with union types, as we do for generic core_Content
+	// queries, we need to pass it the schema definition in advance.
+	// See https://www.apollographql.com/docs/react/advanced/fragments.html#fragment-matcher
+	const fragmentMatcher = new IntrospectionFragmentMatcher({
+		introspectionQueryResultData
+	});
 
-	// Base 64 the URL, but remove any = because they aren't valid as SecureStore keys
-	let base64 = Buffer.from(apiUrl).toString("base64");
-	base64 = base64.replace(/\=/g, "");
+	const accessToken = connectData.accessToken;
+	const apiKey = connectData.apiKey;
 
-	siteIdentifiers[apiUrl] = base64;
-	return base64;
+	console.log(`CLIENT: When getting client instance, accessToken is ${accessToken}`);
+
+	// Apollo config & setup
+	const authLink = new ApolloLink((operation, next) => {
+		operation.setContext(context => {
+			console.log(`CLIENT: Making ${accessToken ? "AUTHENTICATED" : "unauthenticated"} request`);
+			return {
+				...context,
+				credentials: "same-origin",
+				headers: {
+					...context.headers,
+					Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}:`,
+					"User-Agent": getUserAgent()
+				}
+			};
+		});
+		return next(operation);
+	});
+
+	const errorsToUnauth = ["INVALID_ACCESS_TOKEN", "INVALID_API_KEY", "TOO_MANY_REQUESTS_WITH_BAD_KEY"];
+	const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+		if (graphQLErrors) {
+			for (let i = 0; i < graphQLErrors.length; i++) {
+				const error = graphQLErrors[i];
+
+				if (errorsToUnauth.indexOf(error.message) !== -1) {
+					console.log(`CLIENT: Got error: ${error.message}`);
+					const store = configureStore();
+					store.dispatch(removeAuth());
+					return;
+				}
+			}
+		}
+
+		if (networkError) {
+			try {
+				const parsedError = JSON.parse(networkError);
+				console.log("[Network error]:");
+				console.log(parsedError);
+			} catch (err) {
+				console.log(`[Network error]: ${networkError}`);
+			}
+		}
+	});
+
+	const link = ApolloLink.from([
+		//apolloLogger,
+		authLink,
+		errorLink,
+		new HttpLink({
+			uri: `${connectData.apiUrl}/api/graphql/`
+		})
+	]);
+
+	const client = new ApolloClient({
+		link: link,
+		cache: new InMemoryCache({ fragmentMatcher })
+	});
+
+	return client;
 };

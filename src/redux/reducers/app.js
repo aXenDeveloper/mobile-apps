@@ -16,7 +16,18 @@ const initialState = {
 	webview: {
 		active: false,
 		url: ""
-	}
+	},
+	notification: null,
+	communities: {
+		loading: false,
+		error: false,
+		data: []
+	},
+	categoryList: {
+		loading: false,
+		error: false
+	},
+	categories: {}
 };
 
 export default function app(state = initialState, { type, payload }) {
@@ -51,6 +62,8 @@ export default function app(state = initialState, { type, payload }) {
 				}
 			};
 		case actions.BOOT_SITE_ERROR:
+			console.log("Boot status error");
+			console.log(payload);
 			return {
 				...state,
 				bootStatus: {
@@ -59,6 +72,24 @@ export default function app(state = initialState, { type, payload }) {
 					error: payload.error || true,
 					isNetworkError: payload.isNetworkError
 				}
+			};
+
+		// --------------------------------------------------------------
+		// Notification actions
+		case actions.RECEIVE_NOTIFICATION:
+			console.log("Notification reducer");
+			console.log(payload);
+			return {
+				...state,
+				notification: {
+					...payload
+				}
+			};
+
+		case actions.CLEAR_CURRENT_NOTIFICATION:
+			return {
+				...state,
+				notification: null
 			};
 
 		// --------------------------------------------------------------
@@ -80,12 +111,135 @@ export default function app(state = initialState, { type, payload }) {
 			};
 
 		// --------------------------------------------------------------
-		// Other app actions
-		case actions.SET_APOLLO_CLIENT:
+		// "My Communities" list for Multi-community
+		case actions.COMMUNITY_LIST_LOADING:
 			return {
 				...state,
-				client: payload.client
+				communities: {
+					...state.communities,
+					loading: true,
+					error: false
+				}
 			};
+		case actions.COMMUNITY_LIST_ERROR:
+			return {
+				...state,
+				communities: {
+					...state.communities,
+					loading: false,
+					error: true
+				}
+			};
+		case actions.COMMUNITY_LIST_SUCCESS:
+			return {
+				...state,
+				communities: {
+					...state.communities,
+					loading: false,
+					error: false,
+					data: payload.communities
+				}
+			};
+
+		// --------------------------------------------------------------
+		// Category list for Multi-community
+		case actions.COMMUNITY_CATEGORIES_LOADING:
+			return {
+				...state,
+				categoryList: {
+					...state.categoryList,
+					loading: true,
+					error: false
+				}
+			};
+		case actions.COMMUNITY_CATEGORIES_ERROR:
+			return {
+				...state,
+				categoryList: {
+					...state.categoryList,
+					loading: false,
+					error: true
+				}
+			};
+		case actions.COMMUNITY_CATEGORIES_SUCCESS:
+			const categoryKeys = Object.keys(payload);
+			const categoryObj = {};
+
+			categoryKeys.forEach(category => {
+				categoryObj[category] = {
+					id: category,
+					name: payload[category],
+					loading: false,
+					error: false,
+					items: []
+				};
+			});
+
+			return {
+				...state,
+				categoryList: {
+					...state.categoryList,
+					loading: false,
+					error: false
+				},
+				categories: {
+					...categoryObj,
+					...state.categories
+				}
+			};
+
+		// --------------------------------------------------------------
+		// Individual category for Multi-community
+		case actions.COMMUNITY_CATEGORY_LOADING:
+			return {
+				...state,
+				categories: {
+					...state.categories,
+					[payload.id]: {
+						...state.categories[payload.id],
+						loading: true,
+						error: false
+					}
+				}
+			};
+		case actions.COMMUNITY_CATEGORY_ERROR:
+			return {
+				...state,
+				categories: {
+					...state.categories,
+					[payload.id]: {
+						...state.categories[payload.id],
+						loading: false,
+						error: true
+					}
+				}
+			};
+		case actions.COMMUNITY_CATEGORY_SUCCESS:
+			// We receive an offset, so to be sure we dont duplicate items in case of a race condition,
+			// take a slice of existing data up to the offset we're about to append to
+			const existingItems = state.categories[payload.id].items || [];
+			const existingSlice = existingItems.slice(0, payload.offset);
+
+			return {
+				...state,
+				categoryList: {
+					...state.categoryList,
+					loading: false,
+					error: false
+				},
+				categories: {
+					...state.categories,
+					[payload.id]: {
+						...state.categories[payload.id],
+						loading: false,
+						error: false,
+						items: [existingSlice, ...payload.items]
+					}
+				}
+			};
+
+		// --------------------------------------------------------------
+		// Other app actions
 		case actions.SWITCH_APP_VIEW:
 			return {
 				...state,
