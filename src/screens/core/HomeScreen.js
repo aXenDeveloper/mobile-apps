@@ -153,8 +153,8 @@ class HomeScreen extends Component {
 					console.log("navigate!");
 					this.props.navigation.navigate("ForumIndex");
 				}
-			},
-			{
+			}
+			/*{
 				key: "gallery_all",
 				title: "All Images",
 				icon: require("../../../resources/browse/gallery_all.png"),
@@ -185,7 +185,7 @@ class HomeScreen extends Component {
 				handler: () => {
 					console.log("albums");
 				}
-			}
+			}*/
 		];
 	}
 

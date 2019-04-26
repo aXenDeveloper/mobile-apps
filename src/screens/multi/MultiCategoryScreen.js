@@ -1,13 +1,15 @@
 import React, { Component } from "react";
-import { Text, ScrollView } from "react-native";
+import { Text, View, FlatList, ScrollView, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import _ from "underscore";
 
-import configureStore from "../../redux/configureStore";
-import { loadCommunityCategory } from "../../redux/actions/app";
-import { CategoryBox } from "../../ecosystems/MultiCommunity";
+import { loadCommunityCategory, setActiveCommunity, toggleSavedCommunity } from "../../redux/actions/app";
+import { CommunityBox } from "../../ecosystems/MultiCommunity";
+import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import Button from "../../atoms/Button";
+import ErrorBox from "../../atoms/ErrorBox";
 import NavigationService from "../../utils/NavigationService";
+import icons from "../../icons";
 import styles from "../../styles";
 
 class MultiCategoryScreen extends Component {
@@ -18,6 +20,7 @@ class MultiCategoryScreen extends Component {
 	constructor(props) {
 		super(props);
 		this._pressHandlers = {};
+		this._togglePressHandlers = {};
 	}
 
 	componentDidMount() {
@@ -42,16 +45,98 @@ class MultiCategoryScreen extends Component {
 		});
 	}
 
+	/**
+	 * Memoization function that returns an onPress handler for a community
+	 *
+	 * @param 	object 		Object with apiUrl and apiKey values
+	 * @return 	function
+	 */
+	pressCommunity(apiInfo) {
+		if (_.isUndefined(this._pressHandlers[apiInfo.apiUrl])) {
+			this._pressHandlers[apiInfo.apiUrl] = () => {
+				this.props.dispatch(
+					setActiveCommunity({
+						apiUrl: apiInfo.apiUrl,
+						apiKey: apiInfo.apiKey
+					})
+				);
+			};
+		}
+
+		return this._pressHandlers[apiInfo.apiUrl];
+	}
+
+	getToggleCommunityHandler(id) {
+		if (_.isUndefined(this._togglePressHandlers[id])) {
+			this._togglePressHandlers[id] = () => {
+				const categoryItems = this.props.app.categories[this.props.navigation.state.params.categoryID];
+				const community = _.find(categoryItems.items, item => item.id === id);
+
+				this.props.dispatch(toggleSavedCommunity(community));
+				delete this._togglePressHandlers[id];
+			};
+		}
+
+		return this._togglePressHandlers[id];
+	}
+
+	renderItem(item) {
+		const { id, name, client_id: apiKey, logo, description, url: apiUrl } = item;
+		const isSaved = _.find(this.props.app.communities.data, community => community.id === id);
+
+		return (
+			<CommunityBox
+				onPress={this.pressCommunity({ apiUrl: item.url, apiKey: item.client_id })}
+				name={name}
+				logo={logo}
+				description={description}
+				apiKey={apiKey}
+				apiUrl={apiUrl}
+				communityLoading={!this.props.app.bootStatus.loaded && this.props.app.currentCommunity.apiUrl == apiUrl}
+				rightComponent={
+					<View style={{ width: 35 }}>
+						{isSaved ? (
+							<Button
+								onPress={this.getToggleCommunityHandler(id)}
+								icon={icons.CHECKMARK2}
+								type="light"
+								small
+								rounded
+								filled
+								style={{ width: 36, height: 36 }}
+							/>
+						) : (
+							<Button onPress={this.getToggleCommunityHandler(id)} icon={icons.PLUS} type="primary" small rounded style={{ width: 36, height: 36 }} />
+						)}
+					</View>
+				}
+			/>
+		);
+	}
+
 	render() {
 		const { categoryID } = this.props.navigation.state.params;
 		const thisCategory = this.props.app.categories[categoryID];
 
 		if (thisCategory.loading) {
-			return <Text>Loading</Text>;
+			return (
+				<View>
+					<PlaceholderRepeater repeat={7}>
+						<CommunityBox loading />
+					</PlaceholderRepeater>
+				</View>
+			);
 		} else if (thisCategory.error) {
-			return <Text>Couldn't load this category</Text>;
+			return <ErrorBox message="Sorry, there was a problem fetching the communities in this category. Please try again later." />;
 		} else {
-			return thisCategory.items.map(item => <Text>{item.name}</Text>);
+			return (
+				<FlatList
+					extraData={this.props.app.communities.data}
+					data={thisCategory.items}
+					keyExtractor={item => item.id}
+					renderItem={({ item }) => this.renderItem(item)}
+				/>
+			);
 		}
 	}
 }

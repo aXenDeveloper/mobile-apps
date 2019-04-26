@@ -38,11 +38,13 @@ export default class Button extends Component {
 			>
 				<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter]}>
 					{Boolean(this.props.icon) && <Image style={[componentStyles.icon, componentStyles[imageType]]} resizeMode="stretch" source={this.props.icon} />}
-					<View style={componentStyles.textWrapper}>
-						<Text style={[componentStyles[textType], componentStyles.text, componentStyles[textSize]]} numberOfLines={1}>
-							{this.props.title}
-						</Text>
-					</View>
+					{this.props.title && (
+						<View style={componentStyles.textWrapper}>
+							<Text style={[componentStyles[textType], componentStyles.text, componentStyles[textSize]]} numberOfLines={1}>
+								{this.props.title}
+							</Text>
+						</View>
+					)}
 				</View>
 			</TouchableOpacity>
 		);
@@ -60,9 +62,7 @@ const componentStyles = StyleSheet.create({
 	},
 	icon: {
 		width: 18,
-		height: 18,
-		marginLeft: 0,
-		marginRight: styleVars.spacing.tight
+		height: 18
 	},
 	textWrapper: {
 		flexGrow: 1
@@ -191,7 +191,7 @@ Button.defaultProps = {
 };
 
 Button.propTypes = {
-	title: PropTypes.string.isRequired,
+	title: PropTypes.string,
 	icon: PropTypes.any,
 	size: PropTypes.oneOf(["small", "medium", "large"]),
 	type: PropTypes.oneOf(["primary", "light", "warning", "dark"]),

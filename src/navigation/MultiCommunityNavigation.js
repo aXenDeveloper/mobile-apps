@@ -93,8 +93,8 @@ export default class MultiCommunityNavigation extends Component {
 						},
 						tabBarIcon: props => <NavigationTabIcon {...props} active={icons.MULTI_BROWSE_SOLID} inactive={icons.MULTI_BROWSE} />
 					}
-				},
-				MultiSettings: {
+				}
+				/*MultiSettings: {
 					screen: createStackNavigator(
 						{
 							Category: {
@@ -122,7 +122,7 @@ export default class MultiCommunityNavigation extends Component {
 						},
 						tabBarIcon: props => <NavigationTabIcon {...props} active={icons.MULTI_SETTINGS_SOLID} inactive={icons.MULTI_SETTINGS} />
 					}
-				}
+				}*/
 			},
 			{
 				lazy: true,

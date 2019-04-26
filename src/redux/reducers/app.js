@@ -140,6 +140,16 @@ export default function app(state = initialState, { type, payload }) {
 					data: payload.communities
 				}
 			};
+		case actions.SET_COMMUNITIES:
+			return {
+				...state,
+				communities: {
+					...state.communities,
+					loading: false,
+					error: false,
+					data: payload.communities
+				}
+			};
 
 		// --------------------------------------------------------------
 		// Category list for Multi-community
@@ -233,7 +243,7 @@ export default function app(state = initialState, { type, payload }) {
 						...state.categories[payload.id],
 						loading: false,
 						error: false,
-						items: [existingSlice, ...payload.items]
+						items: [...existingSlice, ...payload.items]
 					}
 				}
 			};

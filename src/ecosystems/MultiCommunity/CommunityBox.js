@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Text, View, Image, StyleSheet, TouchableHighlight, TouchableOpacity, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
 import { graphql, compose } from "react-apollo";
+import FadeIn from "react-native-fade-in-image";
 import _ from "underscore";
 
 import configureStore from "../../redux/configureStore";
@@ -11,10 +12,12 @@ import Lang from "../../utils/Lang";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import styles, { styleVars } from "../../styles";
+import icons from "../../icons";
 
 class CommunityBox extends Component {
 	constructor(props) {
 		super(props);
+		this.onPressDots = this.onPressDots.bind(this);
 	}
 
 	getDisplayUrl() {
@@ -33,10 +36,14 @@ class CommunityBox extends Component {
 		return authority;
 	}
 
+	onPressDots() {
+		this._actionSheet.show();
+	}
+
 	render() {
 		if (this.props.loading) {
 			return (
-				<ShadowedArea style={[componentStyles.communityBox, styles.mbStandard]}>
+				<ShadowedArea style={[componentStyles.communityBox, styles.mbStandard, this.props.style]}>
 					<PlaceholderContainer style={[styles.flex, styles.pStandard]} onPress={this.props.onPress}>
 						<PlaceholderElement width={50} height={50} left={0} top={0} />
 						<PlaceholderElement width={200} height={17} left={62} top={8} />
@@ -47,15 +54,21 @@ class CommunityBox extends Component {
 		}
 
 		const displayUrl = this.getDisplayUrl();
+		const RightComponent = this.props.rightComponent;
 
 		return (
-			<ShadowedArea style={[componentStyles.communityBox, styles.mbStandard]}>
-				<TouchableOpacity style={[styles.flex, styles.pStandard]} onPress={this.props.onPress}>
-					<View style={[styles.flexRow]}>
+			<ShadowedArea style={[componentStyles.communityBox, styles.mbTight, this.props.style]}>
+				<TouchableOpacity style={[styles.flex, styles.pWide]} onPress={this.props.onPress}>
+					<View style={[styles.flexRow, componentStyles.communityInfo]}>
 						<View style={[styles.mrStandard, componentStyles.image]}>
-							{!this.props.app.bootStatus.loaded && this.props.app.currentCommunity.apiUrl == this.props.apiUrl && (
+							{this.props.logo && (
+								<FadeIn>
+									<Image source={{ uri: this.props.logo }} resizeMode="contain" style={componentStyles.communityLogo} />
+								</FadeIn>
+							)}
+							{this.props.communityLoading && (
 								<View style={[styles.flex, styles.flexJustifyCenter, styles.flexAlignCenter, componentStyles.loadingWrap]}>
-									<ActivityIndicator size="small" />
+									<ActivityIndicator size="small" color="#ffffff" />
 								</View>
 							)}
 						</View>
@@ -63,7 +76,13 @@ class CommunityBox extends Component {
 							<Text style={[styles.itemTitle]}>{this.props.name}</Text>
 							<Text style={[styles.smallText, styles.lightText]}>{displayUrl}</Text>
 						</View>
+						{this.props.rightComponent && <View>{RightComponent}</View>}
 					</View>
+					{this.props.description && (
+						<View style={[styles.ptStandard, styles.mtStandard, componentStyles.communityDescription]}>
+							<Text numberOfLines={3}>{this.props.description}</Text>
+						</View>
+					)}
 				</TouchableOpacity>
 			</ShadowedArea>
 		);
@@ -78,16 +97,28 @@ export default compose(
 
 const componentStyles = StyleSheet.create({
 	communityBox: {
-		borderRadius: 4,
 		minHeight: 74
 	},
+	communityDescription: {
+		borderTopWidth: 1,
+		borderTopColor: styleVars.greys.medium
+	},
+	communityLogo: {
+		width: 40,
+		height: 40
+	},
 	image: {
-		width: 50,
-		height: 50,
+		width: 40,
+		height: 40,
 		borderRadius: 4,
-		backgroundColor: styleVars.greys.light
+		overflow: "hidden"
 	},
 	loadingWrap: {
-		...StyleSheet.absoluteFillObject
+		...StyleSheet.absoluteFillObject,
+		backgroundColor: "rgba(0,0,0,0.3)"
+	},
+	dots: {
+		width: 20,
+		height: 20
 	}
 });

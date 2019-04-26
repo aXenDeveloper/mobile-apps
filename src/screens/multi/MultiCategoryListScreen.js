@@ -7,6 +7,7 @@ import configureStore from "../../redux/configureStore";
 import { loadCommunityCategories } from "../../redux/actions/app";
 import { CategoryBox } from "../../ecosystems/MultiCommunity";
 import Button from "../../atoms/Button";
+import ErrorBox from "../../atoms/ErrorBox";
 import LargeTitle from "../../atoms/LargeTitle";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import NavigationService from "../../utils/NavigationService";
@@ -84,7 +85,7 @@ class MultiCategoryListScreen extends Component {
 				</PlaceholderRepeater>
 			);
 		} else if (this.props.app.categoryList.error) {
-			return <Text>Couldn't load categories</Text>;
+			return <ErrorBox message="Sorry, we can't load the community directory right now. Please try again later." />;
 		} else {
 			const categories = this.props.app.categories;
 			const pairs = this.getDataInPairs();

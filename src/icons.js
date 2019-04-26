@@ -10,6 +10,7 @@ const icons = {
 	CHECKMARK_CIRCLE_SOLID: require("../resources/checkmark_circle_solid.png"),
 	COG: require("../resources/settings.png"),
 	CROSS: require("../resources/close.png"),
+	DOTS: require("../resources/dots.png"),
 	FIRE: require("../resources/hot.png"),
 	HEART: require("../resources/comment_like.png"),
 	HEART_SOLID: require("../resources/heart_solid.png"),
@@ -26,7 +27,8 @@ const icons = {
 	OFFLINE: require("../resources/offline.png"),
 	PENCIL: require("../resources/pencil.png"),
 	PINNED: require("../resources/pinned.png"),
-	PLUS_CIRCLE: require("../resources/plus.png"),
+	PLUS: require("../resources/plus.png"),
+	PLUS_CIRCLE: require("../resources/plus_outline.png"),
 	QUOTE: require("../resources/comment_quote.png"),
 	QUOTE_SOLID: require("../resources/comment_quote_solid.png"),
 	REPLY: require("../resources/reply.png"),
@@ -46,7 +48,10 @@ const icons = {
 };
 
 export const illustrations = {
-	NOTIFICATIONS: require("../resources/illustration_notifications.png")
+	NOTIFICATIONS: require("../resources/illustration_notifications.png"),
+	LIST: require("../resources/illustration_list.svg"),
+	EMPTY: require("../resources/illustration_empty.png"),
+	COMMUNITY: require("../resources/illustration_community.png")
 };
 
 export default icons;

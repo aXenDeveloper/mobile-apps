@@ -441,6 +441,12 @@ const styles = StyleSheet.create({
 		width: 20,
 		height: 20
 	},
+	lightImage: {
+		tintColor: styleVars.lightText
+	},
+	veryLightImage: {
+		tintColor: styleVars.veryLightText
+	},
 
 	/* Spacing styles */
 	mVeryTight: { margin: styleVars.spacing.veryTight },

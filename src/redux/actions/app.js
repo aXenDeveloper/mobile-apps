@@ -242,6 +242,8 @@ export const loadCommunities = () => {
 			// Get our saved community IDs from storage
 			const communityData = await AsyncStorage.getItem("@savedCommunities");
 			const communityJson = communityData !== null ? JSON.parse(communityData) : null;
+			const favoriteData = await AsyncStorage.getItem("@favoriteCommunities");
+			const favoriteJson = favoriteData !== null ? JSON.parse(favoriteData) : null;
 
 			if (communityJson === null) {
 				dispatch(
@@ -277,11 +279,15 @@ export const loadCommunities = () => {
 
 			// Now loop through each of our stored communities and build a final object that we'll store in redux
 			const communities = [];
+
 			for (let k = 0; k < communityJson.length; k++) {
-				if (!_.isUndefined(receivedCommunities[communityJson[k]])) {
+				const liveCommunityData = receivedCommunities[communityJson[k]];
+
+				if (!_.isUndefined(liveCommunityData)) {
 					communities.push({
-						...receivedCommunities[communityJson[k]],
-						status: "ok"
+						...liveCommunityData,
+						isFavorite: favoriteJson !== null && favoriteJson.indexOf(liveCommunityData.id) !== -1,
+						status: "active"
 					});
 				} else {
 					communities.push({
@@ -291,12 +297,15 @@ export const loadCommunities = () => {
 				}
 			}
 
+			console.log(communities);
+
 			dispatch(
 				communityListSuccess({
 					communities
 				})
 			);
 		} catch (err) {
+			console.log(err);
 			dispatch(communityListError());
 		}
 	};
@@ -304,8 +313,10 @@ export const loadCommunities = () => {
 
 export const _devStoreCommunities = async () => {
 	const communities = ["b8159ddfb42729ad9120567c862e197a", "4c422840184708ffcea278fcccd43dae", "1fe6bc7815de0244c70a2544f8d0adf2", "test_missing"];
+	const favorites = ["b8159ddfb42729ad9120567c862e197a"];
 
 	await AsyncStorage.setItem("@savedCommunities", JSON.stringify(communities));
+	await AsyncStorage.setItem("@favoriteCommunities", JSON.stringify(favorites));
 
 	console.log("Saved communities");
 };
@@ -409,7 +420,16 @@ export const loadCommunityCategory = (id, offset = 0) => {
 
 			const items = await response.json();
 
-			console.log(items);
+			try {
+				const favoriteData = await AsyncStorage.getItem("@favoriteCommunities");
+				const favoriteJson = favoriteData !== null ? JSON.parse(favoriteData) : null;
+
+				items.forEach(item => {
+					item.isFavorite = favoriteJson !== null && favoriteJson.indexOf(item.id) !== -1;
+				});
+			} catch (err) {
+				console.warn("Couldn't add favorite data to category results");
+			}
 
 			dispatch(
 				communityCategorySuccess({
@@ -421,6 +441,100 @@ export const loadCommunityCategory = (id, offset = 0) => {
 		} catch (err) {
 			console.log(err);
 			dispatch(communityCategoryError(id));
+		}
+	};
+};
+
+// =================================================================
+
+export const SET_COMMUNITIES = "SET_COMMUNITIES";
+export const setCommunities = data => ({
+	type: SET_COMMUNITIES,
+	payload: {
+		...data
+	}
+});
+
+export const toggleFavoriteCommunity = id => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const communities = state.app.communities.data;
+		const thisCommunity = _.find(communities, community => community.id === id);
+
+		// Update storage with new favorite data
+		try {
+			const favoriteData = await AsyncStorage.getItem("@favoriteCommunities");
+			const favoriteJson = favoriteData !== null ? JSON.parse(favoriteData) : null;
+			let updatedFavoriteData = [];
+
+			if (favoriteJson !== null) {
+				if (thisCommunity.isFavorite) {
+					updatedFavoriteData = _.without(favoriteJson, id);
+				} else {
+					updatedFavoriteData = [...favoriteJson, id];
+				}
+			}
+
+			await AsyncStorage.setItem("@favoriteCommunities", JSON.stringify(updatedFavoriteData));
+		} catch (err) {
+			console.warn("Couldn't save updated favorite data");
+		}
+
+		// Now dispatch action to update current states
+		if (!_.isUndefined(thisCommunity)) {
+			thisCommunity.isFavorite = !thisCommunity.isFavorite;
+		}
+
+		dispatch(
+			setCommunities({
+				communities
+			})
+		);
+	};
+};
+
+export const toggleSavedCommunity = communityToToggle => {
+	return async (dispatch, getState) => {
+		console.log(communityToToggle);
+
+		try {
+			const id = communityToToggle.id;
+			const state = getState();
+			const communities = state.app.communities.data;
+			const communityData = await AsyncStorage.getItem("@savedCommunities");
+			const communityJson = communityData !== null ? JSON.parse(communityData) : [];
+			const favoriteData = await AsyncStorage.getItem("@favoriteCommunities");
+			const favoriteJson = favoriteData !== null ? JSON.parse(favoriteData) : [];
+
+			let updatedCommunitiesObj = {};
+			let updatedCommunityIDs = [];
+			let updatedFavoriteIDs = [];
+
+			// If this community is already saved
+			if (communityJson.indexOf(id) !== -1) {
+				// Get the object for this community and remove it from the current list
+				updatedCommunitiesObj = _.without(communities, _.find(communities, community => community.id === id));
+
+				// Build an updated list of IDs & favorites
+				updatedCommunityIDs = _.without(communityJson, id);
+				updatedFavoriteIDs = _.without(favoriteJson, id);
+			} else {
+				updatedCommunitiesObj = [...communities, communityToToggle];
+				updatedCommunityIDs = [...communityJson, id];
+			}
+
+			await AsyncStorage.setItem("@savedCommunities", JSON.stringify(updatedCommunityIDs));
+			await AsyncStorage.setItem("@favoriteCommunities", JSON.stringify(updatedFavoriteIDs));
+
+			console.log(updatedCommunitiesObj);
+
+			dispatch(
+				setCommunities({
+					communities: updatedCommunitiesObj
+				})
+			);
+		} catch (err) {
+			console.warn(`Couldn't update saved communities ${err}`);
 		}
 	};
 };
