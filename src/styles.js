@@ -11,7 +11,7 @@ export const styleVars = {
 	accentColor: "#3370AA",
 	altAccentColor: "#009BA2",
 	popularColor: "#F58D23",
-	appBackground: "#e6e8eb",
+	appBackground: "#f7f7f7",
 	tabActive: "#37454B",
 	tabInactive: "#6e797e",
 	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`,
