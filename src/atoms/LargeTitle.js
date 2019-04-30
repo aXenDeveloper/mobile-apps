@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { Text, Image, View, StyleSheet } from 'react-native';
+import React, { Component } from "react";
+import { Text, Image, View, StyleSheet } from "react-native";
 
-import { styleVars } from '../styles';
+import { styleVars } from "../styles";
 
-export default class LargeTitle extends Component {	
+export default class LargeTitle extends Component {
 	constructor(props) {
 		super(props);
 	}
@@ -11,9 +11,7 @@ export default class LargeTitle extends Component {
 	render() {
 		return (
 			<View style={componentStyles.wrapper}>
-				<Text style={componentStyles.largeTitle}>
-					{this.props.children}
-				</Text>
+				<Text style={componentStyles.largeTitle}>{this.props.children}</Text>
 			</View>
 		);
 	}
@@ -23,32 +21,33 @@ export default class LargeTitle extends Component {
 
 const componentStyles = StyleSheet.create({
 	wrapper: {
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'flex-start',
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-start",
 		marginHorizontal: styleVars.spacing.wide,
 		marginTop: styleVars.spacing.veryWide,
-		marginBottom: styleVars.spacing.wide,
+		marginBottom: styleVars.spacing.wide
 	},
 	iconWrap: {
-		backgroundColor: '#009BA2',
+		backgroundColor: "#009BA2",
 		borderRadius: 50,
 		width: 30,
 		height: 30,
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
 		marginRight: styleVars.spacing.tight
 	},
 	icon: {
 		width: 18,
 		height: 18,
-		tintColor: '#fff',
+		tintColor: "#fff"
 	},
 	largeTitle: {
-		fontWeight: 'bold',
+		fontWeight: "bold",
 		fontSize: 26,
-		color: '#000',
+		color: "#000",
+		letterSpacing: -0.5
 	}
 });
