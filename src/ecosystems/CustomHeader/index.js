@@ -29,22 +29,23 @@ export default class CustomHeader extends Component {
 	render() {
 		let content;
 
-		if( this.props.content ){
+		if (this.props.content) {
 			content = this.props.content;
 		} else {
 			content = <Header {...this.props} style={styles.header} />;
 		}
 
-		if (this.props.transparent) {
-			return <Header {...this.props} style={[styles.header, styles.transparentHeader]} />;
-		} else {
-			return (
-				<LinearGradient start={[0, 0]} end={[1, 0]} colors={styleVars.primaryBrand} style={styles.headerWrap}>
-					<StatusBar barStyle="light-content" translucent />
-					{content}
-				</LinearGradient>
-			);
-		}
+		return (
+			<LinearGradient
+				start={[0, 0]}
+				end={[1, 0]}
+				colors={this.props.transparent ? ["rgba(0,0,0,0)", "rgba(0,0,0,0)"] : styleVars.primaryBrand}
+				style={styles.headerWrap}
+			>
+				<StatusBar barStyle="light-content" translucent />
+				{content}
+			</LinearGradient>
+		);
 	}
 }
 
