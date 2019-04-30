@@ -28,11 +28,7 @@ export default class ContentCard extends Component {
 		}
 
 		return (
-			<TouchableOpacity
-				activeOpacity={styleVars.touchOpacity}
-				style={[componentStyles.contentCard, this.props.style]}
-				onPress={this.props.onPress || null}
-			>
+			<TouchableOpacity activeOpacity={styleVars.touchOpacity} style={[componentStyles.contentCard, this.props.style]} onPress={this.props.onPress || null}>
 				<View style={[componentStyles.contentCardInner]}>
 					{Boolean(this.props.header) && (
 						<View style={componentStyles.streamHeader}>
@@ -89,6 +85,6 @@ const componentStyles = StyleSheet.create({
 	streamFooter: {
 		paddingHorizontal: 12,
 		paddingBottom: 12,
-		flexGrow: 1,
+		flexGrow: 1
 	}
 });
