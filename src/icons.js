@@ -57,19 +57,3 @@ export const illustrations = {
 };
 
 export default icons;
-
-export const categoryIcons = {
-	_default: require("../resources/category_icons/general.png"),
-	auto: require("../resources/category_icons/automotive.png"),
-	finance: require("../resources/category_icons/finance.png"),
-	education: require("../resources/category_icons/education.png"),
-	entertainment: require("../resources/category_icons/entertainment.png"),
-	gaming: require("../resources/category_icons/gaming.png"),
-	general: require("../resources/category_icons/general.png"),
-	hobbyist: require("../resources/category_icons/hobbyist.png"),
-	lifestyle: require("../resources/category_icons/lifestyle.png"),
-	local: require("../resources/category_icons/local.png"),
-	news: require("../resources/category_icons/news.png"),
-	sports: require("../resources/category_icons/sport.png"),
-	technology: require("../resources/category_icons/technology.png")
-};

@@ -13,23 +13,7 @@ import Lang from "../../utils/Lang";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import styles, { styleVars, categoryStyles } from "../../styles";
-import { categoryIcons } from "../../icons";
-
-const backgroundImages = {
-	_default: require("../../../resources/category_images/general.jpg"),
-	auto: require("../../../resources/category_images/automotive.jpg"),
-	finance: require("../../../resources/category_images/finance.jpg"),
-	education: require("../../../resources/category_images/education.jpg"),
-	entertainment: require("../../../resources/category_images/entertainment.jpg"),
-	gaming: require("../../../resources/category_images/gaming.jpg"),
-	general: require("../../../resources/category_images/general.jpg"),
-	hobbyist: require("../../../resources/category_images/hobbyist.jpg"),
-	lifestyle: require("../../../resources/category_images/lifestyle.jpg"),
-	local: require("../../../resources/category_images/local.jpg"),
-	news: require("../../../resources/category_images/news.jpg"),
-	sports: require("../../../resources/category_images/sport.jpg"),
-	technology: require("../../../resources/category_images/technology.jpg")
-};
+import { categoryIcons, categoryImages } from "../../categories";
 
 const CategoryBox = props => {
 	if (props.loading) {
@@ -42,7 +26,7 @@ const CategoryBox = props => {
 		);
 	}
 
-	const background = !_.isUndefined(backgroundImages[props.id]) ? backgroundImages[props.id] : backgroundImages["_default"];
+	const background = !_.isUndefined(categoryImages[props.id]) ? categoryImages[props.id] : categoryImages["_default"];
 	const icon = !_.isUndefined(categoryIcons[props.id]) ? categoryIcons[props.id] : categoryIcons["_default"];
 	const color = !_.isUndefined(categoryStyles[props.id]) ? categoryStyles[props.id] : categoryStyles["_default"];
 
