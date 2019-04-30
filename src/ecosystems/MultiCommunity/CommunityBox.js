@@ -11,15 +11,21 @@ import parseUri from "../../utils/parseUri";
 import Lang from "../../utils/Lang";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
+import highlightTerms from "../../utils/highlightTerms";
 import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
 
 class CommunityBox extends Component {
 	constructor(props) {
 		super(props);
-		this.onPressDots = this.onPressDots.bind(this);
 	}
 
+	/**
+	 * Return the URL to display for this community. Returns just the subdomain/domain,
+	 * and excludes www.
+	 *
+	 * @return 	string
+	 */
 	getDisplayUrl() {
 		const parsedUri = parseUri(this.props.apiUrl);
 		const authority = parsedUri.authority;
@@ -36,8 +42,19 @@ class CommunityBox extends Component {
 		return authority;
 	}
 
-	onPressDots() {
-		this._actionSheet.show();
+	/**
+	 * Highlight the given text if our highlight property contains some text
+	 *
+	 * @param 	string 		text 		The text to highlight
+	 * @return 	Component|string
+	 */
+	maybeDoHighlight(text) {
+		// For now, don't do highlighting since it won't do partial word matches
+		/*if (this.props.highlight) {
+			return highlightTerms(text, this.props.highlight, styles.highlightedText);
+		}*/
+
+		return text;
 	}
 
 	render() {
@@ -73,14 +90,14 @@ class CommunityBox extends Component {
 							)}
 						</View>
 						<View style={[styles.flex, styles.flexJustifyCenter]}>
-							<Text style={[styles.itemTitle]}>{this.props.name}</Text>
-							<Text style={[styles.smallText, styles.lightText]}>{displayUrl}</Text>
+							<Text style={[styles.itemTitle]}>{this.maybeDoHighlight(this.props.name)}</Text>
+							<Text style={[styles.smallText, styles.lightText]}>{this.maybeDoHighlight(displayUrl)}</Text>
 						</View>
 						{this.props.rightComponent && <View>{RightComponent}</View>}
 					</View>
 					{this.props.description && (
 						<View style={[styles.ptStandard, styles.mtStandard, componentStyles.communityDescription]}>
-							<Text numberOfLines={3}>{this.props.description}</Text>
+							<Text numberOfLines={3}>{this.maybeDoHighlight(this.props.description)}</Text>
 						</View>
 					)}
 				</TouchableOpacity>
