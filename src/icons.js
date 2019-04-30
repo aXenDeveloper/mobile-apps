@@ -10,6 +10,7 @@ const icons = {
 	CHECKMARK_CIRCLE_SOLID: require("../resources/checkmark_circle_solid.png"),
 	COG: require("../resources/settings.png"),
 	CROSS: require("../resources/close.png"),
+	CROSS_CIRCLE_SOLID: require("../resources/close_circle.png"),
 	DOTS: require("../resources/dots.png"),
 	FIRE: require("../resources/hot.png"),
 	HEART: require("../resources/comment_like.png"),
@@ -51,13 +52,24 @@ export const illustrations = {
 	NOTIFICATIONS: require("../resources/illustration_notifications.png"),
 	LIST: require("../resources/illustration_list.svg"),
 	EMPTY: require("../resources/illustration_empty.png"),
-	COMMUNITY: require("../resources/illustration_community.png")
+	COMMUNITY: require("../resources/illustration_community.png"),
+	SEARCH_LIST: require("../resources/illustration_search.png")
 };
 
 export default icons;
 
 export const categoryIcons = {
 	_default: require("../resources/category_icons/general.png"),
+	auto: require("../resources/category_icons/automotive.png"),
+	finance: require("../resources/category_icons/finance.png"),
+	education: require("../resources/category_icons/education.png"),
+	entertainment: require("../resources/category_icons/entertainment.png"),
+	gaming: require("../resources/category_icons/gaming.png"),
 	general: require("../resources/category_icons/general.png"),
-	gaming: require("../resources/category_icons/gaming.png")
+	hobbyist: require("../resources/category_icons/hobbyist.png"),
+	lifestyle: require("../resources/category_icons/lifestyle.png"),
+	local: require("../resources/category_icons/local.png"),
+	news: require("../resources/category_icons/news.png"),
+	sports: require("../resources/category_icons/sport.png"),
+	technology: require("../resources/category_icons/technology.png")
 };
