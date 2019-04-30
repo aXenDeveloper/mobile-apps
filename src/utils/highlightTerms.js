@@ -13,27 +13,32 @@ import { Text, View, FlatList, TouchableHighlight, StyleSheet } from "react-nati
  * @return 	array
  */
 export default function highlightTerms(content, term, highlightStyle) {
-	if( !term || !content ){
+	if (!term || !content) {
 		return content;
 	}
 
-	const words = content.replace(/[\n\t\r]/g, '').split(' ');
-	const terms = term.split(' ').map(term => term.toLowerCase());
+	const words = content.replace(/[\n\t\r]/g, "").split(" ");
+	const terms = term.split(" ").map(term => term.toLowerCase());
 	const finalContent = [];
 	let currentText = [];
 	let counter = 0;
 
-	words.forEach( (word) => {
-		if( terms.indexOf(word.toLowerCase().trim()) !== -1 ){
+	words.forEach(word => {
+		if (terms.indexOf(word.toLowerCase().trim()) !== -1) {
 			// If one of our terms is found, put previous text in a <Text>, our term in another <Text>
-			if( currentText.length ){
-				finalContent.push( <Text key={counter++}>{currentText.join(' ')}</Text> );
-				finalContent.push( <Text key={counter++}>&nbsp;</Text> );
+			if (currentText.length) {
+				finalContent.push(<Text key={counter++}>{currentText.join(" ")}</Text>);
+				finalContent.push(<Text key={counter++}>&nbsp;</Text>);
 				currentText = [];
 			}
 
-			finalContent.push( <Text key={counter++} style={highlightStyle}> {word} </Text> );
-			finalContent.push( <Text key={counter++}>&nbsp;</Text> );
+			finalContent.push(
+				<Text key={counter++} style={highlightStyle}>
+					{" "}
+					{word}{" "}
+				</Text>
+			);
+			finalContent.push(<Text key={counter++}>&nbsp;</Text>);
 		} else {
 			// Just continue...
 			currentText.push(word);
@@ -41,8 +46,8 @@ export default function highlightTerms(content, term, highlightStyle) {
 	});
 
 	// If we have any words left, add those
-	if( currentText.length ){
-		finalContent.push( <Text key={counter++}>{currentText.join(' ')}</Text> );
+	if (currentText.length) {
+		finalContent.push(<Text key={counter++}>{currentText.join(" ")}</Text>);
 	}
 
 	return finalContent;
