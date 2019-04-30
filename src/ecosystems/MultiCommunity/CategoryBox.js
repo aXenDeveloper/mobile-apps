@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Text, View, Image, ImageBackground, StyleSheet, TouchableHighlight, TouchableOpacity, ActivityIndicator } from "react-native";
+import { LinearGradient } from "expo";
 import { connect } from "react-redux";
 import { graphql, compose } from "react-apollo";
 import FadeIn from "react-native-fade-in-image";
@@ -16,8 +17,18 @@ import { categoryIcons } from "../../icons";
 
 const backgroundImages = {
 	_default: require("../../../resources/category_images/general.jpg"),
+	auto: require("../../../resources/category_images/automotive.jpg"),
+	finance: require("../../../resources/category_images/finance.jpg"),
+	education: require("../../../resources/category_images/education.jpg"),
+	entertainment: require("../../../resources/category_images/entertainment.jpg"),
 	gaming: require("../../../resources/category_images/gaming.jpg"),
-	general: require("../../../resources/category_images/general.jpg")
+	general: require("../../../resources/category_images/general.jpg"),
+	hobbyist: require("../../../resources/category_images/hobbyist.jpg"),
+	lifestyle: require("../../../resources/category_images/lifestyle.jpg"),
+	local: require("../../../resources/category_images/local.jpg"),
+	news: require("../../../resources/category_images/news.jpg"),
+	sports: require("../../../resources/category_images/sport.jpg"),
+	technology: require("../../../resources/category_images/technology.jpg")
 };
 
 const CategoryBox = props => {
@@ -40,10 +51,15 @@ const CategoryBox = props => {
 			<TouchableOpacity style={[componentStyles.touchableBox]} onPress={props.onPress}>
 				<FadeIn style={componentStyles.image}>
 					<ImageBackground source={background} style={componentStyles.image} resizeMode="cover">
-						<View style={[styles.flex, styles.flexGrow, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.innerBox]}>
+						<LinearGradient
+							colors={["rgba(58,69,81,0.2)", "rgba(58,69,81,1)"]}
+							start={[0, 0]}
+							end={[1, 1]}
+							style={[styles.flex, styles.flexGrow, styles.flexAlignCenter, styles.flexJustifyCenter, styles.phWide, componentStyles.innerBox]}
+						>
 							<Image source={icon} resizeMode="contain" style={[componentStyles.icon, styles.mbTight]} />
-							<Text style={componentStyles.categoryTitle}>{props.name}</Text>
-						</View>
+							<Text style={[styles.centerText, componentStyles.categoryTitle]}>{props.name}</Text>
+						</LinearGradient>
 					</ImageBackground>
 				</FadeIn>
 			</TouchableOpacity>
@@ -68,8 +84,7 @@ const componentStyles = StyleSheet.create({
 		...StyleSheet.absoluteFillObject
 	},
 	innerBox: {
-		...StyleSheet.absoluteFillObject,
-		backgroundColor: "rgba(58,69,81,0.8)"
+		...StyleSheet.absoluteFillObject
 	},
 	icon: {
 		width: 40,
