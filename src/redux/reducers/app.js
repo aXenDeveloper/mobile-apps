@@ -208,6 +208,7 @@ export default function app(state = initialState, { type, payload }) {
 					[payload.id]: {
 						...state.categories[payload.id],
 						loading: true,
+						finished: false,
 						error: false
 					}
 				}
@@ -220,6 +221,7 @@ export default function app(state = initialState, { type, payload }) {
 					[payload.id]: {
 						...state.categories[payload.id],
 						loading: false,
+						finished: false,
 						error: true
 					}
 				}
@@ -232,17 +234,13 @@ export default function app(state = initialState, { type, payload }) {
 
 			return {
 				...state,
-				categoryList: {
-					...state.categoryList,
-					loading: false,
-					error: false
-				},
 				categories: {
 					...state.categories,
 					[payload.id]: {
 						...state.categories[payload.id],
 						loading: false,
 						error: false,
+						finished: payload.finished,
 						items: [...existingSlice, ...payload.items]
 					}
 				}

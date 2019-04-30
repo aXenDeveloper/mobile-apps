@@ -21,8 +21,16 @@ class MultiCategoryScreen extends Component {
 		super(props);
 		this._pressHandlers = {};
 		this._togglePressHandlers = {};
+		this._offset = 0;
+
+		this.onEndReached = this.onEndReached.bind(this);
 	}
 
+	/**
+	 * Load items in this category as soon as we mount
+	 *
+	 * @return 	void
+	 */
 	componentDidMount() {
 		const { categoryID } = this.props.navigation.state.params;
 
@@ -30,15 +38,28 @@ class MultiCategoryScreen extends Component {
 		this.setScreenTitle(this.props.app.categories[categoryID].name);
 	}
 
+	/**
+	 * If our category ID has changed, load new items. In theory this shouldn't happen
+	 * because the screen will unmount as we go back to the category listing, but just in case...
+	 *
+	 * @return 	void
+	 */
 	componentDidUpdate(prevProps) {
 		const { categoryID } = this.props.navigation.state.params;
 
 		if (prevProps.navigation.state.params.categoryID !== categoryID) {
-			this.props.dispatch(loadCommunityCategory(categoryID));
+			this._offset = 0;
+			this.props.dispatch(loadCommunityCategory(categoryID, this._offset));
 			this.setScreenTitle(this.props.app.categories[categoryID].name);
 		}
 	}
 
+	/**
+	 * Set the header title for this screen
+	 *
+	 * @param 	string 		name 	Category name
+	 * @return 	void
+	 */
 	setScreenTitle(name) {
 		this.props.navigation.setParams({
 			categoryName: name
@@ -66,6 +87,12 @@ class MultiCategoryScreen extends Component {
 		return this._pressHandlers[apiInfo.apiUrl];
 	}
 
+	/**
+	 * Memoization function for the onPress handler that will save a community to user's list
+	 *
+	 * @param 	string 		ID of community to fetch onPress handler for
+	 * @return 	function
+	 */
 	getToggleCommunityHandler(id) {
 		if (_.isUndefined(this._togglePressHandlers[id])) {
 			this._togglePressHandlers[id] = () => {
@@ -80,6 +107,12 @@ class MultiCategoryScreen extends Component {
 		return this._togglePressHandlers[id];
 	}
 
+	/**
+	 * Render a community item
+	 *
+	 * @param 	object 		Community data object
+	 * @return 	Component
+	 */
 	renderItem(item) {
 		const { id, name, client_id: apiKey, logo, description, url: apiUrl } = item;
 		const isSaved = _.find(this.props.app.communities.data, community => community.id === id);
@@ -114,6 +147,22 @@ class MultiCategoryScreen extends Component {
 		);
 	}
 
+	/**
+	 * Handles loading more items when we reach the end of the list. Only does so if the finished/loading flags are false.
+	 *
+	 * @return 	void
+	 */
+	onEndReached() {
+		const { categoryID } = this.props.navigation.state.params;
+		const categoryData = this.props.app.categories[categoryID];
+
+		if (!_.isUndefined(categoryData) && (categoryData.finished || categoryData.loading)) {
+			return;
+		}
+
+		this.props.dispatch(loadCommunityCategory(categoryID, this.props.app.categories[categoryID].length));
+	}
+
 	render() {
 		const { categoryID } = this.props.navigation.state.params;
 		const thisCategory = this.props.app.categories[categoryID];
@@ -135,6 +184,7 @@ class MultiCategoryScreen extends Component {
 					data={thisCategory.items}
 					keyExtractor={item => item.id}
 					renderItem={({ item }) => this.renderItem(item)}
+					onEndReached={this.onEndReached}
 				/>
 			);
 		}

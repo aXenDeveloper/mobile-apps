@@ -400,7 +400,6 @@ export const communityCategorySuccess = data => ({
 
 export const loadCommunityCategory = (id, offset = 0) => {
 	return async (dispatch, getState) => {
-		console.log("Loading category...");
 		dispatch(communityCategoryLoading(id));
 
 		try {
@@ -435,7 +434,8 @@ export const loadCommunityCategory = (id, offset = 0) => {
 				communityCategorySuccess({
 					id,
 					offset,
-					items
+					items,
+					finished: items.length < 100
 				})
 			);
 		} catch (err) {
