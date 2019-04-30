@@ -350,6 +350,9 @@ const styles = StyleSheet.create({
 		flexBasis: 0,
 		flexGrow: 1
 	},
+	absoluteFill: {
+		...StyleSheet.absoluteFillObject
+	},
 
 	/* Typography */
 	contentTitle: {

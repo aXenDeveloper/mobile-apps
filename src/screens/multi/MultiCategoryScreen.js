@@ -1,20 +1,29 @@
 import React, { Component } from "react";
-import { Text, View, FlatList, ScrollView, TouchableOpacity } from "react-native";
+import { Text, View, FlatList, ScrollView, TouchableOpacity, StatusBar, StyleSheet, Image, Animated, Platform } from "react-native";
 import { connect } from "react-redux";
 import _ from "underscore";
+import { Header } from "react-navigation";
+import FadeIn from "react-native-fade-in-image";
 
 import { loadCommunityCategory, setActiveCommunity, toggleSavedCommunity } from "../../redux/actions/app";
 import { CommunityBox } from "../../ecosystems/MultiCommunity";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import Button from "../../atoms/Button";
 import ErrorBox from "../../atoms/ErrorBox";
+import CustomHeader from "../../ecosystems/CustomHeader";
+import TwoLineHeader from "../../atoms/TwoLineHeader";
 import NavigationService from "../../utils/NavigationService";
 import icons from "../../icons";
 import styles from "../../styles";
+import { categoryIcons, categoryImages } from "../../categories";
 
 class MultiCategoryScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
-		title: navigation.state.params.categoryName ? navigation.state.params.categoryName : "Loading..."
+		headerTransparent: true,
+		header: props => {
+			return <Header {...props} />;
+		}
+		//title: navigation.state.params.categoryName ? navigation.state.params.categoryName : "Loading..."
 	});
 
 	constructor(props) {
@@ -22,6 +31,17 @@ class MultiCategoryScreen extends Component {
 		this._pressHandlers = {};
 		this._togglePressHandlers = {};
 		this._offset = 0;
+
+		this.state = {
+			fullHeaderHeight: 200
+		};
+
+		this._nScroll = new Animated.Value(0);
+		this._scroll = new Animated.Value(0);
+		this._heights = [];
+		this._nScroll.addListener(Animated.event([{ value: this._scroll }], { useNativeDriver: false }));
+
+		this.buildAnimations();
 
 		this.onEndReached = this.onEndReached.bind(this);
 	}
@@ -63,6 +83,30 @@ class MultiCategoryScreen extends Component {
 	setScreenTitle(name) {
 		this.props.navigation.setParams({
 			categoryName: name
+		});
+	}
+
+	buildAnimations() {
+		const HEADER_HEIGHT = Platform.OS === "ios" ? 76 : 50;
+		const SCROLL_HEIGHT = this.state.fullHeaderHeight - HEADER_HEIGHT;
+
+		// Interpolate methods for animations
+		this.categoryInfoOpacity = this._scroll.interpolate({
+			inputRange: [0, SCROLL_HEIGHT / 2, SCROLL_HEIGHT],
+			outputRange: [1, 0.1, 0]
+		});
+		this.headerY = this._nScroll.interpolate({
+			inputRange: [0, SCROLL_HEIGHT, SCROLL_HEIGHT + 1],
+			outputRange: [0, 0, 1]
+		});
+		/*this.imgScale = this._nScroll.interpolate({
+			inputRange: [-75, 0, 50],
+			outputRange: [1, 1, 0.7],
+			extrapolateLeft: "clamp"
+		});*/
+		this.fixedHeaderOpacity = this._scroll.interpolate({
+			inputRange: [0, SCROLL_HEIGHT / 2, SCROLL_HEIGHT * 0.8],
+			outputRange: [0, 0.1, 1]
 		});
 	}
 
@@ -166,9 +210,12 @@ class MultiCategoryScreen extends Component {
 	render() {
 		const { categoryID } = this.props.navigation.state.params;
 		const thisCategory = this.props.app.categories[categoryID];
+		const title = thisCategory.name || "Loading...";
+
+		let ScreenContents;
 
 		if (thisCategory.loading) {
-			return (
+			ScreenContents = (
 				<View>
 					<PlaceholderRepeater repeat={7}>
 						<CommunityBox loading />
@@ -176,9 +223,9 @@ class MultiCategoryScreen extends Component {
 				</View>
 			);
 		} else if (thisCategory.error) {
-			return <ErrorBox message="Sorry, there was a problem fetching the communities in this category. Please try again later." />;
+			ScreenContents = <ErrorBox message="Sorry, there was a problem fetching the communities in this category. Please try again later." />;
 		} else {
-			return (
+			ScreenContents = (
 				<FlatList
 					extraData={this.props.app.communities.data}
 					data={thisCategory.items}
@@ -188,9 +235,81 @@ class MultiCategoryScreen extends Component {
 				/>
 			);
 		}
+
+		return (
+			<View style={styles.flex}>
+				<StatusBar barStyle="light-content" translucent />
+				<Animated.View
+					style={[componentStyles.fixedProfileHeader, { opacity: this.fixedHeaderOpacity }]}
+					onLayout={e => {
+						this.setState({ smallHeaderHeight: e.nativeEvent.layout.height });
+					}}
+				>
+					<CustomHeader
+						transparent
+						content={
+							<View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, { paddingTop: 24 }]}>
+								<TwoLineHeader title={title} />
+							</View>
+						}
+					/>
+				</Animated.View>
+				<Animated.ScrollView
+					showsVerticalScrollIndicator={false}
+					scrollEventThrottle={5}
+					style={[styles.flex, { zIndex: 0 }]}
+					onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: this._nScroll } } }], { useNativeDriver: true })}
+				>
+					<Animated.View
+						onLayout={e => {
+							this.setState({ fullHeaderHeight: e.nativeEvent.layout.height });
+						}}
+						style={[componentStyles.header, { transform: [{ translateY: this.headerY }] }]}
+					>
+						<FadeIn style={styles.absoluteFill}>
+							<Image source={categoryImages[categoryID]} resizeMode="cover" style={[styles.absoluteFill, componentStyles.headerImage]} />
+						</FadeIn>
+						<View style={[styles.absoluteFill, componentStyles.headerTransparentCover]} />
+						<Animated.View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, styles.absoluteFill, { opacity: this.categoryInfoOpacity }]}>
+							<Image source={categoryIcons[categoryID]} resizeMode="contain" style={[styles.mbWide, componentStyles.headerIcon]} />
+							<Text style={[styles.centerText, styles.mediumText, styles.extraLargeText, componentStyles.categoryName]}>{title}</Text>
+						</Animated.View>
+					</Animated.View>
+					{ScreenContents}
+				</Animated.ScrollView>
+			</View>
+		);
 	}
 }
 
 export default connect(state => ({
 	app: state.app
 }))(MultiCategoryScreen);
+
+const componentStyles = StyleSheet.create({
+	fixedProfileHeader: {
+		position: "absolute",
+		top: 0,
+		left: 0,
+		right: 0,
+		zIndex: 100
+	},
+	header: {
+		height: 200,
+		zIndex: 1
+	},
+	headerImage: {
+		height: 200
+	},
+	headerTransparentCover: {
+		backgroundColor: "rgba(58,69,81,0.8)"
+	},
+	headerIcon: {
+		width: 60,
+		height: 60,
+		tintColor: "#fff"
+	},
+	categoryName: {
+		color: "#fff"
+	}
+});
