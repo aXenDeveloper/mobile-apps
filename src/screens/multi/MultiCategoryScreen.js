@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Text, View, FlatList, ScrollView, TouchableOpacity, StatusBar, StyleSheet, Image, Animated, Platform } from "react-native";
 import { connect } from "react-redux";
 import _ from "underscore";
+import { LinearGradient } from "expo";
 import { Header } from "react-navigation";
 import FadeIn from "react-native-fade-in-image";
 
@@ -13,8 +14,8 @@ import ErrorBox from "../../atoms/ErrorBox";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import NavigationService from "../../utils/NavigationService";
-import icons from "../../icons";
-import styles from "../../styles";
+import icons, { illustrations } from "../../icons";
+import styles, { styleVars } from "../../styles";
 import { categoryIcons, categoryImages } from "../../categories";
 
 class MultiCategoryScreen extends Component {
@@ -207,6 +208,22 @@ class MultiCategoryScreen extends Component {
 		this.props.dispatch(loadCommunityCategory(categoryID, this.props.app.categories[categoryID].length));
 	}
 
+	/**
+	 * Emoty category - shouldn't happen in production but might in the early launch stages.
+	 *
+	 * @return 	Component
+	 */
+	renderEmptyList() {
+		return (
+			<View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter]}>
+				<Text style={[styles.mtExtraWide, styles.centerText, styles.itemTitle]}>No Communities</Text>
+				<Text style={[styles.mhExtraWide, styles.mtStandard, styles.lightText, styles.centerText, styles.contentText]}>
+					There are no communities in this category right now. Check back later!
+				</Text>
+			</View>
+		);
+	}
+
 	render() {
 		const { categoryID } = this.props.navigation.state.params;
 		const thisCategory = this.props.app.categories[categoryID];
@@ -232,6 +249,7 @@ class MultiCategoryScreen extends Component {
 					keyExtractor={item => item.id}
 					renderItem={({ item }) => this.renderItem(item)}
 					onEndReached={this.onEndReached}
+					ListEmptyComponent={this.renderEmptyList()}
 				/>
 			);
 		}
@@ -269,7 +287,7 @@ class MultiCategoryScreen extends Component {
 						<FadeIn style={styles.absoluteFill}>
 							<Image source={categoryImages[categoryID]} resizeMode="cover" style={[styles.absoluteFill, componentStyles.headerImage]} />
 						</FadeIn>
-						<View style={[styles.absoluteFill, componentStyles.headerTransparentCover]} />
+						<LinearGradient colors={["rgba(58,69,81,0.2)", "rgba(58,69,81,1)"]} start={[0, 0]} end={[1, 1]} style={[styles.absoluteFill]} />
 						<Animated.View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, styles.absoluteFill, { opacity: this.categoryInfoOpacity }]}>
 							<Image source={categoryIcons[categoryID]} resizeMode="contain" style={[styles.mbWide, componentStyles.headerIcon]} />
 							<Text style={[styles.centerText, styles.mediumText, styles.extraLargeText, componentStyles.categoryName]}>{title}</Text>
@@ -301,9 +319,6 @@ const componentStyles = StyleSheet.create({
 	headerImage: {
 		height: 200
 	},
-	headerTransparentCover: {
-		backgroundColor: "rgba(58,69,81,0.8)"
-	},
 	headerIcon: {
 		width: 60,
 		height: 60,
@@ -311,5 +326,10 @@ const componentStyles = StyleSheet.create({
 	},
 	categoryName: {
 		color: "#fff"
+	},
+	emptyImage: {
+		width: "100%",
+		height: 150,
+		marginTop: styleVars.spacing.extraWide * 2
 	}
 });
