@@ -266,7 +266,7 @@ class MultiCategoryListScreen extends Component {
 	 * @return 	Component
 	 */
 	renderItem(item) {
-		const { id, name, client_id: apiKey, logo, description, url: apiUrl } = item;
+		const { id, name, client_id: apiKey, logo, description, url: apiUrl, category_name } = item;
 		const isSaved = _.find(this.props.app.communities.data, community => community.id === id);
 
 		return (
@@ -277,6 +277,7 @@ class MultiCategoryListScreen extends Component {
 				description={description}
 				apiKey={apiKey}
 				apiUrl={apiUrl}
+				categoryName={category_name}
 				communityLoading={!this.props.app.bootStatus.loaded && this.props.app.currentCommunity.apiUrl == apiUrl}
 				rightComponent={
 					<View style={{ width: 35 }}>

@@ -84,7 +84,7 @@ class CommunityBox extends Component {
 								</FadeIn>
 							)}
 							{this.props.communityLoading && (
-								<View style={[styles.flex, styles.flexJustifyCenter, styles.flexAlignCenter, componentStyles.loadingWrap]}>
+								<View style={[styles.flex, styles.flexJustifyCenter, styles.flexAlignCenter, styles.absoluteFill, componentStyles.loadingWrap]}>
 									<ActivityIndicator size="small" color="#ffffff" />
 								</View>
 							)}
@@ -97,7 +97,10 @@ class CommunityBox extends Component {
 					</View>
 					{this.props.description && (
 						<View style={[styles.ptStandard, styles.mtStandard, componentStyles.communityDescription]}>
-							<Text numberOfLines={3}>{this.maybeDoHighlight(this.props.description)}</Text>
+							<Text numberOfLines={3}>
+								{this.props.categoryName && <Text style={[styles.lightText, componentStyles.categoryNameText]}>({this.props.categoryName}) </Text>}
+								{this.maybeDoHighlight(this.props.description)}
+							</Text>
 						</View>
 					)}
 				</TouchableOpacity>
@@ -131,11 +134,15 @@ const componentStyles = StyleSheet.create({
 		overflow: "hidden"
 	},
 	loadingWrap: {
-		...StyleSheet.absoluteFillObject,
 		backgroundColor: "rgba(0,0,0,0.3)"
 	},
-	dots: {
-		width: 20,
-		height: 20
+	categoryName: {
+		/*backgroundColor: styleVars.greys.medium,
+		borderRadius: 20,
+		paddingVertical: 4,
+		paddingHorizontal: 8*/
+	},
+	categoryNameText: {
+		/*fontSize: 11*/
 	}
 });
