@@ -49,6 +49,7 @@ class MyCommunitiesScreen extends Component {
 		this._pressHandlers = {};
 		this.pressCommunity = this.pressCommunity.bind(this);
 
+		this._actionSheetRefs = {};
 		this._actionSheetHandlers = {};
 		this.toggleFavorite = this.toggleFavorite.bind(this);
 		this.reportCommunity = this.reportCommunity.bind(this);
@@ -158,14 +159,14 @@ class MyCommunitiesScreen extends Component {
 				rightComponent={
 					<React.Fragment>
 						<TouchableOpacity
-							onPress={() => this._actionSheet.show()}
+							onPress={() => this._actionSheetRefs[id].show()}
 							style={[styles.plStandard, styles.flexJustifyCenter]}
 							hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}
 						>
 							<Image source={icons.DOTS} resizeMode="contain" style={componentStyles.dots} />
 						</TouchableOpacity>
 						<ActionSheet
-							ref={o => (this._actionSheet = o)}
+							ref={o => (this._actionSheetRefs[id] = o)}
 							title={name}
 							options={actionSheetOptions}
 							cancelButtonIndex={actionSheetCancelIndex}
