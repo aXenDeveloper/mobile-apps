@@ -32,6 +32,7 @@ class MultiCategoryListScreen extends Component {
 		this._togglePressHandlers = {};
 		this._textInput = null;
 		this.state = {
+			searchFocus: false,
 			searchActive: false,
 			searchTerm: "",
 			searchResults: [],
@@ -335,6 +336,7 @@ class MultiCategoryListScreen extends Component {
 	 */
 	searchOnFocus() {
 		this.setState({
+			searchFocus: true,
 			searchActive: true
 		});
 	}
@@ -350,6 +352,10 @@ class MultiCategoryListScreen extends Component {
 				searchActive: false
 			});
 		}
+
+		this.setState({
+			searchFocus: false
+		});
 	}
 
 	/**
@@ -372,6 +378,7 @@ class MultiCategoryListScreen extends Component {
 	 */
 	searchEmptyTextBox() {
 		this.setState({
+			searchActive: this.state.searchFocus,
 			searchTerm: "",
 			searchResults: []
 		});
