@@ -72,6 +72,7 @@ const LangFragment = gql`
 		attachment_options: phrase(key: "app_attachment_options")
 		no_matching_members: phrase(key: "app_no_matching_members")
 		rep: phrase(key: "app_rep")
+		no_rep_this_week: phrase(key: "app_no_rep_this_week")
 
 		followed_member: phrase(key: "app_followed_member")
 		unfollowed_member: phrase(key: "app_unfollowed_member")
@@ -90,7 +91,7 @@ const LangFragment = gql`
 		forgot_password: phrase(key: "app_forgot_password")
 		sign_in_anon: phrase(key: "app_sign_in_anon")
 		sign_in_with_social: phrase(key: "app_sign_in_with_social")
-		
+
 		search_site: phrase(key: "app_search_site")
 		loading: phrase(key: "app_loading")
 		no_recent_searches: phrase(key: "app_no_recent_searches")
@@ -112,7 +113,7 @@ const LangFragment = gql`
 		no_forum: phrase(key: "app_no_forum")
 		no_topic: phrase(key: "app_no_topic")
 		incorrect_forum_password: phrase(key: "app_incorrect_forum_password")
-		no_post: phrase(key: "app_no_post"),
+		no_post: phrase(key: "app_no_post")
 		invalid_topic: phrase(key: "app_invalid_topic")
 		not_question: phrase(key: "app_not_question")
 		cannot_vote: phrase(key: "app_cannot_vote")
@@ -160,10 +161,10 @@ const LangFragment = gql`
 		earlier: phrase(key: "app_earlier")
 
 		x_follow_this: phrase(key: "app_x_follow_this")
-		follow_immediate: phrase(key: "app_follow_immediate")		
+		follow_immediate: phrase(key: "app_follow_immediate")
 		follow_weekly: phrase(key: "app_follow_weekly")
 		follow_daily: phrase(key: "app_follow_daily")
-		follow_none: phrase(key: "app_follow_none")		
+		follow_none: phrase(key: "app_follow_none")
 		follow_anon: phrase(key: "app_follow_anon")
 		follow_freq: phrase(key: "app_follow_freq")
 		follow_privacy: phrase(key: "app_follow_privacy")

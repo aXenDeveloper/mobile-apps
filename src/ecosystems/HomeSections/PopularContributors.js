@@ -95,7 +95,13 @@ class PopularContributors extends Component {
 
 		return (
 			<View style={[componentStyles.wrapper, styles.row, styles.pvTight]}>
-				{this.props.data.core.popularContributors.map((row, idx) => this.getRow(row, idx))}
+				{this.props.data.core.popularContributors.length ? (
+					this.props.data.core.popularContributors.map((row, idx) => this.getRow(row, idx))
+				) : (
+					<View style={[styles.phWide, styles.pvStandard]}>
+						<Text style={[styles.lightText]}>{Lang.get("no_rep_this_week")}</Text>
+					</View>
+				)}
 			</View>
 		);
 	}
