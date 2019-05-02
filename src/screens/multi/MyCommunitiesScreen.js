@@ -26,8 +26,8 @@ import icons, { illustrations } from "../../icons";
 class MyCommunitiesScreen extends Component {
 	static navigationOptions = ({ navigation }) => {
 		return {
-			title: "My Communities",
-			headerRight: <HeaderButton icon={icons.PLUS_CIRCLE} onPress={navigation.getParam("onPressAddCommunity")} />
+			title: "My Communities"
+			//headerRight: <HeaderButton icon={icons.PLUS_CIRCLE} onPress={navigation.getParam("onPressAddCommunity")} />
 		};
 	};
 
