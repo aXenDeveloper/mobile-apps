@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Image, Alert, Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
+import { Button, Image, Alert, Text, View, StyleSheet, TouchableHighlight, TouchableOpacity, Share } from "react-native";
 import Modal from "react-native-modal";
 import ActionSheet from "react-native-actionsheet";
 import gql from "graphql-tag";
@@ -62,7 +62,7 @@ class Post extends Component {
 			whoReactedModalVisible: false,
 			whoReactedCount: 0,
 			whoReactedReaction: 0,
-			whoReactedImage: '',
+			whoReactedImage: "",
 			ignoreOverride: false
 		};
 		this.onPressReaction = this.onPressReaction.bind(this);
@@ -75,6 +75,8 @@ class Post extends Component {
 		this.onReactionPress = this.onReactionPress.bind(this);
 		this.onPressPostDots = this.onPressPostDots.bind(this);
 		this.onPressIgnoredPost = this.onPressIgnoredPost.bind(this);
+		this.onShare = this.onShare.bind(this);
+		this.actionSheetPress = this.actionSheetPress.bind(this);
 	}
 
 	/**
@@ -118,7 +120,11 @@ class Post extends Component {
 	 * @return 	void
 	 */
 	actionSheetPress(i) {
-		console.log("action sheet");
+		switch (i) {
+			case 1:
+				this.onShare();
+				break;
+		}
 	}
 
 	/**
@@ -186,7 +192,7 @@ class Post extends Component {
 		this.setState({
 			reactionModalVisible: false
 		});
-	};
+	}
 
 	/**
 	 * Render the PostControl for the reaction button
@@ -234,7 +240,7 @@ class Post extends Component {
 		}
 
 		return this.showReactionModal();
-	};
+	}
 
 	/**
 	 * Handle regular press on reputation. Apply our default rep if not already reacted,
@@ -248,7 +254,7 @@ class Post extends Component {
 		} else {
 			this.onReactionPress(this.props.data.reputation.defaultReaction.id);
 		}
-	};
+	}
 
 	/**
 	 * A callback method for removing a reaction from the post
@@ -332,7 +338,7 @@ class Post extends Component {
 			const errorMessage = getErrorMessage(err, Post.errors);
 			Alert.alert(Lang.get("error"), Lang.get("error_reacting"), [{ text: Lang.get("ok") }], { cancelable: false });
 		}
-	};
+	}
 
 	/**
 	 * On update, check whether our reaction count has changed. If so, animate the reaction wrap in
@@ -370,7 +376,7 @@ class Post extends Component {
 			topicID: this.props.topic.id,
 			quotedPost: this.props.data
 		});
-	};
+	}
 
 	/**
 	 * Handler for tapping ... in a post for more options
@@ -379,7 +385,7 @@ class Post extends Component {
 	 */
 	onPressPostDots() {
 		this._actionSheet.show();
-	};
+	}
 
 	/**
 	 * Handler for showing/hiding an ignored post
@@ -393,16 +399,35 @@ class Post extends Component {
 	}
 
 	/**
+	 * Handles launching the share dialog
+	 *
+	 * @return 	void
+	 */
+	async onShare() {
+		try {
+			const result = await Share.share(
+				{
+					message: this.props.shareTitle,
+					url: this.props.data.url.full
+				},
+				{
+					dialogTitle: this.props.shortShareTitle || "",
+					subject: this.props.shortShareTitle || ""
+				}
+			);
+		} catch (err) {
+			console.warn("Failed to share");
+			Alert.alert(Lang.get("error"), Lang.get("error_sharing_content"), [{ text: Lang.get("ok") }], { cancelable: false });
+		}
+	}
+
+	/**
 	 * Render the ignored post wrapper (used when the user has ignored this user but hasn't chosen to show it manually)
 	 *
 	 * @return 	Component
 	 */
 	renderIgnoredPost() {
-		return (
-			<View style={styles.mbVeryTight}>
-				{this.renderIgnoreBar()}
-			</View>
-		);
+		return <View style={styles.mbVeryTight}>{this.renderIgnoreBar()}</View>;
 	}
 
 	/**
@@ -414,20 +439,20 @@ class Post extends Component {
 		return (
 			<ShadowedArea style={this.state.ignoreOverride ? styles.lightBackground : null}>
 				<TouchableOpacity style={[styles.flexRow, styles.flexJustifyBetween, styles.pvStandard, styles.phWide]} onPress={this.onPressIgnoredPost}>
-					<Text style={[styles.standardText, styles.veryLightText]}>{Lang.get('ignoring_user')}</Text>
-					<Text style={[styles.standardText, styles.accentText]}>{Lang.get( this.state.ignoreOverride ? 'hide' : 'show')}</Text>
+					<Text style={[styles.standardText, styles.veryLightText]}>{Lang.get("ignoring_user")}</Text>
+					<Text style={[styles.standardText, styles.accentText]}>{Lang.get(this.state.ignoreOverride ? "hide" : "show")}</Text>
 				</TouchableOpacity>
 			</ShadowedArea>
 		);
 	}
 
 	renderCommentFlag() {
-		if( !this.props.site.settings.reputation_enabled || !this.props.site.settings.reputation_highlight ){
+		if (!this.props.site.settings.reputation_enabled || !this.props.site.settings.reputation_highlight) {
 			return null;
 		}
 
-		if( this.props.data.reputation.reactionCount >= this.props.site.settings.reputation_highlight ){
-			return <CommentFlag />
+		if (this.props.data.reputation.reactionCount >= this.props.site.settings.reputation_highlight) {
+			return <CommentFlag />;
 		}
 
 		return null;
@@ -443,7 +468,7 @@ class Post extends Component {
 		}
 
 		const repButton = this.getReputationButton();
-		
+
 		// <Text>{this.props.position}</Text>
 
 		return (
@@ -494,9 +519,7 @@ class Post extends Component {
 						</View>
 						{Boolean(repButton || this.props.canReply) && (
 							<PostControls style={styles.mhWide}>
-								{Boolean(this.props.canReply) && (
-									<PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />
-								)}
+								{Boolean(this.props.canReply) && <PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />}
 								{repButton}
 							</PostControls>
 						)}
@@ -533,7 +556,7 @@ class Post extends Component {
 }
 
 export default compose(
-	graphql(PostReactionMutation), 
+	graphql(PostReactionMutation),
 	withNavigation,
 	connect(state => ({
 		site: state.site

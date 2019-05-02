@@ -4,9 +4,9 @@
 		"orientation": "portrait",
 		"privacy": "unlisted",
 		"extra": {
-			"multi": true,
-			"oauth_client_id": "e79f36dc890d5c6b01fa0dc25e52ad0e",
-			"api_url": "https://invisioncommunity.com/",
+			"multi": false,
+			"oauth_client_id": "64bec459cc5b5a2055b300b8b0704d7e",
+			"api_url": "http://192.168.1.33/ipsdev/Community/",
 			"refresh_token_advance": 300000,
 			"notification_timeout": 10000,
 			"message_prefix": "__IPS__",

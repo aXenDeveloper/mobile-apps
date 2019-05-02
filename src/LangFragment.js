@@ -73,6 +73,9 @@ const LangFragment = gql`
 		no_matching_members: phrase(key: "app_no_matching_members")
 		rep: phrase(key: "app_rep")
 		no_rep_this_week: phrase(key: "app_no_rep_this_week")
+		error_sharing_content: phrase(key: "app_error_sharing_content")
+		share_x_post: phrase(key: "app_share_x_post")
+		share_x_post_on_x: phrase(key: "app_share_x_post_on_x_at_x")
 
 		followed_member: phrase(key: "app_followed_member")
 		unfollowed_member: phrase(key: "app_unfollowed_member")

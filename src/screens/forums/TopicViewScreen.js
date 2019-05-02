@@ -907,6 +907,14 @@ class TopicViewScreen extends Component {
 				style={additionalPostStyle}
 				onLayout={this.onPostLayout}
 				position={this.state.startingOffset + index + 1}
+				shortShareTitle={Lang.get("share_x_post", {
+					name: item.author.name
+				})}
+				shareTitle={Lang.get("share_x_post_on_x", {
+					name: item.author.name,
+					title: topicData.title,
+					site: this.props.site.settings.board_name
+				})}
 			/>
 		);
 	}
