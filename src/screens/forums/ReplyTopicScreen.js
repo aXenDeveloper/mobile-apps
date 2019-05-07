@@ -6,11 +6,12 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { NavigationActions } from "react-navigation";
 import _ from "underscore";
 
-import getErrorMessage from '../../utils/getErrorMessage';
+import getErrorMessage from "../../utils/getErrorMessage";
 import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
 import { PostFragment } from "../../ecosystems/Post";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import UserPhoto from "../../atoms/UserPhoto";
+import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import styles from "../../styles";
 
@@ -33,14 +34,14 @@ class ReplyTopicScreen extends Component {
 			headerLeft: (
 				<View style={[styles.mlStandard]}>
 					<Text style={[styles.contentText, { color: "#fff" }]} onPress={navigation.getParam("cancelReply")}>
-						Cancel
+						{Lang.get("cancel")}
 					</Text>
 				</View>
 			),
 			headerRight: (
 				<View style={[styles.mrStandard]}>
 					<Text style={[styles.contentText, { color: "#fff" }]} onPress={navigation.getParam("submitReply")}>
-						Post
+						{Lang.get("post_action")}
 					</Text>
 				</View>
 			)
@@ -48,8 +49,8 @@ class ReplyTopicScreen extends Component {
 	};
 
 	static errors = {
-		'NO_TOPIC': "The topic you are replying to does not exist.",
-		'NO_POST': "You didn't provide a post."
+		NO_TOPIC: "The topic you are replying to does not exist.",
+		NO_POST: "You didn't provide a post."
 	};
 
 	constructor(props) {
@@ -100,13 +101,13 @@ class ReplyTopicScreen extends Component {
 				variables: {
 					topicID: this.props.navigation.state.params.topicID,
 					content: this.state.content,
-					replyingTo: !_.isUndefined( this.props.navigation.state.params.quotedPost ) ? this.props.navigation.state.params.quotedPost.id : null
+					replyingTo: !_.isUndefined(this.props.navigation.state.params.quotedPost) ? this.props.navigation.state.params.quotedPost.id : null
 				},
 				refetchQueries: ["TopicViewQuery", "TopicListQuery"]
 			});
 
 			const navigateAction = NavigationActions.navigate({
-				params: { 
+				params: {
 					showLastComment: true
 				},
 				routeName: "TopicView"
@@ -125,7 +126,28 @@ class ReplyTopicScreen extends Component {
 	 * @return 	void
 	 */
 	cancelReply() {
-
+		if (this.state.content) {
+			Alert.alert(
+				"Confirm",
+				"Are you sure you want to discard this reply without posting?",
+				[
+					{
+						text: "Discard",
+						onPress: () => {
+							this.props.navigation.goBack();
+						},
+						style: "cancel"
+					},
+					{
+						text: "Stay Here",
+						onPress: () => console.log("OK Pressed")
+					}
+				],
+				{ cancelable: false }
+			);
+		} else {
+			this.props.navigation.goBack();
+		}
 	}
 
 	render() {
@@ -147,18 +169,18 @@ class ReplyTopicScreen extends Component {
 
 		return (
 			<React.Fragment>
-				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1, backgroundColor: '#fff' }}>
+				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1, backgroundColor: "#fff" }}>
 					{quotedPostComponent}
 					<KeyboardAvoidingView style={{ flex: 1 }} enabled>
 						<QuillEditor
 							placeholder="Your Reply"
 							update={this.updateContentState.bind(this)}
 							height={400}
-							autoFocus={!_.isObject( this.props.navigation.state.params.quotedPost )}
+							autoFocus={!_.isObject(this.props.navigation.state.params.quotedPost)}
 							onFocus={measurer => {
 								// If we're quoting a post, we'll scroll the view up
 								// so that the editor is near the top when focused
-								if( this.props.navigation.state.params.quotedPost ){
+								if (this.props.navigation.state.params.quotedPost) {
 									if (this.offset) {
 										this.scrollview.scrollTo({
 											x: 0,

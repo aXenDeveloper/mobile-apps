@@ -9,6 +9,7 @@ const LangFragment = gql`
 		post_options: phrase(key: "app_post_options")
 		end_of_forum: phrase(key: "app_end_of_forum")
 		cancel: phrase(key: "app_cancel")
+		post_action: phrase(key: "app_post_action")
 		save: phrase(key: "app_save")
 		confirm: phrase(key: "app_confirm")
 		add: phrase(key: "app_add")
