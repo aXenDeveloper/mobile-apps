@@ -175,16 +175,21 @@ class UserScreen extends Component {
 	 * @return 	array
 	 */
 	getMenuOptions() {
-		return [
-			{
-				key: "edit_profile",
-				icon: icons.USER_DOCUMENT,
-				text: Lang.get("edit_profile"),
-				onPress: () => {
-					console.log("edit_profile");
-				}
-			},
-			{
+		let options = [];
+
+		/*{
+			key: "edit_profile",
+			icon: icons.USER_DOCUMENT,
+			text: Lang.get("edit_profile"),
+			onPress: () => {
+				console.log("edit_profile");
+			}
+		},*/
+
+		// For now, only show account settings if we're in white-label - unread settings
+		// will be in the main view for the multi app
+		if (!Expo.Constants.manifest.extra.multi) {
+			options.push({
 				key: "settings",
 				icon: icons.COG,
 				text: Lang.get("settings"),
@@ -192,25 +197,29 @@ class UserScreen extends Component {
 					this.props.navigation.closeDrawer();
 					this.props.navigation.navigate("AccountSettingsScreen");
 				}
-			},
-			{
-				key: "notifications",
-				icon: icons.BELL,
-				text: Lang.get("notification_settings"),
-				onPress: () => {
-					this.props.navigation.closeDrawer();
-					this.props.navigation.navigate("NotificationsSettings");
-				}
-			},
-			{
-				key: "signout",
-				icon: icons.SIGN_OUT,
-				text: Lang.get("sign_out"),
-				onPress: () => {
-					this.confirmLogOut();
-				}
+			});
+		}
+
+		options.push({
+			key: "notifications",
+			icon: icons.BELL,
+			text: Lang.get("notification_settings"),
+			onPress: () => {
+				this.props.navigation.closeDrawer();
+				this.props.navigation.navigate("NotificationsSettings");
 			}
-		];
+		});
+
+		options.push({
+			key: "signout",
+			icon: icons.SIGN_OUT,
+			text: Lang.get("sign_out"),
+			onPress: () => {
+				this.confirmLogOut();
+			}
+		});
+
+		return options;
 	}
 
 	/**
