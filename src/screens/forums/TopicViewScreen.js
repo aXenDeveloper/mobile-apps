@@ -1430,13 +1430,13 @@ export default compose(
 			if (_.isNumber(props.navigation.state.params.findComment)) {
 				offsetPosition = "ID";
 				findComment = props.navigation.state.params.findComment;
-			} else if (props.navigation.state.params.showLastComment || Expo.Constants.manifest.extra.contentBehavior == "last") {
+			} else if (props.navigation.state.params.showLastComment || props.app.settings.contentView == "last") {
 				// If we're showing the last comment, we'll load the previous 'page' of posts too
 				// via the offsetAdjust arg
 				offsetPosition = "LAST";
 				offsetAdjust = Expo.Constants.manifest.extra.per_page * -1;
 			} else {
-				if (Expo.Constants.manifest.extra.contentBehavior == "unread") {
+				if (props.app.settings.contentView == "unread") {
 					offsetPosition = "UNREAD";
 				}
 
@@ -1456,6 +1456,7 @@ export default compose(
 		}
 	}),
 	connect(state => ({
+		app: state.app,
 		auth: state.auth,
 		site: state.site,
 		user: state.user
