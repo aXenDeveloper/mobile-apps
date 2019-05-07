@@ -9,18 +9,15 @@ import {
 } from "react-navigation";
 import { BottomTabBar } from "react-navigation-tabs";
 import { Text, View } from "react-native";
-import Image from "react-native-remote-svg";
 import { connect } from "react-redux";
-import { LinearGradient, WebBrowser } from "expo";
 
+// ----
 // IPS Screens
 import MyCommunitiesScreen from "../screens/multi/MyCommunitiesScreen";
 import MultiCategoryListScreen from "../screens/multi/MultiCategoryListScreen";
 import MultiCategoryScreen from "../screens/multi/MultiCategoryScreen";
+import MultiSettingsScreen from "../screens/multi/MultiSettingsScreen";
 
-//import BrowserModal from "../ecosystems/BrowserModal";
-import NavigationService from "../utils/NavigationService";
-import { resetModalWebview } from "../redux/actions/app";
 import { NavigationTabIcon, NavigationTabNotification } from "../ecosystems/Navigation";
 import CustomHeader from "../ecosystems/CustomHeader";
 import styles, { styleVars, tabStyles } from "../styles";
@@ -93,12 +90,12 @@ export default class MultiCommunityNavigation extends Component {
 						},
 						tabBarIcon: props => <NavigationTabIcon {...props} active={icons.MULTI_BROWSE_SOLID} inactive={icons.MULTI_BROWSE} />
 					}
-				}
-				/*MultiSettings: {
+				},
+				MultiSettings: {
 					screen: createStackNavigator(
 						{
 							Category: {
-								screen: MultiCategoryListScreen
+								screen: MultiSettingsScreen
 							}
 						},
 						{
@@ -118,11 +115,11 @@ export default class MultiCommunityNavigation extends Component {
 					navigationOptions: {
 						tabBarLabel: "Preferences",
 						header: props => {
-							return <CustomHeader {...props} title="Forums" />;
+							return <CustomHeader {...props} title="Preferences" />;
 						},
 						tabBarIcon: props => <NavigationTabIcon {...props} active={icons.MULTI_SETTINGS_SOLID} inactive={icons.MULTI_SETTINGS} />
 					}
-				}*/
+				}
 			},
 			{
 				lazy: true,

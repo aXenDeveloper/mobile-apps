@@ -5,6 +5,7 @@ import { graphql } from "react-apollo";
 
 import SectionHeader from "../../../atoms/SectionHeader";
 import SettingRow from "../../../atoms/SettingRow";
+import { ContentView } from "../../../ecosystems/AppSettings";
 
 class AccountSettingsScreen extends Component {
 	static navigationOptions = {
@@ -13,7 +14,7 @@ class AccountSettingsScreen extends Component {
 
 	getAccountSections() {
 		return [
-			{
+			/*{
 				title: "General",
 				data: [
 					{
@@ -32,37 +33,45 @@ class AccountSettingsScreen extends Component {
 						value: '******'
 					}
 				]
-			},
+			},*/
 			{
-				title: "App Settings For This Device",
+				title: "Content View Behavior",
+				first: true,
 				data: [
 					{
-						key: "content_order",
-						title: "Comment Views",
-						value: 'Start at unread comments',
-						onPress: () => {
-							this.props.navigation.navigate("CommentViewSettingsScreen");
-						}
-					},
-					{
-						key: "home_screen",
-						title: "Default Home Screen",
-						value: 'Community overview',
-						onPress: () => {
-							this.props.navigation.navigate("CommentViewSettingsScreen");
-						}
-					},
+						key: "content_order"
+					}
 				]
 			}
 		];
 	}
 
+	renderItem({ item, index, section }) {
+		if (item.key == "content_order") {
+			return <ContentView />;
+		}
+
+		return <SettingRow data={item} />;
+	}
+
+	renderSectionHeader({ section }) {
+		return (
+			<View style={!section.first ? styles.mtExtraWide : null}>
+				<SectionHeader title={section.title} />
+			</View>
+		);
+	}
+
 	render() {
-		return <SectionList 
-			sections={this.getAccountSections()}
-			renderItem={({item}) => <SettingRow data={item} />}
-			renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
-		/>;
+		return (
+			<SectionList
+				sections={this.getAccountSections()}
+				renderItem={this.renderItem}
+				renderSectionHeader={this.renderSectionHeader}
+				SectionSeparatorComponent={this.renderSectionSeparator}
+				stickySectionHeadersEnabled={false}
+			/>
+		);
 	}
 }
 

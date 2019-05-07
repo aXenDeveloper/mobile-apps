@@ -27,7 +27,10 @@ const initialState = {
 		loading: false,
 		error: false
 	},
-	categories: {}
+	categories: {},
+	settings: {
+		contentView: "first"
+	}
 };
 
 export default function app(state = initialState, { type, payload }) {
@@ -243,6 +246,17 @@ export default function app(state = initialState, { type, payload }) {
 						finished: payload.finished,
 						items: [...existingSlice, ...payload.items]
 					}
+				}
+			};
+
+		// --------------------------------------------------------------
+		// App settings
+		case actions.CONTENT_VIEW:
+			return {
+				...state,
+				settings: {
+					...state.settings,
+					contentView: payload
 				}
 			};
 

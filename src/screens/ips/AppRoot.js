@@ -14,7 +14,8 @@ import {
 	resetBootStatus,
 	receiveNotification,
 	clearCurrentNotification,
-	loadCommunities
+	loadCommunities,
+	setContentView
 } from "../../redux/actions/app";
 import { refreshToken, logOut, voidAuth } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
@@ -72,8 +73,10 @@ class AppRoot extends Component {
 
 		const initialUrl = await Linking.getInitialURL();
 		this.checkUrlForAuth(initialUrl);
-
 		console.log(`Add this URL for auth: ${Linking.makeUrl("auth")}`);
+
+		// Set the content view setting to the default setting
+		this.props.dispatch(setContentView());
 	}
 
 	async handleNotification(notification) {

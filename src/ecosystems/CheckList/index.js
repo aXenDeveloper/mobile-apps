@@ -3,13 +3,6 @@ import { Text, View, FlatList } from "react-native";
 
 import CheckListRow from "../../atoms/CheckListRow";
 
-class CheckList extends Component {
-	render() {
-		return <FlatList 
-			data={this.props.data}
-			renderItem={({item}) => <CheckListRow {...item} onPress={() => this.props.onPress(item)} />}
-		/>;
-	}
-}
+const CheckList = props => <FlatList data={props.data} renderItem={({ item }) => <CheckListRow {...item} onPress={() => props.onPress(item)} />} />;
 
 export default CheckList;

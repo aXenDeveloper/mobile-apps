@@ -495,8 +495,6 @@ export const toggleFavoriteCommunity = id => {
 
 export const toggleSavedCommunity = communityToToggle => {
 	return async (dispatch, getState) => {
-		console.log(communityToToggle);
-
 		try {
 			const id = communityToToggle.id;
 			const state = getState();
@@ -526,8 +524,6 @@ export const toggleSavedCommunity = communityToToggle => {
 			await AsyncStorage.setItem("@savedCommunities", JSON.stringify(updatedCommunityIDs));
 			await AsyncStorage.setItem("@favoriteCommunities", JSON.stringify(updatedFavoriteIDs));
 
-			console.log(updatedCommunitiesObj);
-
 			dispatch(
 				setCommunities({
 					communities: updatedCommunitiesObj
@@ -535,6 +531,35 @@ export const toggleSavedCommunity = communityToToggle => {
 			);
 		} catch (err) {
 			console.warn(`Couldn't update saved communities ${err}`);
+		}
+	};
+};
+
+// =================================================================
+// Settings
+
+export const CONTENT_VIEW = "CONTENT_VIEW";
+export const contentView = data => ({
+	type: CONTENT_VIEW,
+	payload: data
+});
+
+export const setContentView = type => {
+	return async dispatch => {
+		try {
+			if (_.isUndefined(type)) {
+				type = await AsyncStorage.getItem("@contentView");
+
+				if (type === null) {
+					type = "first";
+				}
+			}
+
+			dispatch(contentView(type));
+			await AsyncStorage.setItem("@contentView", type);
+		} catch (err) {
+			console.warn(`Couldn't set content view: ${err}`);
+			dispatch(contentView("first"));
 		}
 	};
 };

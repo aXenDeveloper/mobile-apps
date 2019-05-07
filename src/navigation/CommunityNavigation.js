@@ -31,7 +31,6 @@ import LoginScreen from "../screens/core/LoginRegister/LoginScreen";
 import RegisterScreen from "../screens/core/LoginRegister/RegisterScreen";
 import WebViewScreen from "../screens/core/WebViewScreen";
 import AccountSettingsScreen from "../screens/core/AccountSettings/AccountSettingsScreen";
-import CommentViewSettingsScreen from "../screens/core/AccountSettings/CommentViewSettingsScreen";
 // ----
 // Forums screens
 import ForumListScreen from "../screens/forums/ForumListScreen";
@@ -121,8 +120,7 @@ class AppNavigation extends Component {
 	_getSettingsStack(options) {
 		return createStackNavigator(
 			{
-				AccountSettingsScreen: { screen: AccountSettingsScreen },
-				CommentViewSettingsScreen: { screen: CommentViewSettingsScreen }
+				AccountSettingsScreen: { screen: AccountSettingsScreen }
 			},
 			{
 				initialRouteName: "AccountSettingsScreen",
