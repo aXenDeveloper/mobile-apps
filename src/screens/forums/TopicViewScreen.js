@@ -1421,6 +1421,12 @@ class TopicViewScreen extends Component {
 */
 
 export default compose(
+	connect(state => ({
+		app: state.app,
+		auth: state.auth,
+		site: state.site,
+		user: state.user
+	})),
 	graphql(TopicViewQuery, {
 		options: props => {
 			let offsetPosition = "FIRST";
@@ -1455,12 +1461,6 @@ export default compose(
 			};
 		}
 	}),
-	connect(state => ({
-		app: state.app,
-		auth: state.auth,
-		site: state.site,
-		user: state.user
-	})),
 	withApollo
 )(TopicViewScreen);
 

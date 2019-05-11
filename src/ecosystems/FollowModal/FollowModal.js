@@ -207,7 +207,7 @@ class FollowModal extends Component {
 
 	render() {
 		return (
-			<Modal style={componentStyles.modal} swipeDirection="down" onSwipe={this.props.close} isVisible={this.props.isVisible}>
+			<Modal style={componentStyles.modal} swipeDirection="down" onSwipeComplete={this.props.close} isVisible={this.props.isVisible}>
 				<View style={componentStyles.modalInner}>
 					<View style={styles.modalHandle}></View>
 					<SectionList

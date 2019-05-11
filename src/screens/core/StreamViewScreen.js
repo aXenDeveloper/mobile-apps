@@ -369,7 +369,7 @@ class StreamViewScreen extends Component {
 		} else {
 			return (
 				<React.Fragment>
-					<Modal style={componentStyles.modal} swipeDirection="down" onSwipe={this.closeStreamModal} isVisible={this.state.streamListVisible}>
+					<Modal style={componentStyles.modal} swipeDirection="down" onSwipeComplete={this.closeStreamModal} isVisible={this.state.streamListVisible}>
 						{this.buildStreamList()}
 					</Modal>
 					<Animatable.View style={{ flexGrow: 1 }} ref={this.getViewRef}>
