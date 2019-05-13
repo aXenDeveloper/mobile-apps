@@ -31,9 +31,9 @@ class Mention extends Component {
 		return (
 			<React.Fragment>
 				<Text>{" "}</Text>
-				<TouchableOpacity onPress={this.onPress} style={[componentStyles.mentionWrapper, styles.phVeryTight]}>
+				<Text onPress={this.onPress} style={[componentStyles.mentionWrapper, styles.phVeryTight]}>
 					<Text style={[componentStyles.mention, styles.smallText]}>{this.props.name}</Text>
-				</TouchableOpacity>
+				</Text>
 				<Text>{" "}</Text>
 			</React.Fragment>
 		)
