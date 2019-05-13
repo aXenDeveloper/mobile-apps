@@ -10,23 +10,6 @@ import styles from "../../styles";
 import componentStyles from "./styles";
 
 const StreamItem = (props) => {
-	let replies;
-	let reactions;
-
-	if( props.data.replies !== null ){
-		replies = ( 
-			<Text style={styles.lightText} numberOfLines={1}>
-				{`${Lang.pluralize(Lang.get("replies"), props.data.replies)}`}
-			</Text> 
-		);
-	}
-
-	if( props.data.reactions.length ){
-		reactions = (
-			<ReactionOverview small style={componentStyles.reactionOverview} reactions={props.data.reactions} />
-		)
-	}
-
 	return (
 		<React.Fragment>
 			<View style={componentStyles.streamHeader}>
@@ -51,9 +34,16 @@ const StreamItem = (props) => {
 						{props.data.content}
 					</Text>
 				)}
-				{Boolean(replies || reactions) && (
+				{( Boolean(props.data.reactions.length) || props.data.replies !== null ) && (
 					<View style={componentStyles.streamFooter}>
-						{reactions} {replies}
+						{Boolean(props.data.reactions.length) && (
+							<ReactionOverview small style={componentStyles.reactionOverview} reactions={props.data.reactions} />
+						)}
+						{props.data.replies !== null && (
+							<Text style={styles.lightText} numberOfLines={1}>
+								{`${Lang.pluralize(Lang.get("replies"), props.data.replies)}`}
+							</Text> 
+						)}
 					</View>
 				)}
 			</View>
