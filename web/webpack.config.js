@@ -5,14 +5,14 @@ const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 let pathsToClean = [
-	'web/dist/*.*'
+	'dist/*.*'
 ];
 module.exports = {
 	entry: {
-		main: './web/index.js',
+		main: './index.js',
 	},
 	output: {
-		path: __dirname + '/web/dist',
+		path: __dirname + '/dist',
 		filename: 'main.bundle.js'
 	},
 	devtool: 'source-map',
@@ -25,7 +25,7 @@ module.exports = {
 			{
 				test: /\.js$/,
 				include: [
-					__dirname + '/web',
+					__dirname,
 					/\/node_modules\/quill/,
 				],
 				exclude: /(node_modules|bower_components)/,
@@ -55,7 +55,7 @@ module.exports = {
 	plugins: [
 		new CleanWebpackPlugin(pathsToClean),
 		new HtmlWebpackPlugin({
-			template: './web/template.html',
+			template: './template.html',
 			inject: 'body',
 			filename: './index.html',
 			inlineSource: 'main.bundle.js',
