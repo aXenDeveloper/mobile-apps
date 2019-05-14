@@ -14,7 +14,7 @@ class PollModal extends Component {
 
 	render() {
 		return (
-			<Modal style={[styles.modal, componentStyles.modal]} swipeDirection="down" onSwipe={this.props.close} isVisible={this.props.isVisible}>
+			<Modal style={[styles.modal, componentStyles.modal]} swipeDirection="down" onSwipeComplete={this.props.close} isVisible={this.props.isVisible}>
 				<View style={[styles.modalInner]}>
 					<View style={styles.modalHeader}>
 						<Text>title</Text>

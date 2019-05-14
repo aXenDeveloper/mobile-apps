@@ -9,11 +9,9 @@ import _ from "lodash";
 import { connect } from "react-redux";
 import { setFocus, setFormatting, resetEditor, resetImagePicker, addImageToUpload, showMentionBar, hideMentionBar, loadingMentions, updateMentionResults, insertMentionSymbolDone } from "../../redux/actions/editor";
 import styles, { styleVars } from "../../styles";
-//import AdvancedWebView from 'react-native-advanced-webview';
 
 const EDITOR_VIEW = require("../../../web/dist/index.html");
 const MESSAGE_PREFIX = Expo.Constants.manifest.extra.message_prefix;
-const util = require("util");
 
 const formattingOptions = {
 	bold: true,
@@ -408,7 +406,7 @@ class QuillEditor extends Component {
 			...data
 		});
 
-		console.log(`Sending ${message} ${util.inspect(data)}`);
+		console.log(`Sending ${message}`);
 		this.webview.postMessage(messageToSend, "*");
 	}
 
@@ -551,9 +549,9 @@ class QuillEditor extends Component {
 					javaScriptEnabled={true}
 					injectedJavaScript={injectedJavaScript}
 					mixedContentMode="always"
-					scalesPageToFit={false}
 					style={[editorStyles.editor, this.inlineStyles]}
 					hideAccessory={true}
+					useWebKit={true}
 				/>
 			</View>
 		);

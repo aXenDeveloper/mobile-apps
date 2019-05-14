@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Text, Alert, Button, TextInput, View, ScrollView, StyleSheet, KeyboardAvoidingView } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { NavigationActions } from "react-navigation";
 import _ from "underscore";
 

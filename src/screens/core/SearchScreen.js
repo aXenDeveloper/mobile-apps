@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Text, View, ScrollView, StyleSheet, TextInput, Image, SectionList, AsyncStorage, ActivityIndicator, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import _ from "underscore";
-import ScrollableTabView, { ScrollableTabBar } from "react-native-scrollable-tab-view";
+//import ScrollableTabView, { ScrollableTabBar } from "react-native-scrollable-tab-view";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { ScrollableTab, Tab, TabHeading, Tabs } from "native-base";

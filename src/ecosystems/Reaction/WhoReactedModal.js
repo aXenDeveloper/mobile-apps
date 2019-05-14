@@ -133,7 +133,7 @@ class WhoReactedModal extends Component {
 		}*/
 
 		return (
-			<Modal style={styles.modalAlignBottom} swipeDirection="down" onSwipe={this.props.close} isVisible={this.props.visible}>
+			<Modal style={styles.modalAlignBottom} swipeDirection="down" onSwipeComplete={this.props.close} isVisible={this.props.visible}>
 				<View style={styles.modalInner}>
 					<View style={styles.modalHandle} />
 					<View style={styles.modalHeader}>

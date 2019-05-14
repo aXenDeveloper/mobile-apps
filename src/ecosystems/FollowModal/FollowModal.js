@@ -146,10 +146,10 @@ class FollowModal extends Component {
 	 */
 	getSectionData() {
 		return [
-			...(this.props.followData.followOptions.length > 1 && [{
+			...(this.props.followData.followOptions.length > 1 ? [{
 					title: Lang.get("follow_freq"),
 					data: ["followChoices"]
-			}]),
+			}] : []),
 			{
 				title: Lang.get("follow_privacy"),
 				data: ["anonToggle"]
@@ -207,7 +207,7 @@ class FollowModal extends Component {
 
 	render() {
 		return (
-			<Modal style={componentStyles.modal} swipeDirection="down" onSwipe={this.props.close} isVisible={this.props.isVisible}>
+			<Modal style={componentStyles.modal} swipeDirection="down" onSwipeComplete={this.props.close} isVisible={this.props.isVisible}>
 				<View style={componentStyles.modalInner}>
 					<View style={styles.modalHandle}></View>
 					<SectionList
