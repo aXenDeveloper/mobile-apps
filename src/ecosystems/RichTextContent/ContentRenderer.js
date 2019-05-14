@@ -159,9 +159,6 @@ class ContentRenderer extends PureComponent {
 				}
 
 				return a(htmlAttribs, children, convertedCSSStyles, passProps);
-			},
-			p: (htmlAttribs, children, convertedCSSStyles, passProps) => {
-				return <View key={passProps.key}>{children}</View>
 			}
 		};
 	}

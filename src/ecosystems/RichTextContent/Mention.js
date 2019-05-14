@@ -30,11 +30,11 @@ class Mention extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<Text>{" "}</Text>
 				<Text onPress={this.onPress} style={[componentStyles.mentionWrapper, styles.phVeryTight]}>
+					<Text>{" "}</Text>
 					<Text style={[componentStyles.mention, styles.smallText]}>{this.props.name}</Text>
+					<Text>{" "}</Text>
 				</Text>
-				<Text>{" "}</Text>
 			</React.Fragment>
 		)
 	}
