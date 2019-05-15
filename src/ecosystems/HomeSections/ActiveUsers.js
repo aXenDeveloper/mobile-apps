@@ -100,14 +100,14 @@ class ActiveUsers extends Component {
 	 * @return 	void
 	 */
 	setUpTicker() {
-		const activeUsersData = this.props.data.core.activeUsers;
+		const tickerNamesToUse = this.props.data.core.activeUsers.users.filter( user => _.isString(user.lang) );
 
 		// No need to do anything with the ticker if we don't have much to show
-		if( activeUsersData.users.length < ActiveUsers.minimumTickerNames ){
+		if( tickerNamesToUse.length < ActiveUsers.minimumTickerNames ){
 			return;
 		}
 
-		this._animations = activeUsersData.users.map( (user, idx) => {
+		this._animations = tickerNamesToUse.map( (user, idx) => {
 			// First, initialize a value for each user we're going to show in the ticker
 			this._animatedValue[ user.user.id ] = new Animated.Value(0);
 
@@ -133,13 +133,13 @@ class ActiveUsers extends Component {
 	 * @return 	array|null		Array of Animated.Text components
 	 */
 	getTicker() {
-		const activeUsersData = this.props.data.core.activeUsers;
+		const tickerNamesToUse = this.props.data.core.activeUsers.users.filter( user => _.isString(user.lang) )
 
-		if( activeUsersData.users.length < ActiveUsers.minimumTickerNames ){
+		if( tickerNamesToUse.length < ActiveUsers.minimumTickerNames ){
 			return null;
 		}
 
-		return activeUsersData.users.map( (user) => {
+		return tickerNamesToUse.map( (user) => {
 			// Since our animated value goes from 0 to 1, we'll use that to create a curve that
 			// fades in quickly, stays, then fades out quickly too.
 			const opacity = this._animatedValue[ user.user.id ].interpolate({
