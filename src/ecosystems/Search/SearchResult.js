@@ -8,6 +8,7 @@ import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Place
 import relativeTime from "../../utils/RelativeTime";
 import SearchResultItem from "./SearchResultItem";
 import SearchResultComment from "./SearchResultComment";
+import UnreadComponent from "../../atoms/UnreadComponent";
 import styles, { styleVars } from "../../styles";
 
 class SearchResult extends Component {
@@ -48,6 +49,7 @@ class SearchResult extends Component {
 		return (
 			<ContentRow style={componentStyles.result} onPress={this.onPressHandler}>
 				<ResultComponent data={this.props.data} term={this.props.term} />
+				<UnreadComponent active={this.props.data.unread} />
 			</ContentRow>
 		);
 	}

@@ -4,6 +4,7 @@ import FadeIn from "react-native-fade-in-image";
 
 import Lang from "../../utils/Lang";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
+import UnreadComponent from "../../atoms/UnreadComponent";
 import { styleVars } from "../../styles";
 
 export default class ContentCard extends Component {
@@ -40,6 +41,7 @@ export default class ContentCard extends Component {
 					{Boolean(this.props.image) && this.props.image}
 					{Boolean(this.props.content) && <View style={[componentStyles.streamFooter]}>{this.props.content}</View>}
 				</View>
+				<UnreadComponent active={this.props.unread} />
 			</TouchableOpacity>
 		);
 	}

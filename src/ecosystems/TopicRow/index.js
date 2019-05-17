@@ -7,17 +7,12 @@ import { withNavigation } from "react-navigation";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
-import ShadowedArea from "../../atoms/ShadowedArea";
-import UserPhoto from "../../atoms/UserPhoto";
 import TopicInfo from "./TopicInfo";
 import QuestionInfo from "./QuestionInfo";
-import TopicIcon from "../../atoms/TopicIcon";
-import LockedIcon from "../../atoms/LockedIcon";
 import TopicStatus from "../../atoms/TopicStatus";
-import LastPostInfo from "../../ecosystems/LastPostInfo";
+import UnreadComponent from "../../atoms/UnreadComponent";
 import ContentRow from "../../ecosystems/ContentRow";
 import styles, { styleVars } from "../../styles";
-import icons from "../../icons";
 
 class TopicRow extends Component {
 	constructor(props) {
@@ -90,6 +85,7 @@ class TopicRow extends Component {
 						</Text>
 					</View>
 				</View>
+				<UnreadComponent active={showAsUnread} />
 			</ContentRow>
 		);
 	}

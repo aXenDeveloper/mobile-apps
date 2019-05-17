@@ -30,6 +30,7 @@ const NewContentFragment = `
 				created
 				isComment
 				isReview
+				unread
 				relativeTimeKey
 				itemAuthor {
 					__typename

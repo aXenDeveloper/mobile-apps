@@ -25,6 +25,7 @@ const SearchResultFragment = gql`
 		isReview
 		relativeTimeKey
 		firstCommentRequired
+		unread
 		itemAuthor {
 			id
 			name

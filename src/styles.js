@@ -21,6 +21,7 @@ export const styleVars = {
 	toggleTint: "#1888a7",
 	toggleTintInverse: "#a8dae8",
 	primaryBrand: ["#3370AA", "#009BA2"],
+	unread: "#3370AA",
 	headerText: "#fff",
 	primaryButton: {
 		mainColor: "#3370AA",
@@ -335,13 +336,13 @@ const styles = StyleSheet.create({
 		color: "#000"
 	},
 	textRead: {
-		color: "#8e8e8e"
+		color: "#585858"
 	},
 	title: {
 		color: "#000"
 	},
 	titleRead: {
-		color: "#8e8e8e"
+		color: "#585858"
 	},
 	hidden: {
 		display: "none"

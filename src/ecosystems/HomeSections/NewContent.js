@@ -90,6 +90,7 @@ class NewContent extends Component {
 				}}
 				key={data.indexID}
 				onPress={this.getPressHandler(data.indexID, data)}
+				unread={data.unread}
 				header={cardPieces.header}
 				image={cardPieces.image}
 				content={cardPieces.content}
