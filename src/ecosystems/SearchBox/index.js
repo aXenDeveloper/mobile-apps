@@ -124,7 +124,7 @@ class SearchBox extends Component {
 						ref={ref => (this._textInput = ref)}
 						value={this.props.value}
 					/>
-					{this.props.value.length && (
+					{this.props.value.length > 0 && (
 						<TouchableOpacity onPress={this.emptyTextBox} style={styles.mlWide}>
 							<Image source={icons.CROSS_CIRCLE_SOLID} resizeMode="contain" style={componentStyles.close} />
 						</TouchableOpacity>
