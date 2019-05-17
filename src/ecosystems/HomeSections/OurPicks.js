@@ -54,7 +54,7 @@ class OurPicks extends Component {
 				<React.Fragment>
 					<View style={componentStyles.streamItemInfo}>
 						<View style={componentStyles.streamItemInfoInner}>
-							<Text style={[componentStyles.streamItemTitle, componentStyles.streamItemTitleSmall]} numberOfLines={1}>
+							<Text style={[componentStyles.streamItemTitle, componentStyles.streamItemTitleSmall]} numberOfLines={2}>
 								{data.title}
 							</Text>
 						</View>
