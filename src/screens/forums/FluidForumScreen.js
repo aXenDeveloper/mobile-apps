@@ -22,7 +22,7 @@ import EndOfComments from "../../atoms/EndOfComments";
 const FluidForumQuery = gql`
 	query FluidForumQuery($offset: Int, $limit: Int) {
 		forums {
-			topics(offset: $offset, limit: $limit) {
+			topics(offset: $offset, limit: $limit, honorPinned: false) {
 				id
 				title
 				postCount
@@ -76,14 +76,14 @@ class FluidForumScreen extends Component {
 	 * @return 	void
 	 */
 	onEndReached() {
-		/*if (!this.props.data.loading && !this.state.reachedEnd) {
+		if (!this.props.data.loading && !this.state.reachedEnd) {
 			this.props.data.fetchMore({
 				variables: {
-					offset: this.props.data.forums.forum.topics.length
+					offset: this.props.data.forums.topics.length
 				},
 				updateQuery: (previousResult, { fetchMoreResult }) => {
 					// Don't do anything if there wasn't any new items
-					if (!fetchMoreResult || fetchMoreResult.forums.forum.topics.length === 0) {
+					if (!fetchMoreResult || fetchMoreResult.forums.topics.length === 0) {
 						this.setState({
 							reachedEnd: true
 						});
@@ -94,17 +94,14 @@ class FluidForumScreen extends Component {
 					const result = Object.assign({}, previousResult, {
 						forums: {
 							...previousResult.forums,
-							forum: {
-								...previousResult.forums.forum,
-								topics: [...previousResult.forums.forum.topics, ...fetchMoreResult.forums.forum.topics]
-							}
+							topics: [...previousResult.forums.topics, ...fetchMoreResult.forums.topics]
 						}
 					});
 
 					return result;
 				}
 			});
-		}*/
+		}
 	}
 
 	/**
@@ -193,7 +190,7 @@ class FluidForumScreen extends Component {
 				</PlaceholderRepeater>
 			);
 		} else if (this.props.data.error) {
-			const error = getErrorMessage(this.props.data.error, TopicListScreen.errors);
+			const error = getErrorMessage(this.props.data.error, FluidForumScreen.errors);
 			const message = error ? error : Lang.get("topic_view_error");
 			return <ErrorBox message={message} refresh={() => this.refreshAfterError()} />;
 		} else {
