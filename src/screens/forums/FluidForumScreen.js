@@ -7,16 +7,10 @@ import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
-import relativeTime from "../../utils/RelativeTime";
 import getErrorMessage from "../../utils/getErrorMessage";
-import FollowButton from "../../atoms/FollowButton";
 import ErrorBox from "../../atoms/ErrorBox";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
-import ActionBar from "../../atoms/ActionBar";
-import SectionHeader from "../../atoms/SectionHeader";
-import ForumItem from "../../ecosystems/ForumItem";
 import TopicRow from "../../ecosystems/TopicRow";
-import AddButton from "../../atoms/AddButton";
 import EndOfComments from "../../atoms/EndOfComments";
 
 const FluidForumQuery = gql`
@@ -27,6 +21,10 @@ const FluidForumQuery = gql`
 				title
 				postCount
 				content(stripped: true, singleLine: true, truncateLength: 100)
+				forum {
+					name
+					featureColor
+				}
 				isPinned
 				isLocked
 				started
@@ -153,7 +151,8 @@ class FluidForumScreen extends Component {
 			isLocked: topic.isLocked,
 			lastPostDate: topic.lastPostDate,
 			lastPostPhoto: topic.lastPostAuthor.photo,
-			contentImages: topic.contentImages
+			contentImages: topic.contentImages,
+			forum: topic.forum
 		};
 	}
 
@@ -168,6 +167,7 @@ class FluidForumScreen extends Component {
 			<TopicRow
 				data={item}
 				isGuest={!this.props.auth.isAuthenticated}
+				showCategory={true}
 				onPress={() =>
 					this.props.navigation.navigate("TopicView", {
 						id: item.id,

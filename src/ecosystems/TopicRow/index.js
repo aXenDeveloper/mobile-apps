@@ -65,7 +65,7 @@ class TopicRow extends Component {
 
 		return (
 			<ContentRow withSpace unread={showAsUnread} onPress={this.props.onPress || this.onPress}>
-				<InfoComponent data={this.props.data} showAsUnread={showAsUnread} styles={componentStyles} />
+				<InfoComponent data={this.props.data} showCategory showAsUnread={showAsUnread} styles={componentStyles} />
 				<View style={componentStyles.topicStatusesWrap}>
 					<View style={componentStyles.topicMeta}>
 						{Boolean(this.props.data.isHot) && <TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="hot" />}

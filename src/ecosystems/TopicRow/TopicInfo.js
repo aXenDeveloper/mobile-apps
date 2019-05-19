@@ -1,13 +1,11 @@
 import React, { Component } from "react";
 import { Text, Image, View, StyleSheet, TouchableHighlight } from "react-native";
 
-import Lang from "../../utils/Lang";
-import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
-import TopicIcon from "../../atoms/TopicIcon";
 import LockedIcon from "../../atoms/LockedIcon";
 import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
-import styles, { styleVars } from "../../styles";
+import styles from "../../styles";
+import CategoryName from "../../atoms/CategoryName";
 
 class TopicInfo extends Component {
 	constructor(props) {
@@ -35,6 +33,9 @@ class TopicInfo extends Component {
 		return (
 			<View style={[this.props.styles.topicRowInner, image !== null ? this.props.styles.topicRowInnerWithImage : null]}>
 				<View style={this.props.styles.topicInfo}>
+					{this.props.showCategory && (
+						<CategoryName name={this.props.data.forum.name} showColor color={this.props.data.forum.featureColor} />
+					)}
 					<View style={this.props.styles.topicTitle}>
 						{Boolean(this.props.data.isLocked) && <LockedIcon style={this.props.styles.lockedIcon} />}
 						<Text style={[this.props.styles.topicTitleText, this.props.showAsUnread ? styles.title : styles.titleRead]} numberOfLines={2}>
