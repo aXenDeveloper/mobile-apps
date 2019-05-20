@@ -29,15 +29,17 @@ const FluidForumQuery = gql`
 				isLocked
 				started
 				isUnread
+				author {
+					id
+					name
+					photo
+				}
 				lastPostAuthor {
+					id
 					name
 					photo
 				}
 				lastPostDate
-				author {
-					name
-				}
-				contentImages
 			}
 		}
 	}
@@ -143,13 +145,14 @@ class FluidForumScreen extends Component {
 			unread: topic.isUnread,
 			title: topic.title,
 			replies: parseInt(topic.postCount),
-			author: topic.author.name,
+			author: topic.author,
 			started: topic.started,
 			snippet: topic.content.trim(),
 			isHot: false,
 			isPinned: topic.isPinned,
 			isLocked: topic.isLocked,
 			lastPostDate: topic.lastPostDate,
+			lastPostAuthor: topic.lastPostAuthor,
 			lastPostPhoto: topic.lastPostAuthor.photo,
 			contentImages: topic.contentImages,
 			forum: topic.forum

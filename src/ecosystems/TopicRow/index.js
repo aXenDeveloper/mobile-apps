@@ -11,6 +11,7 @@ import TopicInfo from "./TopicInfo";
 import QuestionInfo from "./QuestionInfo";
 import TopicStatus from "../../atoms/TopicStatus";
 import UnreadComponent from "../../atoms/UnreadComponent";
+import UserPhoto from "../../atoms/UserPhoto";
 import ContentRow from "../../ecosystems/ContentRow";
 import styles, { styleVars } from "../../styles";
 
@@ -65,7 +66,7 @@ class TopicRow extends Component {
 
 		return (
 			<ContentRow withSpace unread={showAsUnread} onPress={this.props.onPress || this.onPress}>
-				<InfoComponent data={this.props.data} showCategory showAsUnread={showAsUnread} styles={componentStyles} />
+				<InfoComponent data={this.props.data} showCategory={this.props.showCategory} showAsUnread={showAsUnread} styles={componentStyles} />
 				<View style={componentStyles.topicStatusesWrap}>
 					<View style={componentStyles.topicMeta}>
 						{Boolean(this.props.data.isHot) && <TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="hot" />}
@@ -83,6 +84,12 @@ class TopicRow extends Component {
 						<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText]}>
 							{Lang.pluralize(Lang.get("replies"), this.props.data.replies)}
 						</Text>
+					</View>
+					<View style={[styles.flexRow, componentStyles.userPhotos]}>
+						<UserPhoto url={this.props.data.author.photo} size={32} />
+						{(this.props.data.author.id !== this.props.data.lastPostAuthor.id) && (
+							<UserPhoto url={this.props.data.lastPostAuthor.photo} size={32} style={componentStyles.lastPostAuthor} />
+						)}
 					</View>
 				</View>
 				<UnreadComponent active={showAsUnread} />
@@ -121,9 +128,9 @@ const componentStyles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignContent: "stretch"
 	},
-	topicRowInnerWithImage: {
+	/*topicRowInnerWithImage: {
 		paddingRight: 90
-	},
+	},*/
 	topicInfo: {
 		flex: 1,
 		paddingTop: 4,
@@ -207,5 +214,11 @@ const componentStyles = StyleSheet.create({
 	},
 	thumbnailImage: {
 		...StyleSheet.absoluteFillObject
+	},
+	userPhotos: {
+		marginTop: -12
+	},
+	lastPostAuthor: {
+		marginLeft: -8
 	}
 });

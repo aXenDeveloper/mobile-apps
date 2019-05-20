@@ -28,10 +28,8 @@ class TopicInfo extends Component {
 	}
 
 	render() {
-		const image = this.getThumbnail();
-
 		return (
-			<View style={[this.props.styles.topicRowInner, image !== null ? this.props.styles.topicRowInnerWithImage : null]}>
+			<View style={[this.props.styles.topicRowInner]}>
 				<View style={this.props.styles.topicInfo}>
 					{this.props.showCategory && (
 						<CategoryName name={this.props.data.forum.name} showColor color={this.props.data.forum.featureColor} />
@@ -46,10 +44,11 @@ class TopicInfo extends Component {
 						{this.props.data.snippet}
 					</Text>
 				</View>
-				<View style={this.props.styles.thumbnail}>{image}</View>
 			</View>
 		);
 	}
 }
+
+//<View style={this.props.styles.thumbnail}>{image}</View>
 
 export default TopicInfo;

@@ -37,14 +37,16 @@ const TopicListQuery = gql`
 					started
 					isUnread
 					lastPostAuthor {
+						id
 						name
 						photo
 					}
 					lastPostDate
 					author {
+						id
 						name
+						photo
 					}
-					contentImages
 					isQuestion
 					questionVotes
 					canVoteUp
@@ -240,7 +242,7 @@ class TopicListScreen extends Component {
 			unread: topic.isUnread,
 			title: topic.title,
 			replies: parseInt(topic.postCount),
-			author: topic.author.name,
+			author: topic.author,
 			started: topic.started,
 			snippet: topic.content.trim(),
 			isHot: topic.isHot,
@@ -249,6 +251,7 @@ class TopicListScreen extends Component {
 			isFeatured: topic.isFeatured,
 			lastPostDate: topic.lastPostDate,
 			lastPostPhoto: topic.lastPostAuthor.photo,
+			lastPostAuthor: topic.lastPostAuthor,
 			contentImages: topic.contentImages,
 			isQuestion: topic.isQuestion,
 			questionVotes: topic.questionVotes,
@@ -282,9 +285,9 @@ class TopicListScreen extends Component {
 	 */
 	renderItem(item, forumData) {
 		if (item.type == "topic") {
-			return <TopicRow data={item} />;
+			return <TopicRow data={item} showCategory={false} />;
 		} else {
-			return <ForumItem key={item.key} data={item.data} />;
+			return <ForumItem key={item.key} showCategory={false} data={item.data} />;
 		}
 	}
 
