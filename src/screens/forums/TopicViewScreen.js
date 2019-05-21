@@ -64,6 +64,7 @@ const TopicViewQuery = gql`
 				isFeatured
 				author {
 					__typename
+					id
 					name
 				}
 				tags {
