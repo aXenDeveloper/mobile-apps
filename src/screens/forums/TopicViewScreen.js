@@ -234,6 +234,7 @@ class TopicViewScreen extends Component {
 		this.onVoteQuestionUp = this.onVoteQuestionUp.bind(this);
 		this.onVoteQuestionDown = this.onVoteQuestionDown.bind(this);
 		this.onViewableItemsChanged = this.onViewableItemsChanged.bind(this);
+		this.scrollToEnd = this.scrollToEnd.bind(this);
 		this.scrollToPost = this.scrollToPost.bind(this);
 		this.onPostLayout = this.onPostLayout.bind(this);
 		this.onHeaderLayout = this.onHeaderLayout.bind(this);
@@ -272,10 +273,6 @@ class TopicViewScreen extends Component {
 			this._flatList.scrollToEnd();
 			this._aboutToScrollToEnd = false;
 		}, 500);
-
-		this._flatList.scrollToIndex({
-			index: 5
-		});
 	}
 
 	clearCellHeightCache() {
@@ -396,6 +393,12 @@ class TopicViewScreen extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps, prevState) {
+
+		// If we're loading again, clear our cache of post heights
+		if( !prevProps.data.loading && this.props.data.loading ){
+			this.clearCellHeightCache();
+		}
+
 		// If we're no longer loading, toggle the follow button if needed
 		if (prevProps.data.loading && !this.props.data.loading && !this.props.data.error) {
 			// If we mounted without the info we need to set the screen title, then set them now
@@ -424,6 +427,10 @@ class TopicViewScreen extends Component {
 
 		// Update our offset tracker, but only if we haven't done it before, otherwise
 		// we'll replace our offset with the initial offset every time the component updates
+		if( prevProps.data.variables.offsetPosition !== "LAST" && this.props.data.variables.offsetPosition === "LAST" && this._initialOffsetDone ){
+			this._initialOffsetDone = false;
+		}
+
 		if (!this._initialOffsetDone && !this.props.data.loading && !this.props.data.error) {
 			if (this.props.data.variables.offsetPosition == "ID" && this.props.data.forums.topic.findCommentPosition) {
 				// If we're starting at a specific post, then set the offset to that post's position
@@ -438,13 +445,14 @@ class TopicViewScreen extends Component {
 				});
 				this._initialOffsetDone = true;
 			} else if (this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0) {
+
+				this._initialOffsetDone = true;
 				// If we're showing the last post, the offset will be the total post count plus our adjustment
 				this.setState({
 					reachedEnd: true,
-					startingOffset: this.props.data.forums.topic.commentCount + this.props.data.variables.offsetAdjust
+					startingOffset: this.props.data.forums.topic.postCount + this.props.data.variables.offsetAdjust
 				});
-				this.scrollToEnd();
-				this._initialOffsetDone = true;
+				this.scrollToEnd();				
 			}
 		}
 
@@ -487,7 +495,7 @@ class TopicViewScreen extends Component {
 			const offsetAdjust = this.state.startingOffset + this.props.data.forums.topic.posts.length;
 
 			// Don't try loading more if we're already showing everything in the topic
-			if (offsetAdjust >= this.props.data.forums.topic.commentCount) {
+			if (offsetAdjust >= this.props.data.forums.topic.postCount) {
 				return;
 			}
 
@@ -1343,7 +1351,6 @@ class TopicViewScreen extends Component {
 
 		// Now check whether the last post in our viewable array matches the last post of the topic
 		if (lastPostIndex == this.props.data.forums.topic.postCount - 1) {
-			console.log("In onViewableItemsChanged, setting currentPosition to lastPostIndex");
 			realIndex = this.state.startingOffset + lastPostIndex + 1;
 		}
 
