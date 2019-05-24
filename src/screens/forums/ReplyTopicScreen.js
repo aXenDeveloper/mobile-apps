@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Text, Alert, Button, TextInput, View, ScrollView, StyleSheet, KeyboardAvoidingView } from "react-native";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
-import { NavigationActions } from "react-navigation";
+import { NavigationActions, Header } from "react-navigation";
 import _ from "underscore";
 
 import getErrorMessage from "../../utils/getErrorMessage";
@@ -10,6 +10,7 @@ import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
 import { PostFragment } from "../../ecosystems/Post";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import UserPhoto from "../../atoms/UserPhoto";
+import HeaderButton from "../../atoms/HeaderButton";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import styles from "../../styles";
@@ -31,18 +32,10 @@ class ReplyTopicScreen extends Component {
 			title: "Reply To Topic",
 			headerTintColor: "white",
 			headerLeft: (
-				<View style={[styles.mlStandard]}>
-					<Text style={[styles.contentText, { color: "#fff" }]} onPress={navigation.getParam("cancelReply")}>
-						{Lang.get("cancel")}
-					</Text>
-				</View>
+				<HeaderButton position='left' label='Cancel' onPress={navigation.getParam("cancelReply")} />
 			),
 			headerRight: (
-				<View style={[styles.mrStandard]}>
-					<Text style={[styles.contentText, { color: "#fff" }]} onPress={navigation.getParam("submitReply")}>
-						{Lang.get("post_action")}
-					</Text>
-				</View>
+				<HeaderButton position='right' label='Post' onPress={navigation.getParam("submitReply")} />
 			)
 		};
 	};

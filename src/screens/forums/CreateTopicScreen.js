@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 
 import TagEdit from "../../ecosystems/TagEdit";
 import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
+import HeaderButton from "../../atoms/HeaderButton";
 import uniqueID from "../../utils/UniqueID";
 import styles from "../../styles";
 
@@ -13,31 +14,14 @@ const CreateTopicMutation = gql`
 	mutation CreateTopicMutation($forumID: ID!, $title: String!, $content: String!) {
 		mutateForums {
 			createTopic(forumID: $forumID, title: $title, content: $content) {
+				__typename
 				id
-				url
-				tags {
-					name
-				}
-				locked
-				posts {
-					id
-					url
-					timestamp
-					author {
-						id
-						photo
-						name
-					}
-					content
-					reputation {
-						canViewReps
-						reactions {
-							id
-							image
-							name
-							count
-						}
-					}
+				url {
+					__typename
+					full
+					app
+					module
+					controller
 				}
 			}
 		}
@@ -50,18 +34,10 @@ class CreateTopicScreen extends Component {
 			title: "Create Topic",
 			headerTintColor: "white",
 			headerLeft: (
-				<View style={[styles.mlStandard]}>
-					<Text style={[styles.contentText, { color: "#fff" }]} onPress={navigation.getParam("cancelTopic")}>
-						Cancel
-					</Text>
-				</View>
+				<HeaderButton position='left' onPress={navigation.getParam("cancelTopic")} label="Cancel" />
 			),
 			headerRight: (
-				<View style={[styles.mrStandard]}>
-					<Text style={[styles.contentText, { color: "#fff" }]} onPress={navigation.getParam("submitTopic")}>
-						Post
-					</Text>
-				</View>
+				<HeaderButton position='right' onPress={navigation.getParam("cancelTopic")} label="Post" />
 			)
 		};
 	};
