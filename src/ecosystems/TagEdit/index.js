@@ -390,7 +390,7 @@ class TagEdit extends Component {
 
 		if (!this.state.storedTags.length) {
 			return (
-				<TouchableWithoutFeedback style={styles.flex} onPress={this.showModal}>
+				<TouchableWithoutFeedback style={[styles.flex, styles.flexGrow]} onPress={this.showModal}>
 					<View>
 						<Text style={[styles.fieldText, styles.fieldTextPlaceholder]}>{placeholder.join(" ")}</Text>
 					</View>
@@ -399,7 +399,7 @@ class TagEdit extends Component {
 		}
 
 		return (
-			<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyStart]}>
+			<View style={[styles.flexRow, styles.flexGrow, styles.flexWrap, styles.flexAlignCenter, styles.flexJustifyStart]}>
 				{this.state.storedTags.map(tag => (
 					<Tag key={tag} style={componentStyles.tag}>
 						{tag}
@@ -411,10 +411,10 @@ class TagEdit extends Component {
 
 	render() {
 		return (
-			<View style={[styles.field, styles.pvStandard, componentStyles.outerWrap]}>
+			<View style={[styles.field, styles.pvStandard, styles.prWide, componentStyles.outerWrap]}>
 				<View style={[componentStyles.innerWrap, styles.flexRow, styles.flexAlignCenter, styles.flexJustifyBetween]}>
 					{this.getTagField()}
-					<TouchableOpacity onPress={this.showModal}>
+					<TouchableOpacity onPress={this.showModal} style={componentStyles.plusWrap}>
 						<Image source={icons.PENCIL} style={componentStyles.plus} />
 					</TouchableOpacity>
 				</View>
@@ -438,33 +438,43 @@ class TagEdit extends Component {
 									</Text>
 								</TouchableOpacity>
 							</View>
-							<View style={[componentStyles.searchBarWrap, styles.flexRow, styles.phStandard, styles.ptStandard, styles.mtWide]}>
-								<View
-									style={[
-										componentStyles.searchInput,
-										styles.pTight,
-										styles.flexRow,
-										styles.flexAlignCenter,
-										styles.flexGrow,
-										styles.flexBasisZero,
-										styles.mrStandard
-									]}
-								>
-									<TextInput
-										ref={ref => (this._tagInput = ref)}
-										style={[styles.flexGrow, styles.contentText]}
-										onChangeText={text => this.onChangeText(text)}
-										value={this.state.searchText}
-										placeholder={Lang.get("enter_tag")}
-										autoCorrect={false}
-										autoCapitalize="none"
-										spellCheck={false}
-										textContentType="none"
-										onSubmitEditing={this.addTag}
+							{Boolean(this.props.freeChoice) && (
+								<View style={[componentStyles.searchBarWrap, styles.flexRow, styles.phStandard, styles.ptStandard, styles.mtWide]}>
+									<View
+										style={[
+											componentStyles.searchInput,
+											styles.pTight,
+											styles.flexRow,
+											styles.flexAlignCenter,
+											styles.flexGrow,
+											styles.flexBasisZero,
+											styles.mrStandard
+										]}
+									>
+										<TextInput
+											ref={ref => (this._tagInput = ref)}
+											style={[styles.flexGrow, styles.contentText]}
+											onChangeText={text => this.onChangeText(text)}
+											value={this.state.searchText}
+											placeholder={Lang.get("enter_tag")}
+											autoCorrect={false}
+											autoCapitalize="none"
+											spellCheck={false}
+											textContentType="none"
+											onSubmitEditing={this.addTag}
+										/>
+									</View>
+									<Button
+										size="medium"
+										type="primary"
+										filled
+										fullWidth={false}
+										title={Lang.get("add")}
+										disabled={this.getAddButtonEnabledState()}
+										onPress={this.addTag}
 									/>
 								</View>
-								<Button size="medium" type="primary" filled title={Lang.get("add")} disabled={this.getAddButtonEnabledState()} onPress={this.addTag} />
-							</View>
+							)}
 						</View>
 						<View style={[styles.flex, componentStyles.mainBody]}>
 							{this.props.freeChoice ? this.openTaggingComponent() : this.closedTaggingComponent()}
@@ -481,12 +491,15 @@ export default TagEdit;
 
 const componentStyles = StyleSheet.create({
 	innerWrap: {
-		width: "100%"
+		//width: "100%"
 	},
 	plus: {
 		tintColor: "#3370AA",
 		width: 20,
 		height: 20
+	},
+	plusWrap: {
+		width: 20
 	},
 	mainBody: {
 		backgroundColor: "#fff"
