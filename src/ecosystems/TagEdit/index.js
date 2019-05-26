@@ -38,7 +38,7 @@ class TagEdit extends Component {
 		this._searchOptions = {
 			shouldSort: true,
 			threshold: 0.4,
-			keys: [ 'tag' ]
+			keys: ["tag"]
 		};
 	}
 
@@ -48,7 +48,6 @@ class TagEdit extends Component {
 	 * @return 	void
 	 */
 	showModal() {
-		console.log("Tag press");
 		this.setState({
 			modalVisible: true
 		});
@@ -75,6 +74,12 @@ class TagEdit extends Component {
 			modalVisible: false,
 			storedTags: [...this.state.currentTags]
 		});
+
+		if (_.isFunction(this.props.onSubmit)) {
+			this.props.onSubmit({
+				tags: this.state.currentTags
+			});
+		}
 	}
 
 	/**
@@ -83,28 +88,26 @@ class TagEdit extends Component {
 	 * @return 	Component|null
 	 */
 	getTagRequirements() {
-		const settings = this.props.site.settings;
-
-		if (!settings.tags_min && !settings.tags_max && !settings.tags_len_min && !settings.tags_len_max) {
+		if (!this.props.minTags && !this.props.maxTags && !this.props.minTagLen && !this.props.maxTagLen) {
 			return null;
 		}
 
 		let tagCountMessage;
-		if (settings.tags_min && settings.tags_max) {
-			tagCountMessage = Lang.pluralize(Lang.get("tags_min_max", { min: settings.tags_min }), settings.tags_max);
-		} else if (settings.tags_min) {
-			tagCountMessage = Lang.pluralize(Lang.get("tags_min"), settings.tags_min);
-		} else if (settings.tags_max) {
-			tagCountMessage = Lang.pluralize(Lang.get("tags_max"), settings.tags_max);
+		if (this.props.minTags && this.props.maxTags) {
+			tagCountMessage = Lang.pluralize(Lang.get("tags_min_max", { min: this.props.minTags }), this.props.maxTags);
+		} else if (this.props.minTags) {
+			tagCountMessage = Lang.pluralize(Lang.get("tags_min"), this.props.minTags);
+		} else if (this.props.maxTags) {
+			tagCountMessage = Lang.pluralize(Lang.get("tags_max"), this.props.maxTags);
 		}
 
 		let tagLenMessage;
-		if (settings.tags_len_min && settings.tags_len_max && settings.tags_open_system) {
-			tagLenMessage = Lang.pluralize(Lang.get("tags_len_min_max", { min: settings.tags_len_min }), settings.tags_len_max);
-		} else if (settings.tags_len_min) {
-			tagLenMessage = Lang.pluralize(Lang.get("tags_len_min"), settings.tags_len_min);
-		} else if (settings.tags_len_max) {
-			tagLenMessage = Lang.pluralize(Lang.get("tags_len_max"), settings.tags_len_max);
+		if (this.props.minTagLen && this.props.maxTagLen && this.props.freeChoice) {
+			tagLenMessage = Lang.pluralize(Lang.get("tags_len_min_max", { min: this.props.minTagLen }), this.props.maxTagLen);
+		} else if (this.props.minTagLen) {
+			tagLenMessage = Lang.pluralize(Lang.get("tags_len_min"), this.props.minTagLen);
+		} else if (this.props.maxTagLen) {
+			tagLenMessage = Lang.pluralize(Lang.get("tags_len_max"), this.props.maxTagLen);
 		}
 
 		return (
@@ -137,14 +140,13 @@ class TagEdit extends Component {
 	 * @return 	void
 	 */
 	predefinedTagOnPress(tag) {
-		const settings = this.props.site.settings;
 		// Important: clone currentTags since we can't mutate the existing state
 		let newTags = [...this.state.currentTags];
 
 		if (this.state.currentTags.indexOf(tag) === -1) {
 			newTags.push(tag);
 
-			if (settings.tags_max && newTags.length > settings.tags_max) {
+			if (this.props.maxTags && newTags.length > this.props.maxTags) {
 				newTags.shift(); // remove the first item
 			}
 		} else {
@@ -227,8 +229,6 @@ class TagEdit extends Component {
 	 * @return 	boolean
 	 */
 	getAddButtonEnabledState() {
-		const settings = this.props.site.settings;
-
 		// Regardless of settings, disable if there's no text
 		if (!this.state.searchText.length) {
 			return true;
@@ -236,8 +236,8 @@ class TagEdit extends Component {
 
 		// If we have min/max set, check those
 		if (
-			(settings.tags_len_min && this.state.searchText.length < settings.tags_len_min) ||
-			(settings.tags_len_max && this.state.searchText.length > settings.tags_len_max)
+			(this.props.minTagLen && this.state.searchText.length < this.props.minTagLen) ||
+			(this.props.maxTagLen && this.state.searchText.length > this.props.maxTagLen)
 		) {
 			return true;
 		}
@@ -252,15 +252,13 @@ class TagEdit extends Component {
 	 * @return 	boolean
 	 */
 	getSaveButtonEnabledState() {
-		const settings = this.props.site.settings;
-
 		if (!this.state.currentTags.length) {
 			return false;
 		}
 
-		if (settings.tags_min) {
-			if (this.state.currentTags.length < settings.tags_min) {
-				if ((settings.tags_min_req && this.state.currentTags.length > 0) || !settings.tags_min_req) {
+		if (this.props.minTags) {
+			if (this.state.currentTags.length < this.props.minTags) {
+				if ((this.props.minRequiredIfAny && this.state.currentTags.length > 0) || !this.props.minRequiredIfAny) {
 					return false;
 				}
 			}
@@ -276,7 +274,7 @@ class TagEdit extends Component {
 	 */
 	closedTaggingComponent() {
 		return (
-			<ScrollView style={styles.flex} keyboardShouldPersistTaps='always'>
+			<ScrollView style={styles.flex} keyboardShouldPersistTaps="always">
 				{this.props.definedTags.map(tag => {
 					const checked = this.state.currentTags.indexOf(tag) !== -1;
 					return (
@@ -313,7 +311,7 @@ class TagEdit extends Component {
 	}
 
 	getSuggestionOnPressHandler(tag) {
-		if( _.isUndefined( this._suggestedTagHandlers[tag] ) ){
+		if (_.isUndefined(this._suggestedTagHandlers[tag])) {
 			this._suggestedTagHandlers[tag] = () => this.suggestedTagOnPress(tag);
 		}
 
@@ -333,31 +331,31 @@ class TagEdit extends Component {
 		let content;
 
 		if (this.state.searchText.length > 0 && this.props.definedTags.length) {
-			if( !this._search ){
-				const tags = this.props.definedTags.map( tag => ({ tag }) );
+			if (!this._search) {
+				const tags = this.props.definedTags.map(tag => ({ tag }));
 				this._search = new Fuse(tags, this._searchOptions);
 			}
 
-			let results = this._search.search( this.state.searchText );
+			let results = this._search.search(this.state.searchText);
 			results = results.slice(0, 5);
 
-			if( results.length ){
+			if (results.length) {
 				return (
-					<ScrollView style={[styles.flex, styles.ptVeryWide]}  keyboardShouldPersistTaps='always'>
-						<Text style={[styles.lightText, styles.phWide, styles.smallText]}>{Lang.get('tag_suggestions').toUpperCase()}</Text>
+					<ScrollView style={[styles.flex, styles.ptVeryWide]} keyboardShouldPersistTaps="always">
+						<Text style={[styles.lightText, styles.phWide, styles.smallText]}>{Lang.get("tag_suggestions").toUpperCase()}</Text>
 						<FlatList
 							data={results}
 							keyExtractor={item => item.tag}
-							renderItem={({item}) => this.renderSuggestion(item.tag)}
-							keyboardShouldPersistTaps='always'
+							renderItem={({ item }) => this.renderSuggestion(item.tag)}
+							keyboardShouldPersistTaps="always"
 						/>
 					</ScrollView>
 				);
 			}
-		} 
+		}
 
 		return (
-			<ScrollView style={styles.flex} keyboardShouldPersistTaps='always'>
+			<ScrollView style={styles.flex} keyboardShouldPersistTaps="always">
 				{this.state.currentTags.map(tag => (
 					<View key={tag} style={[styles.row, styles.flexRow, styles.flexAlignCenter, styles.flexJustifyBetween, styles.pWide]}>
 						<View style={[styles.flexRow, styles.flexAlignStart]}>
@@ -380,11 +378,21 @@ class TagEdit extends Component {
 	 * @return 	Component
 	 */
 	getTagField() {
+		let placeholder = [Lang.get("tags")];
+		// @todo language
+		if (this.props.minTags && this.props.maxTags) {
+			placeholder.push(`(${this.props.minTags} - ${this.props.maxTags} required)`);
+		} else if (this.props.minTags) {
+			placeholder.push(`(at least ${this.props.minTags} required)`);
+		} else if (this.props.maxTags) {
+			placeholder.push(`(up to ${this.props.maxTags})`);
+		}
+
 		if (!this.state.storedTags.length) {
 			return (
 				<TouchableWithoutFeedback style={styles.flex} onPress={this.showModal}>
 					<View>
-						<Text style={[styles.fieldText, styles.fieldTextPlaceholder]}>{Lang.get('tags')}</Text>
+						<Text style={[styles.fieldText, styles.fieldTextPlaceholder]}>{placeholder.join(" ")}</Text>
 					</View>
 				</TouchableWithoutFeedback>
 			);
@@ -423,7 +431,7 @@ class TagEdit extends Component {
 								<TouchableOpacity style={styles.modalHeaderLink} onPress={this.hideModal}>
 									<Text style={styles.modalHeaderLinkText}>{Lang.get("cancel")}</Text>
 								</TouchableOpacity>
-								<Text style={[styles.modalTitle, styles.modalTitleWithLinks]}>{Lang.get('manage_tags')}</Text>
+								<Text style={[styles.modalTitle, styles.modalTitleWithLinks]}>{Lang.get("manage_tags")}</Text>
 								<TouchableOpacity style={styles.modalHeaderLink} onPress={this.submitTags} disabled={!this.getSaveButtonEnabledState()}>
 									<Text style={[styles.modalHeaderLinkText, !this.getSaveButtonEnabledState() ? styles.modalHeaderLinkTextDisabled : null]}>
 										{Lang.get("save")}
@@ -447,7 +455,7 @@ class TagEdit extends Component {
 										style={[styles.flexGrow, styles.contentText]}
 										onChangeText={text => this.onChangeText(text)}
 										value={this.state.searchText}
-										placeholder={Lang.get('enter_tag')}
+										placeholder={Lang.get("enter_tag")}
 										autoCorrect={false}
 										autoCapitalize="none"
 										spellCheck={false}
@@ -455,12 +463,12 @@ class TagEdit extends Component {
 										onSubmitEditing={this.addTag}
 									/>
 								</View>
-								<Button size="medium" type="primary" filled title={Lang.get('add')} disabled={this.getAddButtonEnabledState()} onPress={this.addTag} />
+								<Button size="medium" type="primary" filled title={Lang.get("add")} disabled={this.getAddButtonEnabledState()} onPress={this.addTag} />
 							</View>
 						</View>
 						<View style={[styles.flex, componentStyles.mainBody]}>
-							{this.props.site.settings.tags_open_system ? this.openTaggingComponent() : this.closedTaggingComponent()}
-							{this.props.site.settings.tags_min || this.props.site.settings.tags_max ? this.getTagRequirements() : null}
+							{this.props.freeChoice ? this.openTaggingComponent() : this.closedTaggingComponent()}
+							{this.props.minTags || this.props.maxTags ? this.getTagRequirements() : null}
 						</View>
 					</View>
 				</Modal>
@@ -469,11 +477,7 @@ class TagEdit extends Component {
 	}
 }
 
-export default compose(
-	connect(state => ({
-		site: state.site
-	}))
-)(TagEdit);
+export default TagEdit;
 
 const componentStyles = StyleSheet.create({
 	innerWrap: {
