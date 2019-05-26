@@ -91,10 +91,13 @@ class FluidForumScreen extends Component {
 						return previousResult;
 					}
 
+					const topicArray = [...previousResult.forums.topics, ...fetchMoreResult.forums.topics];
+					const topics = _.uniq(topicArray, false, topic => topic.id);
+
 					const result = Object.assign({}, previousResult, {
 						forums: {
 							...previousResult.forums,
-							topics: [...previousResult.forums.topics, ...fetchMoreResult.forums.topics]
+							topics
 						}
 					});
 

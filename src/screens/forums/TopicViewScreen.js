@@ -514,13 +514,20 @@ class TopicViewScreen extends Component {
 						return previousResult;
 					}
 
+					// Ensure new topic array is unique
+					// Since the topic list can change order between loads (due to user activity), it's possible
+					// that a topic row will appear twice in our data if we don't check for unique values.
+					// This causes a RN duplicate rows error.
+					const postArray = [...previousResult.forums.topic.posts, ...fetchMoreResult.forums.topic.posts];
+					const posts = _.uniq(postArray, false, post => post.id);
+
 					// Now APPEND the new posts to the existing ones
 					const result = Object.assign({}, previousResult, {
 						forums: {
 							...previousResult.forums,
 							topic: {
 								...previousResult.forums.topic,
-								posts: [...previousResult.forums.topic.posts, ...fetchMoreResult.forums.topic.posts]
+								posts
 							}
 						}
 					});
@@ -572,14 +579,14 @@ class TopicViewScreen extends Component {
 					// existing posts. To make sure we only show each post once, we need to ensure
 					// the post array contains unique values.
 					const postArray = [...fetchMoreResult.forums.topic.posts, ...previousResult.forums.topic.posts];
-					const uniq = _.uniq(postArray, false, post => post.id);
+					const posts = _.uniq(postArray, false, post => post.id);
 
 					const result = Object.assign({}, previousResult, {
 						forums: {
 							...previousResult.forums,
 							topic: {
 								...previousResult.forums.topic,
-								posts: uniq
+								posts
 							}
 						}
 					});

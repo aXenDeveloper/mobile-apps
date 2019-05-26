@@ -69,14 +69,15 @@ class ProfileContent extends Component {
 			const { data } = await this.props.client.query({
 				query: MemberContentQuery,
 				variables,
-				fetchPolicy: 'no-cache'
+				fetchPolicy: "no-cache"
 			});
 
 			const currentResults = this.state.results == null ? [] : this.state.results;
 			const updatedResults = [...currentResults, ...data.core.member.content];
+			const results = _.uniq(updatedResults, false, result => result.indexID);
 
 			this.setState({
-				results: updatedResults,
+				results,
 				reachedEnd: !data.core.member.content.length || data.core.member.content.length < LIMIT,
 				loading: false,
 				offset: updatedResults.length

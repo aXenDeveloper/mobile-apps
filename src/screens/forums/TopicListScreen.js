@@ -183,12 +183,18 @@ class TopicListScreen extends Component {
 						return previousResult;
 					}
 
+					// Ensure new topic array is unique
+					// Since the topic list can change order between loads (due to user activity), it's possible
+					// that a topic row will appear twice in our data if we don't check for unique values.
+					// This causes a RN duplicate rows error.
+					const topics = _.uniq([...previousResult.forums.forum.topics, ...fetchMoreResult.forums.forum.topics], false, topic => topic.id);
+
 					const result = Object.assign({}, previousResult, {
 						forums: {
 							...previousResult.forums,
 							forum: {
 								...previousResult.forums.forum,
-								topics: [...previousResult.forums.forum.topics, ...fetchMoreResult.forums.forum.topics]
+								topics
 							}
 						}
 					});

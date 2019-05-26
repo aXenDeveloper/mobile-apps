@@ -100,9 +100,10 @@ class SearchContentPanel extends Component {
 
 			const currentResults = this.state.results == null ? [] : this.state.results;
 			const updatedResults = [...currentResults, ...data.core.search.results];
+			const results = _.uniq(updatedResults, false, result => result.indexID);
 
 			this.setState({
-				results: updatedResults,
+				results,
 				reachedEnd: !data.core.search.results.length || data.core.search.results.length < LIMIT,
 				loading: false,
 				offset: updatedResults.length

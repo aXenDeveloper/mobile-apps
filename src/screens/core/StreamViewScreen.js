@@ -239,7 +239,13 @@ class StreamViewScreen extends Component {
 			return [];
 		}
 
-		items.forEach(item => {
+		// Ensure new topic array is unique
+		// Since the topic list can change order between loads (due to user activity), it's possible
+		// that a topic row will appear twice in our data if we don't check for unique values.
+		// This causes a RN duplicate rows error.
+		const uniqueItems = _.uniq(items, false, item => item.indexID);
+
+		uniqueItems.forEach(item => {
 			if (_.isUndefined(sections[item.relativeTimeKey])) {
 				sections[item.relativeTimeKey] = {
 					title: item.relativeTimeKey,
