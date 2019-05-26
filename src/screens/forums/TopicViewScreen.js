@@ -393,9 +393,8 @@ class TopicViewScreen extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps, prevState) {
-
 		// If we're loading again, clear our cache of post heights
-		if( !prevProps.data.loading && this.props.data.loading ){
+		if (!prevProps.data.loading && this.props.data.loading) {
 			this.clearCellHeightCache();
 		}
 
@@ -427,7 +426,7 @@ class TopicViewScreen extends Component {
 
 		// Update our offset tracker, but only if we haven't done it before, otherwise
 		// we'll replace our offset with the initial offset every time the component updates
-		if( prevProps.data.variables.offsetPosition !== "LAST" && this.props.data.variables.offsetPosition === "LAST" && this._initialOffsetDone ){
+		if (prevProps.data.variables.offsetPosition !== "LAST" && this.props.data.variables.offsetPosition === "LAST" && this._initialOffsetDone) {
 			this._initialOffsetDone = false;
 		}
 
@@ -445,14 +444,13 @@ class TopicViewScreen extends Component {
 				});
 				this._initialOffsetDone = true;
 			} else if (this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0) {
-
 				this._initialOffsetDone = true;
 				// If we're showing the last post, the offset will be the total post count plus our adjustment
 				this.setState({
 					reachedEnd: true,
 					startingOffset: this.props.data.forums.topic.postCount + this.props.data.variables.offsetAdjust
 				});
-				this.scrollToEnd();				
+				this.scrollToEnd();
 			}
 		}
 

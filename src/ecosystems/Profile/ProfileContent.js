@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Text, View, ScrollView, FlatList, StyleSheet, Image, StatusBar, Animated, Platform } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
+import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import { StreamCard, StreamCardFragment } from "../../ecosystems/Stream";
@@ -14,7 +15,7 @@ const MemberContentQuery = gql`
 		core {
 			member(id: $id) {
 				content(offset: $offset, limit: $limit) {
-					...on core_ContentSearchResult {
+					... on core_ContentSearchResult {
 						...StreamCardFragment
 					}
 				}
@@ -38,19 +39,19 @@ class ProfileContent extends Component {
 	}
 
 	componentDidMount() {
-		if( this.props.showResults ){
+		if (this.props.showResults) {
 			this.fetchResults();
 		}
 	}
 
 	componentDidUpdate(prevProps) {
-		if( !prevProps.showResults && prevProps.showResults !== this.props.showResults ){
+		if (!prevProps.showResults && prevProps.showResults !== this.props.showResults) {
 			this.fetchResults();
 		}
 	}
 
 	async fetchResults() {
-		if( this.state.loading || this.state.reachedEnd ){
+		if (this.state.loading || this.state.reachedEnd) {
 			return;
 		}
 
@@ -121,7 +122,7 @@ class ProfileContent extends Component {
 				showIcon={false}
 			/>
 		);
-	}
+	};
 
 	/**
 	 * Build placeholder components
@@ -161,6 +162,4 @@ class ProfileContent extends Component {
 	}
 }
 
-export default compose(
-	withApollo
-)(ProfileContent);
+export default compose(withApollo)(ProfileContent);
