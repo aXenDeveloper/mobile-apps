@@ -46,8 +46,8 @@ class QuillComponent extends Component {
 	 * @return 	void
 	 */
 	waitForReady() {
-		this._timer = setTimeout( () => {
-			if( window._readyToGo || this._count == 50 ){
+		this._timer = setTimeout(() => {
+			if (window._readyToGo || this._count == 50) {
 				this._setUpEditor();
 			} else {
 				this._count++;
@@ -65,20 +65,23 @@ class QuillComponent extends Component {
 	_setUpEditor() {
 		let placeholder = "Content";
 
-		if( window._PLACEHOLDER !== undefined ){
+		if (window._PLACEHOLDER !== undefined) {
 			placeholder = window._PLACEHOLDER;
 		}
 
 		// Set up Quill
-		this.setState({
-			quill: new Quill("#quill", {
-				bounds: "#container",
-				placeholder
-			})
-		}, () => {
-			this.setUpEvents();
-			this.sendMessage("READY");
-		});
+		this.setState(
+			{
+				quill: new Quill("#quill", {
+					bounds: "#container",
+					placeholder
+				})
+			},
+			() => {
+				this.setUpEvents();
+				this.sendMessage("READY");
+			}
+		);
 	}
 
 	/**
@@ -87,7 +90,7 @@ class QuillComponent extends Component {
 	 * @return 	void
 	 */
 	componentWillUnmount() {
-		clearTimeout( this._timer );
+		clearTimeout(this._timer);
 		document.removeEventListener("message", this.onMessage);
 		window.removeEventListener("message", this.onMessage);
 	}
@@ -132,7 +135,7 @@ class QuillComponent extends Component {
 			});
 
 			this.sendMessage("EDITOR_STATUS", {
-				content: this.state.quill.container.querySelector('.ql-editor').innerHTML,
+				content: this.state.quill.container.querySelector(".ql-editor").innerHTML,
 				mention: this.mentionState(),
 				formatting: this.formattingState()
 			});
@@ -145,9 +148,9 @@ class QuillComponent extends Component {
 	 * @return 	void
 	 */
 	textChange(delta, oldDelta, source) {
-		if( source === Quill.sources.USER ){
+		if (source === Quill.sources.USER) {
 			this.sendMessage("EDITOR_STATUS", {
-				content: this.state.quill.container.querySelector('.ql-editor').innerHTML,
+				content: this.state.quill.container.querySelector(".ql-editor").innerHTML,
 				mention: this.mentionState(),
 				formatting: this.formattingState()
 			});
@@ -160,7 +163,7 @@ class QuillComponent extends Component {
 	 * @return 	object
 	 */
 	formattingState() {
-		return this.state.quill.getFormat( this.state.quill.getSelection() );
+		return this.state.quill.getFormat(this.state.quill.getSelection());
 	}
 
 	/**
@@ -174,16 +177,16 @@ class QuillComponent extends Component {
 		const cursorPos = range.index;
 		const startPos = Math.max(0, cursorPos - maxLength);
 		const beforeCursorPos = this.state.quill.getText(startPos, cursorPos - startPos);
-		const mentionCharPos = beforeCursorPos.lastIndexOf('@');
+		const mentionCharPos = beforeCursorPos.lastIndexOf("@");
 
-		if( mentionCharPos !== -1 ){
-			if( !( mentionCharPos === 0 || !!beforeCursorPos[ mentionCharPos - 1 ].match(/\s/g) ) ){
+		if (mentionCharPos !== -1) {
+			if (!(mentionCharPos === 0 || !!beforeCursorPos[mentionCharPos - 1].match(/\s/g))) {
 				return null;
 			}
 
 			const mentionText = beforeCursorPos.substring(mentionCharPos + 1);
 
-			if( mentionText.length ){
+			if (mentionText.length) {
 				this.setState({
 					mentionCharPos,
 					mentionRange: range.index
@@ -193,7 +196,7 @@ class QuillComponent extends Component {
 					text: mentionText
 				};
 			}
-		}		
+		}
 
 		return null;
 	}
@@ -235,10 +238,10 @@ class QuillComponent extends Component {
 						this.insertMentionSymbol();
 						break;
 					case "FOCUS":
-						setTimeout( () => {
+						setTimeout(() => {
 							this.state.quill.blur();
 							this.state.quill.focus();
-						}, 50 );
+						}, 50);
 						break;
 					case "GET_CONTENT":
 						this.getText(messageData);
@@ -257,14 +260,16 @@ class QuillComponent extends Component {
 	 * @return 	void
 	 */
 	insertStyles(data) {
+		this.addDebug("added styles: " + JSON.stringify(data));
+
 		const sheet = this.getCustomStylesheet();
 
-		if( _.isArray( data.style ) ){
-			for( let i = 0; i < data.style.length; i++ ){
-				sheet.insertRule( data.style[i], 1 );
+		if (_.isArray(data.style)) {
+			for (let i = 0; i < data.style.length; i++) {
+				sheet.insertRule(data.style[i], 1);
 			}
 		} else {
-			sheet.insertRule( data.style );
+			sheet.insertRule(data.style);
 		}
 	}
 
@@ -275,7 +280,7 @@ class QuillComponent extends Component {
 	 */
 	getText(data) {
 		this.sendMessage("CONTENT", {
-			content: this.state.quill.container.querySelector('.ql-editor').innerHTML
+			content: this.state.quill.container.querySelector(".ql-editor").innerHTML
 		});
 	}
 
@@ -287,7 +292,7 @@ class QuillComponent extends Component {
 	 */
 	insertLink(data) {
 		// Todo: validate link/text
-		
+
 		const range = this.state.quill.getSelection(true);
 		this.addDebug(`Range index: ${range.index}, length: ${range.length}`);
 
@@ -324,13 +329,18 @@ class QuillComponent extends Component {
 	 * @return 	void
 	 */
 	insertMention(data) {
-		this.state.quill.deleteText( this.state.mentionCharPos, this.state.mentionRange - this.state.mentionCharPos, Quill.sources.API);
-		this.state.quill.insertEmbed( this.state.mentionCharPos, 'mention', {
-			id: data.id,
-			name: data.name,
-			url: data.url
-		}, Quill.sources.API);
-		this.state.quill.insertText( this.state.mentionCharPos + 1, ' ', Quill.sources.API);
+		this.state.quill.deleteText(this.state.mentionCharPos, this.state.mentionRange - this.state.mentionCharPos, Quill.sources.API);
+		this.state.quill.insertEmbed(
+			this.state.mentionCharPos,
+			"mention",
+			{
+				id: data.id,
+				name: data.name,
+				url: data.url
+			},
+			Quill.sources.API
+		);
+		this.state.quill.insertText(this.state.mentionCharPos + 1, " ", Quill.sources.API);
 		this.state.quill.setSelection(this.state.mentionCharPos + 2, Quill.sources.SILENT);
 	}
 
@@ -341,15 +351,15 @@ class QuillComponent extends Component {
 	 */
 	insertMentionSymbol() {
 		const range = this.state.quill.getSelection();
-		const previousCharacter = this.state.quill.getText( range.index - 1, 1);
+		const previousCharacter = this.state.quill.getText(range.index - 1, 1);
 
-		let character = '@';
+		let character = "@";
 
-		if( !previousCharacter.match(/\s/g) ){
-			character = ' ' + character;
+		if (!previousCharacter.match(/\s/g)) {
+			character = " " + character;
 		}
 
-		this.state.quill.insertText( range.index, character, Quill.sources.API);
+		this.state.quill.insertText(range.index, character, Quill.sources.API);
 	}
 
 	/**
@@ -399,12 +409,12 @@ class QuillComponent extends Component {
 				message = util.inspect(message, { showHidden: false, depth: null });
 			}
 
-			if( DEBUG ){
+			if (DEBUG) {
 				this.setState({
 					debug: this.state.debug.concat(message)
 				});
 			}
-			if( REMOTE_DEBUG && sendRemotely ){
+			if (REMOTE_DEBUG && sendRemotely) {
 				this.sendMessage("DEBUG", {
 					debugMessage: message
 				});
@@ -418,9 +428,9 @@ class QuillComponent extends Component {
 	 * @return 	Element
 	 */
 	getCustomStylesheet() {
-		const newSheet = document.createElement('style');
-		newSheet.setAttribute('type', 'text/css');
-		newSheet.appendChild(document.createTextNode(''));
+		const newSheet = document.createElement("style");
+		newSheet.setAttribute("type", "text/css");
+		newSheet.appendChild(document.createTextNode(""));
 		document.head.appendChild(newSheet);
 		return newSheet.sheet;
 	}
@@ -431,12 +441,16 @@ class QuillComponent extends Component {
 				<div id="container" style={{ height: DEBUG ? "50%" : "100%", display: "flex", flexDirection: "column" }}>
 					<div id="quill" style={{ fontSize: "16px", height: "100%" }} />
 				</div>
-				{DEBUG &&
+				{DEBUG && (
 					<div style={{ overflow: "auto", height: "50%" }}>
 						<strong>Debug:</strong>
-						<ul>{this.state.debug.map(message => <li>{message}</li>)}</ul>
+						<ul>
+							{this.state.debug.map(message => (
+								<li>{message}</li>
+							))}
+						</ul>
 					</div>
-				}
+				)}
 			</React.Fragment>
 		);
 	}
@@ -447,30 +461,30 @@ export default QuillComponent;
 // ========================================================
 // MENTION BLOT
 // ========================================================
-const Embed = Quill.import('blots/embed'); // important, must import from quill rather than import as a JS module
+const Embed = Quill.import("blots/embed"); // important, must import from quill rather than import as a JS module
 
 class MentionBlot extends Embed {
 	static create(data) {
 		let node = super.create(data.name);
 
-		node.setAttribute('class', 'ipsMention');
-		node.setAttribute('data-mentionid', data.id);
-		node.setAttribute('href', '#');
-		node.innerHTML = ' @' + data.name + ' ';
+		node.setAttribute("class", "ipsMention");
+		node.setAttribute("data-mentionid", data.id);
+		node.setAttribute("href", "#");
+		node.innerHTML = " @" + data.name + " ";
 
 		return node;
 	}
 
 	static value(domNode) {
 		return {
-			id: domNode.getAttribute('data-mentionid'),
+			id: domNode.getAttribute("data-mentionid"),
 			name: domNode.innerText,
-			url: domNode.getAttribute('href')
+			url: domNode.getAttribute("href")
 		};
 	}
 }
 
-MentionBlot.blotName = 'mention';
-MentionBlot.tagName = 'span';
+MentionBlot.blotName = "mention";
+MentionBlot.tagName = "span";
 
 Quill.register(MentionBlot);

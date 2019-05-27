@@ -11,10 +11,9 @@ import ToggleRow from "../../atoms/ToggleRow";
 import styles, { styleVars } from "../../styles";
 
 class FollowModal extends Component {
-
 	constructor(props) {
 		super(props);
-		
+
 		this.state = {
 			selectedFollowOption: null
 		};
@@ -146,10 +145,14 @@ class FollowModal extends Component {
 	 */
 	getSectionData() {
 		return [
-			...(this.props.followData.followOptions.length > 1 ? [{
-					title: Lang.get("follow_freq"),
-					data: ["followChoices"]
-			}] : []),
+			...(this.props.followData.followOptions.length > 1
+				? [
+						{
+							title: Lang.get("follow_freq"),
+							data: ["followChoices"]
+						}
+				  ]
+				: []),
 			{
 				title: Lang.get("follow_privacy"),
 				data: ["anonToggle"]
@@ -189,8 +192,8 @@ class FollowModal extends Component {
 	}
 
 	/**
-	 * Renders a cell for the SectionList. We use SectionList here so that we have header 
-	 * support without needing to build them manually 
+	 * Renders a cell for the SectionList. We use SectionList here so that we have header
+	 * support without needing to build them manually
 	 *
 	 * @param 	object 		item 		The current item we're building
 	 * @return 	Component
@@ -209,7 +212,7 @@ class FollowModal extends Component {
 		return (
 			<Modal style={componentStyles.modal} swipeDirection="down" onSwipeComplete={this.props.close} isVisible={this.props.isVisible}>
 				<View style={componentStyles.modalInner}>
-					<View style={styles.modalHandle}></View>
+					<View style={styles.modalHandle} />
 					<SectionList
 						sections={this.getSectionData()}
 						renderItem={item => this.renderItem(item)}
@@ -231,7 +234,7 @@ const componentStyles = StyleSheet.create({
 	},
 	modalInner: {
 		backgroundColor: "#fff",
-		borderRadius: 6,
+		borderRadius: 6
 	},
 	followerWrap: {
 		backgroundColor: "#f5f5f5",
