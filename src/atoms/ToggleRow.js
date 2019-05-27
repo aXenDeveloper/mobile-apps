@@ -18,7 +18,7 @@ export default class ToggleRow extends Component {
 					{Boolean(this.props.subText) && <Text style={componentStyles.metaText}>{this.props.subText}</Text>}
 				</View>
 				<Switch
-					onTintColor={styleVars.toggleTint}
+					trackColor={{ true: styleVars.toggleTint }}
 					value={this.props.value}
 					disabled={!_.isUndefined(this.props.enabled) ? !this.props.enabled : false}
 					style={componentStyles.switch}
