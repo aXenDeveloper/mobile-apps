@@ -91,21 +91,21 @@ class FollowModal extends Component {
 		if (this.props.followData.isFollowing) {
 			return (
 				<View style={componentStyles.buttonWrap}>
-					<Button type="primary" filled size="large" title={Lang.get("follow_save")} style={styles.mbTight} onPress={() => this._follow()} />;
-					<Button type="warning" filled size="large" title={Lang.get("unfollow")} onPress={this.props.onUnfollow} />;
+					<Button type="primary" filled size="large" title={Lang.get("follow_save")} style={styles.mbTight} onPress={() => this._follow()} />
+					<Button type="warning" filled size="large" title={Lang.get("unfollow")} onPress={this.props.onUnfollow} />
 				</View>
 			);
 		} else {
 			return (
 				<View style={componentStyles.buttonWrap}>
-					<Button type="primary" filled size="large" title={Lang.get("follow")} onPress={() => this._follow()} />;
+					<Button type="primary" filled size="large" title={Lang.get("follow")} onPress={() => this._follow()} />
 				</View>
 			);
 		}
 	}
 
 	/**
-	 * onPress handler for Follow or Save button which in turn calls 
+	 * onPress handler for Follow or Save button which in turn calls
 	 * the handler passed down to us, with the selected options
 	 *
 	 * @return 	void
