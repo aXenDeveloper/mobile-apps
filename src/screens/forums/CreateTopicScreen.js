@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Text, Alert, Button, TextInput, View, KeyboardAvoidingView } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
+import { NavigationActions, Header } from "react-navigation";
 import { connect } from "react-redux";
 
 import TagEdit from "../../ecosystems/TagEdit";
@@ -16,6 +17,7 @@ const CreateTopicMutation = gql`
 			createTopic(forumID: $forumID, title: $title, content: $content, tags: $tags) {
 				__typename
 				id
+				isHidden
 				url {
 					__typename
 					full
@@ -134,7 +136,7 @@ class CreateTopicScreen extends Component {
 		}
 
 		try {
-			await this.props.mutate({
+			const { data } = await this.props.mutate({
 				variables: {
 					forumID: this.props.navigation.state.params.forumID,
 					title: this.state.title,
@@ -144,7 +146,14 @@ class CreateTopicScreen extends Component {
 				refetchQueries: ["TopicListQuery"]
 			});
 
-			this.props.navigation.goBack();
+			const newTopicData = data.mutateForums.createTopic;
+			const navigateAction = NavigationActions.navigate({
+				params: {
+					highlightTopic: newTopicData.id
+				},
+				routeName: "TopicList"
+			});
+			this.props.navigation.dispatch(navigateAction);
 		} catch (err) {
 			console.log(err);
 			const errorMessage = getErrorMessage(err, CreateTopicScreen.errors);

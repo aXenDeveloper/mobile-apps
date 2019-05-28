@@ -59,6 +59,8 @@ const TopicListQuery = gql`
 				}
 				create {
 					canCreate
+					itemsRequireApproval
+					commentsRequireApproval
 					tags {
 						enabled
 						definedTags
@@ -291,7 +293,9 @@ class TopicListScreen extends Component {
 	 */
 	renderItem(item, forumData) {
 		if (item.type == "topic") {
-			return <TopicRow data={item} showCategory={false} />;
+			const shouldHighlight =
+				!_.isUndefined(this.props.navigation.getParam("highlightTopic")) && parseInt(this.props.navigation.getParam("highlightTopic")) === parseInt(item.id);
+			return <TopicRow data={item} showCategory={false} highlight={shouldHighlight} />;
 		} else {
 			return <ForumItem key={item.key} showCategory={false} data={item.data} />;
 		}
@@ -382,7 +386,8 @@ class TopicListScreen extends Component {
 		this.props.navigation.navigate("CreateTopic", {
 			forumID: this.props.navigation.state.params.id,
 			tagsEnabled: forumData.create.tags.enabled,
-			definedTags: forumData.create.tags.definedTags
+			definedTags: forumData.create.tags.definedTags,
+			requiresApproval: forumData.create.itemsRequireApproval
 		});
 	};
 
