@@ -7,7 +7,19 @@ import { ImagePicker, Permissions } from "expo";
 import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 import _ from "lodash";
 import { connect } from "react-redux";
-import { setFocus, setFormatting, resetEditor, resetImagePicker, addImageToUpload, showMentionBar, hideMentionBar, loadingMentions, updateMentionResults, insertMentionSymbolDone } from "../../redux/actions/editor";
+import {
+	setFocus,
+	setFormatting,
+	resetEditor,
+	resetImagePicker,
+	addImageToUpload,
+	showMentionBar,
+	hideMentionBar,
+	loadingMentions,
+	updateMentionResults,
+	insertMentionSymbolDone,
+	uploadImage
+} from "../../redux/actions/editor";
 import styles, { styleVars } from "../../styles";
 
 const EDITOR_VIEW = require("../../../web/dist/index.html");
@@ -26,7 +38,7 @@ const MentionQuery = gql`
 		core {
 			search(term: $term, type: core_members, orderBy: name, limit: 10) {
 				results {
-					...on core_Member {
+					... on core_Member {
 						id
 						name
 						photo
@@ -107,17 +119,17 @@ class QuillEditor extends Component {
 		}
 
 		// Are we inserting the mention symbol?
-		if( !prevProps.editor.mentions.insertSymbol && this.props.editor.mentions.insertSymbol ){
+		if (!prevProps.editor.mentions.insertSymbol && this.props.editor.mentions.insertSymbol) {
 			this.insertMentionSymbol();
 		}
 
 		// Are we opening the link modal?
-		if( !prevProps.editor.linkModalActive && this.props.editor.linkModalActive ){
+		if (!prevProps.editor.linkModalActive && this.props.editor.linkModalActive) {
 			this.showLinkModal();
 		}
 
 		// Are we opening the image picker?
-		if( !prevProps.editor.imagePickerOpened && this.props.editor.imagePickerOpened ){
+		if (!prevProps.editor.imagePickerOpened && this.props.editor.imagePickerOpened) {
 			this.showImagePicker();
 			this.props.dispatch(resetImagePicker());
 		}
@@ -126,10 +138,9 @@ class QuillEditor extends Component {
 		if (!_.isMatch(prevProps.editor.formatting, this.props.editor.formatting)) {
 			Object.entries(this.props.editor.formatting).forEach(pair => {
 				if (_.isObject(pair[1])) {
-
 					// If this is a button with options, then loop through and find the option that
 					// is currently active. If none are active, we'll send false to Quill.
-					let activeOption = _.find( Object.keys(this.props.editor.formatting[pair[0]]), (val) => {
+					let activeOption = _.find(Object.keys(this.props.editor.formatting[pair[0]]), val => {
 						return this.props.editor.formatting[pair[0]][val] === true;
 					});
 
@@ -138,7 +149,6 @@ class QuillEditor extends Component {
 						option: activeOption || false
 					});
 				} else {
-
 					// If this is a simple boolean button, send it
 					if (prevProps.editor.formatting[pair[0]] !== this.props.editor.formatting[pair[0]]) {
 						this.sendMessage("SET_FORMAT", {
@@ -165,19 +175,19 @@ class QuillEditor extends Component {
 			let mentions = [];
 			const { data } = await this.props.client.query({
 				query: MentionQuery,
-				variables: { term: searchTerm },
+				variables: { term: searchTerm }
 			});
 
-			if( data.core.search.results.length ){
-				mentions = data.core.search.results.map( mention => {
+			if (data.core.search.results.length) {
+				mentions = data.core.search.results.map(mention => {
 					return {
 						...mention,
 						handler: this.getMentionHandler(mention)
-					}
+					};
 				});
 			}
 
-			this.props.dispatch(updateMentionResults( mentions ));
+			this.props.dispatch(updateMentionResults(mentions));
 		} catch (err) {
 			console.log(err);
 		}
@@ -190,11 +200,11 @@ class QuillEditor extends Component {
 	 * @return 	function
 	 */
 	getMentionHandler(mention) {
-		if( _.isUndefined( this._mentionHandlers[ mention.id ] ) ){
-			this._mentionHandlers[ mention.id ] = () => this.onPressMention(mention);
+		if (_.isUndefined(this._mentionHandlers[mention.id])) {
+			this._mentionHandlers[mention.id] = () => this.onPressMention(mention);
 		}
 
-		return this._mentionHandlers[ mention.id ];
+		return this._mentionHandlers[mention.id];
 	}
 
 	/**
@@ -214,7 +224,7 @@ class QuillEditor extends Component {
 	}
 
 	/**
-	 * Insert the mention 
+	 * Insert the mention
 	 *
 	 * @param 	object 		mention 		Mention data
 	 * @return 	void
@@ -257,10 +267,10 @@ class QuillEditor extends Component {
 			style: this.buildCustomStyles()
 		});
 
-		if( this.props.autoFocus ){
-			setTimeout( () => {
+		if (this.props.autoFocus) {
+			setTimeout(() => {
 				this.sendMessage("FOCUS");
-			}, 500 );
+			}, 500);
 		}
 	}
 
@@ -273,11 +283,11 @@ class QuillEditor extends Component {
 	}
 
 	EDITOR_STATUS(messageData) {
-		for( let key in messageData ){
+		for (let key in messageData) {
 			const handler = `handle${key.charAt(0).toUpperCase()}${key.slice(1)}`;
 
-			if( _.isFunction( this[ handler ] ) ){
-				this[ handler ].call(this, messageData[ key ]);
+			if (_.isFunction(this[handler])) {
+				this[handler].call(this, messageData[key]);
 			}
 		}
 	}
@@ -285,7 +295,6 @@ class QuillEditor extends Component {
 	DEBUG(messageData) {
 		console.log(`WEBVIEW DEBUG: ${messageData.debugMessage}`);
 	}
-
 
 	/**
 	 * ========================================================================
@@ -310,7 +319,7 @@ class QuillEditor extends Component {
 		const formatState = data;
 		const newFormatting = {};
 
-		console.log('FORMAT STATE:');
+		console.log("FORMAT STATE:");
 		console.log(formatState);
 
 		Object.entries(this.props.editor.formatting).forEach(pair => {
@@ -336,16 +345,16 @@ class QuillEditor extends Component {
 	 * @return 	void
 	 */
 	handleMention(data) {
-		if( data === null ){
-			if( this.props.editor.mentions.active ) {
+		if (data === null) {
+			if (this.props.editor.mentions.active) {
 				this.props.dispatch(hideMentionBar());
 			}
 			return;
 		} else {
 			this.props.dispatch(showMentionBar());
 
-			if( data.text !== this.props.editor.mentions.searchText ){
-				this.fetchMentions( data.text );
+			if (data.text !== this.props.editor.mentions.searchText) {
+				this.fetchMentions(data.text);
 			}
 		}
 	}
@@ -363,7 +372,6 @@ class QuillEditor extends Component {
 
 		this.props.update.call(null, data);
 	}
-
 
 	/**
 	 * ========================================================================
@@ -492,7 +500,7 @@ class QuillEditor extends Component {
 				return;
 			}
 
-			dispatch(addImageToUpload(result));
+			dispatch(uploadImage(result, this.props.uploadData));
 		} else {
 			throw new Error("Permission not granted");
 		}
@@ -505,8 +513,11 @@ class QuillEditor extends Component {
 			window._readyToGo = true;
 		`;
 
+		console.log("In editor, uploadData is");
+		console.log(this.props.uploadData);
+
 		return (
-			<View style={{ flex: 1, backgroundColor: '#fff' }}>
+			<View style={{ flex: 1, backgroundColor: "#fff" }}>
 				<Modal
 					style={modalStyles.modal}
 					avoidKeyboard={true}

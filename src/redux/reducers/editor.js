@@ -9,7 +9,7 @@ const initialState = {
 	mentions: {
 		active: false,
 		loading: false,
-		searchText: '',
+		searchText: "",
 		matches: [],
 		insertSymbol: false
 	},
@@ -28,17 +28,16 @@ const initialState = {
 export default function editor(state = initialState, { type, payload }) {
 	switch (type) {
 		case actions.SET_BUTTON_STATE:
-
 			let buttonState = payload.state;
 
-			if( _.isObject( initialState.formatting[payload.button] ) ){
+			if (_.isObject(initialState.formatting[payload.button])) {
 				buttonState = {};
 
-				Object.entries(initialState.formatting[payload.button]).forEach( pair => {
+				Object.entries(initialState.formatting[payload.button]).forEach(pair => {
 					buttonState[pair[0]] = false;
 				});
 				buttonState[payload.option] = payload.state;
-			} 
+			}
 
 			return {
 				...state,
@@ -50,7 +49,7 @@ export default function editor(state = initialState, { type, payload }) {
 		case actions.SET_FORMATTING:
 			return {
 				...state,
-				formatting:	{
+				formatting: {
 					...payload
 				}
 			};
@@ -84,9 +83,7 @@ export default function editor(state = initialState, { type, payload }) {
 				mentions: {
 					...state.mentions,
 					loading: false,
-					matches: [
-						...payload
-					]
+					matches: [...payload]
 				}
 			};
 		case actions.INSERT_MENTION_SYMBOL:
@@ -132,19 +129,20 @@ export default function editor(state = initialState, { type, payload }) {
 			};
 		case actions.RESET_EDITOR:
 			return Object.assign({}, initialState);
-		case actions.ADD_IMAGE_TO_UPLOAD:
+
+		case actions.ADD_UPLOADED_IMAGE:
 			return {
 				...state,
 				attachedImages: [
 					...state.attachedImages,
-					{ 
+					{
 						...payload,
-						status: 'READY',
+						status: "PENDING",
 						progress: 0
 					}
 				]
 			};
-		default: 
+		default:
 			return state;
 	}
 }

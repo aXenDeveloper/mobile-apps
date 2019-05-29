@@ -39,24 +39,30 @@ class QuillToolbar extends Component {
 
 	async componentDidUpdate(prevProps, prevState) {
 		// Check if we need to show the mention bar
-		if( !prevProps.editor.mentions.active && this.props.editor.mentions.active ){
-			this.setState({
-				showMentionToolbar: true,
-				showImageToolbar: false,
-				overrideMentionBar: false
-			}, () => {
-				this._wrapper.transitionTo({ height: 130 });
-				this._toolbar.transitionTo({ opacity: 0 });
-				this._mentionToolbar.transitionTo({ opacity: 1 });
-			})
+		if (!prevProps.editor.mentions.active && this.props.editor.mentions.active) {
+			this.setState(
+				{
+					showMentionToolbar: true,
+					showImageToolbar: false,
+					overrideMentionBar: false
+				},
+				() => {
+					this._wrapper.transitionTo({ height: 130 });
+					this._toolbar.transitionTo({ opacity: 0 });
+					this._mentionToolbar.transitionTo({ opacity: 1 });
+				}
+			);
 		}
 
 		// Check if we need to hide the mention bar
-		if( this.state.showMentionToolbar && ( ( !this.props.editor.mentions.active && prevProps.editor.mentions.active ) || ( !prevState.overrideMentionBar && this.state.overrideMentionBar ) ) ){
+		if (
+			this.state.showMentionToolbar &&
+			((!this.props.editor.mentions.active && prevProps.editor.mentions.active) || (!prevState.overrideMentionBar && this.state.overrideMentionBar))
+		) {
 			this._wrapper.transitionTo({ height: TOOLBAR_HEIGHT });
 			this._toolbar.transitionTo({ opacity: 1 });
 			await this._mentionToolbar.transitionTo({ opacity: 0 });
-			
+
 			this.setState({
 				showMentionToolbar: false,
 				overrideMentionBar: false
@@ -176,11 +182,7 @@ class QuillToolbar extends Component {
 						{Boolean(this.state.showToolbar) && (
 							<Animatable.View style={[styles.flexRow, styles.flexAlignCenter, componentStyles.toolbarIcons]} ref={ref => (this._toolbar = ref)}>
 								<QuillToolbarButton icon={require("../../../resources/image.png")} onPress={this.showImageToolbar} />
-								<QuillToolbarButton
-									active={this.props.editor.linkModalActive}
-									icon={require("../../../resources/link.png")}
-									onPress={this.openLinkModal}
-								/>
+								<QuillToolbarButton active={this.props.editor.linkModalActive} icon={require("../../../resources/link.png")} onPress={this.openLinkModal} />
 								<QuillToolbarButton
 									active={this.props.editor.mentionModalActive}
 									icon={require("../../../resources/mention.png")}
@@ -215,10 +217,7 @@ class QuillToolbar extends Component {
 							</Animatable.View>
 						)}
 						{Boolean(this.state.showMentionToolbar) && (
-							<Animatable.View
-								style={[styles.flex, componentStyles.mentionToolbar]}
-								ref={ref => (this._mentionToolbar = ref)}
-							>
+							<Animatable.View style={[styles.flex, componentStyles.mentionToolbar]} ref={ref => (this._mentionToolbar = ref)}>
 								<ScrollView style={[styles.ptVeryTight]}>
 									<View style={componentStyles.mentionContainer}>
 										{Boolean(this.props.editor.mentions.loading) && !Boolean(this.props.editor.mentions.matches.length) && (
@@ -227,23 +226,21 @@ class QuillToolbar extends Component {
 											</PlaceholderRepeater>
 										)}
 										{!Boolean(this.props.editor.mentions.loading) && !Boolean(this.props.editor.mentions.matches.length) && (
-											<Text style={[styles.mvTight, styles.mhStandard, styles.veryLightText]}>{Lang.get('no_matching_members')}</Text>
+											<Text style={[styles.mvTight, styles.mhStandard, styles.veryLightText]}>{Lang.get("no_matching_members")}</Text>
 										)}
-										{Boolean(this.props.editor.mentions.matches.length) && this.props.editor.mentions.matches.map(mention => (
-											<MentionRow key={mention.id} onPress={mention.handler} name={mention.name} id={mention.id} photo={mention.photo} />
-										))}
+										{Boolean(this.props.editor.mentions.matches.length) &&
+											this.props.editor.mentions.matches.map(mention => (
+												<MentionRow key={mention.id} onPress={mention.handler} name={mention.name} id={mention.id} photo={mention.photo} />
+											))}
 									</View>
 									<TouchableOpacity onPress={this.closeMentionBar} style={componentStyles.closeMentionBar}>
-										<Image source={icons.CROSS} resizeMode='contain' style={componentStyles.closeMentionBarIcon} />
+										<Image source={icons.CROSS} resizeMode="contain" style={componentStyles.closeMentionBarIcon} />
 									</TouchableOpacity>
 								</ScrollView>
 							</Animatable.View>
 						)}
 						{Boolean(this.state.showImageToolbar) && (
-							<Animatable.View
-								style={[styles.flexRow, styles.pvTight, styles.plTight, componentStyles.imageToolbar]}
-								ref={ref => (this._imageToolbar = ref)}
-							>
+							<Animatable.View style={[styles.flexRow, styles.pvTight, styles.plTight, componentStyles.imageToolbar]} ref={ref => (this._imageToolbar = ref)}>
 								<ScrollView horizontal style={[styles.flexRow, styles.flexGrow]}>
 									<TouchableOpacity
 										onPress={this.openImagePicker}
@@ -252,7 +249,7 @@ class QuillToolbar extends Component {
 										<Image source={icons.PLUS_CIRCLE} resizeMode="contain" style={componentStyles.addImageIcon} />
 									</TouchableOpacity>
 									{attachedImages.reverse().map(image => (
-										<UploadedImage image={image.uri} status={image.status} key={image.uri} />
+										<UploadedImage image={image.localFilename} status={image.status} key={image.id} />
 									))}
 								</ScrollView>
 								<TouchableOpacity onPress={this.hideImageToolbar} style={[styles.pvTight, componentStyles.closeImageToolbar]}>
@@ -320,7 +317,7 @@ const componentStyles = StyleSheet.create({
 		marginRight: 36
 	},
 	closeMentionBar: {
-		position: 'absolute',
+		position: "absolute",
 		right: 8,
 		top: 8
 	},

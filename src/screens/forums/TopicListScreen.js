@@ -21,7 +21,7 @@ import EndOfComments from "../../atoms/EndOfComments";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 
 const TopicListQuery = gql`
-	query TopicListQuery($forum: ID!, $offset: Int, $limit: Int, $password: String) {
+	query TopicListQuery($forum: ID!, $offset: Int, $limit: Int, $password: String, $postKey: String!) {
 		forums {
 			forum(id: $forum) {
 				...ForumItemFragment
@@ -64,6 +64,12 @@ const TopicListQuery = gql`
 					tags {
 						enabled
 						definedTags
+					}
+					uploadPermissions(postKey: $postKey) {
+						allowedFileTypes
+						maxTotalSize
+						chunkingSupported
+						maxChunkSize
 					}
 				}
 			}
@@ -382,12 +388,17 @@ class TopicListScreen extends Component {
 	 */
 	createTopic = () => {
 		const forumData = this.props.data.forums.forum;
+		const { enabled: tagsEnabled, definedTags } = forumData.create.tags;
 
 		this.props.navigation.navigate("CreateTopic", {
 			forumID: this.props.navigation.state.params.id,
-			tagsEnabled: forumData.create.tags.enabled,
-			definedTags: forumData.create.tags.definedTags,
-			requiresApproval: forumData.create.itemsRequireApproval
+			tagsEnabled,
+			definedTags,
+			requiresApproval: forumData.create.itemsRequireApproval,
+			uploadData: {
+				...forumData.create.uploadPermissions,
+				postKey: `forum${this.props.navigation.state.params.id}-${this.props.user.id}`
+			}
 		});
 	};
 
@@ -462,7 +473,8 @@ class TopicListScreen extends Component {
 export default compose(
 	connect(state => ({
 		auth: state.auth,
-		forums: state.forums
+		forums: state.forums,
+		user: state.user
 	})),
 	graphql(TopicListQuery, {
 		options: props => ({
@@ -471,7 +483,8 @@ export default compose(
 				forum: props.navigation.state.params.id,
 				offset: 0,
 				limit: Expo.Constants.manifest.extra.per_page,
-				password: props.forums[props.navigation.state.params.id] || null
+				password: props.forums[props.navigation.state.params.id] || null,
+				postKey: `forum${props.navigation.state.params.id}-${props.user.id}`
 			}
 		})
 	}),
