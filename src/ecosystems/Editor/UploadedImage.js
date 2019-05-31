@@ -15,6 +15,7 @@ export class UploadedImage extends PureComponent {
 		this.showActionSheet = this.showActionSheet.bind(this);
 
 		this._uploadOverlay = null;
+		this._uploadProgress = null;
 
 		this.state = {
 			destructiveButtonIndex: this.props.status === UPLOAD_STATUS.DONE ? 2 : null,
@@ -25,7 +26,8 @@ export class UploadedImage extends PureComponent {
 	componentDidUpdate(prevProps) {
 		if (prevProps.status !== this.props.status) {
 			if (this.props.status === UPLOAD_STATUS.DONE) {
-				this._animationTimer = setTimeout(() => this._uploadOverlay.zoomOut(), 1000);
+				this._uploadProgress.zoomOut(200);
+				this._animationTimer = setTimeout(() => this._uploadOverlay.fadeOut(), 5000);
 
 				this.setState({
 					destructiveButtonIndex: 2,
@@ -72,7 +74,9 @@ export class UploadedImage extends PureComponent {
 						ref={ref => (this._uploadOverlay = ref)}
 						style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.uploadingOverlay]}
 					>
-						<AnimatedCircularProgress size={34} width={17} rotation={0} fill={this.props.progress} tintColor="#fff" />
+						<Animatable.View ref={ref => (this._uploadProgress = ref)}>
+							<AnimatedCircularProgress size={34} width={17} rotation={0} fill={this.props.progress || 0} tintColor="#fff" />
+						</Animatable.View>
 					</Animatable.View>
 				)}
 				<ActionSheet

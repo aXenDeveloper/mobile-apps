@@ -6,6 +6,7 @@ const initialState = {
 	linkModalActive: false,
 	imagePickerOpened: false,
 	attachedImages: {},
+	maxUploadSize: 0,
 	mentions: {
 		active: false,
 		loading: false,
@@ -129,6 +130,12 @@ export default function editor(state = initialState, { type, payload }) {
 			};
 		case actions.RESET_EDITOR:
 			return Object.assign({}, initialState);
+
+		case actions.SET_UPLOAD_LIMIT:
+			return {
+				...state,
+				maxUploadSize: payload.maxUploadSize
+			};
 
 		case actions.ADD_UPLOADED_IMAGE:
 			const position = Object.keys(state.attachedImages).length + 1;

@@ -12,9 +12,9 @@ import uniqueID from "../../utils/UniqueID";
 import styles from "../../styles";
 
 const CreateTopicMutation = gql`
-	mutation CreateTopicMutation($forumID: ID!, $title: String!, $content: String!, $tags: [String]) {
+	mutation CreateTopicMutation($forumID: ID!, $title: String!, $content: String!, $tags: [String], $postKey: String!) {
 		mutateForums {
-			createTopic(forumID: $forumID, title: $title, content: $content, tags: $tags) {
+			createTopic(forumID: $forumID, title: $title, content: $content, tags: $tags, postKey: $postKey) {
 				__typename
 				id
 				isHidden
@@ -141,7 +141,8 @@ class CreateTopicScreen extends Component {
 					forumID: this.props.navigation.state.params.forumID,
 					title: this.state.title,
 					content: this.state.content,
-					tags: this.state.tags
+					tags: this.state.tags,
+					postKey: this.props.navigation.state.params.uploadData.postKey
 				},
 				refetchQueries: ["TopicListQuery"]
 			});

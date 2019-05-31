@@ -497,10 +497,21 @@ class QuillEditor extends Component {
 				return;
 			}
 
+			const currentUploadSize = this.getCurrentUploadSize();
+
+			console.log("CURRENT UPLOAD SIZE: " + currentUploadSize);
+
 			dispatch(uploadImage(result, this.props.uploadData));
 		} else {
 			throw new Error("Permission not granted");
 		}
+	}
+
+	getCurrentUploadSize() {
+		const attachedImages = this.props.editor.attachedImages;
+		const totalUploadSize = Object.keys(attachedImages).reduce((previous, current) => previous + attachedImages[current].fileSize, 0);
+
+		return totalUploadSize;
 	}
 
 	render() {

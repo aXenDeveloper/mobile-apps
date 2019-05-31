@@ -66,6 +66,10 @@ export const insertMentionSymbolDone = data => ({
 });
 
 // ------------------------------------------------------------
+export const SET_UPLOAD_LIMIT = "SET_UPLOAD_LIMIT";
+export const setUploadLimit = data => ({
+	type: SET_UPLOAD_LIMIT
+});
 export const OPEN_IMAGE_PICKER = "OPEN_IMAGE_PICKER";
 export const openImagePicker = data => ({
 	type: OPEN_IMAGE_PICKER
@@ -109,7 +113,6 @@ import gql from "graphql-tag";
 import { FileSystem, ImageManipulator } from "expo";
 import _ from "underscore";
 
-import { graphql, compose } from "react-apollo";
 //import console = require("console");
 
 const uploadMutation = gql`
@@ -157,28 +160,27 @@ export const uploadImage = (data, uploadRestrictions) => {
 			canonicalFile = resizedImage;
 		}
 
-		console.log(canonicalFile);
-
-		dispatch(
-			addUploadedImage({
-				id: fileName,
-				localFilename: canonicalFile.uri,
-				width: canonicalFile.width,
-				height: canonicalFile.height
-			})
-		);
-
-		dispatch(
-			setUploadStatus({
-				id: fileName,
-				status: UPLOAD_STATUS.UPLOADING
-			})
-		);
-
 		try {
 			const realFile = await FileSystem.readAsStringAsync(canonicalFile.uri, { encoding: FileSystem.EncodingTypes.Base64 });
 			const buf = Buffer.from(realFile, "base64");
 			let requiresChunking = false;
+
+			dispatch(
+				addUploadedImage({
+					id: fileName,
+					localFilename: canonicalFile.uri,
+					fileSize: buf.length,
+					width: canonicalFile.width,
+					height: canonicalFile.height
+				})
+			);
+
+			dispatch(
+				setUploadStatus({
+					id: fileName,
+					status: UPLOAD_STATUS.UPLOADING
+				})
+			);
 
 			// We need to figure out the max allowed size of a chunk, allowing for the fact it'll be base64'd
 			// which adds approx 33% to the size. The -3 is to allow for up to three padding characters that
@@ -259,12 +261,8 @@ const uploadFile = async (client, pieces, variables, onProgress) => {
 	const totalSize = pieces.reduce((accumulator, currentValue) => accumulator + currentValue.length, 0);
 	let totalLoaded = 0;
 
-	console.log(`totalSize is ${totalSize}`);
-
 	const sendMutation = async (contents, additionalParams = {}) => {
 		let thisFileUploaded = 0;
-		console.log(additionalParams);
-		console.log(contents.length);
 		const { data } = await client.mutate({
 			mutation: uploadMutation,
 			variables: {
@@ -276,7 +274,6 @@ const uploadFile = async (client, pieces, variables, onProgress) => {
 				fetchOptions: {
 					useUpload: true,
 					onProgress: ev => {
-						console.log(`In piece ${variables.chunk} we've loaded ${ev.loaded}`);
 						thisFileUploaded = ev.loaded;
 						onProgress(totalLoaded + thisFileUploaded, totalSize);
 					}
@@ -292,7 +289,6 @@ const uploadFile = async (client, pieces, variables, onProgress) => {
 
 	if (pieces.length > 1) {
 		let i = 1;
-		console.log(`Number of pieces is ${pieces.length}`);
 		for (let piece of pieces) {
 			data = await sendMutation(piece, { totalChunks: pieces.length, chunk: i++ });
 		}
