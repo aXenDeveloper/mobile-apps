@@ -1,7 +1,10 @@
 import React, { PureComponent } from "react";
-import { View, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from "react-native";
 import ActionSheet from "react-native-actionsheet";
+import * as Animatable from "react-native-animatable";
 
+import { UPLOAD_STATUS } from "../../redux/actions/editor";
+import { AnimatedCircularProgress } from "../../ecosystems/CircularProgress";
 import Lang from "../../utils/Lang";
 import styles, { styleVars } from "../../styles";
 
@@ -11,15 +14,19 @@ export class UploadedImage extends PureComponent {
 		this.actionSheetPress = this.actionSheetPress.bind(this);
 		this.showActionSheet = this.showActionSheet.bind(this);
 
+		this._uploadOverlay = null;
+
 		this.state = {
-			destructiveButtonIndex: this.props.status === 'READY' ? 2 : null,
+			destructiveButtonIndex: this.props.status === UPLOAD_STATUS.DONE ? 2 : null,
 			actionSheetOptions: this.getActionSheetOptions()
 		};
 	}
 
 	componentDidUpdate(prevProps) {
-		if( prevProps.status !== this.props.status ){
-			if( this.props.status === 'READY' ){
+		if (prevProps.status !== this.props.status) {
+			if (this.props.status === UPLOAD_STATUS.DONE) {
+				this._animationTimer = setTimeout(() => this._uploadOverlay.zoomOut(), 1000);
+
 				this.setState({
 					destructiveButtonIndex: 2,
 					actionSheetOptions: this.getActionSheetOptions()
@@ -28,11 +35,15 @@ export class UploadedImage extends PureComponent {
 		}
 	}
 
+	componentWillMount() {
+		clearTimeout(this._animationTimer);
+	}
+
 	getActionSheetOptions() {
-		if( this.props.status === 'READY' ){
-			return [ Lang.get('cancel'), Lang.get('insert_into_post'), Lang.get('delete_image') ];
+		if (this.props.status === UPLOAD_STATUS.DONE) {
+			return [Lang.get("cancel"), Lang.get("insert_into_post"), Lang.get("delete_image")];
 		} else {
-			return [ Lang.get('cancel'), Lang.get('cancel_upload') ];
+			return [Lang.get("cancel"), Lang.get("cancel_upload")];
 		}
 	}
 
@@ -56,10 +67,13 @@ export class UploadedImage extends PureComponent {
 		return (
 			<TouchableOpacity style={[styles.mrStandard, componentStyles.uploadedImageWrapper]} onPress={this.showActionSheet}>
 				<Image source={{ uri: this.props.image }} resizeMode="cover" style={componentStyles.uploadedImage} />
-				{this.props.status === 'UPLOADING' && (
-					<View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.uploadingOverlay]}>
-						<ActivityIndicator size='small' color='#fff' />
-					</View>
+				{(this.props.status === UPLOAD_STATUS.UPLOADING || this.props.status === UPLOAD_STATUS.DONE) && (
+					<Animatable.View
+						ref={ref => (this._uploadOverlay = ref)}
+						style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.uploadingOverlay]}
+					>
+						<AnimatedCircularProgress size={34} width={17} rotation={0} fill={this.props.progress} tintColor="#fff" />
+					</Animatable.View>
 				)}
 				<ActionSheet
 					ref={o => (this._actionSheet = o)}
@@ -70,9 +84,11 @@ export class UploadedImage extends PureComponent {
 					onPress={this.actionSheetPress}
 				/>
 			</TouchableOpacity>
-		)
+		);
 	}
 }
+
+//<ActivityIndicator size='small' color='#fff' />
 
 const componentStyles = StyleSheet.create({
 	uploadedImageWrapper: {

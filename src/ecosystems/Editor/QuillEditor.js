@@ -319,9 +319,6 @@ class QuillEditor extends Component {
 		const formatState = data;
 		const newFormatting = {};
 
-		console.log("FORMAT STATE:");
-		console.log(formatState);
-
 		Object.entries(this.props.editor.formatting).forEach(pair => {
 			if (_.isBoolean(pair[1])) {
 				// Normal boolean button - if it's in the object received from quill, that formatting is currently applied
@@ -512,9 +509,6 @@ class QuillEditor extends Component {
 			window._PLACEHOLDER = ${placeholder};
 			window._readyToGo = true;
 		`;
-
-		console.log("In editor, uploadData is");
-		console.log(this.props.uploadData);
 
 		return (
 			<View style={{ flex: 1, backgroundColor: "#fff" }}>

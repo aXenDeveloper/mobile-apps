@@ -668,7 +668,6 @@ const getNewClient = connectData => {
 
 const customFetch = (uri, options) => {
 	if (options.useUpload) {
-		console.log("Using custom fetch");
 		return uploadFetch(uri, options);
 	}
 	return fetch(uri, options);

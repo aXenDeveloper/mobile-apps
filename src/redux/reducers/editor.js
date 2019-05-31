@@ -5,7 +5,7 @@ const initialState = {
 	focused: false,
 	linkModalActive: false,
 	imagePickerOpened: false,
-	attachedImages: [],
+	attachedImages: {},
 	mentions: {
 		active: false,
 		loading: false,
@@ -131,17 +131,46 @@ export default function editor(state = initialState, { type, payload }) {
 			return Object.assign({}, initialState);
 
 		case actions.ADD_UPLOADED_IMAGE:
+			const position = Object.keys(state.attachedImages).length + 1;
 			return {
 				...state,
-				attachedImages: [
+				attachedImages: {
 					...state.attachedImages,
-					{
+					[payload.id]: {
 						...payload,
-						status: "PENDING",
-						progress: 0
+						status: actions.UPLOAD_STATUS.PENDING,
+						progress: 0,
+						position
 					}
-				]
+				}
 			};
+
+		case actions.SET_UPLOAD_STATUS:
+			return {
+				...state,
+				attachedImages: {
+					...state.attachedImages,
+					[payload.id]: {
+						...state.attachedImages[payload.id],
+						status: payload.status,
+						progress: payload.status === actions.UPLOAD_STATUS.DONE ? 100 : payload.progress
+					}
+				}
+			};
+
+		case actions.SET_UPLOAD_PROGRESS:
+			console.log(`Progress: ${payload.progress}`);
+			return {
+				...state,
+				attachedImages: {
+					...state.attachedImages,
+					[payload.id]: {
+						...state.attachedImages[payload.id],
+						progress: payload.progress
+					}
+				}
+			};
+
 		default:
 			return state;
 	}

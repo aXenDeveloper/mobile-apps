@@ -82,8 +82,32 @@ export const addUploadedImage = data => ({
 	}
 });
 
+export const SET_UPLOAD_PROGRESS = "SET_UPLOAD_PROGRESS";
+export const setUploadProgress = data => ({
+	type: SET_UPLOAD_PROGRESS,
+	payload: {
+		...data
+	}
+});
+
+export const SET_UPLOAD_STATUS = "SET_UPLOAD_STATUS";
+export const setUploadStatus = data => ({
+	type: SET_UPLOAD_STATUS,
+	payload: {
+		...data
+	}
+});
+
+export const UPLOAD_STATUS = {
+	PENDING: "pending",
+	UPLOADING: "uploading",
+	DONE: "done",
+	ERROR: "error"
+};
+
 import gql from "graphql-tag";
 import { FileSystem, ImageManipulator } from "expo";
+import _ from "underscore";
 
 import { graphql, compose } from "react-apollo";
 //import console = require("console");
@@ -112,41 +136,58 @@ const uploadMutation = gql`
 export const uploadImage = (data, uploadRestrictions) => {
 	return async (dispatch, getState) => {
 		const fileName = data.uri.split("/").pop();
-		const { maxChunkSize } = uploadRestrictions;
-		//const maxChunkSize = 5000;
+		//const { maxChunkSize } = uploadRestrictions;
+		const maxChunkSize = 6000;
 		const state = getState();
 		const client = state.auth.client;
+		const maxImageDim = Expo.Constants.manifest.extra.max_image_dim;
+
+		let canonicalFile = data;
+
+		// If width or height is > 1000, resize
+		if (data.width > maxImageDim || data.height > maxImageDim) {
+			const resizedImage = await ImageManipulator.manipulateAsync(
+				data.uri,
+				[{ resize: data.width > maxImageDim ? { width: maxImageDim } : { height: maxImageDim } }],
+				{
+					compress: 0.7,
+					format: "jpeg"
+				}
+			);
+			canonicalFile = resizedImage;
+		}
+
+		console.log(canonicalFile);
 
 		dispatch(
 			addUploadedImage({
 				id: fileName,
-				localFilename: data.uri,
-				width: data.width,
-				height: data.height
+				localFilename: canonicalFile.uri,
+				width: canonicalFile.width,
+				height: canonicalFile.height
 			})
 		);
 
-		let canonicalFileUri = data.uri;
-
-		// If width or height is > 1000, resize
-		if (data.width > 1000 || data.height > 1000) {
-			console.log("Resizing image...");
-			const resizedImage = await ImageManipulator.manipulateAsync(data.uri, [{ resize: data.width > 1000 ? { width: 1000 } : { height: 1000 } }], {
-				compress: 0.7,
-				format: "jpeg"
-			});
-			canonicalFileUri = resizedImage.uri;
-			console.log("Resizing image done");
-		}
+		dispatch(
+			setUploadStatus({
+				id: fileName,
+				status: UPLOAD_STATUS.UPLOADING
+			})
+		);
 
 		try {
-			const realFile = await FileSystem.readAsStringAsync(canonicalFileUri, { encoding: FileSystem.EncodingTypes.Base64 });
+			const realFile = await FileSystem.readAsStringAsync(canonicalFile.uri, { encoding: FileSystem.EncodingTypes.Base64 });
 			const buf = Buffer.from(realFile, "base64");
 			let requiresChunking = false;
 
+			// We need to figure out the max allowed size of a chunk, allowing for the fact it'll be base64'd
+			// which adds approx 33% to the size. The -3 is to allow for up to three padding characters that
+			// base64 will add
+			const theoreticalMaxChunkSize = Math.floor((maxChunkSize / 4) * 3 - 3);
+
 			// If the file length is bigger than our acceptable chunk size AFTER base64 encoding, we need to chunk
 			// if supported. If we can't chunk, we have to error for this file.
-			if (realFile.length > maxChunkSize) {
+			if (realFile.length > theoreticalMaxChunkSize) {
 				if (uploadRestrictions.chunkingSupported) {
 					requiresChunking = true;
 				} else {
@@ -154,59 +195,110 @@ export const uploadImage = (data, uploadRestrictions) => {
 				}
 			}
 
+			const bufPieces = [];
 			const uploadData = {
 				name: fileName,
-				postKey: uploadRestrictions.postKey,
+				postKey: uploadRestrictions.postKey
 			};
 
 			if (requiresChunking) {
 				// If we're chunking, then we slice the Buffer and reencode each piece as base64
-				const bufPieces = [];
 				const bufLen = buf.length;
 				let i = 0;
-				let chunk = 1;
 
 				while (i < bufLen) {
-					const piece = buf.slice(i, (i += maxChunkSize));
+					const piece = buf.slice(i, (i += theoreticalMaxChunkSize));
 					bufPieces.push(piece.toString("base64"));
 				}
-
-				receivedData = await uploadFile(client, bufPieces, uploadData);
 			} else {
-				receivedData = await uploadFile(client, realFile, uploadData);
+				bufPieces.push(realFile);
 			}
 
-			console.log(receivedData);
+			const receivedData = await uploadFile(client, bufPieces, uploadData, (totalLoaded, totalSize) => {
+				dispatch(
+					setUploadProgress({
+						id: fileName,
+						progress: Math.min(Math.round((totalLoaded / totalSize) * 100), 100)
+					})
+				);
+			});
+
+			dispatch(
+				setUploadStatus({
+					id: fileName,
+					status: UPLOAD_STATUS.DONE
+				})
+			);
 		} catch (err) {
-			console.log(err);
+			console.log(`Error uploading image: ${err}`);
+
+			dispatch(
+				setUploadStatus({
+					id: fileName,
+					status: UPLOAD_STATUS.ERROR
+				})
+			);
 		}
 	};
 };
 
-const uploadFile = async (client, pieces, variables) => {
-	if( !_.isArray(pieces) ){
+/**
+ * Handles uploading a file via a GQL mutation. Takes an array of pieces for chunking.
+ *
+ * @param 	{object} 			client 		The GQL client to use for the mutation
+ * @param 	{array|string}		pieces 		The pieces to be uploaded
+ * @param 	{object}			variables 	Any additional variables to be send with the mutation
+ * @param 	{function}			onProgress 	A function that will be called when upload progress happens
+ * @return 	void
+ */
+const uploadFile = async (client, pieces, variables, onProgress) => {
+	if (!_.isArray(pieces)) {
 		pieces = [pieces];
 	}
 
-	return new Promise((resolve, reject) => {
+	const totalSize = pieces.reduce((accumulator, currentValue) => accumulator + currentValue.length, 0);
+	let totalLoaded = 0;
 
+	console.log(`totalSize is ${totalSize}`);
 
-
-		
+	const sendMutation = async (contents, additionalParams = {}) => {
+		let thisFileUploaded = 0;
+		console.log(additionalParams);
+		console.log(contents.length);
 		const { data } = await client.mutate({
 			mutation: uploadMutation,
 			variables: {
 				...variables,
-				contents: item
+				...additionalParams,
+				contents
 			},
 			context: {
 				fetchOptions: {
 					useUpload: true,
 					onProgress: ev => {
-						console.log(`${Math.round((ev.loaded / ev.total) * 100)}% uploaded`);
+						console.log(`In piece ${variables.chunk} we've loaded ${ev.loaded}`);
+						thisFileUploaded = ev.loaded;
+						onProgress(totalLoaded + thisFileUploaded, totalSize);
 					}
 				}
 			}
 		});
-	});
-}
+
+		totalLoaded += thisFileUploaded;
+		return data;
+	};
+
+	let data;
+
+	if (pieces.length > 1) {
+		let i = 1;
+		console.log(`Number of pieces is ${pieces.length}`);
+		for (let piece of pieces) {
+			data = await sendMutation(piece, { totalChunks: pieces.length, chunk: i++ });
+		}
+	} else {
+		data = await sendMutation(pieces[0]);
+	}
+
+	return data;
+};

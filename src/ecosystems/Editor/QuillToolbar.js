@@ -173,7 +173,10 @@ class QuillToolbar extends Component {
 	}
 
 	render() {
-		const attachedImages = this.props.editor.attachedImages.slice(0); // clone
+		const attachedImages = this.props.editor.attachedImages;
+		const sortedAttachedImages = Object.keys(attachedImages)
+			.sort((a, b) => (attachedImages[a].position > attachedImages[b].position ? 1 : -1))
+			.map(imageID => attachedImages[imageID]);
 
 		return (
 			<KeyboardAccessoryView hideBorder alwaysVisible={this.props.editor.focused} visibleOpacity={this.props.editor.focused ? 1 : 0}>
@@ -248,8 +251,8 @@ class QuillToolbar extends Component {
 									>
 										<Image source={icons.PLUS_CIRCLE} resizeMode="contain" style={componentStyles.addImageIcon} />
 									</TouchableOpacity>
-									{attachedImages.reverse().map(image => (
-										<UploadedImage image={image.localFilename} status={image.status} key={image.id} />
+									{sortedAttachedImages.reverse().map(image => (
+										<UploadedImage image={image.localFilename} status={image.status} key={image.id} progress={image.progress} />
 									))}
 								</ScrollView>
 								<TouchableOpacity onPress={this.hideImageToolbar} style={[styles.pvTight, componentStyles.closeImageToolbar]}>
