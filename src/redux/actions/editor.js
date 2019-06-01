@@ -136,7 +136,7 @@ const uploadMutation = gql`
 	}
 `;
 
-export const uploadImage = (data, uploadRestrictions) => {
+export const uploadImage = (data, uploadRestrictions, editorID) => {
 	return async (dispatch, getState) => {
 		const fileName = data.uri.split("/").pop();
 		//const { maxChunkSize } = uploadRestrictions;
@@ -200,7 +200,7 @@ export const uploadImage = (data, uploadRestrictions) => {
 			const bufPieces = [];
 			const uploadData = {
 				name: fileName,
-				postKey: uploadRestrictions.postKey
+				postKey: editorID
 			};
 
 			if (requiresChunking) {

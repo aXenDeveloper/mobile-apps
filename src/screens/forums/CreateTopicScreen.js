@@ -142,7 +142,7 @@ class CreateTopicScreen extends Component {
 					title: this.state.title,
 					content: this.state.content,
 					tags: this.state.tags,
-					postKey: this.props.navigation.state.params.uploadData.postKey
+					postKey: this.editorID
 				},
 				refetchQueries: ["TopicListQuery"]
 			});

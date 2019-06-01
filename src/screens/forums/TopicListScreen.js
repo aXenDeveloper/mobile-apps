@@ -396,8 +396,7 @@ class TopicListScreen extends Component {
 			definedTags,
 			requiresApproval: forumData.create.itemsRequireApproval,
 			uploadData: {
-				...forumData.create.uploadPermissions,
-				postKey: `forum${this.props.navigation.state.params.id}-${this.props.user.id}`
+				...forumData.create.uploadPermissions
 			}
 		});
 	};

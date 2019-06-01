@@ -501,7 +501,7 @@ class QuillEditor extends Component {
 
 			console.log("CURRENT UPLOAD SIZE: " + currentUploadSize);
 
-			dispatch(uploadImage(result, this.props.uploadData));
+			dispatch(uploadImage(result, this.props.uploadData, this.props.editorID));
 		} else {
 			throw new Error("Permission not granted");
 		}
