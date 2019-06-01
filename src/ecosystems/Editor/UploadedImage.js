@@ -26,8 +26,9 @@ export class UploadedImage extends PureComponent {
 	componentDidUpdate(prevProps) {
 		if (prevProps.status !== this.props.status) {
 			if (this.props.status === UPLOAD_STATUS.DONE) {
-				this._uploadProgress.zoomOut(200);
-				this._animationTimer = setTimeout(() => this._uploadOverlay.fadeOut(), 5000);
+				this._uploadProgress.zoomOut(200).then(() => {
+					this._uploadOverlay.fadeOut();
+				});
 
 				this.setState({
 					destructiveButtonIndex: 2,
