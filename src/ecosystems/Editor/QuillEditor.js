@@ -3,7 +3,7 @@ import { View, TextInput, Text, KeyboardAvoidingView, Button, WebView, StyleShee
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import Modal from "react-native-modal";
-import { ImagePicker, Permissions } from "expo";
+import { ImagePicker, Permissions, FileSystem, ImageManipulator } from "expo";
 import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 import _ from "lodash";
 import { connect } from "react-redux";
@@ -18,7 +18,9 @@ import {
 	loadingMentions,
 	updateMentionResults,
 	insertMentionSymbolDone,
-	uploadImage
+	uploadImage,
+	setUploadStatus,
+	UPLOAD_STATUS
 } from "../../redux/actions/editor";
 import styles, { styleVars } from "../../styles";
 
@@ -486,30 +488,78 @@ class QuillEditor extends Component {
 	async showImagePicker() {
 		const { dispatch } = this.props;
 		const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+		const maxImageDim = Expo.Constants.manifest.extra.max_image_dim;
 
-		if (status === "granted") {
-			let result = await ImagePicker.launchImageLibraryAsync({
-				allowsEditing: true,
-				aspect: [4, 3]
-			});
+		if (status !== "granted") {
+			throw new Error("Permission not granted");
+		}
 
-			if (result.cancelled) {
-				return;
+		let selectedFile = await ImagePicker.launchImageLibraryAsync({
+			allowsEditing: true,
+			base64: true
+		});
+
+		if (selectedFile.cancelled) {
+			return;
+		}
+
+		// If width or height is > 1000, resize
+		if (selectedFile.width > maxImageDim || selectedFile.height > maxImageDim) {
+			selectedFile = await ImageManipulator.manipulateAsync(
+				selectedFile.uri,
+				[{ resize: data.width > maxImageDim ? { width: maxImageDim } : { height: maxImageDim } }],
+				{
+					compress: 0.7,
+					format: "jpeg"
+				}
+			);
+		}
+
+		// Build data object to pass into action
+		const uploadData = {
+			// We need to figure out the max allowed size of a chunk, allowing for the fact it'll be base64'd
+			// which adds approx 33% to the size. The -3 is to allow for up to three padding characters that
+			// base64 will add
+			maxActualChunkSize: Math.floor((this.props.uploadData.maxChunkSize / 4) * 3 - 3),
+			maxChunkSize: this.props.uploadData.maxChunkSize,
+			fileData: selectedFile,
+			postKey: this.props.editorID,
+			chunkingSupported: this.props.uploadData.chunkingSupported
+		};
+
+		// Get the file stream
+		try {
+			const fileBuffer = Buffer.from(selectedFile.base64, "base64");
+
+			// Check we have space for it
+			if (this.props.uploadData.maxTotalSize !== null) {
+				if (fileBuffer.length > parseInt(this.props.uploadData.maxTotalSize) - this.getCurrentUploadSize()) {
+					Alert.alert("Error", "You do not have enough space left to upload this image.", [{ text: "OK" }], { cancelable: false });
+					return;
+				}
 			}
 
-			const currentUploadSize = this.getCurrentUploadSize();
-
-			console.log("CURRENT UPLOAD SIZE: " + currentUploadSize);
-
-			dispatch(uploadImage(result, this.props.uploadData, this.props.editorID));
-		} else {
-			throw new Error("Permission not granted");
+			dispatch(uploadImage({ base64file: selectedFile.base64, fileBuffer }, uploadData));
+		} catch (err) {
+			dispatch(
+				setUploadStatus({
+					id: selectedFile.uri,
+					status: UPLOAD_STATUS.ERROR,
+					error: "There was a problem uploading this image." + err
+				})
+			);
 		}
 	}
 
 	getCurrentUploadSize() {
 		const attachedImages = this.props.editor.attachedImages;
-		const totalUploadSize = Object.keys(attachedImages).reduce((previous, current) => previous + attachedImages[current].fileSize, 0);
+		const totalUploadSize = Object.keys(attachedImages).reduce((previous, current) => {
+			// Don't count errored files in the total size calc
+			if (attachedImages[current].status === UPLOAD_STATUS.ERROR) {
+				return previous;
+			}
+			return previous + attachedImages[current].fileSize;
+		}, 0);
 
 		return totalUploadSize;
 	}

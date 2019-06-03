@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image, Alert } from "react-native";
 import ActionSheet from "react-native-actionsheet";
 import * as Animatable from "react-native-animatable";
 
@@ -7,18 +7,19 @@ import { UPLOAD_STATUS } from "../../redux/actions/editor";
 import { AnimatedCircularProgress } from "../../ecosystems/CircularProgress";
 import Lang from "../../utils/Lang";
 import styles, { styleVars } from "../../styles";
+import icons from "../../icons";
 
 export class UploadedImage extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.actionSheetPress = this.actionSheetPress.bind(this);
-		this.showActionSheet = this.showActionSheet.bind(this);
+		this.onPressImage = this.onPressImage.bind(this);
 
 		this._uploadOverlay = null;
 		this._uploadProgress = null;
 
 		this.state = {
-			destructiveButtonIndex: this.props.status === UPLOAD_STATUS.DONE ? 2 : null,
+			destructiveButtonIndex: this.props.status === UPLOAD_STATUS.DONE ? 2 : -1,
 			actionSheetOptions: this.getActionSheetOptions()
 		};
 	}
@@ -62,13 +63,17 @@ export class UploadedImage extends PureComponent {
 		console.log(`action sheet ${i}`);
 	}
 
-	showActionSheet() {
-		this._actionSheet.show();
+	onPressImage() {
+		if (this.props.status === UPLOAD_STATUS.ERROR) {
+			Alert.alert("Error", this.props.error, [{ text: "OK" }], { cancelable: false });
+		} else {
+			this._actionSheet.show();
+		}
 	}
 
 	render() {
 		return (
-			<TouchableOpacity style={[styles.mrStandard, componentStyles.uploadedImageWrapper]} onPress={this.showActionSheet}>
+			<TouchableOpacity style={[styles.mrStandard, componentStyles.uploadedImageWrapper]} onPress={this.onPressImage}>
 				<Image source={{ uri: this.props.image }} resizeMode="cover" style={componentStyles.uploadedImage} />
 				{(this.props.status === UPLOAD_STATUS.UPLOADING || this.props.status === UPLOAD_STATUS.DONE) && (
 					<Animatable.View
@@ -79,6 +84,12 @@ export class UploadedImage extends PureComponent {
 							<AnimatedCircularProgress size={34} width={17} rotation={0} fill={this.props.progress || 0} tintColor="#fff" />
 						</Animatable.View>
 					</Animatable.View>
+				)}
+				{this.props.status === UPLOAD_STATUS.ERROR && (
+					<View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.uploadingOverlay]}>
+						<Image source={icons.ERROR} resizeMode="contain" style={componentStyles.errorIcon} />
+						<Text style={[componentStyles.errorText]}>FAILED</Text>
+					</View>
 				)}
 				<ActionSheet
 					ref={o => (this._actionSheet = o)}
@@ -110,5 +121,16 @@ const componentStyles = StyleSheet.create({
 	uploadingOverlay: {
 		backgroundColor: "rgba(0,0,0,0.4)",
 		...StyleSheet.absoluteFillObject
+	},
+	errorIcon: {
+		width: 24,
+		height: 24,
+		tintColor: "#fff"
+	},
+	errorText: {
+		color: "#fff",
+		fontSize: 10,
+		fontWeight: "500",
+		marginTop: 2
 	}
 });

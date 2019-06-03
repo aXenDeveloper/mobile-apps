@@ -160,7 +160,8 @@ export default function editor(state = initialState, { type, payload }) {
 					[payload.id]: {
 						...state.attachedImages[payload.id],
 						status: payload.status,
-						progress: payload.status === actions.UPLOAD_STATUS.DONE ? 100 : payload.progress
+						progress: payload.status === actions.UPLOAD_STATUS.DONE ? 100 : payload.progress,
+						...(!_.isUndefined(payload.error) ? { error: payload.error } : {})
 					}
 				}
 			};

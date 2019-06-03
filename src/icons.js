@@ -12,6 +12,7 @@ const icons = {
 	CROSS: require("../resources/close.png"),
 	CROSS_CIRCLE_SOLID: require("../resources/close_circle.png"),
 	DOTS: require("../resources/dots.png"),
+	ERROR: require("../resources/error.png"),
 	FIRE: require("../resources/hot.png"),
 	HEART: require("../resources/comment_like.png"),
 	HEART_SOLID: require("../resources/heart_solid.png"),

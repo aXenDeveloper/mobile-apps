@@ -110,7 +110,6 @@ export const UPLOAD_STATUS = {
 };
 
 import gql from "graphql-tag";
-import { FileSystem, ImageManipulator } from "expo";
 import _ from "underscore";
 
 //import console = require("console");
@@ -136,90 +135,68 @@ const uploadMutation = gql`
 	}
 `;
 
-export const uploadImage = (data, uploadRestrictions, editorID) => {
+export const uploadImage = (file, uploadData) => {
 	return async (dispatch, getState) => {
-		const fileName = data.uri.split("/").pop();
-		//const { maxChunkSize } = uploadRestrictions;
-		const maxChunkSize = 6000;
+		const { base64file, fileBuffer } = file;
+		const { fileData, maxChunkSize, chunkingSupported, maxActualChunkSize, postKey } = uploadData;
+		const fileName = fileData.uri.split("/").pop();
 		const state = getState();
 		const client = state.auth.client;
-		const maxImageDim = Expo.Constants.manifest.extra.max_image_dim;
+		const bufferPieces = [];
+		let requiresChunking = false;
 
-		let canonicalFile = data;
+		dispatch(
+			addUploadedImage({
+				id: fileData.uri,
+				localFilename: fileData.uri,
+				fileSize: fileBuffer.length,
+				width: fileData.width,
+				height: fileData.height
+			})
+		);
 
-		// If width or height is > 1000, resize
-		if (data.width > maxImageDim || data.height > maxImageDim) {
-			const resizedImage = await ImageManipulator.manipulateAsync(
-				data.uri,
-				[{ resize: data.width > maxImageDim ? { width: maxImageDim } : { height: maxImageDim } }],
-				{
-					compress: 0.7,
-					format: "jpeg"
-				}
-			);
-			canonicalFile = resizedImage;
+		dispatch(
+			setUploadStatus({
+				id: fileData.uri,
+				status: UPLOAD_STATUS.UPLOADING
+			})
+		);
+
+		// If the file length is bigger than our acceptable chunk size AFTER base64 encoding, we need to chunk
+		// if supported. If we can't chunk, we have to error for this file.
+		if (fileBuffer.length > maxActualChunkSize) {
+			if (chunkingSupported) {
+				requiresChunking = true;
+			} else {
+				dispatch(
+					setUploadStatus({
+						id: fileData.uri,
+						status: UPLOAD_STATUS.ERROR,
+						error: "There is not enough space to upload this image."
+					})
+				);
+				return;
+			}
+		}
+
+		if (requiresChunking) {
+			// If we're chunking, then we slice the Buffer and reencode each piece as base64
+			const bufLen = fileBuffer.length;
+			let i = 0;
+
+			while (i < bufLen) {
+				const piece = fileBuffer.slice(i, (i += maxActualChunkSize));
+				bufferPieces.push(piece.toString("base64"));
+			}
+		} else {
+			bufferPieces.push(base64file);
 		}
 
 		try {
-			const realFile = await FileSystem.readAsStringAsync(canonicalFile.uri, { encoding: FileSystem.EncodingTypes.Base64 });
-			const buf = Buffer.from(realFile, "base64");
-			let requiresChunking = false;
-
-			dispatch(
-				addUploadedImage({
-					id: fileName,
-					localFilename: canonicalFile.uri,
-					fileSize: buf.length,
-					width: canonicalFile.width,
-					height: canonicalFile.height
-				})
-			);
-
-			dispatch(
-				setUploadStatus({
-					id: fileName,
-					status: UPLOAD_STATUS.UPLOADING
-				})
-			);
-
-			// We need to figure out the max allowed size of a chunk, allowing for the fact it'll be base64'd
-			// which adds approx 33% to the size. The -3 is to allow for up to three padding characters that
-			// base64 will add
-			const theoreticalMaxChunkSize = Math.floor((maxChunkSize / 4) * 3 - 3);
-
-			// If the file length is bigger than our acceptable chunk size AFTER base64 encoding, we need to chunk
-			// if supported. If we can't chunk, we have to error for this file.
-			if (realFile.length > theoreticalMaxChunkSize) {
-				if (uploadRestrictions.chunkingSupported) {
-					requiresChunking = true;
-				} else {
-					// @todo throw error - file too big
-				}
-			}
-
-			const bufPieces = [];
-			const uploadData = {
-				name: fileName,
-				postKey: editorID
-			};
-
-			if (requiresChunking) {
-				// If we're chunking, then we slice the Buffer and reencode each piece as base64
-				const bufLen = buf.length;
-				let i = 0;
-
-				while (i < bufLen) {
-					const piece = buf.slice(i, (i += theoreticalMaxChunkSize));
-					bufPieces.push(piece.toString("base64"));
-				}
-			} else {
-				bufPieces.push(realFile);
-			}
-
-			const receivedData = await uploadFile(client, bufPieces, uploadData, (totalLoaded, totalSize) => {
+			const receivedData = await uploadFile(client, bufferPieces, { name: fileName, postKey }, (totalLoaded, totalSize) => {
 				dispatch(
 					setUploadProgress({
-						id: fileName,
+						id: fileData.uri,
 						progress: Math.min(Math.round((totalLoaded / totalSize) * 100), 100)
 					})
 				);
@@ -227,7 +204,7 @@ export const uploadImage = (data, uploadRestrictions, editorID) => {
 
 			dispatch(
 				setUploadStatus({
-					id: fileName,
+					id: fileData.uri,
 					status: UPLOAD_STATUS.DONE
 				})
 			);
@@ -236,8 +213,9 @@ export const uploadImage = (data, uploadRestrictions, editorID) => {
 
 			dispatch(
 				setUploadStatus({
-					id: fileName,
-					status: UPLOAD_STATUS.ERROR
+					id: fileData.uri,
+					status: UPLOAD_STATUS.ERROR,
+					error: "There was a problem uploading this image."
 				})
 			);
 		}

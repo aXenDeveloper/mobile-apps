@@ -4,9 +4,11 @@ import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
 import { NavigationActions, Header } from "react-navigation";
 import { connect } from "react-redux";
+import _ from "underscore";
 
 import TagEdit from "../../ecosystems/TagEdit";
 import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
+import { UPLOAD_STATUS } from "../../redux/actions/editor";
 import HeaderButton from "../../atoms/HeaderButton";
 import uniqueID from "../../utils/UniqueID";
 import styles from "../../styles";
@@ -63,6 +65,7 @@ class CreateTopicScreen extends Component {
 		this.editorID = uniqueID();
 
 		this.updateTags = this.updateTags.bind(this);
+		this.updateContentState = this.updateContentState.bind(this);
 	}
 
 	/**
@@ -112,6 +115,8 @@ class CreateTopicScreen extends Component {
 	 * @return 	void
 	 */
 	async submitTopic() {
+		console.log("submit topic");
+
 		// @todo language
 		if (!this.state.title) {
 			Alert.alert("Title Required", "You must enter a topic title.", [{ text: "OK" }], { cancelable: false });
@@ -133,6 +138,22 @@ class CreateTopicScreen extends Component {
 				Alert.alert("Not Enough Tags", `You must provide at least ${this.props.site.settings.tags_min} tags.`, [{ text: "OK" }], { cancelable: false });
 				return;
 			}
+		}
+
+		// Check for any uploading files
+		const attachedImages = this.props.attachedImages;
+		const uploadingFiles = Object.keys(attachedImages).find(
+			imageID => [UPLOAD_STATUS.UPLOADING, UPLOAD_STATUS.PENDING].indexOf(attachedImages[imageID].status) !== -1
+		);
+
+		console.log("In submit:");
+		console.log(uploadingFiles);
+
+		if (!_.isUndefined(uploadingFiles)) {
+			Alert.alert("Uploads In Progress", "Please wait until your uploaded images have finished processing, then submit again.", [{ text: "OK" }], {
+				cancelable: false
+			});
+			return;
 		}
 
 		try {
@@ -204,7 +225,7 @@ class CreateTopicScreen extends Component {
 					)}
 					<QuillEditor
 						placeholder="Post"
-						update={this.updateContentState.bind(this)}
+						update={this.updateContentState}
 						style={styles.flex}
 						editorID={this.editorID}
 						uploadData={this.props.navigation.state.params.uploadData}
@@ -220,6 +241,7 @@ export default compose(
 	graphql(CreateTopicMutation),
 	connect(state => ({
 		site: state.site,
-		user: state.user
+		user: state.user,
+		attachedImages: state.editor.attachedImages
 	}))
 )(CreateTopicScreen);

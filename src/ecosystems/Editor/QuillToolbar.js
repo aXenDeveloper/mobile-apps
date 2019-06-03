@@ -244,7 +244,7 @@ class QuillToolbar extends Component {
 						)}
 						{Boolean(this.state.showImageToolbar) && (
 							<Animatable.View style={[styles.flexRow, styles.pvTight, styles.plTight, componentStyles.imageToolbar]} ref={ref => (this._imageToolbar = ref)}>
-								<ScrollView horizontal style={[styles.flexRow, styles.flexGrow]}>
+								<ScrollView horizontal style={[styles.flexRow, styles.flexGrow]} showsHorizontalScrollIndicator={false}>
 									<TouchableOpacity
 										onPress={this.openImagePicker}
 										style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter, styles.mrStandard, componentStyles.addImage]}
@@ -252,7 +252,7 @@ class QuillToolbar extends Component {
 										<Image source={icons.PLUS_CIRCLE} resizeMode="contain" style={componentStyles.addImageIcon} />
 									</TouchableOpacity>
 									{sortedAttachedImages.reverse().map(image => (
-										<UploadedImage image={image.localFilename} status={image.status} key={image.id} progress={image.progress} />
+										<UploadedImage image={image.localFilename} status={image.status} key={image.id} progress={image.progress} error={image.error} />
 									))}
 								</ScrollView>
 								<TouchableOpacity onPress={this.hideImageToolbar} style={[styles.pvTight, componentStyles.closeImageToolbar]}>
