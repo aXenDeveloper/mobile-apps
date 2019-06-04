@@ -57,14 +57,14 @@ const TopicListQuery = gql`
 				follow {
 					...FollowModalFragment
 				}
-				create {
+				nodePermissions {
 					canCreate
 					itemsRequireApproval
 					commentsRequireApproval
-					tags {
-						enabled
-						definedTags
-					}
+				}
+				tagPermissions {
+					enabled
+					definedTags
 				}
 			}
 		}
@@ -382,12 +382,13 @@ class TopicListScreen extends Component {
 	 */
 	createTopic = () => {
 		const forumData = this.props.data.forums.forum;
+		const { enabled: tagsEnabled, definedTags } = forumData.tagPermissions;
 
 		this.props.navigation.navigate("CreateTopic", {
 			forumID: this.props.navigation.state.params.id,
-			tagsEnabled: forumData.create.tags.enabled,
-			definedTags: forumData.create.tags.definedTags,
-			requiresApproval: forumData.create.itemsRequireApproval
+			tagsEnabled,
+			definedTags,
+			requiresApproval: forumData.nodePermissions.itemsRequireApproval
 		});
 	};
 
@@ -447,7 +448,7 @@ class TopicListScreen extends Component {
 							onEndReached={this.onEndReached}
 							ListEmptyComponent={ListEmptyComponent}
 						/>
-						{forumData.create.canCreate && (
+						{forumData.nodePermissions.canCreate && (
 							<ActionBar>
 								<AddButton icon={require("../../../resources/compose.png")} title={Lang.get("create_new_topic")} onPress={this.createTopic} />
 							</ActionBar>
@@ -462,7 +463,8 @@ class TopicListScreen extends Component {
 export default compose(
 	connect(state => ({
 		auth: state.auth,
-		forums: state.forums
+		forums: state.forums,
+		user: state.user
 	})),
 	graphql(TopicListQuery, {
 		options: props => ({

@@ -86,13 +86,19 @@ class SearchScreen extends Component {
 	 * @return 	void
 	 */
 	async componentDidMount() {
-		const recentSearchData = await AsyncStorage.getItem("@recentSearches");
-		const recentSearches = this.transformRecentSearchData(recentSearchData);
+		try {
+			const recentSearchData = await AsyncStorage.getItem(`@recentSearches:${this.props.app.currentCommunity.apiUrl}`);
+			const recentSearches = this.transformRecentSearchData(recentSearchData);
 
-		this.setState({
-			recentSearches,
-			loadingRecentSearches: false
-		});
+			this.setState({
+				recentSearches,
+				loadingRecentSearches: false
+			});
+		} catch (err) {
+			this.setState({
+				loadingRecentSearches: false
+			});
+		}
 	}
 
 	/**
@@ -228,7 +234,7 @@ class SearchScreen extends Component {
 	 * @return 	void
 	 */
 	async addToRecentSearches(term) {
-		let recentSearchData = await AsyncStorage.getItem("@recentSearches");
+		let recentSearchData = await AsyncStorage.getItem(`@recentSearches:${this.props.app.currentCommunity.apiUrl}`);
 
 		if (recentSearchData === null) {
 			recentSearchData = [];
@@ -254,7 +260,7 @@ class SearchScreen extends Component {
 		recentSearchData = JSON.stringify(recentSearchData);
 
 		// Store it back in storage
-		await AsyncStorage.setItem("@recentSearches", recentSearchData);
+		await AsyncStorage.setItem(`@recentSearches:${this.props.app.currentCommunity.apiUrl}`, recentSearchData);
 
 		// Now transform it and return
 		return this.transformRecentSearchData(recentSearchData);
@@ -291,7 +297,7 @@ class SearchScreen extends Component {
 				renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
 				sections={sectionData}
 				keyExtractor={item => item}
-				keyboardShouldPersistTaps='always'
+				keyboardShouldPersistTaps="always"
 			/>
 		);
 	}
@@ -428,7 +434,7 @@ class SearchScreen extends Component {
 					<ContentRow
 						style={componentStyles.seeAllRow}
 						onPress={() => {
-							this.onChangeTab({ i: _.find( this.state.searchSections, (s) => s.key == section.key )['index'] });
+							this.onChangeTab({ i: _.find(this.state.searchSections, s => s.key == section.key)["index"] });
 						}}
 					>
 						<Text numberOfLines={1} style={componentStyles.seeAllRowText}>
@@ -451,7 +457,7 @@ class SearchScreen extends Component {
 		// index 0 is the overview tab so we don't need to do anything
 		if (i == 0 || i == null) {
 			this.setState({
-				currentTab: "overview",
+				currentTab: "overview"
 			});
 			return;
 		}
@@ -469,8 +475,8 @@ class SearchScreen extends Component {
 	getResultsViews() {
 		let currentTab = null;
 
-		if( this.state.currentTab ){
-			currentTab = _.find( this.state.searchSections, (s) => s.key == this.state.currentTab )['index'];
+		if (this.state.currentTab) {
+			currentTab = _.find(this.state.searchSections, s => s.key == this.state.currentTab)["index"];
 		}
 
 		return (
@@ -489,24 +495,19 @@ class SearchScreen extends Component {
 					onChangeTab={this.onChangeTab}
 				>
 					{this.state.searchSections.map(section => {
-						if( section.key == 'overview' ){
+						if (section.key == "overview") {
 							return (
-								<Tab style={componentStyles.tab} key='overview' heading={Lang.get("overview")}>
+								<Tab style={componentStyles.tab} key="overview" heading={Lang.get("overview")}>
 									{this.renderOverviewTab()}
 								</Tab>
 							);
-						} else if( !this.state.noResults ) {
+						} else if (!this.state.noResults) {
 							const PanelComponent = section.key === "core_members" ? SearchMemberPanel : SearchContentPanel;
 							const showResults = this.state.currentTab == section.key;
 
 							return (
 								<Tab style={componentStyles.tab} key={section.key} heading={section.lang}>
-									<PanelComponent
-										type={section.key}
-										typeName={section.lang}
-										term={this.state.searchTerm}
-										showResults={showResults}
-									/>
+									<PanelComponent type={section.key} typeName={section.lang} term={this.state.searchTerm} showResults={showResults} />
 								</Tab>
 							);
 						}
@@ -591,6 +592,7 @@ class SearchScreen extends Component {
 
 export default compose(
 	connect(state => ({
+		app: state.app,
 		site: state.site
 	})),
 	withApollo

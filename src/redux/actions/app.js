@@ -84,6 +84,7 @@ import _ from "underscore";
 import Lang from "../../utils/Lang";
 import { guestLoaded, userLoaded, setUserStreams } from "./user";
 import { setSiteSettings, setLoginHandlers } from "./site";
+import { setEditorSettings } from "./editor";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 
@@ -94,7 +95,6 @@ export const bootSite = apiInfo => {
 		} = getState();
 
 		console.log(`BOOT SITE: ${apiInfo.apiUrl}`);
-		console.log(`BOOT SITE: ${client}`);
 
 		// Set state to loading
 		dispatch(bootSiteLoading());
@@ -106,9 +106,6 @@ export const bootSite = apiInfo => {
 				query: BootQuery,
 				variables: {}
 			});
-
-			console.log(`BOOT SITE:`);
-			console.log(data);
 
 			if (auth.isAuthenticated && data.core.me.group.groupType !== "GUEST") {
 				dispatch(userLoaded({ ...data.core.me }));
@@ -122,6 +119,16 @@ export const bootSite = apiInfo => {
 				const { __typename, ...rest } = data.core.language;
 				Lang.setWords(rest);
 			}
+
+			// Set editor settings
+			const { allowedFileTypes, chunkingSupported, maxChunkSize } = data.core.settings;
+			dispatch(
+				setEditorSettings({
+					allowedFileTypes,
+					chunkingSupported,
+					maxChunkSize
+				})
+			);
 
 			// Set our system settings
 			dispatch(setSiteSettings(data.core.settings));
@@ -160,6 +167,7 @@ const BootQuery = gql`
 				name
 				photo
 				notificationCount
+				maxUploadSize
 				group {
 					canAccessSite
 					canAccessOffline
@@ -187,6 +195,9 @@ const BootQuery = gql`
 				reputation_show_profile
 				allow_result_view
 				forums_questions_downvote
+				allowedFileTypes
+				chunkingSupported
+				maxChunkSize
 			}
 			loginHandlers {
 				id

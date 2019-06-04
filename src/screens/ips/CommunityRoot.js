@@ -177,7 +177,7 @@ class CommunityRoot extends Component {
 				fetchPolicy: "network-only"
 			});
 
-			console.log(`COMMUNITY_ROOT: Ran notification update, got count ${data.core.me.notificationCount}`);
+			//console.log(`COMMUNITY_ROOT: Ran notification update, got count ${data.core.me.notificationCount}`);
 
 			if (parseInt(data.core.me.notificationCount) !== parseInt(this.props.user.notificationCount)) {
 				this.props.dispatch(updateNotificationCount(data.core.me.notificationCount));

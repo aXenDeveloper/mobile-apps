@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { Text, Alert, Button, TextInput, View, ScrollView, StyleSheet, KeyboardAvoidingView } from "react-native";
 import gql from "graphql-tag";
-import { graphql } from "react-apollo";
+import { graphql, compose } from "react-apollo";
 import { NavigationActions, Header } from "react-navigation";
+import { connect } from "react-redux";
 import _ from "underscore";
 
 import getErrorMessage from "../../utils/getErrorMessage";
@@ -11,6 +12,7 @@ import { PostFragment } from "../../ecosystems/Post";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import UserPhoto from "../../atoms/UserPhoto";
 import HeaderButton from "../../atoms/HeaderButton";
+import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import styles from "../../styles";
@@ -31,12 +33,8 @@ class ReplyTopicScreen extends Component {
 		return {
 			title: "Reply To Topic",
 			headerTintColor: "white",
-			headerLeft: (
-				<HeaderButton position='left' label='Cancel' onPress={navigation.getParam("cancelReply")} />
-			),
-			headerRight: (
-				<HeaderButton position='right' label='Post' onPress={navigation.getParam("submitReply")} />
-			)
+			headerLeft: <HeaderButton position="left" label="Cancel" onPress={navigation.getParam("cancelReply")} />,
+			headerRight: <HeaderButton position="right" label="Post" onPress={navigation.getParam("submitReply")} />
 		};
 	};
 
@@ -48,9 +46,13 @@ class ReplyTopicScreen extends Component {
 	constructor(props) {
 		super(props);
 		this.offset = null;
+
+		this.editorID = uniqueID();
 		this.state = {
 			content: ""
 		};
+
+		this.updateContentState = this.updateContentState.bind(this);
 	}
 
 	/**
@@ -166,9 +168,10 @@ class ReplyTopicScreen extends Component {
 					<KeyboardAvoidingView style={{ flex: 1 }} enabled>
 						<QuillEditor
 							placeholder="Your Reply"
-							update={this.updateContentState.bind(this)}
+							update={this.updateContentState}
 							height={400}
 							autoFocus={!_.isObject(this.props.navigation.state.params.quotedPost)}
+							editorID={this.editorID}
 							onFocus={measurer => {
 								// If we're quoting a post, we'll scroll the view up
 								// so that the editor is near the top when focused
@@ -194,13 +197,18 @@ class ReplyTopicScreen extends Component {
 						/>
 					</KeyboardAvoidingView>
 				</ScrollView>
-				<QuillToolbar />
+				<QuillToolbar editorID={this.editorID} />
 			</React.Fragment>
 		);
 	}
 }
 
-export default graphql(ReplyTopicMutation)(ReplyTopicScreen);
+export default compose(
+	graphql(ReplyTopicMutation),
+	connect(state => ({
+		attachedImages: state.editor.attachedImages
+	}))
+)(ReplyTopicScreen);
 
 const componentStyles = StyleSheet.create({
 	postInfo: {

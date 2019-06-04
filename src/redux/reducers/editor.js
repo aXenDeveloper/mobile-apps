@@ -5,11 +5,12 @@ const initialState = {
 	focused: false,
 	linkModalActive: false,
 	imagePickerOpened: false,
-	attachedImages: [],
+	attachedImages: {},
+	maxUploadSize: 0,
 	mentions: {
 		active: false,
 		loading: false,
-		searchText: '',
+		searchText: "",
 		matches: [],
 		insertSymbol: false
 	},
@@ -22,23 +23,39 @@ const initialState = {
 			bullet: false,
 			ordered: false
 		}
-	}
+	},
+	settings: {}
 };
 
 export default function editor(state = initialState, { type, payload }) {
 	switch (type) {
-		case actions.SET_BUTTON_STATE:
+		case actions.RESET_EDITOR:
+			return {
+				...initialState,
+				settings: {
+					...state.settings
+				}
+			};
 
+		case actions.SET_EDITOR_SETTINGS:
+			return {
+				...state,
+				settings: {
+					...state.settings,
+					...payload
+				}
+			};
+		case actions.SET_BUTTON_STATE:
 			let buttonState = payload.state;
 
-			if( _.isObject( initialState.formatting[payload.button] ) ){
+			if (_.isObject(initialState.formatting[payload.button])) {
 				buttonState = {};
 
-				Object.entries(initialState.formatting[payload.button]).forEach( pair => {
+				Object.entries(initialState.formatting[payload.button]).forEach(pair => {
 					buttonState[pair[0]] = false;
 				});
 				buttonState[payload.option] = payload.state;
-			} 
+			}
 
 			return {
 				...state,
@@ -50,7 +67,7 @@ export default function editor(state = initialState, { type, payload }) {
 		case actions.SET_FORMATTING:
 			return {
 				...state,
-				formatting:	{
+				formatting: {
 					...payload
 				}
 			};
@@ -84,9 +101,7 @@ export default function editor(state = initialState, { type, payload }) {
 				mentions: {
 					...state.mentions,
 					loading: false,
-					matches: [
-						...payload
-					]
+					matches: [...payload]
 				}
 			};
 		case actions.INSERT_MENTION_SYMBOL:
@@ -125,26 +140,66 @@ export default function editor(state = initialState, { type, payload }) {
 				...state,
 				imagePickerOpened: false
 			};
+		case actions.OPEN_CAMERA:
+			return {
+				...state,
+				cameraOpened: true
+			};
 		case actions.SET_FOCUS:
 			return {
 				...state,
 				focused: payload.focused
 			};
-		case actions.RESET_EDITOR:
-			return Object.assign({}, initialState);
-		case actions.ADD_IMAGE_TO_UPLOAD:
+
+		case actions.SET_UPLOAD_LIMIT:
 			return {
 				...state,
-				attachedImages: [
-					...state.attachedImages,
-					{ 
-						...payload,
-						status: 'READY',
-						progress: 0
-					}
-				]
+				maxUploadSize: payload.maxUploadSize
 			};
-		default: 
+
+		case actions.ADD_UPLOADED_IMAGE:
+			const position = Object.keys(state.attachedImages).length + 1;
+			return {
+				...state,
+				attachedImages: {
+					...state.attachedImages,
+					[payload.id]: {
+						...payload,
+						status: actions.UPLOAD_STATUS.PENDING,
+						progress: 0,
+						position
+					}
+				}
+			};
+
+		case actions.SET_UPLOAD_STATUS:
+			return {
+				...state,
+				attachedImages: {
+					...state.attachedImages,
+					[payload.id]: {
+						...state.attachedImages[payload.id],
+						status: payload.status,
+						progress: payload.status === actions.UPLOAD_STATUS.DONE ? 100 : payload.progress,
+						...(!_.isUndefined(payload.error) ? { error: payload.error } : {})
+					}
+				}
+			};
+
+		case actions.SET_UPLOAD_PROGRESS:
+			console.log(`Progress: ${payload.progress}`);
+			return {
+				...state,
+				attachedImages: {
+					...state.attachedImages,
+					[payload.id]: {
+						...state.attachedImages[payload.id],
+						progress: payload.progress
+					}
+				}
+			};
+
+		default:
 			return state;
 	}
 }

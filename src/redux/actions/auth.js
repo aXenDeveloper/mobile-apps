@@ -1,7 +1,7 @@
 import { SecureStore, Linking, WebBrowser, Permissions } from "expo";
 import apolloLogger from "apollo-link-logger";
 import { ApolloClient } from "apollo-client";
-import { HttpLink } from "apollo-link-http";
+import { HttpLink, createHttpLink } from "apollo-link-http";
 import { ApolloLink } from "apollo-link";
 import { onError } from "apollo-link-error";
 import { InMemoryCache } from "apollo-cache-inmemory";
@@ -606,7 +606,7 @@ const getNewClient = connectData => {
 	// Apollo config & setup
 	const authLink = new ApolloLink((operation, next) => {
 		operation.setContext(context => {
-			console.log(`CLIENT: Making ${accessToken ? "AUTHENTICATED" : "unauthenticated"} request`);
+			//console.log(`CLIENT: Making ${accessToken ? "AUTHENTICATED" : "unauthenticated"} request`);
 			return {
 				...context,
 				credentials: "same-origin",
@@ -621,7 +621,7 @@ const getNewClient = connectData => {
 	});
 
 	const errorsToUnauth = ["INVALID_ACCESS_TOKEN", "INVALID_API_KEY", "TOO_MANY_REQUESTS_WITH_BAD_KEY"];
-	const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
+	const errorLink = onError(({ graphQLErrors, networkError }) => {
 		if (graphQLErrors) {
 			for (let i = 0; i < graphQLErrors.length; i++) {
 				const error = graphQLErrors[i];
@@ -646,13 +646,16 @@ const getNewClient = connectData => {
 		}
 	});
 
+	const httpLink = createHttpLink({
+		uri: `${connectData.apiUrl}/api/graphql/`,
+		fetch: customFetch
+	});
+
 	const link = ApolloLink.from([
 		//apolloLogger,
 		authLink,
 		errorLink,
-		new HttpLink({
-			uri: `${connectData.apiUrl}/api/graphql/`
-		})
+		httpLink
 	]);
 
 	const client = new ApolloClient({
@@ -661,4 +664,70 @@ const getNewClient = connectData => {
 	});
 
 	return client;
+};
+
+const customFetch = (uri, options) => {
+	if (options.useUpload) {
+		return uploadFetch(uri, options);
+	}
+	return fetch(uri, options);
+};
+
+// See https://github.com/jaydenseric/apollo-upload-client/issues/88#issuecomment-468318261
+const uploadFetch = (url, options) => {
+	return new Promise((resolve, reject) => {
+		const xhr = new XMLHttpRequest();
+
+		xhr.onload = () => {
+			const opts = {
+				status: xhr.status,
+				statusText: xhr.statusText,
+				headers: parseHeaders(xhr.getAllResponseHeaders() || "")
+			};
+
+			opts.url = "responseURL" in xhr ? xhr.responseURL : opts.headers.get("X-Request-URL");
+			const body = "response" in xhr ? xhr.response : xhr.responseText;
+			resolve(new Response(body, opts));
+		};
+
+		xhr.onerror = () => {
+			reject(new TypeError("Network request failed"));
+		};
+		xhr.ontimeout = () => {
+			reject(new TypeError("Network request failed"));
+		};
+		xhr.open(options.method, url, true);
+
+		Object.keys(options.headers).forEach(key => {
+			xhr.setRequestHeader(key, options.headers[key]);
+		});
+
+		if (xhr.upload) {
+			xhr.upload.onprogress = options.onProgress;
+		}
+
+		if (options.onAbortPossible) {
+			options.onAbortPossible(() => {
+				xhr.abort();
+			});
+		}
+
+		xhr.send(options.body);
+	});
+};
+
+const parseHeaders = rawHeaders => {
+	const headers = new Headers();
+	const preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, " ");
+
+	preProcessedHeaders.split(/\r?\n/).forEach(line => {
+		const parts = line.split(":");
+		const key = parts.shift().trim();
+		if (key) {
+			const value = parts.join(":").trim();
+			headers.append(key, value);
+		}
+	});
+
+	return headers;
 };
