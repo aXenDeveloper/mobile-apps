@@ -223,13 +223,7 @@ class CreateTopicScreen extends Component {
 							freeChoice={settings.tags_open_system}
 						/>
 					)}
-					<QuillEditor
-						placeholder="Post"
-						update={this.updateContentState}
-						style={styles.flex}
-						editorID={this.editorID}
-						uploadData={this.props.navigation.state.params.uploadData}
-					/>
+					<QuillEditor placeholder="Post" update={this.updateContentState} style={styles.flex} editorID={this.editorID} />
 				</KeyboardAvoidingView>
 				<QuillToolbar editorID={this.editorID} />
 			</React.Fragment>

@@ -21,7 +21,7 @@ import EndOfComments from "../../atoms/EndOfComments";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 
 const TopicListQuery = gql`
-	query TopicListQuery($forum: ID!, $offset: Int, $limit: Int, $password: String, $postKey: String!) {
+	query TopicListQuery($forum: ID!, $offset: Int, $limit: Int, $password: String) {
 		forums {
 			forum(id: $forum) {
 				...ForumItemFragment
@@ -57,20 +57,14 @@ const TopicListQuery = gql`
 				follow {
 					...FollowModalFragment
 				}
-				create {
+				nodePermissions {
 					canCreate
 					itemsRequireApproval
 					commentsRequireApproval
-					tags {
-						enabled
-						definedTags
-					}
-					uploadPermissions(postKey: $postKey) {
-						allowedFileTypes
-						maxTotalSize
-						chunkingSupported
-						maxChunkSize
-					}
+				}
+				tagPermissions {
+					enabled
+					definedTags
 				}
 			}
 		}
@@ -388,16 +382,13 @@ class TopicListScreen extends Component {
 	 */
 	createTopic = () => {
 		const forumData = this.props.data.forums.forum;
-		const { enabled: tagsEnabled, definedTags } = forumData.create.tags;
+		const { enabled: tagsEnabled, definedTags } = forumData.tagPermissions;
 
 		this.props.navigation.navigate("CreateTopic", {
 			forumID: this.props.navigation.state.params.id,
 			tagsEnabled,
 			definedTags,
-			requiresApproval: forumData.create.itemsRequireApproval,
-			uploadData: {
-				...forumData.create.uploadPermissions
-			}
+			requiresApproval: forumData.nodePermissions.itemsRequireApproval
 		});
 	};
 
@@ -457,7 +448,7 @@ class TopicListScreen extends Component {
 							onEndReached={this.onEndReached}
 							ListEmptyComponent={ListEmptyComponent}
 						/>
-						{forumData.create.canCreate && (
+						{forumData.nodePermissions.canCreate && (
 							<ActionBar>
 								<AddButton icon={require("../../../resources/compose.png")} title={Lang.get("create_new_topic")} onPress={this.createTopic} />
 							</ActionBar>
@@ -482,8 +473,7 @@ export default compose(
 				forum: props.navigation.state.params.id,
 				offset: 0,
 				limit: Expo.Constants.manifest.extra.per_page,
-				password: props.forums[props.navigation.state.params.id] || null,
-				postKey: `forum${props.navigation.state.params.id}-${props.user.id}`
+				password: props.forums[props.navigation.state.params.id] || null
 			}
 		})
 	}),
