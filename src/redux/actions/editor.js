@@ -1,3 +1,15 @@
+export const SET_EDITOR_SETTINGS = "SET_EDITOR_SETTINGS";
+export const setEditorSettings = data => {
+	console.log("setEditorSettings");
+	console.log(data);
+	return {
+		type: SET_EDITOR_SETTINGS,
+		payload: {
+			...data
+		}
+	};
+};
+
 export const SET_FOCUS = "SET_FOCUS";
 export const setFocus = data => ({
 	type: SET_FOCUS,
@@ -78,6 +90,15 @@ export const RESET_IMAGE_PICKER = "RESET_IMAGE_PICKER";
 export const resetImagePicker = data => ({
 	type: RESET_IMAGE_PICKER
 });
+export const OPEN_CAMERA = "OPEN_CAMERA";
+export const openCamera = data => ({
+	type: OPEN_CAMERA
+});
+export const RESET_CAMERA = "RESET_CAMERA";
+export const resetCamera = data => ({
+	type: RESET_CAMERA
+});
+
 export const ADD_UPLOADED_IMAGE = "ADD_UPLOADED_IMAGE";
 export const addUploadedImage = data => ({
 	type: ADD_UPLOADED_IMAGE,
@@ -135,6 +156,13 @@ const uploadMutation = gql`
 	}
 `;
 
+/**
+ * Upload an image
+ *
+ * @param 	{string} 		file 			The file to upload, in base64
+ * @param 	{object}		uploadData		Object containing some data required for processing the upload
+ * @return 	void
+ */
 export const uploadImage = (file, uploadData) => {
 	return async (dispatch, getState) => {
 		const { base64file, fileBuffer } = file;

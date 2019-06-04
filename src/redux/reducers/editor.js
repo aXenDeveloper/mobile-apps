@@ -23,11 +23,28 @@ const initialState = {
 			bullet: false,
 			ordered: false
 		}
-	}
+	},
+	settings: {}
 };
 
 export default function editor(state = initialState, { type, payload }) {
 	switch (type) {
+		case actions.RESET_EDITOR:
+			return {
+				...initialState,
+				settings: {
+					...state.settings
+				}
+			};
+
+		case actions.SET_EDITOR_SETTINGS:
+			return {
+				...state,
+				settings: {
+					...state.settings,
+					...payload
+				}
+			};
 		case actions.SET_BUTTON_STATE:
 			let buttonState = payload.state;
 
@@ -123,13 +140,16 @@ export default function editor(state = initialState, { type, payload }) {
 				...state,
 				imagePickerOpened: false
 			};
+		case actions.OPEN_CAMERA:
+			return {
+				...state,
+				cameraOpened: true
+			};
 		case actions.SET_FOCUS:
 			return {
 				...state,
 				focused: payload.focused
 			};
-		case actions.RESET_EDITOR:
-			return Object.assign({}, initialState);
 
 		case actions.SET_UPLOAD_LIMIT:
 			return {
