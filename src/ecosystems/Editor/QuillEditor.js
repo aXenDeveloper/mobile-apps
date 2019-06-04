@@ -4,7 +4,6 @@ import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import Modal from "react-native-modal";
 import { ImagePicker, Permissions, FileSystem, ImageManipulator } from "expo";
-import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 import _ from "lodash";
 import { connect } from "react-redux";
 import {
@@ -12,6 +11,7 @@ import {
 	setFormatting,
 	resetEditor,
 	resetImagePicker,
+	resetCamera,
 	addImageToUpload,
 	showMentionBar,
 	hideMentionBar,
@@ -134,6 +134,12 @@ class QuillEditor extends Component {
 		if (!prevProps.editor.imagePickerOpened && this.props.editor.imagePickerOpened) {
 			this.showImagePicker();
 			this.props.dispatch(resetImagePicker());
+		}
+
+		// Are we opening the camera?
+		if (!prevProps.editor.cameraOpened && this.props.editor.cameraOpened) {
+			this.showCamera();
+			this.props.dispatch(resetCamera());
 		}
 
 		// If any of our formatting options have changed, send a SET_FORMAT command to the WebView
@@ -486,16 +492,14 @@ class QuillEditor extends Component {
 	 * @return 	void
 	 */
 	async showImagePicker() {
-		const { dispatch } = this.props;
 		const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-		const maxImageDim = Expo.Constants.manifest.extra.max_image_dim;
 
 		if (status !== "granted") {
 			throw new Error("Permission not granted");
 		}
 
 		let selectedFile = await ImagePicker.launchImageLibraryAsync({
-			allowsEditing: true,
+			mediaTypes: "Images",
 			base64: true
 		});
 
@@ -503,16 +507,76 @@ class QuillEditor extends Component {
 			return;
 		}
 
+		this.doUploadImage(selectedFile);
+	}
+
+	/**
+	 * Event handler for image button; show the OS camera
+	 *
+	 * @return 	void
+	 */
+	async showCamera() {
+		const { status: statusRoll } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+		if (statusRoll !== "granted") {
+			throw new Error("Permission not granted");
+		}
+
+		const { status: statusCamera } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+		if (statusCamera !== "granted") {
+			throw new Error("Permission not granted");
+		}
+
+		let selectedFile = await ImagePicker.launchCameraAsync({
+			base64: true
+		});
+
+		if (selectedFile.cancelled) {
+			return;
+		}
+
+		this.doUploadImage(selectedFile);
+	}
+
+	/**
+	 * Uploads a provided image resource
+	 *
+	 * @param 	object 		selectedFile 		Object containing resource info for an image
+	 * @return 	void
+	 */
+	async doUploadImage(selectedFile) {
+		const { dispatch } = this.props;
+		const maxImageDim = Expo.Constants.manifest.extra.max_image_dim;
+		const { allowedFileTypes, chunkingSupported, maxChunkSize } = this.props.editor.settings;
+
 		// If width or height is > 1000, resize
 		if (selectedFile.width > maxImageDim || selectedFile.height > maxImageDim) {
 			selectedFile = await ImageManipulator.manipulateAsync(
 				selectedFile.uri,
-				[{ resize: data.width > maxImageDim ? { width: maxImageDim } : { height: maxImageDim } }],
+				[{ resize: selectedFile.width > maxImageDim ? { width: maxImageDim } : { height: maxImageDim } }],
 				{
 					compress: 0.7,
-					format: "jpeg"
+					format: "jpeg",
+					base64: true
 				}
 			);
+		}
+
+		const fileName = selectedFile.uri.split("/").pop();
+		const fileExt = fileName.split(".").pop();
+
+		// Check the extension is permitted
+		if (allowedFileTypes.indexOf(fileExt) === -1) {
+			// OK so this type isn't allowed. What if we change it to a jpg or png?
+			if (allowedFileTypes.indexOf("jpg") !== -1 || allowedFileTypes.indexOf("png") !== -1) {
+				selectedFile = await ImageManipulator.manipulateAsync(selectedFile.uri, {
+					format: allowedFileTypes.indexOf("jpg") !== -1 ? "jpeg" : "png",
+					base64: true
+				});
+			} else {
+				// Nope, not even that. wtf.
+				Alert.alert("Error", "Sorry, you can't upload images of this type.", [{ text: "OK" }], { cancelable: false });
+				return;
+			}
 		}
 
 		// Build data object to pass into action
@@ -520,11 +584,11 @@ class QuillEditor extends Component {
 			// We need to figure out the max allowed size of a chunk, allowing for the fact it'll be base64'd
 			// which adds approx 33% to the size. The -3 is to allow for up to three padding characters that
 			// base64 will add
-			maxActualChunkSize: Math.floor((this.props.uploadData.maxChunkSize / 4) * 3 - 3),
-			maxChunkSize: this.props.uploadData.maxChunkSize,
+			maxActualChunkSize: Math.floor((maxChunkSize / 4) * 3 - 3),
+			maxChunkSize: maxChunkSize,
 			fileData: selectedFile,
 			postKey: this.props.editorID,
-			chunkingSupported: this.props.uploadData.chunkingSupported
+			chunkingSupported: chunkingSupported
 		};
 
 		// Get the file stream
@@ -532,8 +596,8 @@ class QuillEditor extends Component {
 			const fileBuffer = Buffer.from(selectedFile.base64, "base64");
 
 			// Check we have space for it
-			if (this.props.uploadData.maxTotalSize !== null) {
-				if (fileBuffer.length > parseInt(this.props.uploadData.maxTotalSize) - this.getCurrentUploadSize()) {
+			if (this.props.user.maxUploadSize !== null) {
+				if (fileBuffer.length > parseInt(this.props.user.maxUploadSize) - this.getCurrentUploadSize()) {
 					Alert.alert("Error", "You do not have enough space left to upload this image.", [{ text: "OK" }], { cancelable: false });
 					return;
 				}
@@ -551,6 +615,11 @@ class QuillEditor extends Component {
 		}
 	}
 
+	/**
+	 * Returns the currently-used upload allowance
+	 *
+	 * @return 	int 	Upload size currently used
+	 */
 	getCurrentUploadSize() {
 		const attachedImages = this.props.editor.attachedImages;
 		const totalUploadSize = Object.keys(attachedImages).reduce((previous, current) => {
@@ -627,7 +696,8 @@ class QuillEditor extends Component {
 export default compose(
 	withApollo,
 	connect(state => ({
-		editor: state.editor
+		editor: state.editor,
+		user: state.user
 	}))
 )(QuillEditor);
 

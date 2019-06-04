@@ -2,14 +2,16 @@ import React, { Component } from "react";
 import { View, StyleSheet, ScrollView, Text, TextInput, Animated, TouchableOpacity, Image } from "react-native";
 import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 import { connect } from "react-redux";
+import * as Animatable from "react-native-animatable";
 import _ from "underscore";
+
 import { QuillToolbarButton } from "./QuillToolbarButton";
 import { QuillToolbarSeparator } from "./QuillToolbarSeparator";
 import { MentionRow } from "./MentionRow";
 import { UploadedImage } from "./UploadedImage";
-import { setFocus, setButtonState, openLinkModal, openImagePicker, insertMentionSymbol } from "../../redux/actions/editor";
-import * as Animatable from "react-native-animatable";
-
+import { setFocus, setButtonState, openLinkModal, openImagePicker, openCamera, insertMentionSymbol } from "../../redux/actions/editor";
+import ActionSheet from "react-native-actionsheet";
+import Lang from "../../utils/Lang";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import icons from "../../icons";
 import styles, { styleVars } from "../../styles";
@@ -29,12 +31,13 @@ class QuillToolbar extends Component {
 
 		this._formattingHandlers = {};
 		this.openLinkModal = this.openLinkModal.bind(this);
-		this.openImagePicker = this.openImagePicker.bind(this);
+		this.openImageActionSheet = this.openImageActionSheet.bind(this);
 		this.toggleFormatting = this.toggleFormatting.bind(this);
 		this.showImageToolbar = this.showImageToolbar.bind(this);
 		this.hideImageToolbar = this.hideImageToolbar.bind(this);
 		this.insertMention = this.insertMention.bind(this);
 		this.closeMentionBar = this.closeMentionBar.bind(this);
+		this.actionSheetPress = this.actionSheetPress.bind(this);
 	}
 
 	async componentDidUpdate(prevProps, prevState) {
@@ -135,8 +138,8 @@ class QuillToolbar extends Component {
 	 *
 	 * @return 	void
 	 */
-	openImagePicker() {
-		this.props.dispatch(openImagePicker());
+	openImageActionSheet() {
+		this._actionSheet.show();
 	}
 
 	/**
@@ -162,6 +165,8 @@ class QuillToolbar extends Component {
 	/**
 	 * Memoization function that returns a formatting handler
 	 *
+	 * @param 	{string} 			button 		The format button that was pressed
+	 * @param 	{object\null} 		option		An additional optional param for the formatting
 	 * @return 	void
 	 */
 	getFormattingHandler(button, option = null) {
@@ -172,11 +177,35 @@ class QuillToolbar extends Component {
 		return this._formattingHandlers[button];
 	}
 
+	getActionSheetOptions() {
+		return [Lang.get("cancel"), Lang.get("Take Photo"), Lang.get("Choose from Camera Roll")];
+	}
+
+	/**
+	 * Handle tapping an action sheet item. Triggers the relevant action.
+	 *
+	 * @param 	number 	i 	THe index of the item that was tapped
+	 * @return 	void
+	 */
+	actionSheetPress(i) {
+		if (i === 2) {
+			this.props.dispatch(openImagePicker());
+		} else if (i === 1) {
+			this.props.dispatch(openCamera());
+		}
+	}
+
 	render() {
-		const attachedImages = this.props.editor.attachedImages;
+		console.log(this.props.editor);
+
+		const {
+			attachedImages,
+			settings: { allowedFileTypes }
+		} = this.props.editor;
 		const sortedAttachedImages = Object.keys(attachedImages)
 			.sort((a, b) => (attachedImages[a].position > attachedImages[b].position ? 1 : -1))
 			.map(imageID => attachedImages[imageID]);
+		const allowImageUploads = allowedFileTypes === null || (_.isArray(allowedFileTypes) && _.intersection(["jpg", "png"], allowedFileTypes).length);
 
 		return (
 			<KeyboardAccessoryView hideBorder alwaysVisible={this.props.editor.focused} visibleOpacity={this.props.editor.focused ? 1 : 0}>
@@ -184,37 +213,21 @@ class QuillToolbar extends Component {
 					<Animatable.View style={[componentStyles.toolbarInner]} ref={ref => (this._wrapper = ref)}>
 						{Boolean(this.state.showToolbar) && (
 							<Animatable.View style={[styles.flexRow, styles.flexAlignCenter, componentStyles.toolbarIcons]} ref={ref => (this._toolbar = ref)}>
-								<QuillToolbarButton icon={require("../../../resources/image.png")} onPress={this.showImageToolbar} />
-								<QuillToolbarButton active={this.props.editor.linkModalActive} icon={require("../../../resources/link.png")} onPress={this.openLinkModal} />
-								<QuillToolbarButton
-									active={this.props.editor.mentionModalActive}
-									icon={require("../../../resources/mention.png")}
-									onPress={this.insertMention}
-								/>
+								{allowImageUploads && <QuillToolbarButton icon={icons.IMAGE} onPress={this.showImageToolbar} />}
+								<QuillToolbarButton active={this.props.editor.linkModalActive} icon={icons.LINK} onPress={this.openLinkModal} />
+								<QuillToolbarButton active={this.props.editor.mentionModalActive} icon={icons.MENTION} onPress={this.insertMention} />
 								<QuillToolbarSeparator />
-								<QuillToolbarButton
-									active={this.props.editor.formatting.bold}
-									icon={require("../../../resources/bold.png")}
-									onPress={this.getFormattingHandler("bold")}
-								/>
-								<QuillToolbarButton
-									active={this.props.editor.formatting.italic}
-									icon={require("../../../resources/italic.png")}
-									onPress={this.getFormattingHandler("italic")}
-								/>
-								<QuillToolbarButton
-									active={this.props.editor.formatting.underline}
-									icon={require("../../../resources/underline.png")}
-									onPress={this.getFormattingHandler("underline")}
-								/>
+								<QuillToolbarButton active={this.props.editor.formatting.bold} icon={icons.BOLD} onPress={this.getFormattingHandler("bold")} />
+								<QuillToolbarButton active={this.props.editor.formatting.italic} icon={icons.ITALIC} onPress={this.getFormattingHandler("italic")} />
+								<QuillToolbarButton active={this.props.editor.formatting.underline} icon={icons.UNDERLINE} onPress={this.getFormattingHandler("underline")} />
 								<QuillToolbarButton
 									active={this.props.editor.formatting.list.bullet}
-									icon={require("../../../resources/list_unordered.png")}
+									icon={icons.LIST_UNORDERED}
 									onPress={this.getFormattingHandler("list", "bullet")}
 								/>
 								<QuillToolbarButton
 									active={this.props.editor.formatting.list.ordered}
-									icon={require("../../../resources/list_ordered.png")}
+									icon={icons.LIST_ORDERED}
 									onPress={this.getFormattingHandler("list", "ordered")}
 								/>
 							</Animatable.View>
@@ -246,7 +259,7 @@ class QuillToolbar extends Component {
 							<Animatable.View style={[styles.flexRow, styles.pvTight, styles.plTight, componentStyles.imageToolbar]} ref={ref => (this._imageToolbar = ref)}>
 								<ScrollView horizontal style={[styles.flexRow, styles.flexGrow]} showsHorizontalScrollIndicator={false}>
 									<TouchableOpacity
-										onPress={this.openImagePicker}
+										onPress={this.openImageActionSheet}
 										style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter, styles.mrStandard, componentStyles.addImage]}
 									>
 										<Image source={icons.PLUS_CIRCLE} resizeMode="contain" style={componentStyles.addImageIcon} />
@@ -264,6 +277,7 @@ class QuillToolbar extends Component {
 						)}
 					</Animatable.View>
 				</View>
+				<ActionSheet ref={o => (this._actionSheet = o)} cancelButtonIndex={0} options={this.getActionSheetOptions()} onPress={this.actionSheetPress} />
 			</KeyboardAccessoryView>
 		);
 	}

@@ -72,6 +72,7 @@ export class UploadedImage extends PureComponent {
 	}
 
 	render() {
+		// @todo language
 		return (
 			<TouchableOpacity style={[styles.mrStandard, componentStyles.uploadedImageWrapper]} onPress={this.onPressImage}>
 				<Image source={{ uri: this.props.image }} resizeMode="cover" style={componentStyles.uploadedImage} />
@@ -81,7 +82,7 @@ export class UploadedImage extends PureComponent {
 						style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.uploadingOverlay]}
 					>
 						<Animatable.View ref={ref => (this._uploadProgress = ref)}>
-							<AnimatedCircularProgress size={34} width={17} rotation={0} fill={this.props.progress || 0} tintColor="#fff" />
+							<AnimatedCircularProgress size={30} width={15} rotation={0} fill={this.props.progress || 0} tintColor="#fff" />
 						</Animatable.View>
 					</Animatable.View>
 				)}
