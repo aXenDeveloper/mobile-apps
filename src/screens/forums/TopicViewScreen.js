@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, Image, View, Button, ScrollView, FlatList, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
+import { Text, Image, View, Button, ScrollView, FlatList, TouchableOpacity, TextInput, StyleSheet, Alert, LayoutAnimation } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
@@ -380,6 +380,14 @@ class TopicViewScreen extends Component {
 				});
 			}
 		);
+	}
+
+	getSnapshotBeforeUpdate(prevProps) {
+		if (prevProps.data.loading && !this.props.data.loading) {
+			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+		}
+
+		return null;
 	}
 
 	/**

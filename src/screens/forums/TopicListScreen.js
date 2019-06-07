@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, Image, View, Button, ScrollView, SectionList } from "react-native";
+import { Text, Image, View, Button, ScrollView, SectionList, LayoutAnimation } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
@@ -100,6 +100,13 @@ class TopicListScreen extends Component {
 			reachedEnd: false,
 			followModalVisible: false
 		};
+	}
+
+	getSnapshotBeforeUpdate(prevProps) {
+		if (!prevProps.navigation.state.params.highlightTopic && this.props.navigation.state.params.highlightTopic) {
+			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+		}
+		return null;
 	}
 
 	/**
