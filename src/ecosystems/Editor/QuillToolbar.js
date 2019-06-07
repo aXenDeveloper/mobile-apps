@@ -9,7 +9,17 @@ import { QuillToolbarButton } from "./QuillToolbarButton";
 import { QuillToolbarSeparator } from "./QuillToolbarSeparator";
 import { MentionRow } from "./MentionRow";
 import { UploadedImage } from "./UploadedImage";
-import { setFocus, setButtonState, openLinkModal, openImagePicker, openCamera, insertMentionSymbol } from "../../redux/actions/editor";
+import {
+	setFocus,
+	setButtonState,
+	openLinkModal,
+	openImagePicker,
+	openCamera,
+	insertMentionSymbol,
+	abortImageUpload,
+	deleteImageUpload,
+	UPLOAD_STATUS
+} from "../../redux/actions/editor";
 import ActionSheet from "react-native-actionsheet";
 import Lang from "../../utils/Lang";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
@@ -30,6 +40,9 @@ class QuillToolbar extends Component {
 		};
 
 		this._formattingHandlers = {};
+		this._abortHandlers = {};
+		this._deleteHandlers = {};
+
 		this.openLinkModal = this.openLinkModal.bind(this);
 		this.openImageActionSheet = this.openImageActionSheet.bind(this);
 		this.toggleFormatting = this.toggleFormatting.bind(this);
@@ -178,7 +191,24 @@ class QuillToolbar extends Component {
 	}
 
 	getActionSheetOptions() {
+		// @todo language
 		return [Lang.get("cancel"), Lang.get("Take Photo"), Lang.get("Choose from Camera Roll")];
+	}
+
+	getAbortUploadHandler(id) {
+		if (_.isUndefined(this._abortHandlers[id])) {
+			this._abortHandlers[id] = () => this.props.dispatch(abortImageUpload(id));
+		}
+
+		return this._abortHandlers[id];
+	}
+
+	getDeleteUploadHandler(id, attachmentID) {
+		if (_.isUndefined(this._deleteHandlers[id])) {
+			this._deleteHandlers[id] = () => this.props.dispatch(deleteImageUpload(id, attachmentID));
+		}
+
+		return this._deleteHandlers[id];
 	}
 
 	/**
@@ -196,8 +226,6 @@ class QuillToolbar extends Component {
 	}
 
 	render() {
-		console.log(this.props.editor);
-
 		const {
 			attachedImages,
 			settings: { allowedFileTypes }
@@ -265,7 +293,17 @@ class QuillToolbar extends Component {
 										<Image source={icons.PLUS_CIRCLE} resizeMode="contain" style={componentStyles.addImageIcon} />
 									</TouchableOpacity>
 									{sortedAttachedImages.reverse().map(image => (
-										<UploadedImage image={image.localFilename} status={image.status} key={image.id} progress={image.progress} error={image.error} />
+										<UploadedImage
+											image={image.localFilename}
+											status={image.status}
+											id={image.id}
+											attachmentID={image.attachmentID || null}
+											abort={this.getAbortUploadHandler(image.id)}
+											delete={image.status === UPLOAD_STATUS.DONE ? this.getDeleteUploadHandler(image.id, image.attachmentID) : null}
+											key={image.id}
+											progress={image.progress}
+											error={image.error}
+										/>
 									))}
 								</ScrollView>
 								<TouchableOpacity onPress={this.hideImageToolbar} style={[styles.pvTight, componentStyles.closeImageToolbar]}>

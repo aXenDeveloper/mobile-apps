@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { UIManager } from "react-native";
 import { Provider } from "react-redux";
 import configureStore from "./src/redux/configureStore";
 import { connect } from "react-redux";
@@ -22,6 +23,7 @@ Sentry.config("https://7ebe0255a311425c8edb883ad65e5002@sentry.io/1429754").inst
 export default class App extends Component {
 	constructor(props) {
 		super(props);
+		UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
 	}
 
 	render() {

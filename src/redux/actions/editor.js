@@ -1,7 +1,5 @@
 export const SET_EDITOR_SETTINGS = "SET_EDITOR_SETTINGS";
 export const setEditorSettings = data => {
-	console.log("setEditorSettings");
-	console.log(data);
 	return {
 		type: SET_EDITOR_SETTINGS,
 		payload: {
@@ -106,6 +104,13 @@ export const addUploadedImage = data => ({
 		...data
 	}
 });
+export const REMOVE_UPLOADED_IMAGE = "REMOVE_UPLOADED_IMAGE";
+export const removeUploadedImage = data => ({
+	type: REMOVE_UPLOADED_IMAGE,
+	payload: {
+		...data
+	}
+});
 
 export const SET_UPLOAD_PROGRESS = "SET_UPLOAD_PROGRESS";
 export const setUploadProgress = data => ({
@@ -127,9 +132,12 @@ export const UPLOAD_STATUS = {
 	PENDING: "pending",
 	UPLOADING: "uploading",
 	DONE: "done",
-	ERROR: "error"
+	ERROR: "error",
+	ABORTED: "aborted",
+	REMOVING: "removing"
 };
 
+import { LayoutAnimation } from "react-native";
 import gql from "graphql-tag";
 import _ from "underscore";
 
@@ -147,11 +155,15 @@ const uploadMutation = gql`
 					width
 					height
 				}
-				uploader {
-					id
-					name
-				}
 			}
+		}
+	}
+`;
+
+const deleteMutation = gql`
+	mutation DeleteAttachmentMutation($id: ID!) {
+		mutateCore {
+			deleteAttachment(id: $id)
 		}
 	}
 `;
@@ -171,11 +183,12 @@ export const uploadImage = (file, uploadData) => {
 		const state = getState();
 		const client = state.auth.client;
 		const bufferPieces = [];
+		const id = fileData.uri;
 		let requiresChunking = false;
 
 		dispatch(
 			addUploadedImage({
-				id: fileData.uri,
+				id,
 				localFilename: fileData.uri,
 				fileSize: fileBuffer.length,
 				width: fileData.width,
@@ -185,7 +198,7 @@ export const uploadImage = (file, uploadData) => {
 
 		dispatch(
 			setUploadStatus({
-				id: fileData.uri,
+				id,
 				status: UPLOAD_STATUS.UPLOADING
 			})
 		);
@@ -198,7 +211,7 @@ export const uploadImage = (file, uploadData) => {
 			} else {
 				dispatch(
 					setUploadStatus({
-						id: fileData.uri,
+						id,
 						status: UPLOAD_STATUS.ERROR,
 						error: "There is not enough space to upload this image."
 					})
@@ -221,19 +234,32 @@ export const uploadImage = (file, uploadData) => {
 		}
 
 		try {
-			const receivedData = await uploadFile(client, bufferPieces, { name: fileName, postKey }, (totalLoaded, totalSize) => {
-				dispatch(
-					setUploadProgress({
-						id: fileData.uri,
-						progress: Math.min(Math.round((totalLoaded / totalSize) * 100), 100)
-					})
-				);
-			});
+			const receivedData = await uploadFile(
+				client,
+				id,
+				bufferPieces,
+				{ name: fileName, postKey },
+				(totalLoaded, totalSize) => {
+					dispatch(
+						setUploadProgress({
+							id,
+							progress: Math.min(Math.round((totalLoaded / totalSize) * 100), 100)
+						})
+					);
+				},
+				() => {
+					const {
+						editor: { attachedImages }
+					} = getState();
+					return attachedImages[id].status === UPLOAD_STATUS.ABORTED;
+				}
+			);
 
 			dispatch(
 				setUploadStatus({
-					id: fileData.uri,
-					status: UPLOAD_STATUS.DONE
+					id,
+					status: UPLOAD_STATUS.DONE,
+					attachmentID: receivedData.mutateCore.uploadAttachment.id
 				})
 			);
 		} catch (err) {
@@ -241,11 +267,41 @@ export const uploadImage = (file, uploadData) => {
 
 			dispatch(
 				setUploadStatus({
-					id: fileData.uri,
+					id,
 					status: UPLOAD_STATUS.ERROR,
-					error: "There was a problem uploading this image."
+					error: "There was a problem uploading this image." + err
 				})
 			);
+		}
+	};
+};
+
+const abortHandlers = {};
+
+export const abortImageUpload = id => {
+	return dispatch => {
+		if (_.isFunction(abortHandlers[id])) {
+			dispatch(
+				setUploadStatus({
+					id,
+					status: UPLOAD_STATUS.ABORTED
+				})
+			);
+
+			try {
+				abortHandlers[id]();
+			} catch (err) {
+				console.log(`Failed to abort: ${err}`);
+			}
+
+			setTimeout(() => {
+				LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+				dispatch(
+					removeUploadedImage({
+						id
+					})
+				);
+			}, 1000);
 		}
 	};
 };
@@ -257,15 +313,17 @@ export const uploadImage = (file, uploadData) => {
  * @param 	{array|string}		pieces 		The pieces to be uploaded
  * @param 	{object}			variables 	Any additional variables to be send with the mutation
  * @param 	{function}			onProgress 	A function that will be called when upload progress happens
+ * @param 	{function} 			isAborted 	A function to be called for each piece to determine whether the upload is aborted
  * @return 	void
  */
-const uploadFile = async (client, pieces, variables, onProgress) => {
+const uploadFile = async (client, fileId, pieces, variables, onProgress, isAborted) => {
 	if (!_.isArray(pieces)) {
 		pieces = [pieces];
 	}
 
 	const totalSize = pieces.reduce((accumulator, currentValue) => accumulator + currentValue.length, 0);
 	let totalLoaded = 0;
+	let aborted = false;
 
 	const sendMutation = async (contents, additionalParams = {}) => {
 		let thisFileUploaded = 0;
@@ -279,6 +337,9 @@ const uploadFile = async (client, pieces, variables, onProgress) => {
 			context: {
 				fetchOptions: {
 					useUpload: true,
+					onAbortPossible: fn => {
+						abortHandlers[fileId] = fn;
+					},
 					onProgress: ev => {
 						thisFileUploaded = ev.loaded;
 						onProgress(totalLoaded + thisFileUploaded, totalSize);
@@ -296,11 +357,53 @@ const uploadFile = async (client, pieces, variables, onProgress) => {
 	if (pieces.length > 1) {
 		let i = 1;
 		for (let piece of pieces) {
-			data = await sendMutation(piece, { totalChunks: pieces.length, chunk: i++ });
+			if (!isAborted()) {
+				data = await sendMutation(piece, { totalChunks: pieces.length, chunk: i++ });
+			} else {
+				break;
+			}
 		}
 	} else {
-		data = await sendMutation(pieces[0]);
+		if (!isAborted()) {
+			data = await sendMutation(pieces[0]);
+		}
 	}
 
 	return data;
+};
+
+/**
+ * Delete an image
+ *
+ * @param 	{string|number} 		id 				The attachment id to delete
+ * @return 	void
+ */
+export const deleteImageUpload = (id, attachmentID) => {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const client = state.auth.client;
+
+		dispatch(
+			setUploadStatus({
+				id,
+				status: UPLOAD_STATUS.REMOVING
+			})
+		);
+
+		const { data } = await client.mutate({
+			mutation: deleteMutation,
+			variables: {
+				id: attachmentID
+			}
+		});
+
+		setTimeout(() => {
+			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+			dispatch(
+				removeUploadedImage({
+					id
+				})
+			);
+		}, 1000);
+	};
 };

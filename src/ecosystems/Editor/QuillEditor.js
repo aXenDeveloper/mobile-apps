@@ -1,5 +1,5 @@
 import React, { Fragment, Component } from "react";
-import { View, TextInput, Text, KeyboardAvoidingView, Button, WebView, StyleSheet } from "react-native";
+import { View, TextInput, Text, KeyboardAvoidingView, Button, WebView, StyleSheet, LayoutAnimation } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import Modal from "react-native-modal";
@@ -195,6 +195,7 @@ class QuillEditor extends Component {
 				});
 			}
 
+			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 			this.props.dispatch(updateMentionResults(mentions));
 		} catch (err) {
 			console.log(err);
@@ -547,6 +548,9 @@ class QuillEditor extends Component {
 		const { dispatch } = this.props;
 		const maxImageDim = Expo.Constants.manifest.extra.max_image_dim;
 		const { allowedFileTypes, chunkingSupported, maxChunkSize } = this.props.editor.settings;
+		//const maxChunkSize = 3000;
+
+		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
 		// If width or height is > 1000, resize
 		if (selectedFile.width > maxImageDim || selectedFile.height > maxImageDim) {
@@ -565,7 +569,7 @@ class QuillEditor extends Component {
 		const fileExt = fileName.split(".").pop();
 
 		// Check the extension is permitted
-		if (allowedFileTypes.indexOf(fileExt) === -1) {
+		if (_.isArray(allowedFileTypes) && allowedFileTypes.indexOf(fileExt) === -1) {
 			// OK so this type isn't allowed. What if we change it to a jpg or png?
 			if (allowedFileTypes.indexOf("jpg") !== -1 || allowedFileTypes.indexOf("png") !== -1) {
 				selectedFile = await ImageManipulator.manipulateAsync(selectedFile.uri, {
@@ -623,8 +627,8 @@ class QuillEditor extends Component {
 	getCurrentUploadSize() {
 		const attachedImages = this.props.editor.attachedImages;
 		const totalUploadSize = Object.keys(attachedImages).reduce((previous, current) => {
-			// Don't count errored files in the total size calc
-			if (attachedImages[current].status === UPLOAD_STATUS.ERROR) {
+			// Don't count errored/aborted files in the total size calc
+			if ([UPLOAD_STATUS.ERROR, UPLOAD_STATUS.ABORTED].indexOf(attachedImages[current].status) !== -1) {
 				return previous;
 			}
 			return previous + attachedImages[current].fileSize;

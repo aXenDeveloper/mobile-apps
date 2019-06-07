@@ -172,6 +172,15 @@ export default function editor(state = initialState, { type, payload }) {
 				}
 			};
 
+		case actions.REMOVE_UPLOADED_IMAGE:
+			const cloneWithoutImage = Object.assign({}, state.attachedImages);
+			delete cloneWithoutImage[payload.id];
+
+			return {
+				...state,
+				attachedImages: cloneWithoutImage
+			};
+
 		case actions.SET_UPLOAD_STATUS:
 			return {
 				...state,
@@ -181,6 +190,7 @@ export default function editor(state = initialState, { type, payload }) {
 						...state.attachedImages[payload.id],
 						status: payload.status,
 						progress: payload.status === actions.UPLOAD_STATUS.DONE ? 100 : payload.progress,
+						...(!_.isUndefined(payload.attachmentID) ? { attachmentID: payload.attachmentID } : {}),
 						...(!_.isUndefined(payload.error) ? { error: payload.error } : {})
 					}
 				}

@@ -50,6 +50,7 @@ const icons = {
 	UNDERLINE: require("../resources/underline.png"),
 	USER_DOCUMENT: require("../resources/edit_profile.png"),
 	POLL: require("../resources/poll.png"),
+	STOP: require("../resources/stop.png"),
 	VIEW: require("../resources/view.png"),
 	VOTE_UP: require("../resources/vote_up.png"),
 	VOTE_UP_SOLID: require("../resources/vote_up_solid.png"),
