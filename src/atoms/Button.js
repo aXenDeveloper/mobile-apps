@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Image, TouchableOpacity, Text, ViewPropTypes } from "react-native";
+import { View, StyleSheet, Image, TouchableOpacity, Text, ViewPropTypes, ActivityIndicator } from "react-native";
 import PropTypes from "prop-types";
 import { transparentize } from "polished";
 
@@ -18,7 +18,7 @@ export default class Button extends Component {
 		const rounded = this.props.rounded ? componentStyles.rounded : null;
 		const imageType = buttonType + "Image";
 		const colorStyle = this.props.color ? { backgroundColor: this.props.color } : null;
-		const disabledStyle = this.props.disabled ? { opacity: 0.2 } : null;
+		const disabledStyle = this.props.disabled ? { opacity: 0.4 } : null;
 		const fullWidth = this.props.fullWidth ? [styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter] : null;
 
 		return (
@@ -38,6 +38,7 @@ export default class Button extends Component {
 			>
 				<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter]}>
 					{Boolean(this.props.icon) && <Image style={[componentStyles.icon, componentStyles[imageType]]} resizeMode="stretch" source={this.props.icon} />}
+					{Boolean(this.props.showActivity) && <ActivityIndicator size="small" color="#fff" />}
 					{this.props.title && (
 						<View style={componentStyles.textWrapper}>
 							<Text style={[componentStyles[textType], componentStyles.text, componentStyles[textSize]]} numberOfLines={1}>
