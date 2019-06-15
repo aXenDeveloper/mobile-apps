@@ -23,6 +23,18 @@ const PostFragment = gql`
 		isFirstPost
 		isIgnored
 		isFeatured
+		reportStatus {
+			id
+			hasReported
+			reportDate
+			reportType
+			reportContent
+		}
+		commentPermissions {
+			canShare
+			canReport
+			canReportOrRevoke
+		}
 		reputation {
 			__typename
 			reactionCount

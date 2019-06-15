@@ -53,10 +53,31 @@ const WhoReactedQuery = gql`
 	${WhoReactedFragment}
 `;
 
+const ReportPostMutation = gql`
+	mutation ReportPostMutation($id: ID!, $reason: Int, $additionalInfo: String) {
+		mutateForums {
+			reportPost(id: $id, reason: $reason, additionalInfo: $additionalInfo) {
+				...PostFragment
+			}
+		}
+	}
+	${PostFragment}
+`;
+
+const RevokeReportMutation = gql`
+	mutation RevokeReportMutation($id: ID!, $reportID: ID!) {
+		mutateForums {
+			revokePostReport(id: $id, reportID: $reportID) {
+				...PostFragment
+			}
+		}
+	}
+	${PostFragment}
+`;
+
 class Post extends Component {
 	constructor(props) {
 		super(props);
-		this._actionSheetOptions = [Lang.get("cancel"), Lang.get("share"), Lang.get("report")];
 		this.state = {
 			reactionModalVisible: false,
 			whoReactedModalVisible: false,
@@ -120,10 +141,14 @@ class Post extends Component {
 	 * @return 	void
 	 */
 	actionSheetPress(i) {
-		switch (i) {
-			case 1:
+		if (i === 1) {
+			if (this.props.data.commentPermissions.canShare) {
 				this.onShare();
-				break;
+			} else {
+				this.onReport();
+			}
+		} else if (i > 1) {
+			this.onReport();
 		}
 	}
 
@@ -133,8 +158,18 @@ class Post extends Component {
 	 * @return 	array
 	 */
 	actionSheetOptions() {
-		return this._actionSheetOptions;
+		const options = [Lang.get("cancel")];
+
+		if (this.props.data.commentPermissions.canShare) {
+			options.push(Lang.get("share"));
+		}
+		if (this.props.data.commentPermissions.canReportOrRevoke) {
+			options.push(Lang.get("report"));
+		}
+
+		return options;
 	}
+
 	/**
 	 * Return the index of the 'cancel' option
 	 *
@@ -143,6 +178,7 @@ class Post extends Component {
 	actionSheetCancelIndex() {
 		return 0;
 	}
+
 	//====================================================================
 
 	/**
@@ -422,6 +458,23 @@ class Post extends Component {
 	}
 
 	/**
+	 * Handles launching the share dialog
+	 *
+	 * @return 	void
+	 */
+	onReport() {
+		// @todo language
+		this.props.navigation.navigate("ReportContent", {
+			id: this.props.data.id,
+			contentTitle: this.props.topic.title,
+			thingTitle: `${this.props.data.author.name}'s post`,
+			reportData: this.props.data.reportStatus,
+			reportMutation: ReportPostMutation,
+			revokeReportMutation: RevokeReportMutation
+		});
+	}
+
+	/**
 	 * Render the ignored post wrapper (used when the user has ignored this user but hasn't chosen to show it manually)
 	 *
 	 * @return 	Component
@@ -468,38 +521,40 @@ class Post extends Component {
 		}
 
 		const repButton = this.getReputationButton();
-
+		const postData = this.props.data;
 		// <Text>{this.props.position}</Text>
 
 		return (
 			<ViewMeasure onLayout={this.props.onLayout} id={parseInt(this.props.data.id)}>
 				<View style={styles.mbVeryTight}>
-					{Boolean(this.props.data.isIgnored) && Boolean(this.state.ignoreOverride) && this.renderIgnoreBar()}
+					{Boolean(postData.isIgnored) && Boolean(this.state.ignoreOverride) && this.renderIgnoreBar()}
 					<ShadowedArea style={[styles.pvWide, componentStyles.post, this.props.style]}>
 						{this.props.topComponent}
 						<View style={styles.flexRow}>
 							{this.props.leftComponent}
 							<View style={[this.props.leftComponent ? styles.mrWide : styles.mhWide, styles.flexBasisZero, styles.flexGrow]}>
 								<View style={[styles.flexRow, styles.flexAlignStart]} testId="postAuthor">
-									<TouchableOpacity style={styles.flex} onPress={this.props.data.author.id ? this.onPressProfile : null}>
+									<TouchableOpacity style={styles.flex} onPress={postData.author.id ? this.onPressProfile : null}>
 										<View style={[styles.flex, styles.flexRow, styles.flexAlignStart]}>
-											<UserPhoto url={this.props.data.author.photo} online={this.props.data.author.isOnline || null} size={36} />
+											<UserPhoto url={postData.author.photo} online={postData.author.isOnline || null} size={36} />
 											<View style={[styles.flexColumn, styles.flexJustifyCenter, styles.mlStandard]}>
-												<Text style={styles.itemTitle}>{this.props.data.author.name}</Text>
-												<Text style={[styles.standardText, styles.lightText]}>{relativeTime.long(this.props.data.timestamp)}</Text>
+												<Text style={styles.itemTitle}>{postData.author.name}</Text>
+												<Text style={[styles.standardText, styles.lightText]}>{relativeTime.long(postData.timestamp)}</Text>
 											</View>
 										</View>
 									</TouchableOpacity>
-									<TouchableOpacity style={styles.flexAlignSelfStart} onPress={this.onPressPostDots}>
-										<Image style={componentStyles.postMenu} resizeMode="contain" source={require("../../../resources/dots.png")} />
-									</TouchableOpacity>
+									{Boolean(postData.commentPermissions.canShare || postData.commentPermissions.canReportOrRevoke) && (
+										<TouchableOpacity style={styles.flexAlignSelfStart} onPress={this.onPressPostDots}>
+											<Image style={componentStyles.postMenu} resizeMode="contain" source={icons.DOTS} />
+										</TouchableOpacity>
+									)}
 								</View>
 								<View style={styles.mvWide}>
-									<RichTextContent>{this.props.data.content}</RichTextContent>
+									<RichTextContent>{postData.content}</RichTextContent>
 									<Animatable.View ref={r => (this._reactionWrap = r)}>
-										{Boolean(this.props.data.reputation.reactions.length) && (
+										{Boolean(postData.reputation.reactions.length) && (
 											<View style={[styles.mtWide, styles.flexRow, styles.flexJustifyEnd, styles.flexWrap]} testId="reactionList">
-												{this.props.data.reputation.reactions.map(reaction => {
+												{postData.reputation.reactions.map(reaction => {
 													return (
 														<Reaction
 															style={styles.mlStandard}
@@ -507,7 +562,7 @@ class Post extends Component {
 															id={reaction.id}
 															image={reaction.image}
 															count={reaction.count}
-															onPress={this.props.data.reputation.canViewReps ? this.onPressReaction : null}
+															onPress={postData.reputation.canViewReps ? this.onPressReaction : null}
 														/>
 													);
 												})}
@@ -523,17 +578,19 @@ class Post extends Component {
 								{repButton}
 							</PostControls>
 						)}
-						<ActionSheet
-							ref={o => (this._actionSheet = o)}
-							title={Lang.get("post_options")}
-							options={this.actionSheetOptions()}
-							cancelButtonIndex={this.actionSheetCancelIndex()}
-							onPress={this.actionSheetPress}
-						/>
+						{Boolean(postData.commentPermissions.canShare || postData.commentPermissions.canReportOrRevoke) && (
+							<ActionSheet
+								ref={o => (this._actionSheet = o)}
+								title={Lang.get("post_options")}
+								options={this.actionSheetOptions()}
+								cancelButtonIndex={this.actionSheetCancelIndex()}
+								onPress={this.actionSheetPress}
+							/>
+						)}
 						<ReactionModal
 							visible={this.state.reactionModalVisible}
 							closeModal={this.hideReactionModal}
-							reactions={this.props.data.reputation.availableReactions}
+							reactions={postData.reputation.availableReactions}
 							onReactionPress={this.onReactionPress}
 						/>
 						<WhoReactedModal
@@ -543,7 +600,7 @@ class Post extends Component {
 							reactionImage={this.state.whoReactedImage}
 							query={WhoReactedQuery}
 							variables={{
-								id: this.props.data.id,
+								id: postData.id,
 								reactionID: parseInt(this.state.whoReactedReaction)
 							}}
 						/>

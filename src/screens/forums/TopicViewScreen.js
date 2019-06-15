@@ -1395,6 +1395,7 @@ class TopicViewScreen extends Component {
 						<FlatList
 							style={styles.flex}
 							ref={flatList => (this._flatList = flatList)}
+							extraData={this.props.data.forums.topic}
 							keyExtractor={item => item.id}
 							ListHeaderComponent={this.getHeaderComponent(topicData)}
 							ListFooterComponent={this.getFooterComponent()}

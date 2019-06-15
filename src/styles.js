@@ -322,6 +322,20 @@ const styles = StyleSheet.create({
 		color: "white"
 	},
 
+	/* Submit bar */
+	bottomSubmitBar: {
+		position: "absolute",
+		bottom: 0,
+		left: 0,
+		right: 0,
+		backgroundColor: "#fff",
+		borderTopWidth: 1,
+		borderTopColor: styleVars.borderColors.medium,
+		paddingVertical: styleVars.spacing.wide,
+		paddingHorizontal: styleVars.spacing.wide,
+		...(isIphoneX() ? { paddingBottom: styleVars.spacing.extraWide + styleVars.spacing.wide } : {})
+	},
+
 	/* General purpose styles */
 	unreadBackground: {
 		backgroundColor: "#ffffff"
@@ -333,7 +347,7 @@ const styles = StyleSheet.create({
 		backgroundColor: styleVars.greys.light
 	},
 	text: {
-		color: "#000"
+		color: styleVars.text
 	},
 	textRead: {
 		color: "#585858"

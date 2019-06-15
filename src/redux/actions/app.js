@@ -211,6 +211,11 @@ const BootQuery = gql`
 				allowedFileTypes
 				chunkingSupported
 				maxChunkSize
+				automoderationEnabled
+				reportReasons {
+					id
+					reason
+				}
 			}
 			loginHandlers {
 				id

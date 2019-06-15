@@ -27,6 +27,7 @@ import NotificationsSettingsScreen from "../screens/core/NotificationsSettingsSc
 import ProfileScreen from "../screens/core/ProfileScreen";
 import UserScreen from "../screens/core/UserScreen";
 import PollScreen from "../screens/core/PollScreen";
+import ReportContentScreen from "../screens/core/ReportContentScreen";
 import LoginScreen from "../screens/core/LoginRegister/LoginScreen";
 import RegisterScreen from "../screens/core/LoginRegister/RegisterScreen";
 import WebViewScreen from "../screens/core/WebViewScreen";
@@ -194,10 +195,17 @@ class AppNavigation extends Component {
 						header: null,
 						headerMode: "none"
 					}
+				},
+				ReportContent: {
+					screen: ReportContentScreen,
+					navigationOptions: {
+						title: "Report Content"
+					}
 				}
 			},
 			{
 				mode: "modal",
+				cardStyle: styles.stackCardStyle,
 				defaultNavigationOptions: {
 					header: props => {
 						return <CustomHeader {...props} />;
