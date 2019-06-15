@@ -37,6 +37,19 @@ export const switchAppView = data => ({
 	}
 });
 
+export const PUSH_TOAST = "PUSH_TOAST";
+export const pushToast = data => ({
+	type: PUSH_TOAST,
+	payload: {
+		...data
+	}
+});
+
+export const SHIFT_TOAST = "SHIFT_TOAST";
+export const shiftToast = data => ({
+	type: SHIFT_TOAST
+});
+
 // =================================================================
 
 export const RECEIVE_NOTIFICATION = "RECEIVE_NOTIFICATION";

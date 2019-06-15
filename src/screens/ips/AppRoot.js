@@ -4,6 +4,7 @@ import { Linking, Permissions, Notifications } from "expo";
 import { connect } from "react-redux";
 import { ApolloProvider } from "react-apollo";
 import { graphql, compose } from "react-apollo";
+import Toast from "react-native-root-toast";
 import _ from "underscore";
 
 import {
@@ -15,7 +16,8 @@ import {
 	receiveNotification,
 	clearCurrentNotification,
 	loadCommunities,
-	setContentView
+	setContentView,
+	shiftToast
 } from "../../redux/actions/app";
 import { refreshToken, logOut, voidAuth } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
@@ -25,7 +27,8 @@ import Button from "../../atoms/Button";
 import AppLoading from "../../atoms/AppLoading";
 import NavigationService from "../../utils/NavigationService";
 import getUserAgent from "../../utils/getUserAgent";
-import Toast, { DURATION } from "react-native-easy-toast";
+import isIphoneX from "../../utils/isIphoneX";
+import styles, { styleVars } from "../../styles";
 
 class AppRoot extends Component {
 	constructor(props) {
@@ -239,6 +242,28 @@ class AppRoot extends Component {
 				);
 				this.props.dispatch(resetBootStatus());
 			}
+		}
+
+		// --------------------------------------------------------------------
+		// Flash messages
+		if (prevProps.app.toast !== this.props.app.toast && this.props.app.toast.length) {
+			// Get the first item
+			const toast = this.props.app.toast[0];
+
+			Toast.show(toast.message, {
+				duration: 2000,
+				position: -35,
+				shadow: false,
+				opacity: 1,
+				animation: true,
+				hideOnPress: true,
+				delay: 0,
+				containerStyle: componentStyles.toastContainerStyle,
+				textStyle: componentStyles.toastTextStyle,
+				onHidden: () => {
+					this.props.dispatch(shiftToast());
+				}
+			});
 		}
 	}
 
@@ -474,16 +499,18 @@ class AppRoot extends Component {
 					<CommunityRoot redirect={this.state.redirectToNotification} />
 				)}
 				<PromptModal isVisible={this.state.showNotificationPrompt} close={this.closeNotificationPrompt} />
-				<Toast
-					ref="notificationToast"
-					position="top"
-					positionValue={0}
-					style={{ backgroundColor: "#fff", position: "absolute", left: 10, right: 10, top: 10 }}
-				/>
 			</View>
 		);
 	}
 }
+
+/*
+<Toast
+	ref="notificationToast"
+	position="top"
+	positionValue={0}
+	style={{ backgroundColor: "#fff", position: "absolute", left: 10, right: 10, top: 10 }}
+/>*/
 
 export default connect(state => ({
 	auth: state.auth,
@@ -491,3 +518,15 @@ export default connect(state => ({
 	site: state.site,
 	user: state.user
 }))(AppRoot);
+
+const componentStyles = StyleSheet.create({
+	toastContainerStyle: {
+		padding: styleVars.spacing.wide,
+		backgroundColor: "#363636",
+		borderRadius: 5
+	},
+	toastTextStyle: {
+		fontSize: styleVars.fontSizes.standard,
+		color: "#fff"
+	}
+});

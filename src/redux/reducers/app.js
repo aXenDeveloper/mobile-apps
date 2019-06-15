@@ -30,7 +30,8 @@ const initialState = {
 	categories: {},
 	settings: {
 		contentView: "first"
-	}
+	},
+	toast: []
 };
 
 export default function app(state = initialState, { type, payload }) {
@@ -283,6 +284,19 @@ export default function app(state = initialState, { type, payload }) {
 					active: false,
 					url: ""
 				}
+			};
+		case actions.PUSH_TOAST:
+			return {
+				...state,
+				toast: [...state.toast, payload]
+			};
+		case actions.SHIFT_TOAST:
+			const clone = [state.toast];
+			clone.shift();
+
+			return {
+				...state,
+				toast: clone
 			};
 		default:
 			return { ...state };
