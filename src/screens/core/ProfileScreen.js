@@ -8,9 +8,9 @@ import HeaderBackButton from "react-navigation";
 import { List, ListItem as Item, ScrollableTab, Tab, TabHeading, Tabs, Title } from "native-base";
 import { Header } from "react-navigation";
 import FadeIn from "react-native-fade-in-image";
-import Toast, { DURATION } from "react-native-easy-toast";
 
 import Lang from "../../utils/Lang";
+import { pushToast } from "../../redux/actions/app";
 import CustomTab from "../../atoms/CustomTab";
 import FollowButton from "../../atoms/FollowButton";
 import Button from "../../atoms/Button";
@@ -151,7 +151,11 @@ class ProfileScreen extends Component {
 					refetchQueries: ["ProfileFollowersQuery"]
 				});
 
-				this.refs.toast.show(Lang.get("followed_member", { name: this.props.data.core.member.name }), DURATION.LENGTH_LONG);
+				this.props.dispatch(
+					pushToast({
+						message: Lang.get("followed_member", { name: this.props.data.core.member.name })
+					})
+				);
 			} catch (err) {
 				Alert.alert(Lang.get("error"), Lang.get("error_following"), [{ text: Lang.get("ok") }], { cancelable: false });
 			}
@@ -193,7 +197,11 @@ class ProfileScreen extends Component {
 					refetchQueries: ["ProfileFollowersQuery"]
 				});
 
-				this.refs.toast.show(Lang.get("unfollowed_member", { name: this.props.data.core.member.name }), DURATION.LENGTH_LONG);
+				this.props.dispatch(
+					pushToast({
+						message: Lang.get("unfollowed_member", { name: this.props.data.core.member.name })
+					})
+				);
 			} catch (err) {
 				Alert.alert(Lang.get("error"), Lang.get("error_unfollowing"), [{ text: Lang.get("ok") }], { cancelable: false });
 			}
@@ -409,7 +417,6 @@ class ProfileScreen extends Component {
 						onUnfollow={this.onUnfollow}
 						close={this.toggleFollowModal}
 					/>
-					<Toast ref="toast" textStyle={styles.toastText} />
 					<Animated.View
 						style={[componentStyles.fixedProfileHeader, { opacity: this.fixedHeaderOpacity }]}
 						onLayout={e => {
