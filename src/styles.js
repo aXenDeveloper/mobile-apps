@@ -4,8 +4,8 @@ import { isIphoneX } from "./utils/isIphoneX";
 
 /* VARIABLES USED THROUGHOUT THE APP */
 export const styleVars = {
-	text: "#000000",
-	lightText: "#657686",
+	text: "#141823",
+	lightText: "#6d727b",
 	veryLightText: "#9ba3ab",
 	reverseText: "#fff",
 	accentColor: "#3370AA",
@@ -373,19 +373,19 @@ const styles = StyleSheet.create({
 	contentTitle: {
 		fontSize: styleVars.fontSizes.extraLarge,
 		fontWeight: "600",
-		color: "#171717",
+		color: "#141823",
 		fontFamily: styleVars.fontFamily
 	},
 	itemTitle: {
 		fontSize: styleVars.fontSizes.large,
 		fontWeight: "600",
-		color: "#171717",
+		color: "#141823",
 		fontFamily: styleVars.fontFamily
 	},
 	smallItemTitle: {
 		fontSize: styleVars.fontSizes.content,
 		fontWeight: "bold",
-		color: "#171717",
+		color: "#141823",
 		fontFamily: styleVars.fontFamily
 	},
 	highlightedText: {
