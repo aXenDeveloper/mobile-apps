@@ -77,7 +77,7 @@ export const styleVars = {
 			backgroundColor: "#3370AA"
 		}
 	},
-	badgeBackground: "#ff3b2f",
+	badgeBackground: "#e52418",
 	badgeText: "#fff",
 	greys: {
 		light: "#F7F9FA",
