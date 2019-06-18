@@ -3,6 +3,7 @@ import { Text, View, FlatList, LayoutAnimation } from "react-native";
 import _ from "underscore";
 
 import CheckListRow from "../../atoms/CheckListRow";
+import styles from "../../styles";
 
 const handlers = {};
 
@@ -18,7 +19,11 @@ const getHandler = (item, onPress) => {
 };
 const CheckList = props => {
 	return (
-		<FlatList data={props.data} renderItem={({ item }) => <CheckListRow {...item} onPress={!props.disabled ? getHandler(item, props.onPress) : null} />} />
+		<FlatList
+			style={props.style}
+			data={props.data}
+			renderItem={({ item }) => <CheckListRow {...item} onPress={!props.disabled ? getHandler(item, props.onPress) : null} />}
+		/>
 	);
 };
 

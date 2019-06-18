@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, Image, StyleSheet, AsyncStorage, SectionList, FlatList, TouchableOpacity } from "react-native";
+import { Text, View, ScrollView, Image, StyleSheet, AsyncStorage, SectionList, FlatList, TouchableOpacity } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
@@ -273,7 +273,7 @@ class StreamViewScreen extends Component {
 		}));
 
 		return (
-			<View style={styles.modalInner}>
+			<View style={[styles.modalInner, componentStyles.modalInner]}>
 				<View style={styles.modalHandle} />
 				<View style={styles.modalHeader}>
 					<Text style={styles.modalTitle}>{Lang.get("switch_stream")}</Text>
@@ -281,7 +281,7 @@ class StreamViewScreen extends Component {
 						<Image source={require("../../../resources/close_circle.png")} resizeMode="contain" style={styles.modalClose} />
 					</TouchableOpacity>
 				</View>
-				<CheckList data={data} onPress={this.switchStream} />
+				<CheckList data={data} onPress={this.switchStream} style={styles.flex} />
 			</View>
 		);
 	}
@@ -375,7 +375,13 @@ class StreamViewScreen extends Component {
 		} else {
 			return (
 				<React.Fragment>
-					<Modal style={componentStyles.modal} swipeDirection="down" onSwipeComplete={this.closeStreamModal} isVisible={this.state.streamListVisible}>
+					<Modal
+						style={componentStyles.modal}
+						swipeDirection="down"
+						propagateSwipe={true}
+						onSwipeComplete={this.closeStreamModal}
+						isVisible={this.state.streamListVisible}
+					>
 						{this.buildStreamList()}
 					</Modal>
 					<Animatable.View style={{ flexGrow: 1 }} ref={this.getViewRef}>
@@ -410,5 +416,8 @@ const componentStyles = StyleSheet.create({
 		justifyContent: "flex-end",
 		margin: 0,
 		padding: 0
+	},
+	modalInner: {
+		height: "80%"
 	}
 });
