@@ -87,7 +87,7 @@ class TopicRow extends Component {
 					</View>
 					<View style={[styles.flexRow, componentStyles.userPhotos]}>
 						<UserPhoto url={this.props.data.author.photo} size={32} />
-						{(this.props.data.author.id !== this.props.data.lastPostAuthor.id) && (
+						{this.props.data.author.id !== this.props.data.lastPostAuthor.id && (
 							<UserPhoto url={this.props.data.lastPostAuthor.photo} size={32} style={componentStyles.lastPostAuthor} />
 						)}
 					</View>

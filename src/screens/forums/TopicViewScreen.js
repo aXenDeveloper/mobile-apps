@@ -175,7 +175,7 @@ class TopicViewScreen extends Component {
 			) : (
 				<TwoLineHeader
 					title={navigation.state.params.title}
-					subtitle={`Started by ${navigation.state.params.author}`} //@todo lang abstraction
+					subtitle={`Started by ${navigation.state.params.author.name}`} //@todo lang abstraction
 				/>
 			),
 		headerRight: navigation.state.params.showFollowControl && (
@@ -411,7 +411,7 @@ class TopicViewScreen extends Component {
 			// If we mounted without the info we need to set the screen title, then set them now
 			if (!this.props.navigation.state.params.author) {
 				this.props.navigation.setParams({
-					author: this.props.data.forums.topic.author.name,
+					author: this.props.data.forums.topic.author,
 					title: this.props.data.forums.topic.title
 				});
 			}
