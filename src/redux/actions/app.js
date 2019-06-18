@@ -217,6 +217,7 @@ const BootQuery = gql`
 					id
 					reason
 				}
+				mobileHomeBlocks
 			}
 			loginHandlers {
 				id

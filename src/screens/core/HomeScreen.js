@@ -66,7 +66,7 @@ class HomeScreen extends Component {
 		let queryIncludes = [];
 
 		// Dynamically build the fragments we'll need
-		HomeSectionsToShow.forEach(section => {
+		this.props.site.settings.mobileHomeBlocks.forEach(section => {
 			if (!_.isUndefined(HomeSections[section])) {
 				queryFragments.push("..." + HomeSections[section].fragmentName);
 				queryIncludes.push(HomeSections[section].fragment);
@@ -211,7 +211,11 @@ class HomeScreen extends Component {
 					<View style={componentStyles.navigator}>{navigation}</View>
 					{this.getLoginRegPrompt()}
 					<ScrollView style={componentStyles.browseWrapper}>
-						{HomeSectionsToShow.map(section => {
+						{this.props.site.settings.mobileHomeBlocks.map(section => {
+							if (_.isUndefined(HomeSections[section])) {
+								return null;
+							}
+
 							const SectionComponent = HomeSections[section].component;
 							return (
 								<React.Fragment key={section}>
