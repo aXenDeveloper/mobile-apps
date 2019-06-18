@@ -2,10 +2,7 @@
 // If content types other than these are loaded, they'll be displayed in a WebView instead
 // There's a few ways we identify content: classnames, controller paths, and basic URLs.
 const supported = {
-	classes: [
-		"IPS\\forums\\Topic",
-		"IPS\\forums\\Topic\\Post"
-	],
+	classes: ["IPS\\forums\\Topic", "IPS\\forums\\Topic\\Post"],
 	appComponents: {
 		forums: {
 			forums: {
@@ -19,13 +16,12 @@ const supported = {
 		}
 	},
 	urls: [
-
 		// -------
 		// CORE SCREENS
 		// Profile view
 		{
-			test: new RegExp("profile\/([0-9]+?)-([^\/]+)?", "i"),
-			matchCallback: (found) => {
+			test: new RegExp("profile/([0-9]+?)-([^/]+)?", "i"),
+			matchCallback: found => {
 				return {
 					routeName: "Profile",
 					params: {
@@ -39,29 +35,47 @@ const supported = {
 		// FORUMS SCREENS
 		// Forum view
 		{
-			test: new RegExp("forum/([0-9]+?)-([^\/]+)?", "i"),
-			matchCallback: (found) => {
+			test: new RegExp("forum/([0-9]+?)-([^/]+)?", "i"),
+			matchCallback: found => {
 				return {
 					routeName: "TopicList",
 					params: {
 						id: found[1]
 					}
-				}
+				};
 			}
 		},
 		// Topic view
 		{
-			test: new RegExp("topic/([0-9]+?)-([^\/]+)?", "i"),
-			matchCallback: (found) => {
+			test: new RegExp("topic/([0-9]+?)-([^/]+)?", "i"),
+			matchCallback: found => {
 				return {
 					routeName: "TopicView",
 					params: {
 						id: found[1]
 					}
+				};
+			}
+		},
+		// Forum index
+		{
+			test: new RegExp("[/&?]method=([a-z0-9]+)", "i"),
+			matchCallback: found => {
+				console.log("---");
+				console.log(found);
+
+				if (found[1] === "fluid") {
+					return {
+						routeName: "FluidForum"
+					};
+				} else {
+					return {
+						routeName: "ForumIndex"
+					};
 				}
 			}
 		}
 	]
-}
+};
 
 export default supported;

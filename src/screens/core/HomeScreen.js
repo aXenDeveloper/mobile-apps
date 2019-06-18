@@ -17,6 +17,7 @@ import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from ".
 import ContentCard from "../../ecosystems/ContentCard";
 import getErrorMessage from "../../utils/getErrorMessage";
 import styles, { styleVars } from "../../styles";
+import icons from "../../icons";
 
 import { HomeSections } from "../../ecosystems/HomeSections";
 
@@ -31,7 +32,7 @@ const HomeSectionsToShow = ["new_content", "active_users", "our_picks", "popular
 class HomeScreen extends Component {
 	static navigationOptions = ({ navigation }) => {
 		return {
-			title: "Invision Community",
+			title: "Community",
 			headerLeft: <GoToMulti />
 		};
 	};
@@ -47,6 +48,8 @@ class HomeScreen extends Component {
 			data: null,
 			navConfig: []
 		};
+
+		this._menuHandlers = {};
 	}
 
 	componentDidMount() {
@@ -134,66 +137,43 @@ class HomeScreen extends Component {
 		this.startHomeQuery();
 	}
 
+	getMenuPressHandler(item) {
+		if (_.isUndefined(this._menuHandlers[item.id])) {
+			this._menuHandlers[item.id] = () => {
+				console.log(item);
+				NavigationService.navigate(item.url.full);
+			};
+		}
+
+		return this._menuHandlers[item.id];
+	}
+
 	getNavConfig() {
-		return [
-			{
-				key: "forums_all",
-				title: "All Topics",
-				icon: require("../../../resources/browse/forums_all.png"),
-				handler: () => {
-					console.log("all topics");
-					this.props.navigation.navigate("FluidForum");
-				}
-			},
-			{
-				key: "forums_browse",
-				title: "Forums",
-				icon: require("../../../resources/browse/forums_browse.png"),
-				handler: () => {
-					console.log("navigate!");
-					this.props.navigation.navigate("ForumIndex");
-				}
-			}
-			/*{
-				key: "gallery_all",
-				title: "All Images",
-				icon: require("../../../resources/browse/gallery_all.png"),
-				handler: () => {
-					console.log("albums");
-				}
-			},
-			{
-				key: "gallery_browse",
-				title: "Browse By Category",
-				icon: require("../../../resources/browse/gallery_browse.png"),
-				handler: () => {
-					console.log("albums");
-				}
-			},
-			{
-				key: "downloads_all",
-				title: "All Files",
-				icon: require("../../../resources/browse/gallery_all.png"),
-				handler: () => {
-					console.log("albums");
-				}
-			},
-			{
-				key: "downloads_browse",
-				title: "Browse By Category",
-				icon: require("../../../resources/browse/gallery_browse.png"),
-				handler: () => {
-					console.log("albums");
-				}
-			}*/
-		];
+		console.log(this.props.site);
+		return this.props.site.menu.map((item, idx) => ({
+			key: `menu_${idx}`,
+			id: item.id,
+			icon: item.icon || null,
+			title: item.title,
+			url: item.url
+		}));
 	}
 
 	renderNavItem(item) {
+		let icon;
+
+		if (!_.isUndefined(item.icon) && !_.isUndefined(icons[item.icon])) {
+			icon = icons[item.icon];
+		} else if (NavigationService.isInternalUrl(item.url.full)) {
+			icon = icons.ARROW_RIGHT;
+		} else {
+			icon = icons.GLOBE;
+		}
+
 		return (
-			<TouchableOpacity style={componentStyles.navItem} onPress={item.handler}>
+			<TouchableOpacity style={componentStyles.navItem} onPress={this.getMenuPressHandler(item)}>
 				<React.Fragment>
-					<Image source={item.icon} resizeMode="contain" style={componentStyles.navItemIcon} />
+					<Image source={icon} resizeMode="contain" style={componentStyles.navItemIcon} />
 					<Text style={componentStyles.navItemText}>{item.title}</Text>
 				</React.Fragment>
 			</TouchableOpacity>
@@ -219,9 +199,9 @@ class HomeScreen extends Component {
 			} else {
 				navigation = (
 					<PlaceholderContainer>
-						<PlaceholderElement width={120} top={0} left={15} height={45} style={{ borderRadius: 45 }} />
-						<PlaceholderElement width={120} top={0} left={145} height={45} style={{ borderRadius: 45 }} />
-						<PlaceholderElement width={120} top={0} left={275} height={45} style={{ borderRadius: 45 }} />
+						<PlaceholderElement width={120} top={0} left={15} height={40} style={{ borderRadius: 45 }} />
+						<PlaceholderElement width={120} top={0} left={145} height={40} style={{ borderRadius: 45 }} />
+						<PlaceholderElement width={120} top={0} left={275} height={40} style={{ borderRadius: 45 }} />
 					</PlaceholderContainer>
 				);
 			}
@@ -259,7 +239,7 @@ const componentStyles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomColor: "rgba(0,0,0,0.1)",
 		paddingVertical: styleVars.spacing.standard,
-		height: 70
+		height: 64
 	},
 	navItem: {
 		display: "flex",
@@ -278,9 +258,10 @@ const componentStyles = StyleSheet.create({
 		color: styleVars.tabActive
 	},
 	navItemIcon: {
-		width: 18,
-		height: 18,
-		marginRight: styleVars.spacing.standard,
-		tintColor: styleVars.tabActive
+		width: 14,
+		height: 14,
+		marginRight: styleVars.spacing.tight,
+		tintColor: styleVars.tabActive,
+		marginTop: -1
 	}
 });

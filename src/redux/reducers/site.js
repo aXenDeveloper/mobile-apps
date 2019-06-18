@@ -1,4 +1,4 @@
-import { SET_SITE_SETTINGS, SET_LOGIN_HANDLERS } from "../actions/site";
+import { SET_SITE_SETTINGS, SET_LOGIN_HANDLERS, SET_SITE_MENU } from "../actions/site";
 import { SET_ACTIVE_COMMUNITY } from "../actions/app";
 
 const initialState = {
@@ -7,6 +7,7 @@ const initialState = {
 		site_offline_message: "",
 		board_name: "Invision Community"
 	},
+	menu: [],
 	loginHandlers: []
 };
 
@@ -30,6 +31,11 @@ export default function site(state = initialState, { type, payload }) {
 			return {
 				...state,
 				loginHandlers: [...Object.values(payload)]
+			};
+		case SET_SITE_MENU:
+			return {
+				...state,
+				menu: payload
 			};
 		default:
 			return { ...state };

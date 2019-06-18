@@ -96,7 +96,7 @@ export const bootSiteSuccess = data => ({
 import _ from "underscore";
 import Lang from "../../utils/Lang";
 import { guestLoaded, userLoaded, setUserStreams } from "./user";
-import { setSiteSettings, setLoginHandlers } from "./site";
+import { setSiteSettings, setLoginHandlers, setSiteMenu } from "./site";
 import { setEditorSettings } from "./editor";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
@@ -146,6 +146,7 @@ export const bootSite = apiInfo => {
 			// Set our system settings
 			dispatch(setSiteSettings(data.core.settings));
 			dispatch(setLoginHandlers(data.core.loginHandlers));
+			dispatch(setSiteMenu(data.core.mobileMenu));
 
 			// Store our streams
 			dispatch(
@@ -232,6 +233,20 @@ const BootQuery = gql`
 				id
 				title
 				isDefault
+			}
+			mobileMenu {
+				id
+				title
+				icon
+				url {
+					full
+					app
+					module
+					query {
+						key
+						value
+					}
+				}
 			}
 		}
 	}

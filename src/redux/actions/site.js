@@ -23,3 +23,9 @@ export const setForumPassword = data => ({
 		...data
 	}
 });
+
+export const SET_SITE_MENU = "SET_SITE_MENU";
+export const setSiteMenu = data => ({
+	type: SET_SITE_MENU,
+	payload: data
+});
