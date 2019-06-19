@@ -808,7 +808,9 @@ class TopicViewScreen extends Component {
 	 *
 	 * @return 	Component
 	 */
-	getHeaderComponent(topicData) {
+	getHeaderComponent() {
+		const topicData = this.props.data.forums.topic;
+
 		return (
 			<ViewMeasure onLayout={this.onHeaderLayout} id="header">
 				<ShadowedArea style={[styles.flexRow, styles.flexAlignStretch, styles.pvStandard, styles.mbStandard]}>
@@ -895,7 +897,10 @@ class TopicViewScreen extends Component {
 	 * @param 	object 	topicData 	The topic data
 	 * @return 	Component
 	 */
-	renderItem(item, topicData, index) {
+	renderItem(item, index) {
+		const topicData = this.props.data.forums.topic;
+		const settings = this.props.site.settings;
+
 		// If this is the unread bar, just return it
 		if (item.id === "unread") {
 			return <UnreadIndicator label={Lang.get("unread_posts")} onLayout={this.onPostLayout} />;
@@ -903,11 +908,11 @@ class TopicViewScreen extends Component {
 			return (
 				<LoginRegisterPrompt
 					style={{ marginBottom: 7 }}
-					register={this.props.site.settings.allow_reg !== "DISABLED"}
-					registerUrl={this.props.site.settings.allow_reg_target || null}
+					register={settings.allow_reg !== "DISABLED"}
+					registerUrl={settings.allow_reg_target || null}
 					navigation={this.props.navigation}
-					message={Lang.get(this.props.site.settings.allow_reg !== "DISABLED" ? "login_register_prompt_comment" : "login_prompt_comment", {
-						siteName: this.props.site.settings.board_name
+					message={Lang.get(settings.allow_reg !== "DISABLED" ? "login_register_prompt_comment" : "login_prompt_comment", {
+						siteName: settings.board_name
 					})}
 					onLayout={this.onPostLayout}
 				/>
@@ -935,7 +940,7 @@ class TopicViewScreen extends Component {
 				shareTitle={Lang.get("share_x_post_on_x", {
 					name: item.author.name,
 					title: topicData.title,
-					site: this.props.site.settings.board_name
+					site: settings.board_name
 				})}
 			/>
 		);
@@ -1397,9 +1402,9 @@ class TopicViewScreen extends Component {
 							ref={flatList => (this._flatList = flatList)}
 							extraData={this.props.data.forums.topic}
 							keyExtractor={item => item.id}
-							ListHeaderComponent={this.getHeaderComponent(topicData)}
+							ListHeaderComponent={this.getHeaderComponent()}
 							ListFooterComponent={this.getFooterComponent()}
-							renderItem={({ item, index }) => this.renderItem(item, topicData, index)}
+							renderItem={({ item, index }) => this.renderItem(item, index)}
 							initialNumToRender={Expo.Constants.manifest.extra.per_page}
 							data={listData}
 							refreshing={this.props.data.networkStatus == 4}
