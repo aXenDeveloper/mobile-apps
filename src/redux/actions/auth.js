@@ -621,13 +621,15 @@ const getNewClient = connectData => {
 	});
 
 	const errorsToUnauth = ["INVALID_ACCESS_TOKEN", "INVALID_API_KEY", "TOO_MANY_REQUESTS_WITH_BAD_KEY"];
-	const errorLink = onError(({ graphQLErrors, networkError }) => {
+	const errorLink = onError(errors => {
+		const { graphQLErrors, networkError } = errors;
 		if (graphQLErrors) {
 			for (let i = 0; i < graphQLErrors.length; i++) {
 				const error = graphQLErrors[i];
 
 				if (errorsToUnauth.indexOf(error.message) !== -1) {
-					console.log(`CLIENT: Got error: ${error.message}`);
+					console.log(`CLIENT ERROR: Got error: ${error.message} (${error.path.join(" -> ")})`);
+
 					const store = configureStore();
 					store.dispatch(removeAuth());
 					return;
