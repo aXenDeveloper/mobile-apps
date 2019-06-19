@@ -38,7 +38,7 @@ const NotificationRow = props => {
 					</View>
 					{Boolean(props.data.content) && (
 						<Text style={[styles.smallText, styles.lightText]} numberOfLines={2}>
-							{props.data.content}
+							{props.data.content.plain}
 						</Text>
 					)}
 				</View>

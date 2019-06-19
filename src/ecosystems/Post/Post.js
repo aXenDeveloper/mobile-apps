@@ -550,7 +550,7 @@ class Post extends Component {
 									)}
 								</View>
 								<View style={styles.mvWide}>
-									<RichTextContent>{postData.content}</RichTextContent>
+									<RichTextContent>{postData.content.original}</RichTextContent>
 									<Animatable.View ref={r => (this._reactionWrap = r)}>
 										{Boolean(postData.reputation.reactions.length) && (
 											<View style={[styles.mtWide, styles.flexRow, styles.flexJustifyEnd, styles.flexWrap]} testId="reactionList">

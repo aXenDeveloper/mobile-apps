@@ -20,7 +20,9 @@ const FluidForumQuery = gql`
 				id
 				title
 				postCount
-				content(stripped: true, singleLine: true, truncateLength: 100)
+				content {
+					plain(truncateLength: 100)
+				}
 				forum {
 					name
 					featureColor
@@ -150,7 +152,7 @@ class FluidForumScreen extends Component {
 			replies: parseInt(topic.postCount),
 			author: topic.author,
 			started: topic.started,
-			snippet: topic.content.trim(),
+			snippet: topic.content.plain,
 			isHot: false,
 			isPinned: topic.isPinned,
 			isLocked: topic.isLocked,

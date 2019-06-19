@@ -15,7 +15,9 @@ const NotificationFragment = gql`
 			photo
 		}
 		title
-		content
+		content {
+			plain(truncateLength: 200)
+		}
 		url {
 			full
 			app

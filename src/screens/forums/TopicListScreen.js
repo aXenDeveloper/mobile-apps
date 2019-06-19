@@ -29,7 +29,9 @@ const TopicListQuery = gql`
 					id
 					title
 					postCount
-					content(stripped: true, singleLine: true, truncateLength: 100)
+					content {
+						plain(truncateLength: 100)
+					}
 					isPinned
 					isLocked
 					isHot
@@ -259,7 +261,7 @@ class TopicListScreen extends Component {
 			replies: parseInt(topic.postCount),
 			author: topic.author,
 			started: topic.started,
-			snippet: topic.content.trim(),
+			snippet: topic.content.plain,
 			isHot: topic.isHot,
 			isPinned: topic.isPinned,
 			isLocked: topic.isLocked,

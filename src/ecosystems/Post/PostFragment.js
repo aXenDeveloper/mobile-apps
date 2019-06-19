@@ -19,7 +19,9 @@ const PostFragment = gql`
 			name
 			isOnline
 		}
-		content
+		content {
+			original
+		}
 		isFirstPost
 		isIgnored
 		isFeatured
