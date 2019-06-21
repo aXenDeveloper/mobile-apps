@@ -223,6 +223,7 @@ class ContentRenderer extends PureComponent {
 					alterNode={this.alterNode}
 					alterData={this.alterData}
 					baseFontStyle={this.props.baseFontStyle || richTextStyles(this.props.dark).defaultTextStyle}
+					ignoredStyles={["font-family"]}
 					html={this.props.children}
 					imagesMaxWidth={parseInt(Dimensions.get("window").width) - 35}
 					staticContentMaxWidth={parseInt(Dimensions.get("window").width) - 35}
