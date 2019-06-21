@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import _ from "underscore";
 import Image from "react-native-remote-svg";
+import FadeIn from "react-native-fade-in-image";
 
 import getImageUrl from "../utils/getImageUrl";
 import { styleVars } from "../styles";
@@ -27,12 +28,14 @@ export default class UserPhoto extends Component {
 		return (
 			<View style={this.props.style || null}>
 				<View style={wrap}>
-					<Image
-						source={{ uri: getImageUrl(unescape(this.props.url)) }}
-						style={[photoSize, componentStyles.photo, !_.isUndefined(this.props.anon) && this.props.anon ? componentStyles.anonymous : null]}
-						resizeMode="cover"
-						testId="userPhoto"
-					/>
+					<FadeIn>
+						<Image
+							source={{ uri: getImageUrl(unescape(this.props.url)) }}
+							style={[photoSize, componentStyles.photo, !_.isUndefined(this.props.anon) && this.props.anon ? componentStyles.anonymous : null]}
+							resizeMode="cover"
+							testId="userPhoto"
+						/>
+					</FadeIn>
 				</View>
 				{_.isBoolean(this.props.online) && (
 					<View
