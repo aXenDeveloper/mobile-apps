@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
 	contentTitle: {
 		fontSize: styleVars.fontSizes.extraLarge,
 		fontWeight: "600",
-		color: "#141823",
+		color: "#07080b",
 		fontFamily: styleVars.fontFamily
 	},
 	itemTitle: {
