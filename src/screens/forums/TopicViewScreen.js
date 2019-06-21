@@ -276,6 +276,7 @@ class TopicViewScreen extends Component {
 		this.onPostLayout = this.onPostLayout.bind(this);
 		this.onHeaderLayout = this.onHeaderLayout.bind(this);
 		this.onInnerHeaderLayout = this.onInnerHeaderLayout.bind(this);
+		this.onScrollEnd = this.onScrollEnd.bind(this);
 
 		if (this.props.auth.isAuthenticated) {
 			this.props.navigation.setParams({
@@ -305,7 +306,7 @@ class TopicViewScreen extends Component {
 		const SCROLL_HEIGHT = this.state.innerHeaderHeight + HEADER_HEIGHT;
 
 		// This value is the extra padding on innerHeader to leave space for the user photo
-		const topSpacing = styleVars.spacing.extraWide + styleVars.spacing.tight;
+		const topSpacing = 44;
 
 		// Interpolate methods for animations that will be used in the react-navigation header
 		this.props.navigation.setParams({
@@ -339,6 +340,22 @@ class TopicViewScreen extends Component {
 			outputRange: [1, 0.8],
 			extrapolateLeft: "clamp"
 		});
+	}
+
+	/**
+	 * On scroll end handler, used to 'snap' list back into place if it's mid-animation
+	 *
+	 * @param 	event 		e 		Event data
+	 * @return 	void
+	 */
+	onScrollEnd(e) {
+		const y = e.nativeEvent.contentOffset.y;
+
+		if (this._flatList && this._flatList.getNode()) {
+			if (y < 0 || y < this.state.innerHeaderHeight) {
+				this._flatList.getNode().scrollToOffset({ y: 0 });
+			}
+		}
 	}
 
 	/**
@@ -923,8 +940,8 @@ class TopicViewScreen extends Component {
 
 		return (
 			<ViewMeasure onLayout={this.onHeaderLayout} id="header">
-				<ShadowedArea style={[styles.ptStandard, styles.pbExtraWide, styles.mbStandard]}>
-					<ViewMeasure onLayout={this.onInnerHeaderLayout} style={[componentStyles.innerHeader]}>
+				<ShadowedArea style={[styles.mbStandard]}>
+					<ViewMeasure onLayout={this.onInnerHeaderLayout} style={[componentStyles.innerHeader, styles.pbExtraWide]}>
 						<Animated.View style={[styles.flexRow, styles.flexAlignStretch, { opacity: this._titleOpacity, transform: [{ scale: this._titleScale }] }]}>
 							{Boolean(topicData.isQuestion) && (
 								<View style={styles.flexAlignSelfStart}>
@@ -1550,6 +1567,8 @@ class TopicViewScreen extends Component {
 							viewabilityConfig={this._viewabilityConfig}
 							initialScrollIndex={0}
 							onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: this._nScroll } } }], { useNativeDriver: true })}
+							onScrollEndDrag={this.onScrollEnd}
+							onMomentumScrollEnd={this.onScrollEnd}
 						/>
 						<Pager
 							total={topicData.postCount}
@@ -1634,7 +1653,7 @@ const componentStyles = StyleSheet.create({
 		borderTopColor: styleVars.borderColors.medium
 	},*/
 	innerHeader: {
-		marginTop: styleVars.spacing.extraWide + styleVars.spacing.tight
+		paddingTop: 44
 	},
 	authorPhoto: {
 		position: "absolute",
