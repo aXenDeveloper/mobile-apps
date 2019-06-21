@@ -51,7 +51,8 @@ export default class CustomHeader extends Component {
 
 const styles = StyleSheet.create({
 	headerWrap: {
-		height: isIphoneX() ? 96 : 76
+		height: isIphoneX() ? 96 : 76,
+		overflow: "visible"
 	},
 	header: {
 		shadowColor: "transparent",

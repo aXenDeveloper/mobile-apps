@@ -1,5 +1,19 @@
 import React, { Component } from "react";
-import { Text, Image, View, Button, ScrollView, FlatList, TouchableOpacity, TextInput, StyleSheet, Alert, LayoutAnimation } from "react-native";
+import {
+	Text,
+	Image,
+	View,
+	Button,
+	ScrollView,
+	FlatList,
+	TouchableOpacity,
+	TextInput,
+	StyleSheet,
+	Alert,
+	LayoutAnimation,
+	Animated,
+	Platform
+} from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
@@ -31,6 +45,7 @@ import EndOfComments from "../../atoms/EndOfComments";
 import TopicStatus from "../../atoms/TopicStatus";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import FollowButton from "../../atoms/FollowButton";
+import UserPhoto from "../../atoms/UserPhoto";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 
 import styles, { styleVars } from "../../styles";
@@ -66,6 +81,7 @@ const TopicViewQuery = gql`
 					__typename
 					id
 					name
+					photo
 				}
 				tags {
 					__typename
@@ -168,20 +184,36 @@ class TopicViewScreen extends Component {
 	/**
 	 * React Navigation config
 	 */
-	static navigationOptions = ({ navigation }) => ({
-		headerTitle:
-			!navigation.state.params.title || !navigation.state.params.author ? (
-				<TwoLineHeader loading={true} />
-			) : (
-				<TwoLineHeader
-					title={navigation.state.params.title}
-					subtitle={`Started by ${navigation.state.params.author.name}`} //@todo lang abstraction
-				/>
-			),
-		headerRight: navigation.state.params.showFollowControl && (
-			<FollowButton followed={navigation.state.params.isFollowed} onPress={navigation.state.params.onPressFollow} />
-		)
-	});
+	static navigationOptions = ({ navigation }) => {
+		const { params } = navigation.state;
+		const animValues = {
+			headerBarOpacity: params.header
+		};
+		return {
+			headerTitle: params.ready ? (
+				<React.Fragment>
+					<Animated.View style={{ opacity: params.headerBarOpacity || 1 }}>
+						<TwoLineHeader
+							title={params.title}
+							subtitle={`Started by ${params.author.name}`} //@todo lang abstraction
+						/>
+					</Animated.View>
+					<Animated.View
+						style={[
+							{ opacity: params.authorOpacity || 0, transform: [{ scale: params.authorScale || 0.6 }, { translateY: params.authorTranslate || -35 }] },
+							componentStyles.authorPhoto
+						]}
+					>
+						<UserPhoto url={params.author.photo} size={60} />
+					</Animated.View>
+				</React.Fragment>
+			) : null,
+			headerRight: params.showFollowControl && <FollowButton followed={params.isFollowed} onPress={params.onPressFollow} />
+		};
+	};
+
+	/*
+	 */
 
 	/**
 	 * GraphQL error types
@@ -198,7 +230,7 @@ class TopicViewScreen extends Component {
 		this._flatList = null; // Ref to the flatlist
 		//this._startingOffset = 0; // The offset we're currently displaying in the view
 		this._cellHeights = {}; // Store the height of each post
-		this._headerHeight = 0;
+		//this._headerHeight = 250;
 		this._loadMoreHeight = 0;
 		this._initialOffsetDone = false; // Flag to indicate we've set our initial offset on render
 		this._aboutToScrollToEnd = false; // Flag to indicate a scrollToEnd is pending so we can avoid other autoscrolls
@@ -214,7 +246,8 @@ class TopicViewScreen extends Component {
 			followModalVisible: false,
 			currentPosition: 1,
 			ignoreViewability: false,
-			loadingUnseenPosts: false
+			loadingUnseenPosts: false,
+			innerHeaderHeight: 200
 		};
 
 		this._viewabilityConfig = {
@@ -222,6 +255,10 @@ class TopicViewScreen extends Component {
 			viewAreaCoveragePercentThreshold: 0
 			//itemVisiblePercentThreshold: 25
 		};
+
+		this._nScroll = new Animated.Value(0);
+		this._scroll = new Animated.Value(0);
+		this._nScroll.addListener(Animated.event([{ value: this._scroll }], { useNativeDriver: false }));
 
 		this.loadEarlierComments = this.loadEarlierComments.bind(this);
 		this.toggleFollowModal = this.toggleFollowModal.bind(this);
@@ -238,6 +275,7 @@ class TopicViewScreen extends Component {
 		this.scrollToPost = this.scrollToPost.bind(this);
 		this.onPostLayout = this.onPostLayout.bind(this);
 		this.onHeaderLayout = this.onHeaderLayout.bind(this);
+		this.onInnerHeaderLayout = this.onInnerHeaderLayout.bind(this);
 
 		if (this.props.auth.isAuthenticated) {
 			this.props.navigation.setParams({
@@ -246,6 +284,61 @@ class TopicViewScreen extends Component {
 				onPressFollow: this.toggleFollowModal
 			});
 		}
+	}
+
+	/**
+	 * Create animation values as soon as we mount
+	 *
+	 * @return 	void
+	 */
+	componentDidMount() {
+		this.buildAnimations();
+	}
+
+	/**
+	 * Build animation values
+	 *
+	 * @return 	void
+	 */
+	buildAnimations() {
+		const HEADER_HEIGHT = Platform.OS === "ios" ? 76 : 50;
+		const SCROLL_HEIGHT = this.state.innerHeaderHeight + HEADER_HEIGHT;
+
+		// This value is the extra padding on innerHeader to leave space for the user photo
+		const topSpacing = styleVars.spacing.extraWide + styleVars.spacing.tight;
+
+		// Interpolate methods for animations that will be used in the react-navigation header
+		this.props.navigation.setParams({
+			authorOpacity: this._scroll.interpolate({
+				inputRange: [topSpacing, SCROLL_HEIGHT * 0.4],
+				outputRange: [1, 0]
+			}),
+			authorScale: this._nScroll.interpolate({
+				inputRange: [0, 45],
+				outputRange: [1, 0.6],
+				extrapolate: "clamp"
+			}),
+			authorTranslate: this._nScroll.interpolate({
+				inputRange: [0, 45],
+				outputRange: [0, -35],
+				extrapolate: "clamp"
+			}),
+			headerBarOpacity: this._scroll.interpolate({
+				inputRange: [topSpacing, SCROLL_HEIGHT * 0.75],
+				outputRange: [0, 1]
+			})
+		});
+
+		// Other interpolations
+		this._titleOpacity = this._scroll.interpolate({
+			inputRange: [0, SCROLL_HEIGHT * 0.5],
+			outputRange: [1, 0.5]
+		});
+		this._titleScale = this._nScroll.interpolate({
+			inputRange: [0, SCROLL_HEIGHT * 0.8],
+			outputRange: [1, 0.8],
+			extrapolateLeft: "clamp"
+		});
 	}
 
 	/**
@@ -270,11 +363,16 @@ class TopicViewScreen extends Component {
 		// I don't like this, but it appears to be necessary to trigger the
 		// scroll after a short timeout to allow time for the list to render
 		setTimeout(() => {
-			this._flatList.scrollToEnd();
+			this._flatList.getNode().scrollToEnd();
 			this._aboutToScrollToEnd = false;
 		}, 500);
 	}
 
+	/**
+	 * Clear our cache of list cell heights
+	 *
+	 * @return 	void
+	 */
 	clearCellHeightCache() {
 		this._cellHeights = {};
 	}
@@ -327,7 +425,7 @@ class TopicViewScreen extends Component {
 					}
 
 					// Now do the scroll. This is async; don't disable ignoreViewability until we're finished.
-					await this._flatList.scrollToOffset({
+					await this._flatList.getNode().scrollToOffset({
 						offset: totalHeight + this._headerHeight
 					});
 
@@ -401,6 +499,11 @@ class TopicViewScreen extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps, prevState) {
+		// Update animations if our header has changed
+		if (prevState.innerHeaderHeight !== this.state.innerHeaderHeight) {
+			this.buildAnimations();
+		}
+
 		// If we're loading again, clear our cache of post heights
 		if (!prevProps.data.loading && this.props.data.loading) {
 			this.clearCellHeightCache();
@@ -412,7 +515,12 @@ class TopicViewScreen extends Component {
 			if (!this.props.navigation.state.params.author) {
 				this.props.navigation.setParams({
 					author: this.props.data.forums.topic.author,
-					title: this.props.data.forums.topic.title
+					title: this.props.data.forums.topic.title,
+					ready: true
+				});
+			} else {
+				this.props.navigation.setParams({
+					ready: true
 				});
 			}
 
@@ -465,7 +573,7 @@ class TopicViewScreen extends Component {
 		// If we've loaded in posts from a different position in the topic, see if we need to scroll to the right place
 		if (prevState.loadingUnseenPosts && !this.state.loadingUnseenPosts) {
 			if (this.state.startingOffset > 0) {
-				this._flatList.scrollToOffset({
+				this._flatList.getNode().scrollToOffset({
 					offset: this._headerHeight,
 					animated: false
 				});
@@ -482,7 +590,7 @@ class TopicViewScreen extends Component {
 			// Figure out if we need to scroll to hide the Load Earlier Posts button
 			if (!this.props.data.loading && !this.props.data.error) {
 				if (showEarlierPosts && !this._aboutToScrollToEnd) {
-					this._flatList.scrollToOffset({
+					this._flatList.getNode().scrollToOffset({
 						offset: this._headerHeight + LOAD_MORE_HEIGHT,
 						animated: false
 					});
@@ -810,50 +918,64 @@ class TopicViewScreen extends Component {
 	 */
 	getHeaderComponent() {
 		const topicData = this.props.data.forums.topic;
+		const headerAlignClass = topicData.isQuestion ? styles.leftText : styles.centerText;
+		// @todo language abstraction
 
 		return (
 			<ViewMeasure onLayout={this.onHeaderLayout} id="header">
-				<ShadowedArea style={[styles.flexRow, styles.flexAlignStretch, styles.pvStandard, styles.mbStandard]}>
-					{Boolean(topicData.isQuestion) && (
-						<View style={styles.flexAlignSelfCenter}>
-							<QuestionVote
-								score={topicData.questionVotes}
-								hasVotedUp={topicData.vote == "UP"}
-								hasVotedDown={topicData.vote == "DOWN"}
-								canVoteUp={topicData.canVoteUp}
-								canVoteDown={topicData.canVoteDown}
-								downvoteEnabled={this.props.site.settings.forums_questions_downvote}
-								onVoteUp={this.onVoteQuestionUp}
-								onVoteDown={this.onVoteQuestionDown}
-							/>
-						</View>
-					)}
-					<View style={[styles.flexGrow, styles.flexAlignSelfCenter, !topicData.isQuestion ? styles.phWide : null]}>
-						<View style={styles.flexRow}>
-							<ContentItemStat value={relativeTime.short(topicData.started)} name="Started" />
-							<ContentItemStat value={relativeTime.short(topicData.updated)} name="Updated" />
-							<ContentItemStat value={shortNumber(topicData.postCount)} name="Replies" />
-							<ContentItemStat value={shortNumber(topicData.views)} name="Views" />
-						</View>
-						{Boolean(topicData.tags.length || topicData.isLocked || topicData.isHot || topicData.isPinned || topicData.isFeatured) && (
-							<View style={[styles.mtStandard, styles.ptStandard, componentStyles.metaInfo, topicData.isQuestion ? styles.plWide : null]}>
-								{Boolean(topicData.tags.length) && (
-									<TagList>
-										{topicData.tags.map(tag => (
-											<Tag key={tag.name}>{tag.name}</Tag>
-										))}
-									</TagList>
-								)}
-								<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter]}>
-									{Boolean(topicData.isArchived) && <TopicStatus style={styles.mrStandard} type="archived" />}
-									{Boolean(topicData.isLocked) && <TopicStatus style={styles.mrStandard} type="locked" />}
-									{Boolean(topicData.isHot) && <TopicStatus style={styles.mrStandard} type="hot" />}
-									{Boolean(topicData.isPinned) && <TopicStatus style={styles.mrStandard} type="pinned" />}
-									{Boolean(topicData.isFeatured) && <TopicStatus style={styles.mrStandard} type="featured" />}
+				<ShadowedArea style={[styles.ptStandard, styles.pbExtraWide, styles.mbStandard]}>
+					<ViewMeasure onLayout={this.onInnerHeaderLayout} style={[componentStyles.innerHeader]}>
+						<Animated.View style={[styles.flexRow, styles.flexAlignStretch, { opacity: this._titleOpacity, transform: [{ scale: this._titleScale }] }]}>
+							{Boolean(topicData.isQuestion) && (
+								<View style={styles.flexAlignSelfStart}>
+									<QuestionVote
+										score={topicData.questionVotes}
+										hasVotedUp={topicData.vote == "UP"}
+										hasVotedDown={topicData.vote == "DOWN"}
+										canVoteUp={topicData.canVoteUp}
+										canVoteDown={topicData.canVoteDown}
+										downvoteEnabled={this.props.site.settings.forums_questions_downvote}
+										onVoteUp={this.onVoteQuestionUp}
+										onVoteDown={this.onVoteQuestionDown}
+									/>
 								</View>
+							)}
+							<View style={[styles.flexGrow, styles.flexBasisZero, styles.flexAlignSelfCenter, topicData.isQuestion ? styles.prWide : styles.phWide]}>
+								<View>
+									<Text style={[styles.contentTitle, headerAlignClass]}>{topicData.title}</Text>
+									<Text style={[styles.lightText, styles.standardText, headerAlignClass, styles.mtVeryTight]}>
+										Started by {topicData.author.name}, {relativeTime.long(topicData.started)}
+									</Text>
+								</View>
+								{Boolean(topicData.tags.length || topicData.isLocked || topicData.isHot || topicData.isPinned || topicData.isFeatured) && (
+									<View>
+										{Boolean(topicData.tags.length) && (
+											<TagList centered={!topicData.isQuestion} style={styles.mtTight}>
+												{topicData.tags.map(tag => (
+													<Tag key={tag.name}>{tag.name}</Tag>
+												))}
+											</TagList>
+										)}
+										<View
+											style={[
+												styles.flexRow,
+												styles.flexAlignCenter,
+												topicData.isQuestion ? styles.flexJustifyStart : styles.flexJustifyCenter,
+												styles.mtTight,
+												componentStyles.metaInfo
+											]}
+										>
+											{Boolean(topicData.isArchived) && <TopicStatus style={styles.mrStandard} type="archived" />}
+											{Boolean(topicData.isLocked) && <TopicStatus style={styles.mrStandard} type="locked" />}
+											{Boolean(topicData.isHot) && <TopicStatus style={styles.mrStandard} type="hot" />}
+											{Boolean(topicData.isPinned) && <TopicStatus style={styles.mrStandard} type="pinned" />}
+											{Boolean(topicData.isFeatured) && <TopicStatus style={styles.mrStandard} type="featured" />}
+										</View>
+									</View>
+								)}
 							</View>
-						)}
-					</View>
+						</Animated.View>
+					</ViewMeasure>
 				</ShadowedArea>
 				{topicData.poll !== null && <PollPreview data={topicData.poll} onPress={this.goToPollScreen} />}
 				{this.getLoadPreviousButton()}
@@ -894,7 +1016,6 @@ class TopicViewScreen extends Component {
 	 * Render a post
 	 *
 	 * @param 	object 	item 		A post object (already transformed by this.buildPostData)
-	 * @param 	object 	topicData 	The topic data
 	 * @return 	Component
 	 */
 	renderItem(item, index) {
@@ -948,6 +1069,8 @@ class TopicViewScreen extends Component {
 
 	/**
 	 * Callback for when the header has a layoutchange
+	 * This callback handles the *outer* header height; that is, the header box,
+	 * the poll box and the Load Earlier Posts button
 	 *
 	 * @param 	object 		data
 	 * @return 	void
@@ -955,6 +1078,19 @@ class TopicViewScreen extends Component {
 	onHeaderLayout(data) {
 		const { height } = data.measure;
 		this._headerHeight = height;
+	}
+
+	/**
+	 * Callback for when the inner header has a layoutchange
+	 * This callback handles the *inner* header height; that is,
+	 * just the title/author box
+	 *
+	 * @param 	object 		data
+	 * @return 	void
+	 */
+	onInnerHeaderLayout(data) {
+		const { height: innerHeaderHeight } = data.measure;
+		this.setState({ innerHeaderHeight });
 	}
 
 	/**
@@ -1397,7 +1533,7 @@ class TopicViewScreen extends Component {
 			return (
 				<View style={styles.flex}>
 					<View style={[styles.flex, styles.flexGrow]}>
-						<FlatList
+						<Animated.FlatList
 							style={styles.flex}
 							ref={flatList => (this._flatList = flatList)}
 							extraData={this.props.data.forums.topic}
@@ -1413,6 +1549,7 @@ class TopicViewScreen extends Component {
 							onViewableItemsChanged={this.onViewableItemsChanged}
 							viewabilityConfig={this._viewabilityConfig}
 							initialScrollIndex={0}
+							onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: this._nScroll } } }], { useNativeDriver: true })}
 						/>
 						<Pager
 							total={topicData.postCount}
@@ -1492,8 +1629,18 @@ export default compose(
 )(TopicViewScreen);
 
 const componentStyles = StyleSheet.create({
-	metaInfo: {
+	/*metaInfo: {
 		borderTopWidth: 1,
 		borderTopColor: styleVars.borderColors.medium
+	},*/
+	innerHeader: {
+		marginTop: styleVars.spacing.extraWide + styleVars.spacing.tight
+	},
+	authorPhoto: {
+		position: "absolute",
+		top: 15,
+		left: "50%",
+		marginLeft: -30,
+		zIndex: 100
 	}
 });
