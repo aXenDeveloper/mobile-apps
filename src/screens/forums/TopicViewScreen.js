@@ -352,8 +352,10 @@ class TopicViewScreen extends Component {
 		const y = e.nativeEvent.contentOffset.y;
 
 		if (this._flatList && this._flatList.getNode()) {
-			if (y < 0 || y < this.state.innerHeaderHeight) {
+			if (0 < y && y < this.state.innerHeaderHeight) {
 				this._flatList.getNode().scrollToOffset({ y: 0 });
+			} else if (this.state.innerHeaderHeight / 2 <= y && y < this.state.innerHeaderHeight) {
+				this._flatList.getNode().scrollToOffset({ y: this.state.innerHeaderHeight });
 			}
 		}
 	}
