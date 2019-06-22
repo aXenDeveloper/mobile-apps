@@ -3,6 +3,7 @@ import { Text, View, FlatList, StyleSheet, ActivityIndicator } from "react-nativ
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { withNavigation } from "react-navigation";
+import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import ErrorBox from "../../atoms/ErrorBox";
