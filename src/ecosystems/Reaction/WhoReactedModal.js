@@ -24,6 +24,7 @@ class WhoReactedModal extends Component {
 			reachedEnd: false
 		};
 		this.preOnPressCallback = this.preOnPressCallback.bind(this);
+		this.onEndReached = this.onEndReached.bind(this);
 	}
 
 	componentDidUpdate(prevProps, prevState) {
