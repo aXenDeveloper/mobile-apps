@@ -144,7 +144,7 @@ class ProfileContent extends Component {
 		} else if (this.state.error) {
 			return (
 				<View style={componentStyles.panel}>
-					<ErrorBox message={Lang.get("error_searching")} />;
+					<ErrorBox message={Lang.get("error_searching")} />
 				</View>
 			);
 		}

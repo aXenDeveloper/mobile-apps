@@ -47,7 +47,7 @@ class SearchMemberPanel extends Component {
 
 	componentDidMount() {
 		// If showResults is true on first mount, kick off the request immediately
-		if( this.props.showResults ){
+		if (this.props.showResults) {
 			this.fetchResults();
 		}
 	}
@@ -59,7 +59,7 @@ class SearchMemberPanel extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps) {
-		console.log('componentDidUpdate');
+		console.log("componentDidUpdate");
 
 		// If we were not previously showing results but now we are, then start fetching them
 		// so they can be displayed when loaded
@@ -175,7 +175,7 @@ class SearchMemberPanel extends Component {
 		} else if (this.state.error) {
 			return (
 				<View style={componentStyles.panel}>
-					<ErrorBox message={Lang.get("error_searching")} />;
+					<ErrorBox message={Lang.get("error_searching")} />
 				</View>
 			);
 		}
@@ -195,7 +195,10 @@ class SearchMemberPanel extends Component {
 	}
 }
 
-export default compose(withApollo, withNavigation)(SearchMemberPanel);
+export default compose(
+	withApollo,
+	withNavigation
+)(SearchMemberPanel);
 
 SearchMemberPanel.defaultProps = {
 	showResults: false
