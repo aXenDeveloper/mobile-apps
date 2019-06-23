@@ -1,4 +1,6 @@
-import { SecureStore, Linking, WebBrowser, Permissions } from "expo";
+import { Linking, Permissions } from "expo";
+import * as WebBrowser from "expo-web-browser";
+import * as SecureStore from "expo-secure-store";
 import apolloLogger from "apollo-link-logger";
 import { ApolloClient } from "apollo-client";
 import { HttpLink, createHttpLink } from "apollo-link-http";

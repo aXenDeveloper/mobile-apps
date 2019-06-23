@@ -1,4 +1,5 @@
-import { WebBrowser, Linking } from "expo";
+import { Linking } from "expo";
+import * as WebBrowser from "expo-web-browser";
 import { NavigationActions } from "react-navigation";
 import _ from "underscore";
 import isURL from "validator/lib/isURL";
