@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, Alert, StyleSheet, StatusBar, ActivityIndicator, AsyncStorage, Platform, PushNotificationIOS } from "react-native";
-import { Linking, Permissions, Notifications } from "expo";
+import { Linking, Notifications } from "expo";
+import * as Permissions from "expo-permissions";
 import { connect } from "react-redux";
 import { ApolloProvider } from "react-apollo";
 import { graphql, compose } from "react-apollo";

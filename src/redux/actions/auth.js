@@ -1,4 +1,5 @@
-import { Linking, Permissions } from "expo";
+import { Linking } from "expo";
+import * as Permissions from "expo-permissions";
 import * as WebBrowser from "expo-web-browser";
 import * as SecureStore from "expo-secure-store";
 import apolloLogger from "apollo-link-logger";
