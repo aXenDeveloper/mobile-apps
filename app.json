@@ -19,6 +19,12 @@
 		"version": "0.1.0",
 		"description": "",
 		"scheme": "invision-community",
+		"ios": {
+			"bundleIdentifier": "com.invisioncommunity.app"
+		},
+		"android": {
+			"bundleIdentifier": "com.invisioncommunity.app"
+		},
 		"hooks": {
 			"postPublish": [
 				{
