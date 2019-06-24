@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Text, View, StyleSheet, SectionList } from "react-native";
 import { connect } from "react-redux";
 import _ from "underscore";
-import { LinearGradient } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 import { Header } from "react-navigation";
 import FadeIn from "react-native-fade-in-image";
 

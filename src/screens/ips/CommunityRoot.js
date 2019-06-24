@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Text, Alert, View, Image, TouchableHighlight, StyleSheet, ActivityIndicator, AsyncStorage, StatusBar } from "react-native";
-import { Permissions, Notifications } from "expo";
+import { Notifications } from "expo";
+import * as Permissions from "expo-permissions";
 import { ApolloProvider } from "react-apollo";
 import apolloLogger from "apollo-link-logger";
 import { ApolloClient } from "apollo-client";

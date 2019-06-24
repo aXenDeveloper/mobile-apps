@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, StatusBar, SafeAreaView, TouchableHighlight, Button, StyleSheet } from "react-native";
 import { Header } from "react-navigation";
-import { LinearGradient } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { isIphoneX } from "../../utils/isIphoneX";
 import { styleVars } from "../../styles";

@@ -3,7 +3,10 @@ import { View, TextInput, Text, KeyboardAvoidingView, Button, WebView, StyleShee
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import Modal from "react-native-modal";
-import { ImagePicker, Permissions, FileSystem, ImageManipulator } from "expo";
+import { FileSystem } from "expo";
+import * as Permissions from "expo-permissions";
+import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 import _ from "lodash";
 import { connect } from "react-redux";
 import {

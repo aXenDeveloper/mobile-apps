@@ -11,7 +11,9 @@ import { BottomTabBar } from "react-navigation-tabs";
 import { View } from "react-native";
 import Image from "react-native-remote-svg";
 import { connect } from "react-redux";
-import { LinearGradient, WebBrowser } from "expo";
+import * as WebBrowser from "expo";
+import { LinearGradient } from "expo-linear-gradient";
+import "react-native-gesture-handler";
 
 // ----
 // Core screens

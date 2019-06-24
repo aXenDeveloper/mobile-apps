@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, Button, ScrollView, FlatList, StyleSheet, TouchableOpacity, Alert, StatusBar, Image } from "react-native";
-import { Permissions, Notifications } from "expo";
+import { Notifications } from "expo";
+import * as Permissions from "expo-permissions";
 import { SafeAreaView } from "react-navigation";
 import gql from "graphql-tag";
 import { graphql, withApollo, compose } from "react-apollo";

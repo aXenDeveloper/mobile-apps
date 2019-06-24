@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Text, View, Image, ImageBackground, StyleSheet, TouchableHighlight, TouchableOpacity, ActivityIndicator } from "react-native";
-import { LinearGradient } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 import { connect } from "react-redux";
 import { graphql, compose } from "react-apollo";
 import FadeIn from "react-native-fade-in-image";

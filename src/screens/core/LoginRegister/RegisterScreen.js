@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { Text, Image, View, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, AsyncStorage } from "react-native";
 import { withApollo, compose } from "react-apollo";
-import { LinearGradient } from "expo";
+import { LinearGradient } from "expo-linear-gradient";
 import { connect } from "react-redux";
 import _ from "underscore";
 
@@ -18,8 +18,6 @@ export default class RegisterScreen extends Component {
 	};
 
 	render() {
-		return (
-			<Text>Register</Text>
-		);
+		return <Text>Register</Text>;
 	}
 }

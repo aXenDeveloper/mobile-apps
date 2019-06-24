@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Image, Text, View, StyleSheet, AsyncStorage } from "react-native";
-import { Permissions, Notifications } from "expo";
+import * as Permissions from "expo-permissions";
+import { Notifications } from "expo";
 import Modal from "react-native-modal";
 import { connect } from "react-redux";
 
