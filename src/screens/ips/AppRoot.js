@@ -1,10 +1,8 @@
 import React, { Component } from "react";
-import { Text, View, Alert, StyleSheet, StatusBar, ActivityIndicator, AsyncStorage, Platform, PushNotificationIOS } from "react-native";
+import { View, Alert, StyleSheet, AsyncStorage } from "react-native";
 import { Linking, Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import { connect } from "react-redux";
-import { ApolloProvider } from "react-apollo";
-import { graphql, compose } from "react-apollo";
 import Toast from "react-native-root-toast";
 import _ from "underscore";
 
@@ -20,15 +18,12 @@ import {
 	setContentView,
 	shiftToast
 } from "../../redux/actions/app";
-import { refreshToken, logOut, voidAuth } from "../../redux/actions/auth";
+import { refreshToken } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
 import { PromptModal, LocalNotification } from "../../ecosystems/PushNotifications";
 import CommunityRoot from "./CommunityRoot";
-import Button from "../../atoms/Button";
 import AppLoading from "../../atoms/AppLoading";
 import NavigationService from "../../utils/NavigationService";
-import getUserAgent from "../../utils/getUserAgent";
-import isIphoneX from "../../utils/isIphoneX";
 import styles, { styleVars } from "../../styles";
 
 class AppRoot extends Component {
