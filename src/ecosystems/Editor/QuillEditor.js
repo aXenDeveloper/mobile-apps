@@ -146,19 +146,25 @@ class QuillEditor extends Component {
 		}
 
 		// If any of our formatting options have changed, send a SET_FORMAT command to the WebView
-		if (!_.isMatch(prevProps.editor.formatting, this.props.editor.formatting)) {
+		if (!_.isEqual(prevProps.editor.formatting, this.props.editor.formatting)) {
 			Object.entries(this.props.editor.formatting).forEach(pair => {
 				if (_.isObject(pair[1])) {
-					// If this is a button with options, then loop through and find the option that
-					// is currently active. If none are active, we'll send false to Quill.
-					let activeOption = _.find(Object.keys(this.props.editor.formatting[pair[0]]), val => {
+					// Buttons with options
+					// Compare the previously-active option with the current option, and if they're different
+					// send the SET_FORMAT command. If no options are active, send false to turn off format.
+					const prevActiveOption = _.find(Object.keys(prevProps.editor.formatting[pair[0]]), val => {
+						return prevProps.editor.formatting[pair[0]][val] === true;
+					});
+					const activeOption = _.find(Object.keys(this.props.editor.formatting[pair[0]]), val => {
 						return this.props.editor.formatting[pair[0]][val] === true;
 					});
 
-					this.sendMessage("SET_FORMAT", {
-						type: pair[0],
-						option: activeOption || false
-					});
+					if (prevActiveOption !== activeOption) {
+						this.sendMessage("SET_FORMAT", {
+							type: pair[0],
+							option: activeOption || false
+						});
+					}
 				} else {
 					// If this is a simple boolean button, send it
 					if (prevProps.editor.formatting[pair[0]] !== this.props.editor.formatting[pair[0]]) {

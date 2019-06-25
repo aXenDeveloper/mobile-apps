@@ -163,6 +163,7 @@ class QuillComponent extends Component {
 	 * @return 	object
 	 */
 	formattingState() {
+		this.addDebug(`formatting is ${JSON.stringify(this.state.quill.getFormat(this.state.quill.getSelection()))}`);
 		return this.state.quill.getFormat(this.state.quill.getSelection());
 	}
 
