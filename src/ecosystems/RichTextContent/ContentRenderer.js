@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import _ from "underscore";
 
 import { openModalWebview } from "../../redux/actions/app";
+import getImageUrl from "../../utils/getImageUrl";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import Lightbox from "../Lightbox";
@@ -100,6 +101,14 @@ class ContentRenderer extends PureComponent {
 		// Remove width attribute from iframes, so that contentMaxWidth works
 		if (name === "iframe") {
 			delete node.attribs.width;
+			return node;
+		}
+
+		if (name === "img" && !_.isUndefined(node.attribs.src)) {
+			node.attribs = {
+				...node.attribs,
+				src: getImageUrl(node.attribs.src)
+			};
 			return node;
 		}
 
