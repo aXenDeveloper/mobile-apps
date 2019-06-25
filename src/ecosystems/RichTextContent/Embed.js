@@ -108,11 +108,11 @@ class Embed extends Component {
 		};
 
 		if (this.props.data.core.content["__typename"] == "core_Comment") {
-			data.comment = this.props.data.core.content.plain;
+			data.comment = this.props.data.core.content;
 			data.primary = data.comment;
 			data.item = data.comment.item;
 		} else if (this.props.data.core.content["__typename"] == "core_Item") {
-			data.item = this.props.data.core.content.plain;
+			data.item = this.props.data.core.content;
 			data.primary = data.item;
 		}
 
@@ -127,7 +127,6 @@ class Embed extends Component {
 	getEmbedContents() {
 		// Normalize the data
 		const data = this._getNormalizedData();
-
 		const imageToUse = getSuitableImage(data.item.contentImages);
 		const langString = Lang.buildActionString(
 			data.comment !== null,
