@@ -29,7 +29,9 @@ const ItemFragment = gql`
 		}
 		firstCommentRequired
 		contentImages
-		content(stripped: true, singleLine: true, truncateLength: 100)
+		content {
+			plain(truncateLength: 100)
+		}
 		articleLang {
 			indefinite
 			definite
@@ -41,7 +43,9 @@ const CommentFragment = gql`
 	fragment CommentFragment on core_Comment {
 		id
 		timestamp
-		content(stripped: true, singleLine: true, truncateLength: 100)
+		content {
+			plain(truncateLength: 100)
+		}
 		author {
 			name
 		}
@@ -104,11 +108,11 @@ class Embed extends Component {
 		};
 
 		if (this.props.data.core.content["__typename"] == "core_Comment") {
-			data.comment = this.props.data.core.content;
+			data.comment = this.props.data.core.content.plain;
 			data.primary = data.comment;
 			data.item = data.comment.item;
 		} else if (this.props.data.core.content["__typename"] == "core_Item") {
-			data.item = this.props.data.core.content;
+			data.item = this.props.data.core.content.plain;
 			data.primary = data.item;
 		}
 
@@ -146,7 +150,7 @@ class Embed extends Component {
 						{data.item.title}
 					</Text>
 					<Text style={componentStyles.bodyText} numberOfLines={1}>
-						{data.primary.content}
+						{data.primary.content.plain}
 					</Text>
 				</View>
 			</React.Fragment>
