@@ -232,6 +232,8 @@ class TopicViewScreen extends Component {
 		this._cellHeights = {}; // Store the height of each post
 		//this._headerHeight = 250;
 		this._loadMoreHeight = 0;
+		this._isSnapping = false; // Is the flatlist currently snapping back to top?
+		this._snapTimeout = null; // Reference to timeout for snap function
 		this._initialOffsetDone = false; // Flag to indicate we've set our initial offset on render
 		this._aboutToScrollToEnd = false; // Flag to indicate a scrollToEnd is pending so we can avoid other autoscrolls
 		this._answerVoteUpHandlers = {}; // Stores memoized event handlers for voting answers up
@@ -297,6 +299,15 @@ class TopicViewScreen extends Component {
 	}
 
 	/**
+	 * Clear timeouts
+	 *
+	 * @return 	void
+	 */
+	componentWillUnmount() {
+		clearTimeout(this._snapTimeout);
+	}
+
+	/**
 	 * Build animation values
 	 *
 	 * @return 	void
@@ -351,13 +362,25 @@ class TopicViewScreen extends Component {
 	onScrollEnd(e) {
 		const y = e.nativeEvent.contentOffset.y;
 
-		if (this._flatList && this._flatList.getNode()) {
+		if (this._flatList && this._flatList.getNode() && !this._isSnapping) {
 			if (0 < y && y < this.state.innerHeaderHeight) {
 				this._flatList.getNode().scrollToOffset({ y: 0 });
+				this.setIsSnapping();
 			} else if (this.state.innerHeaderHeight / 2 <= y && y < this.state.innerHeaderHeight) {
 				this._flatList.getNode().scrollToOffset({ y: this.state.innerHeaderHeight });
+				this.setIsSnapping();
 			}
 		}
+	}
+
+	/**
+	 * Sets a flag indicating we're snapping back, and a timeout to reset flag
+	 *
+	 * @return 	void
+	 */
+	setIsSnapping() {
+		this._isSnapping = true;
+		this._snapTimeout = setTimeout(() => (this._isSnapping = false), 300);
 	}
 
 	/**
