@@ -135,11 +135,13 @@ class StreamViewScreen extends Component {
 			});
 
 			// Get the user's default
-			const defaultStream = await AsyncStorage.getItem("@defaultStream");
-			const defaultExists = _.find(this.props.user.streams, stream => stream.id == defaultStream);
+			let viewingStream = "all";
+			if (_.isNumber(this.props.user.defaultStream)) {
+				viewingStream = this.props.user.defaultStream;
+			}
 
 			this.setState({
-				viewingStream: _.isUndefined(defaultExists) ? "all" : defaultExists,
+				viewingStream,
 				offset: 0,
 				sectionData: []
 			});

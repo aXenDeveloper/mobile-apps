@@ -180,6 +180,7 @@ const BootQuery = gql`
 				id
 				name
 				photo
+				defaultStream
 				notificationCount
 				maxUploadSize
 				group {
