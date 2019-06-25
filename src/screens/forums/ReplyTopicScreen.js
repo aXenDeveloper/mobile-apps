@@ -155,7 +155,7 @@ class ReplyTopicScreen extends Component {
 					<UserPhoto url={quotedPost.author.photo} size={36} />
 					<View style={componentStyles.postContent}>
 						<Text style={componentStyles.quotingTitle}>Quoting {quotedPost.author.name}:</Text>
-						<RichTextContent removeQuotes>{quotedPost.content}</RichTextContent>
+						<RichTextContent removeQuotes>{quotedPost.content.original}</RichTextContent>
 					</View>
 				</View>
 			);
