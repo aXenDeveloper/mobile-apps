@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { View, ViewPropTypes } from "react-native";
-import * as Svg from "react-native-svg";
+import { Svg, G, Path } from "react-native-svg";
 
 export default class CircularProgress extends PureComponent {
 	polarToCartesian(centerX, centerY, radius, angleInDegrees) {
@@ -64,12 +64,12 @@ export default class CircularProgress extends PureComponent {
 		return (
 			<View style={style}>
 				<Svg width={size} height={size} style={{ backgroundColor: "transparent" }}>
-					<Svg.G rotation={rotation} originX={size / 2} originY={size / 2}>
+					<G rotation={rotation} originX={size / 2} originY={size / 2}>
 						{backgroundColor && (
-							<Svg.Path d={backgroundPath} stroke={backgroundColor} strokeWidth={backgroundWidth || width} strokeLinecap={lineCap} fill="transparent" />
+							<Path d={backgroundPath} stroke={backgroundColor} strokeWidth={backgroundWidth || width} strokeLinecap={lineCap} fill="transparent" />
 						)}
-						{fill > 0 && <Svg.Path d={circlePath} stroke={tintColor} strokeWidth={width} strokeLinecap={lineCap} fill="transparent" />}
-					</Svg.G>
+						{fill > 0 && <Path d={circlePath} stroke={tintColor} strokeWidth={width} strokeLinecap={lineCap} fill="transparent" />}
+					</G>
 				</Svg>
 				{children && <View style={localChildrenContainerStyle}>{children(fill)}</View>}
 			</View>
