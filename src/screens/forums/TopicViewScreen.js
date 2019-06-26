@@ -1450,7 +1450,7 @@ class TopicViewScreen extends Component {
 					app: "forums",
 					area: "topic",
 					id: this.props.data.forums.topic.id,
-					anonymous: followData.anonymous,
+					anonymous: followData.anonymous || 0,
 					type: followData.option.toUpperCase()
 				}
 			});

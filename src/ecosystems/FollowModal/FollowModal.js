@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { FlatList, SectionList, Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
+import { FlatList, SectionList, Text, View, StyleSheet, Alert } from "react-native";
 import Modal from "react-native-modal";
 
 import Lang from "../../utils/Lang";
@@ -8,30 +8,20 @@ import CheckList from "../../ecosystems/CheckList";
 import Button from "../../atoms/Button";
 import SectionHeader from "../../atoms/SectionHeader";
 import ToggleRow from "../../atoms/ToggleRow";
+import { isIphoneX } from "../../utils/isIphoneX";
 import styles, { styleVars } from "../../styles";
 
 class FollowModal extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			selectedFollowOption: null
-		};
-	}
-
-	/**
-	 * Set our initial state
-	 *
-	 * @return 	void
-	 */
-	componentDidMount() {
 		const selectedItem = this.props.followData.followOptions.find(item => item.selected);
 		const isAnonymous = this.props.followData.followType === "ANONYMOUS";
 
-		this.setState({
-			selectedFollowOption: selectedItem ? selectedItem.type : null,
+		this.state = {
+			selectedFollowOption: selectedItem ? selectedItem.type : this.props.followData.followOptions[0].type,
 			isAnonymous
-		});
+		};
 	}
 
 	/*getFollowers() {
@@ -115,6 +105,11 @@ class FollowModal extends Component {
 			option: this.state.selectedFollowOption,
 			anonymous: this.state.isAnonymous
 		};
+
+		if (this.state.selectedFollowOption === null) {
+			Alert.alert(Lang.get("error"), Lang.get("error_select_follow_option"), [{ text: Lang.get("ok") }], { cancelable: false });
+			return;
+		}
 
 		this.props.onFollow(data);
 	}
@@ -261,7 +256,8 @@ const componentStyles = StyleSheet.create({
 	},
 	modalBody: {
 		backgroundColor: "#f5f5f5",
-		padding: styleVars.spacing.wide
+		padding: styleVars.spacing.wide,
+		...(isIphoneX() ? { paddingBottom: styleVars.spacing.extraWide + styleVars.spacing.standard } : {})
 	},
 	buttonWrap: {
 		marginTop: -1

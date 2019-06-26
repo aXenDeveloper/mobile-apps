@@ -175,6 +175,7 @@ const LangFragment = gql`
 		follow: phrase(key: "app_follow")
 		follow_save: phrase(key: "app_follow_save")
 		unfollow: phrase(key: "app_unfollow")
+		error_select_follow_option: phrase(key: "app_error_select_follow_option")
 
 		reporting_x_in_x: phrase(key: "app_reporting_x_in_x")
 		revoke_report_x_in_x: phrase(key: "app_revoke_report_x_in_x")
