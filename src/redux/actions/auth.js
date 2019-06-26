@@ -631,7 +631,7 @@ const getNewClient = connectData => {
 				const error = graphQLErrors[i];
 
 				if (errorsToUnauth.indexOf(error.message) !== -1) {
-					console.log(`CLIENT ERROR: Got error: ${error.message} (${error.path.join(" -> ")})`);
+					console.log(`CLIENT ERROR: Got error: ${error.message} (${!_.isUndefined(error.path) ? error.path.join(" -> ") : "no path"})`);
 
 					const store = configureStore();
 					store.dispatch(removeAuth());
