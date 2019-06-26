@@ -16,6 +16,7 @@ export default Badge;
 const componentStyles = StyleSheet.create({
 	notificationBadge: {
 		height: 19,
+		minWidth: 19,
 		borderRadius: 19,
 		paddingHorizontal: 4,
 		backgroundColor: styleVars.badgeBackground,
