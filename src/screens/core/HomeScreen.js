@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, Image, ScrollView, View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { Text, Image, ScrollView, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl, LayoutAnimation } from "react-native";
 import gql from "graphql-tag";
 import { graphql, withApollo } from "react-apollo";
 import _ from "underscore";
@@ -46,22 +46,52 @@ class HomeScreen extends Component {
 			loading: true,
 			error: false,
 			data: null,
-			navConfig: []
+			refreshing: false
 		};
 
 		this._menuHandlers = {};
+
+		this.onRefresh = this.onRefresh.bind(this);
 	}
 
 	componentDidMount() {
 		this.startHomeQuery();
 	}
 
-	async startHomeQuery() {
+	/**
+	 * Set state to loading and fetch the home screen blocks
+	 *
+	 * @return 	void
+	 */
+	startHomeQuery() {
 		this.setState({
 			loading: true,
 			error: false
 		});
 
+		this.doHomeQuery();
+	}
+
+	/**
+	 * Set the RefreshControl state and triggers a new query to update the homescreen
+	 *
+	 * @return 	void
+	 */
+	onRefresh() {
+		this.setState({
+			refreshing: true,
+			error: false
+		});
+
+		this.doHomeQuery();
+	}
+
+	/**
+	 * Runs the query to get the home screen blocks
+	 *
+	 * @return 	void
+	 */
+	async doHomeQuery() {
 		let queryFragments = [];
 		let queryIncludes = [];
 
@@ -85,21 +115,23 @@ class HomeScreen extends Component {
 		try {
 			const { data } = await this.props.client.query({
 				query,
-				variables: {}
+				variables: {},
+				fetchPolicy: "network-only"
 			});
 
-			const navConfig = this.getNavConfig();
+			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
 			this.setState({
 				loading: false,
-				data,
-				navConfig
+				refreshing: false,
+				data
 			});
 		} catch (err) {
 			console.log(err);
 
 			this.setState({
 				loading: false,
+				refreshing: false,
 				error: true
 			});
 		}
@@ -137,10 +169,15 @@ class HomeScreen extends Component {
 		this.startHomeQuery();
 	}
 
+	/**
+	 * Memoization function that returns a handler for menu item onPress
+	 *
+	 * @param 	object 		item 		Item data
+	 * @return 	function
+	 */
 	getMenuPressHandler(item) {
 		if (_.isUndefined(this._menuHandlers[item.id])) {
 			this._menuHandlers[item.id] = () => {
-				console.log(item);
 				NavigationService.navigate(item.url.full);
 			};
 		}
@@ -148,8 +185,12 @@ class HomeScreen extends Component {
 		return this._menuHandlers[item.id];
 	}
 
+	/**
+	 * Build an array of navigation items
+	 *
+	 * @return 	array
+	 */
 	getNavConfig() {
-		console.log(this.props.site);
 		return this.props.site.menu.map((item, idx) => ({
 			key: `menu_${idx}`,
 			id: item.id,
@@ -159,6 +200,12 @@ class HomeScreen extends Component {
 		}));
 	}
 
+	/**
+	 * Render a nav bar item
+	 *
+	 * @param 	object 		item 		The nav bar item to render
+	 * @return 	void
+	 */
 	renderNavItem(item) {
 		let icon;
 
@@ -184,13 +231,14 @@ class HomeScreen extends Component {
 		if (this.state.error) {
 			return <ErrorBox message={Lang.get("home_view_error")} refresh={() => this.refreshAfterError()} />;
 		} else {
+			const navConfig = this.getNavConfig();
 			let navigation;
 
-			if (this.state.navConfig.length) {
+			if (navConfig.length) {
 				navigation = (
 					<FlatList
 						renderItem={({ item }) => this.renderNavItem(item)}
-						data={this.state.navConfig}
+						data={navConfig}
 						keyExtractor={item => item.key}
 						horizontal
 						showsHorizontalScrollIndicator={false}
@@ -210,7 +258,7 @@ class HomeScreen extends Component {
 				<React.Fragment>
 					<View style={componentStyles.navigator}>{navigation}</View>
 					{this.getLoginRegPrompt()}
-					<ScrollView style={componentStyles.browseWrapper}>
+					<ScrollView style={componentStyles.browseWrapper} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}>
 						{HomeSectionsToShow.map(section => {
 							if (_.isUndefined(HomeSections[section])) {
 								return null;
