@@ -51,9 +51,7 @@ class NotificationsScreen extends Component {
 			<HeaderButton
 				icon="settings"
 				onPress={
-					!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.onPressSettings)
-						? navigation.state.params.onPressSettings
-						: null
+					!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.onPressSettings) ? navigation.state.params.onPressSettings : null
 				}
 			/>
 		)
@@ -114,8 +112,8 @@ class NotificationsScreen extends Component {
 			(!prevProps.navigation.isFocused && this.props.navigation.isFocused) // Or this screen has now been focused
 		) {
 			this.props.dispatch(updateNotificationCount(0)); // We'll also update our user store to 0
-			
-			if( this.props.data.core.me.notifications.length > 0 ){
+
+			if (this.props.data.core.me.notifications.length > 0) {
 				this.markAllRead();
 			}
 		}
@@ -143,7 +141,7 @@ class NotificationsScreen extends Component {
 	 */
 	onEndReached = () => {
 		// If we've finished loading but there were no notifications, don't try and fetch more
-		if( this.props.data.networkStatus >= 7 && !this.props.data.core.me.notifications.length ){
+		if (this.props.data.networkStatus >= 7 && !this.props.data.core.me.notifications.length) {
 			return;
 		}
 
@@ -206,7 +204,7 @@ class NotificationsScreen extends Component {
 		}
 
 		// If we've finished loading but there were no notifications, don't show any footer
-		if( this.props.data.networkStatus >= 7 && !this.props.data.core.me.notifications.length ){
+		if (this.props.data.networkStatus >= 7 && !this.props.data.core.me.notifications.length) {
 			return null;
 		}
 
@@ -289,13 +287,11 @@ class NotificationsScreen extends Component {
 			}
 		}
 
-		NavigationService.navigate( item.url.app, {
-			id: item.itemID
-		});
+		NavigationService.navigate(item.url.full);
 	}
 
 	render() {
-		if (this.props.data.loading) {
+		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return (
 				<PlaceholderRepeater repeat={7}>
 					<NotificationRow loading />
@@ -334,7 +330,7 @@ export default compose(
 	withApollo,
 	graphql(NotificationQuery, {
 		options: {
-			fetchPolicy: 'cache-and-network' // Needed here so that we fetch fresh notification data after e.g. reading a topic
+			fetchPolicy: "cache-and-network" // Needed here so that we fetch fresh notification data after e.g. reading a topic
 		}
 	})
 )(NotificationsScreen);

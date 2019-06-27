@@ -1,3 +1,5 @@
+import _ from "underscore";
+
 // Keeps track of the types of content the app is able to display
 // If content types other than these are loaded, they'll be displayed in a WebView instead
 // There's a few ways we identify content: classnames, controller paths, and basic URLs.
@@ -40,19 +42,20 @@ const supported = {
 				return {
 					routeName: "TopicList",
 					params: {
-						id: found[1]
+						id: parseInt(found[1])
 					}
 				};
 			}
 		},
 		// Topic view
 		{
-			test: new RegExp("topic/([0-9]+?)-([^/]+)?", "i"),
+			test: new RegExp(/topic\/([0-9]+?)-([^/]+)\/?(\?do=findComment&comment=([0-9]+))?/, "i"),
 			matchCallback: found => {
 				return {
 					routeName: "TopicView",
 					params: {
-						id: found[1]
+						id: parseInt(found[1]),
+						...(!_.isUndefined(found[4]) ? { findComment: parseInt(found[4]) } : {})
 					}
 				};
 			}
@@ -61,9 +64,6 @@ const supported = {
 		{
 			test: new RegExp("[/&?]method=([a-z0-9]+)", "i"),
 			matchCallback: found => {
-				console.log("---");
-				console.log(found);
-
 				if (found[1] === "fluid") {
 					return {
 						routeName: "FluidForum"
