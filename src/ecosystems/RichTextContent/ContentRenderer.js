@@ -104,12 +104,19 @@ class ContentRenderer extends PureComponent {
 			return node;
 		}
 
-		if (name === "img" && !_.isUndefined(node.attribs.src)) {
-			node.attribs = {
-				...node.attribs,
-				src: getImageUrl(node.attribs.src)
-			};
-			return node;
+		if (name === "img") {
+			// Fix the image SRC
+			if (!_.isUndefined(node.attribs.src)) {
+				node.attribs = {
+					...node.attribs,
+					src: getImageUrl(node.attribs.src)
+				};
+			}
+
+			// Add to lightbox if this is an attachment
+			if (!_.isUndefined(node.attribs["data-fileid"])) {
+				this._lightboxedImages[parent.attribs.href] = true;
+			}
 		}
 
 		// If this is a Text node within the citation, add the citation text styling
@@ -119,11 +126,6 @@ class ContentRenderer extends PureComponent {
 				style: styleVars.citationTextStyle
 			};
 			return node;
-		}
-
-		// Turn attached images into a lightbox
-		if (name === "img" && !_.isUndefined(node.attribs["data-fileid"])) {
-			this._lightboxedImages[parent.attribs.href] = true;
 		}
 	}
 
