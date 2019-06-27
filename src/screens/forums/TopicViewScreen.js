@@ -129,6 +129,8 @@ const MarkTopicRead = gql`
 	mutation MarkTopicRead($id: ID!) {
 		mutateForums {
 			markTopicRead(id: $id) {
+				__typename
+				id
 				timeLastRead
 				unreadCommentPosition
 				isUnread
@@ -502,9 +504,6 @@ class TopicViewScreen extends Component {
 							return previousResult;
 						}
 
-						// Check if we should mark this read
-						this.maybeMarkAsRead();
-
 						// Clear our cell height cache because we're replacing them all
 						this.clearCellHeightCache();
 
@@ -551,6 +550,10 @@ class TopicViewScreen extends Component {
 			this.clearCellHeightCache();
 		}
 
+		if (prevState.currentPosition !== this.state.currentPosition) {
+			this.maybeMarkAsRead();
+		}
+
 		// If we're no longer loading, toggle the follow button if needed
 		if (prevProps.data.loading && !this.props.data.loading && !this.props.data.error) {
 			// If we mounted without the info we need to set the screen title, then set them now
@@ -565,9 +568,6 @@ class TopicViewScreen extends Component {
 					ready: true
 				});
 			}
-
-			// Check if we should mark this read
-			this.maybeMarkAsRead();
 
 			// If follow controls are available, show them
 			if (!this.props.data.forums.topic.passwordProtected && !this.props.data.forums.topic.isArchived && this.props.auth.isAuthenticated) {
@@ -690,9 +690,6 @@ class TopicViewScreen extends Component {
 						}
 					});
 
-					// Check if we should mark this read
-					this.maybeMarkAsRead();
-
 					return result;
 				}
 			});
@@ -762,33 +759,36 @@ class TopicViewScreen extends Component {
 	 * @return 	void
 	 */
 	async maybeMarkAsRead() {
-		const offsetAdjust = this.state.startingOffset + this.props.data.forums.topic.posts.length;
-
-		// If we are unread and on the last 'page' of results...
+		// If we are unread and have viewed the last post...
 		if (
-			this.props.data.forums.topic.itemPermissions.canMarkRead &&
-			this.props.data.forums.topic.isUnread &&
-			offsetAdjust >= this.props.data.forums.topic.postCount - Expo.Constants.manifest.extra.per_page
+			!this.props.data.forums.topic.itemPermissions.canMarkAsRead ||
+			!this.props.data.forums.topic.isUnread ||
+			this.state.currentPosition < this.props.data.forums.topic.postCount
 		) {
-			try {
-				const { data } = await this.props.client.mutate({
-					mutation: MarkTopicRead,
-					variables: {
-						id: this.props.data.forums.topic.id
-					},
-					optimisticResponse: {
-						mutateForums: {
-							__typename: "mutate_Forums",
-							markTopicRead: {
-								...this.props.data.forums.topic,
-								isUnread: false
-							}
+			return;
+		}
+
+		try {
+			const { data } = await this.props.client.mutate({
+				mutation: MarkTopicRead,
+				variables: {
+					id: this.props.data.forums.topic.id
+				},
+				optimisticResponse: {
+					mutateForums: {
+						__typename: "mutate_Forums",
+						markTopicRead: {
+							__typename: "forums_Topic",
+							id: this.props.data.forums.topic.id,
+							timeLastRead: this.props.data.forums.topic.timeLastRead,
+							unreadCommentPosition: this.props.data.forums.topic.unreadCommentPosition,
+							isUnread: false
 						}
 					}
-				});
-			} catch (err) {
-				console.log("Couldn't mark topic as read: " + err);
-			}
+				}
+			});
+		} catch (err) {
+			console.log("Couldn't mark topic as read: " + err);
 		}
 	}
 
