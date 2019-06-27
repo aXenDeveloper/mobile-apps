@@ -6,7 +6,7 @@ const ActiveUsersFragment = `
 		activeUsers {
 			__typename
 			count(includeGuests: true)
-			users(limit: 14) {
+			users(limit: 25) {
 				anonymous
 				lang
 				timestamp
@@ -14,6 +14,7 @@ const ActiveUsersFragment = `
 					id
 					name
 					photo
+					url
 				}
 			}
 		}
