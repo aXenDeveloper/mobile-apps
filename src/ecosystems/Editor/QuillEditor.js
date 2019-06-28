@@ -87,6 +87,8 @@ class QuillEditor extends Component {
 			content: ""
 		};
 
+		this.blur = this.blur.bind(this);
+
 		// Optionally set a height on the webview
 		// We need this if we're showing the editor in a scrollview,
 		// which doesn't support flex elements
@@ -106,6 +108,19 @@ class QuillEditor extends Component {
 	 */
 	componentDidMount() {
 		this.props.dispatch(resetEditor());
+
+		if (this.props.receiveOnBlurCallback) {
+			this.props.receiveOnBlurCallback(this.blur);
+		}
+	}
+
+	/**
+	 * Blur the editor
+	 *
+	 * @return 	void
+	 */
+	blur() {
+		this.sendMessage("BLUR");
 	}
 
 	/**
@@ -116,6 +131,13 @@ class QuillEditor extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps, prevState) {
+		// If our state has changed
+		if (prevProps.enabled !== this.props.enabled) {
+			this.sendMessage("TOGGLE_STATE", {
+				enabled: this.props.enabled
+			});
+		}
+
 		// If we're now focused, but were not before, call the callback
 		if (!prevProps.editor.focused && this.props.editor.focused) {
 			if (this.props.onFocus) {

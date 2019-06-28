@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, Alert, Button, TextInput, View, ScrollView, StyleSheet, KeyboardAvoidingView } from "react-native";
+import { Text, Alert, Button, TextInput, View, ScrollView, StyleSheet, KeyboardAvoidingView, ActivityIndicator } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
 import { NavigationActions, Header } from "react-navigation";
@@ -31,10 +31,17 @@ const ReplyTopicMutation = gql`
 class ReplyTopicScreen extends Component {
 	static navigationOptions = ({ navigation }) => {
 		return {
-			title: "Reply To Topic",
+			headerTitle: navigation.getParam("submitting") ? (
+				<React.Fragment>
+					<ActivityIndicator size="small" color="#fff" />
+					<Text style={styles.headerTitle}> Submitting...</Text>
+				</React.Fragment>
+			) : (
+				"Reply"
+			),
 			headerTintColor: "white",
-			headerLeft: <HeaderButton position="left" label="Cancel" onPress={navigation.getParam("cancelReply")} />,
-			headerRight: <HeaderButton position="right" label="Post" onPress={navigation.getParam("submitReply")} />
+			headerLeft: navigation.getParam("submitting") ? null : <HeaderButton position="left" label="Cancel" onPress={navigation.getParam("cancelReply")} />,
+			headerRight: navigation.getParam("submitting") ? null : <HeaderButton position="right" label="Post" onPress={navigation.getParam("submitReply")} />
 		};
 	};
 
@@ -52,6 +59,8 @@ class ReplyTopicScreen extends Component {
 			content: ""
 		};
 
+		this._onBlurCallback = null;
+
 		this.updateContentState = this.updateContentState.bind(this);
 	}
 
@@ -65,6 +74,18 @@ class ReplyTopicScreen extends Component {
 			submitReply: this.submitReply.bind(this),
 			cancelReply: this.cancelReply.bind(this)
 		});
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if (prevState.submitting !== this.state.submitting) {
+			this.props.navigation.setParams({
+				submitting: this.state.submitting
+			});
+
+			if (this._onBlurCallback && this.state.submitting) {
+				this._onBlurCallback();
+			}
+		}
 	}
 
 	/**
@@ -90,6 +111,10 @@ class ReplyTopicScreen extends Component {
 			return;
 		}
 
+		this.setState({
+			submitting: true
+		});
+
 		try {
 			await this.props.mutate({
 				variables: {
@@ -109,6 +134,10 @@ class ReplyTopicScreen extends Component {
 			this.props.navigation.dispatch(navigateAction);
 			//this.props.navigation.goBack();
 		} catch (err) {
+			this.setState({
+				submitting: false
+			});
+
 			const errorMessage = getErrorMessage(err, ReplyTopicScreen.errors);
 			Alert.alert("Error", "Sorry, there was an error posting this reply. " + err, [{ text: "OK" }], { cancelable: false });
 		}
@@ -172,6 +201,8 @@ class ReplyTopicScreen extends Component {
 							height={400}
 							autoFocus={!_.isObject(this.props.navigation.state.params.quotedPost)}
 							editorID={this.editorID}
+							receiveOnBlurCallback={callback => (this._onBlurCallback = callback)}
+							enabled={!this.state.submitting}
 							onFocus={measurer => {
 								// If we're quoting a post, we'll scroll the view up
 								// so that the editor is near the top when focused

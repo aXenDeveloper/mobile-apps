@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, Alert, Button, TextInput, View, KeyboardAvoidingView } from "react-native";
+import { Text, Alert, Button, TextInput, View, KeyboardAvoidingView, ActivityIndicator } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
 import { NavigationActions, Header } from "react-navigation";
@@ -36,10 +36,17 @@ class CreateTopicScreen extends Component {
 	// @todo language
 	static navigationOptions = ({ navigation }) => {
 		return {
-			title: "Create Topic",
+			headerTitle: navigation.getParam("submitting") ? (
+				<React.Fragment>
+					<ActivityIndicator size="small" color="#fff" />
+					<Text style={styles.headerTitle}> Submitting...</Text>
+				</React.Fragment>
+			) : (
+				"New Topic"
+			),
 			headerTintColor: "white",
-			headerLeft: <HeaderButton position="left" onPress={navigation.getParam("cancelTopic")} label="Cancel" />,
-			headerRight: <HeaderButton position="right" onPress={navigation.getParam("submitTopic")} label="Post" />
+			headerLeft: navigation.getParam("submitting") ? null : <HeaderButton position="left" onPress={navigation.getParam("cancelTopic")} label="Cancel" />,
+			headerRight: navigation.getParam("submitting") ? null : <HeaderButton position="right" onPress={navigation.getParam("submitTopic")} label="Post" />
 		};
 	};
 
@@ -60,9 +67,11 @@ class CreateTopicScreen extends Component {
 		this.state = {
 			title: "",
 			content: "",
-			tags: []
+			tags: [],
+			submitting: false
 		};
 		this.editorID = uniqueID();
+		this._onBlurCallback = null;
 
 		this.updateTags = this.updateTags.bind(this);
 		this.updateContentState = this.updateContentState.bind(this);
@@ -76,6 +85,23 @@ class CreateTopicScreen extends Component {
 			submitTopic: this.submitTopic.bind(this),
 			cancelTopic: this.cancelTopic.bind(this)
 		});
+	}
+
+	/**
+	 * Check state for submitting flag
+	 *
+	 * @return 	void
+	 */
+	componentDidUpdate(prevProps, prevState) {
+		if (prevState.submitting !== this.state.submitting) {
+			this.props.navigation.setParams({
+				submitting: this.state.submitting
+			});
+
+			if (this._onBlurCallback && this.state.submitting) {
+				this._onBlurCallback();
+			}
+		}
 	}
 
 	/**
@@ -146,15 +172,16 @@ class CreateTopicScreen extends Component {
 			imageID => [UPLOAD_STATUS.UPLOADING, UPLOAD_STATUS.PENDING].indexOf(attachedImages[imageID].status) !== -1
 		);
 
-		console.log("In submit:");
-		console.log(uploadingFiles);
-
 		if (!_.isUndefined(uploadingFiles)) {
 			Alert.alert("Uploads In Progress", "Please wait until your uploaded images have finished processing, then submit again.", [{ text: "OK" }], {
 				cancelable: false
 			});
 			return;
 		}
+
+		this.setState({
+			submitting: true
+		});
 
 		try {
 			const { data } = await this.props.mutate({
@@ -178,6 +205,10 @@ class CreateTopicScreen extends Component {
 			this.props.navigation.dispatch(navigateAction);
 		} catch (err) {
 			console.log(err);
+			this.setState({
+				submitting: false
+			});
+
 			const errorMessage = getErrorMessage(err, CreateTopicScreen.errors);
 			Alert.alert("Error", "Sorry, there was an error posting this topic." + errorMessage, [{ text: "OK" }], { cancelable: false });
 		}
@@ -210,7 +241,12 @@ class CreateTopicScreen extends Component {
 		return (
 			<React.Fragment>
 				<KeyboardAvoidingView style={styles.flex} enabled behavior="padding">
-					<TextInput style={[styles.field, styles.fieldText]} placeholder="Topic Title" onChangeText={text => this.setState({ title: text })} />
+					<TextInput
+						style={[styles.field, styles.fieldText]}
+						placeholder="Topic Title"
+						editable={!this.state.submitting}
+						onChangeText={text => this.setState({ title: text })}
+					/>
 					{Boolean(this.props.site.settings.tags_enabled) && Boolean(this.props.user.group.canTag) && (
 						<TagEdit
 							definedTags={this.props.navigation.state.params.definedTags || null}
@@ -223,7 +259,14 @@ class CreateTopicScreen extends Component {
 							freeChoice={settings.tags_open_system}
 						/>
 					)}
-					<QuillEditor placeholder="Post" update={this.updateContentState} style={styles.flex} editorID={this.editorID} />
+					<QuillEditor
+						placeholder="Post"
+						update={this.updateContentState}
+						style={styles.flex}
+						editorID={this.editorID}
+						enabled={!this.state.submitting}
+						receiveOnBlurCallback={callback => (this._onBlurCallback = callback)}
+					/>
 				</KeyboardAvoidingView>
 				<QuillToolbar editorID={this.editorID} />
 			</React.Fragment>

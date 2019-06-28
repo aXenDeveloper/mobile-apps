@@ -244,6 +244,14 @@ class QuillComponent extends Component {
 							this.state.quill.focus();
 						}, 50);
 						break;
+					case "BLUR":
+						setTimeout(() => {
+							this.state.quill.blur();
+						}, 50);
+						break;
+					case "TOGGLE_STATE":
+						this.toggleState(messageData.enabled);
+						break;
 					case "GET_CONTENT":
 						this.getText(messageData);
 						break;
@@ -252,6 +260,16 @@ class QuillComponent extends Component {
 		} catch (err) {
 			this.addDebug(err);
 		}
+	}
+
+	/**
+	 * Toggles the state of the editor (enabled/disabled)
+	 *
+	 * @param 	boolean 	enabled 	WHether the editor should be enabled
+	 * @return 	void
+	 */
+	toggleState(enabled) {
+		this.state.quill.enable(enabled);
 	}
 
 	/**
