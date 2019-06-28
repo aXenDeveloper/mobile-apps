@@ -1606,7 +1606,7 @@ class TopicViewScreen extends Component {
 							onChange={this.scrollToPost}
 							unreadIndicator={topicData.isUnread ? topicData.unreadCommentPosition : false}
 						/>
-						{!Boolean(topicData.isArchived) && (
+						{!Boolean(topicData.isArchived) && Boolean(this.props.user.isAuthenticated) && (
 							<FollowModal
 								isVisible={this.state.followModalVisible}
 								followData={topicData.follow}
