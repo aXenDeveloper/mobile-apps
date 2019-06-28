@@ -256,8 +256,8 @@ class TopicViewScreen extends Component {
 
 		this._viewabilityConfig = {
 			minimumViewTime: 600,
-			viewAreaCoveragePercentThreshold: 0
-			//itemVisiblePercentThreshold: 25
+			//viewAreaCoveragePercentThreshold: 10
+			itemVisiblePercentThreshold: 25
 		};
 
 		this._nScroll = new Animated.Value(0);
@@ -435,8 +435,8 @@ class TopicViewScreen extends Component {
 
 		// First, 'fix' the current position so it doesn't bounce as we move in the topic feed
 		this.setState({
-			currentPosition: newPost,
-			ignoreViewability: true
+			currentPosition: newPost
+			//ignoreViewability: true
 		});
 
 		// If the post we're about to move to already exists in our posts array, then we'll
@@ -474,7 +474,7 @@ class TopicViewScreen extends Component {
 					});
 
 					this.setState({
-						ignoreViewability: false
+						//ignoreViewability: false
 					});
 
 					return;
@@ -508,11 +508,16 @@ class TopicViewScreen extends Component {
 						this.clearCellHeightCache();
 
 						// Set our states
-						this.setState({
-							ignoreViewability: false,
-							loadingUnseenPosts: false,
-							earlierPostsAvailable: realPostPosition > 0
-						});
+						this.setState(
+							{
+								//ignoreViewability: false,
+								loadingUnseenPosts: false,
+								earlierPostsAvailable: realPostPosition > 0
+							},
+							() => {
+								this._flatList.getNode().recordInteraction();
+							}
+						);
 
 						return fetchMoreResult;
 					}
