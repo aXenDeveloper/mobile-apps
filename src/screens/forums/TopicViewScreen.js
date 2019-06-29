@@ -514,9 +514,7 @@ class TopicViewScreen extends Component {
 								loadingUnseenPosts: false,
 								earlierPostsAvailable: realPostPosition > 0
 							},
-							() => {
-								this._flatList.getNode().recordInteraction();
-							}
+							() => {}
 						);
 
 						return fetchMoreResult;
@@ -620,10 +618,12 @@ class TopicViewScreen extends Component {
 		// If we've loaded in posts from a different position in the topic, see if we need to scroll to the right place
 		if (prevState.loadingUnseenPosts && !this.state.loadingUnseenPosts) {
 			if (this.state.startingOffset > 0) {
-				this._flatList.getNode().scrollToOffset({
-					offset: this._headerHeight,
-					animated: false
-				});
+				setTimeout(() => {
+					this._flatList.getNode().scrollToOffset({
+						offset: this._headerHeight,
+						animated: false
+					});
+				}, 20);
 			}
 		} else if (prevState.earlierPostsAvailable == null || (prevState.startingOffset !== this.state.startingOffset && !this.state.loadingUnseenPosts)) {
 			// Figure out if we need to change the state that determines whether the
