@@ -268,7 +268,13 @@ class HomeScreen extends Component {
 							return (
 								<React.Fragment key={section}>
 									<LargeTitle icon={HomeSections[section].icon || null}>{Lang.get(section)}</LargeTitle>
-									<SectionComponent loading={this.state.loading} data={this.state.data} cardWidth={HomeScreen.CARD_WIDTH} navigation={this.props.navigation} />
+									<SectionComponent
+										loading={this.state.loading}
+										refreshing={this.state.refreshing}
+										data={this.state.data}
+										cardWidth={HomeScreen.CARD_WIDTH}
+										navigation={this.props.navigation}
+									/>
 								</React.Fragment>
 							);
 						})}

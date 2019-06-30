@@ -41,13 +41,8 @@ class ActiveUsers extends Component {
 	 */
 	componentDidUpdate(prevProps, prevState) {
 		// If we have gone from loading to loaded, then set up the ticker animations
-		if (prevProps.loading !== this.props.loading) {
+		if (prevProps.loading !== this.props.loading || (prevProps.refreshing && !this.props.refreshing)) {
 			this.setUpTicker();
-		}
-
-		// If state change indicates the ticker is ready to start, then do that now
-		if (!prevState.tickerReady && this.state.tickerReady) {
-			Animated.loop(Animated.stagger(ActiveUsers.animationDelay, this._animations)).start();
 		}
 	}
 
@@ -110,12 +105,18 @@ class ActiveUsers extends Component {
 	 * @return 	void
 	 */
 	setUpTicker() {
+		this.setState({
+			tickerReady: true
+		});
+
 		const tickerNamesToUse = this.props.data.core.activeUsers.users.filter(user => _.isString(user.lang));
 
 		// No need to do anything with the ticker if we don't have much to show
 		if (tickerNamesToUse.length < ActiveUsers.minimumTickerNames) {
 			return;
 		}
+
+		this._animatedValue = {};
 
 		this._animations = tickerNamesToUse.map((user, idx) => {
 			// First, initialize a value for each user we're going to show in the ticker
@@ -127,6 +128,8 @@ class ActiveUsers extends Component {
 				duration: ActiveUsers.animationDelay
 			});
 		});
+
+		Animated.loop(Animated.stagger(ActiveUsers.animationDelay, this._animations)).start();
 
 		// Setting this state will now cause the ticker to render and begin animating
 		this.setState({
