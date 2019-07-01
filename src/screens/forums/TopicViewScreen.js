@@ -249,7 +249,6 @@ class TopicViewScreen extends Component {
 			pollModalVisible: false,
 			followModalVisible: false,
 			currentPosition: 1,
-			ignoreViewability: false,
 			loadingUnseenPosts: false,
 			innerHeaderHeight: 200
 		};
@@ -429,7 +428,6 @@ class TopicViewScreen extends Component {
 		// First, 'fix' the current position so it doesn't bounce as we move in the topic feed
 		this.setState({
 			currentPosition: newPost
-			//ignoreViewability: true
 		});
 
 		// If the post we're about to move to already exists in our posts array, then we'll
@@ -461,13 +459,9 @@ class TopicViewScreen extends Component {
 						}
 					}
 
-					// Now do the scroll. This is async; don't disable ignoreViewability until we're finished.
+					// Now do the scroll. This is async
 					await this._flatList.getNode().scrollToOffset({
 						offset: totalHeight + this._headerHeight
-					});
-
-					this.setState({
-						//ignoreViewability: false
 					});
 
 					return;
@@ -503,7 +497,6 @@ class TopicViewScreen extends Component {
 						// Set our states
 						this.setState(
 							{
-								//ignoreViewability: false,
 								loadingUnseenPosts: false,
 								earlierPostsAvailable: realPostPosition > 0
 							},
@@ -1520,12 +1513,6 @@ class TopicViewScreen extends Component {
 	 * @return 	void
 	 */
 	onViewableItemsChanged({ viewableItems }) {
-		// While we're animating to another position, we set this flag to prevent this
-		// method from updating the currentPosition.
-		if (this.state.ignoreViewability) {
-			return;
-		}
-
 		// Get an array of visible items that contains only posts
 		const postItems = _.reject(viewableItems, item => item.key == "unread" || item.key == "loginPrompt");
 
