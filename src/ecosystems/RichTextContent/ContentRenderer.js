@@ -156,7 +156,6 @@ class ContentRenderer extends PureComponent {
 	 */
 	renderers() {
 		return {
-			br: () => null,
 			iframe: (htmlAttribs, children, convertedCSSStyles, passProps) => {
 				if (!_.isUndefined(htmlAttribs["data-embedcontent"])) {
 					return <Embed url={htmlAttribs.src} key={htmlAttribs["data-embedid"]} />;
