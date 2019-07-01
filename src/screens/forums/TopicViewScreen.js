@@ -969,10 +969,12 @@ class TopicViewScreen extends Component {
 		// @todo language abstraction
 
 		return (
-			<ViewMeasure onLayout={this.onHeaderLayout} id="header">
+			<ViewMeasure onLayout={this.onHeaderLayout}>
 				<ShadowedArea style={[styles.mbStandard]}>
 					<ViewMeasure onLayout={this.onInnerHeaderLayout} style={[componentStyles.innerHeader, styles.pbExtraWide]}>
-						<Animated.View style={[styles.flexRow, styles.flexAlignStretch, { opacity: this._titleOpacity, transform: [{ scale: this._titleScale }] }]}>
+						<Animated.View
+							style={[styles.flexRow, styles.flexAlignStretch, { opacity: this._titleOpacity || 1, transform: [{ scale: this._titleScale || 1 }] }]}
+						>
 							{Boolean(topicData.isQuestion) && (
 								<View style={styles.flexAlignSelfStart}>
 									<QuestionVote
@@ -1591,7 +1593,6 @@ class TopicViewScreen extends Component {
 							initialNumToRender={Expo.Constants.manifest.extra.per_page}
 							data={listData}
 							refreshing={this.props.data.networkStatus == 4}
-							onRefresh={this.onRefresh}
 							onEndReached={this.onEndReached}
 							onViewableItemsChanged={this.onViewableItemsChanged}
 							viewabilityConfig={this._viewabilityConfig}
