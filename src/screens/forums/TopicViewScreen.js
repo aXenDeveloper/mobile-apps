@@ -281,14 +281,6 @@ class TopicViewScreen extends Component {
 		this.onHeaderLayout = this.onHeaderLayout.bind(this);
 		this.onInnerHeaderLayout = this.onInnerHeaderLayout.bind(this);
 		this.onScrollEnd = this.onScrollEnd.bind(this);
-
-		if (this.props.auth.isAuthenticated) {
-			this.props.navigation.setParams({
-				showFollowControl: false,
-				isFollowed: false,
-				onPressFollow: this.toggleFollowModal
-			});
-		}
 	}
 
 	/**
@@ -298,6 +290,7 @@ class TopicViewScreen extends Component {
 	 */
 	componentDidMount() {
 		this.buildAnimations();
+		this.setHeaderParams();
 	}
 
 	/**
@@ -533,6 +526,37 @@ class TopicViewScreen extends Component {
 	}
 
 	/**
+	 * Set the react-navigation header params to show author/title info based on the data we have
+	 *
+	 * @return 	void
+	 */
+	setHeaderParams() {
+		if (_.isUndefined(this.props.data) || _.isUndefined(this.props.data.forums) || this.props.data.error) {
+			this.props.navigation.setParams({
+				showFollowControl: false,
+				isFollowed: false,
+				onPressFollow: this.toggleFollowModal
+			});
+			return;
+		}
+
+		this.props.navigation.setParams({
+			author: this.props.data.forums.topic.author,
+			title: this.props.data.forums.topic.title,
+			ready: true
+		});
+
+		// If follow controls are available, show them
+		if (!this.props.data.forums.topic.passwordProtected && !this.props.data.forums.topic.isArchived && this.props.auth.isAuthenticated) {
+			this.props.navigation.setParams({
+				showFollowControl: true,
+				isFollowed: this.props.data.forums.topic.follow.isFollowing,
+				onPressFollow: this.toggleFollowModal
+			});
+		}
+	}
+
+	/**
 	 * Manage several areas that might need to change as we get data:
 	 * - setting screen params if the screen loaded without them
 	 * - setting the offset, and scrolling to the end of the view if needed
@@ -557,32 +581,9 @@ class TopicViewScreen extends Component {
 			this.maybeMarkAsRead();
 		}
 
-		// If we're no longer loading, toggle the follow button if needed
-		if (prevProps.data.loading && !this.props.data.loading && !this.props.data.error) {
-			// If we mounted without the info we need to set the screen title, then set them now
-			if (!this.props.navigation.state.params.author) {
-				this.props.navigation.setParams({
-					author: this.props.data.forums.topic.author,
-					title: this.props.data.forums.topic.title,
-					ready: true
-				});
-			} else {
-				this.props.navigation.setParams({
-					ready: true
-				});
-			}
-
-			// If follow controls are available, show them
-			if (!this.props.data.forums.topic.passwordProtected && !this.props.data.forums.topic.isArchived && this.props.auth.isAuthenticated) {
-				this.props.navigation.setParams({
-					showFollowControl: true,
-					isFollowed: this.props.data.forums.topic.follow.isFollowing
-				});
-			}
-		} else if (!prevProps.data.error && this.props.data.error) {
-			this.props.navigation.setParams({
-				showFollowControl: false
-			});
+		// If we're no longer loading, set the header params
+		if (prevProps.data.loading && !this.props.data.loading) {
+			this.setHeaderParams();
 		}
 
 		// Update our offset tracker, but only if we haven't done it before, otherwise
