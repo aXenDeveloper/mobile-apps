@@ -49,6 +49,8 @@ const icons = {
 	SEARCH: require("../resources/search.png"),
 	SIGN_OUT: require("../resources/signout.png"),
 	STAR_SOLID: require("../resources/star_solid.png"),
+	STAR_HALF_SOLID: require("../resources/star_half_solid.png"),
+	STAR: require("../resources/star.png"),
 	TAG: require("../resources/tag.png"),
 	TAG_SOLID: require("../resources/tag_solid.png"),
 	TRASH: require("../resources/trash.png"),

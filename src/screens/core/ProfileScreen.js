@@ -12,6 +12,8 @@ import FadeIn from "react-native-fade-in-image";
 import Lang from "../../utils/Lang";
 import { pushToast } from "../../redux/actions/app";
 import CustomTab from "../../atoms/CustomTab";
+import ErrorBox from "../../atoms/ErrorBox";
+import getErrorMessage from "../../utils/getErrorMessage";
 import FollowButton from "../../atoms/FollowButton";
 import Button from "../../atoms/Button";
 import ListItem from "../../atoms/ListItem";
@@ -21,7 +23,7 @@ import UserPhoto from "../../atoms/UserPhoto";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import RichTextContent from "../../ecosystems/RichTextContent";
-import { ProfileContent, ProfileTab, ProfileFollowers, ProfilePlaceholder } from "../../ecosystems/Profile";
+import { ProfileContent, ProfileTab, ProfileFollowers, ProfilePlaceholder, ProfileField } from "../../ecosystems/Profile";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 import getImageUrl from "../../utils/getImageUrl";
 import styles, { styleVars } from "../../styles";
@@ -282,8 +284,9 @@ class ProfileScreen extends Component {
 					data: {
 						id: "joined",
 						title: Lang.get("joined"),
-						value: relativeTime.long(this.props.data.core.member.joined),
-						html: false
+						// Since our CustomField component expects JSON field data, we have to re-json this
+						value: JSON.stringify(String(this.props.data.core.member.joined)),
+						type: "Date"
 					}
 				},
 				...(this.props.data.core.member.email
@@ -293,8 +296,9 @@ class ProfileScreen extends Component {
 								data: {
 									id: "email",
 									title: Lang.get("email_address"),
-									value: this.props.data.core.member.email,
-									html: false
+									// Since our CustomField component expects JSON field data, we have to re-json this
+									value: JSON.stringify(this.props.data.core.member.email),
+									type: "Email"
 								}
 							}
 					  ]
@@ -316,11 +320,7 @@ class ProfileScreen extends Component {
 					if (field.type !== "Editor") {
 						fields.push({
 							key: field.id,
-							data: {
-								id: field.id,
-								title: field.title,
-								value: field.value
-							}
+							data: field
 						});
 					}
 				});
@@ -346,11 +346,7 @@ class ProfileScreen extends Component {
 				if (group.fields.length) {
 					group.fields.forEach(field => {
 						if (field.type == "Editor") {
-							additionalTabs.push({
-								title: field.title,
-								content: field.value,
-								id: field.id
-							});
+							additionalTabs.push(field);
 						}
 					});
 				}
@@ -391,8 +387,12 @@ class ProfileScreen extends Component {
 	}*/
 
 	render() {
-		if (this.props.data.loading) {
+		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return <ProfilePlaceholder />;
+		} else if (this.props.data.error) {
+			const error = getErrorMessage(this.props.data.error, ProfileScreen.errors);
+			const message = error ? error : Lang.get("topic_view_error");
+			return <ErrorBox message={message} />;
 		} else {
 			// Follow button
 			let showFollowButton = false;
@@ -502,7 +502,7 @@ class ProfileScreen extends Component {
 							<ProfileTab tabIndex={0} heading={Lang.get("profile_overview")} active={this.state.activeTab == 0} minHeight={this.state.minHeight}>
 								<SectionList
 									scrollEnabled={false}
-									renderItem={({ item }) => <ListItem key={item.key} data={item.data} />}
+									renderItem={({ item }) => <ProfileField key={item.key} title={item.data.title} value={item.data.value} type={item.data.type} />}
 									renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
 									sections={this.getProfileFields()}
 								/>
