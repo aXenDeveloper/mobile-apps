@@ -5,6 +5,7 @@ import FadeIn from "react-native-fade-in-image";
 
 import NavigationService from "../../utils/NavigationService";
 import LargeTitle from "../../atoms/LargeTitle";
+import UnreadIndicator from "../../atoms/UnreadIndicator";
 import UserPhoto from "../../atoms/UserPhoto";
 import ContentCard from "../../ecosystems/ContentCard";
 import getImageUrl from "../../utils/getImageUrl";
@@ -65,6 +66,7 @@ class NewContent extends Component {
 					<View style={componentStyles.streamItemInfo}>
 						<View style={componentStyles.streamItemInfoInner}>
 							<Text style={[styles.itemTitle]} numberOfLines={1}>
+								<UnreadIndicator show={data.unread} />
 								{data.title}
 							</Text>
 							<Text style={componentStyles.streamItemContainer} numberOfLines={1}>

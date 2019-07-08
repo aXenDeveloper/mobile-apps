@@ -10,7 +10,6 @@ import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Place
 import StreamItem from "./StreamItem";
 import StreamComment from "./StreamComment";
 import ShadowedArea from "../../atoms/ShadowedArea";
-import UnreadComponent from "../../atoms/UnreadComponent";
 import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
 import componentStyles from "./styles";
@@ -107,7 +106,6 @@ class StreamCard extends PureComponent {
 							this.props.data.articleLang
 						)}
 					/>
-					<UnreadComponent active={this.props.data.unread} />
 				</ShadowedArea>
 			</TouchableHighlight>
 		);

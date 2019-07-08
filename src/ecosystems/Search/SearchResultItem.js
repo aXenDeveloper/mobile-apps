@@ -6,6 +6,7 @@ import Lang from "../../utils/Lang";
 import highlightTerms from "../../utils/highlightTerms";
 import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
+import UnreadIndicator from "../../atoms/UnreadIndicator";
 import UserPhoto from "../../atoms/UserPhoto";
 import relativeTime from "../../utils/RelativeTime";
 import styles, { styleVars } from "../../styles";
@@ -29,6 +30,7 @@ const SearchResultItem = props => {
 			)}
 			<View style={componentStyles.itemBody}>
 				<Text style={styles.itemTitle} numberOfLines={1}>
+					<UnreadIndicator show={props.data.unread} />
 					{highlightTerms(props.data.title, props.term, styles.highlightedText)}
 				</Text>
 				<Text style={styles.contentText} numberOfLines={2}>

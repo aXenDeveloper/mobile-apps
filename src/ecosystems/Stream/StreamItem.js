@@ -4,16 +4,17 @@ import { Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "re
 import Lang from "../../utils/Lang";
 import UserPhoto from "../../atoms/UserPhoto";
 import RichTextContent from "../../ecosystems/RichTextContent";
+import UnreadIndicator from "../../atoms/UnreadIndicator";
 import { ReactionOverview } from "../../ecosystems/Reaction";
 import relativeTime from "../../utils/RelativeTime";
 import styles from "../../styles";
 import componentStyles from "./styles";
 
-const StreamItem = (props) => {
+const StreamItem = props => {
 	return (
 		<React.Fragment>
 			<View style={componentStyles.streamHeader}>
-				<View style={[ componentStyles.streamMeta, styles.mbStandard ]}>
+				<View style={[componentStyles.streamMeta, styles.mbStandard]}>
 					<View style={componentStyles.streamMetaInner}>
 						<UserPhoto url={props.data.author.photo} size={20} />
 						<Text style={[componentStyles.streamMetaText, componentStyles.streamMetaAction]}>{props.metaString}</Text>
@@ -22,7 +23,10 @@ const StreamItem = (props) => {
 				</View>
 				<View style={componentStyles.streamItemInfo}>
 					<View style={[componentStyles.streamItemInfoInner, componentStyles.streamItemInfoInnerWithPhoto]}>
-						<Text style={styles.itemTitle}>{props.data.title}</Text>
+						<Text style={styles.itemTitle}>
+							<UnreadIndicator show={props.data.unread} />
+							{props.data.title}
+						</Text>
 						<Text style={componentStyles.streamItemContainer}>In {props.data.containerTitle}</Text>
 					</View>
 				</View>
@@ -34,21 +38,19 @@ const StreamItem = (props) => {
 						{props.data.content}
 					</Text>
 				)}
-				{( Boolean(props.data.reactions.length) || props.data.replies !== null ) && (
+				{(Boolean(props.data.reactions.length) || props.data.replies !== null) && (
 					<View style={componentStyles.streamFooter}>
-						{Boolean(props.data.reactions.length) && (
-							<ReactionOverview small style={componentStyles.reactionOverview} reactions={props.data.reactions} />
-						)}
+						{Boolean(props.data.reactions.length) && <ReactionOverview small style={componentStyles.reactionOverview} reactions={props.data.reactions} />}
 						{props.data.replies !== null && (
 							<Text style={styles.lightText} numberOfLines={1}>
 								{`${Lang.pluralize(Lang.get("replies"), props.data.replies)}`}
-							</Text> 
+							</Text>
 						)}
 					</View>
 				)}
 			</View>
 		</React.Fragment>
 	);
-}
+};
 
 export default StreamItem;

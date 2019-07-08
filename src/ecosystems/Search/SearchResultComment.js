@@ -4,6 +4,7 @@ import { Text, View, FlatList, StyleSheet, ActivityIndicator } from "react-nativ
 import Lang from "../../utils/Lang";
 import highlightTerms from "../../utils/highlightTerms";
 import UserPhoto from "../../atoms/UserPhoto";
+import UnreadIndicator from "../../atoms/UnreadIndicator";
 import relativeTime from "../../utils/RelativeTime";
 import styles, { styleVars } from "../../styles";
 
@@ -12,6 +13,7 @@ const SearchResultComment = props => (
 		<View style={componentStyles.commentHeader}>
 			<View style={componentStyles.commentItemInfo}>
 				<Text style={[styles.smallItemTitle, styles.mrWide, styles.flexReset]} numberOfLines={1}>
+					<UnreadIndicator show={props.data.unread} />
 					{highlightTerms(props.data.title, props.term, styles.highlightedText)}
 				</Text>
 				<Text style={[styles.lightText]}>{relativeTime.short(props.data.updated)}</Text>

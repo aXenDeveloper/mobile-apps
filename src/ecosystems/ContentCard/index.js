@@ -4,7 +4,6 @@ import FadeIn from "react-native-fade-in-image";
 
 import Lang from "../../utils/Lang";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
-import UnreadComponent from "../../atoms/UnreadComponent";
 import { styleVars } from "../../styles";
 
 export default class ContentCard extends Component {
@@ -41,7 +40,6 @@ export default class ContentCard extends Component {
 					{Boolean(this.props.image) && this.props.image}
 					{Boolean(this.props.content) && <View style={[componentStyles.streamFooter]}>{this.props.content}</View>}
 				</View>
-				<UnreadComponent active={this.props.unread} />
 			</TouchableOpacity>
 		);
 	}
@@ -58,7 +56,7 @@ const componentStyles = StyleSheet.create({
 		},
 		shadowOpacity: 1,
 		shadowRadius: 12,
-		marginBottom: 15
+		marginBottom: styleVars.spacing.wide
 	},
 	contentCardInner: {
 		borderRadius: 5,
@@ -68,15 +66,15 @@ const componentStyles = StyleSheet.create({
 		flexGrow: 1
 	},
 	streamHeader: {
-		paddingHorizontal: 12,
-		paddingTop: 12
+		paddingHorizontal: styleVars.spacing.wide,
+		paddingTop: styleVars.spacing.standard
 	},
 	streamMeta: {
 		width: "100%",
 		display: "flex",
 		flexDirection: "row",
 		justifyContent: "space-between",
-		paddingBottom: 12
+		paddingBottom: styleVars.spacing.wide
 	},
 	streamMetaInner: {
 		display: "flex",
@@ -85,8 +83,8 @@ const componentStyles = StyleSheet.create({
 		alignItems: "center"
 	},
 	streamFooter: {
-		paddingHorizontal: 12,
-		paddingBottom: 12,
+		paddingHorizontal: styleVars.spacing.wide,
+		paddingBottom: styleVars.spacing.wide,
 		flexGrow: 1
 	}
 });

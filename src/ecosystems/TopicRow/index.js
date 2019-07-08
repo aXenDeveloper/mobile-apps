@@ -10,7 +10,6 @@ import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Place
 import TopicInfo from "./TopicInfo";
 import QuestionInfo from "./QuestionInfo";
 import TopicStatus from "../../atoms/TopicStatus";
-import UnreadComponent from "../../atoms/UnreadComponent";
 import UserPhoto from "../../atoms/UserPhoto";
 import ContentRow from "../../ecosystems/ContentRow";
 import styles, { styleVars } from "../../styles";
@@ -92,7 +91,6 @@ class TopicRow extends Component {
 						)}
 					</View>
 				</View>
-				<UnreadComponent active={showAsUnread} />
 			</ContentRow>
 		);
 	}

@@ -1,54 +1,22 @@
-import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { Text, StyleSheet } from "react-native";
 
-import ViewMeasure from "./ViewMeasure";
-import { styleVars } from '../styles';
+import styles, { styleVars } from "../styles";
+import icons from "../icons";
 
-export default class UnreadIndicator extends Component {	
-	constructor(props) {
-		super(props);
+const UnreadIndicator = props => {
+	if (!props.show) {
+		return null;
 	}
 
-	render() {
-		return (
-			<ViewMeasure style={styles.wrapper} onLayout={this.props.onLayout} id='unread'>
-				<Text style={styles.text}>{this.props.label.toUpperCase()}</Text>
-			</ViewMeasure>
-		)
-	}
-}
+	return <Text style={[styles.mrTight, componentStyles.dot, props.style]}>{"\u2022" + " "}</Text>;
+};
 
-const styles = StyleSheet.create({
-	wrapper: {
-		marginHorizontal: 12,
-		marginBottom: 27,
-		marginTop: 20,
-		height: 1,
-		borderRadius: 5,
-		backgroundColor: '#9da5ad'
-	},
-	text: {
-		fontSize: 10,
-		fontWeight: "500",
-		backgroundColor: styleVars.appBackground,
-		color: '#9da5ad',
-		//paddingHorizontal: 9,
-		//width: 120,
-		textAlign: 'center',
-		position: 'absolute',
-		/*left: '50%',
-		marginLeft: -60,*/
-		paddingRight: 9,
-		left: 0,
-		top: -5
+export default UnreadIndicator;
+
+const componentStyles = StyleSheet.create({
+	dot: {
+		color: styleVars.accentColor,
+		fontSize: 20
 	}
 });
-
-UnreadIndicator.defaultProps = {
-	label: 'Unread Comments'
-};
-
-UnreadIndicator.propTypes = {
-	label: PropTypes.string
-};

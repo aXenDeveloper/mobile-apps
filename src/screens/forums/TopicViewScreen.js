@@ -39,7 +39,7 @@ import ReplyButton from "../../atoms/ReplyButton";
 import ViewMeasure from "../../atoms/ViewMeasure";
 import ContentItemStat from "../../atoms/ContentItemStat";
 import DummyTextInput from "../../atoms/DummyTextInput";
-import UnreadIndicator from "../../atoms/UnreadIndicator";
+import UnreadBar from "../../atoms/UnreadBar";
 import LoadMoreComments from "../../atoms/LoadMoreComments";
 import EndOfComments from "../../atoms/EndOfComments";
 import TopicStatus from "../../atoms/TopicStatus";
@@ -1067,7 +1067,7 @@ class TopicViewScreen extends Component {
 
 		// If this is the unread bar, just return it
 		if (item.id === "unread") {
-			return <UnreadIndicator label={Lang.get("unread_posts")} onLayout={this.onPostLayout} />;
+			return <UnreadBar label={Lang.get("unread_posts")} onLayout={this.onPostLayout} />;
 		} else if (item.id === "loginPrompt") {
 			return (
 				<LoginRegisterPrompt

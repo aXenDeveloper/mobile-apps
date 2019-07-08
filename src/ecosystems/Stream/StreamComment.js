@@ -3,12 +3,13 @@ import { Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "re
 
 import UserPhoto from "../../atoms/UserPhoto";
 import RichTextContent from "../../ecosystems/RichTextContent";
+import UnreadIndicator from "../../atoms/UnreadIndicator";
 import { ReactionOverview } from "../../ecosystems/Reaction";
 import relativeTime from "../../utils/RelativeTime";
 import componentStyles from "./styles";
 import styles from "../../styles";
 
-const StreamComment = (props) => (
+const StreamComment = props => (
 	<React.Fragment>
 		<View style={componentStyles.streamHeader}>
 			<View style={componentStyles.streamMeta}>
@@ -22,7 +23,10 @@ const StreamComment = (props) => (
 		<View style={[componentStyles.streamContent, componentStyles.streamContentIndented]}>
 			<View style={componentStyles.streamItemInfo}>
 				<View style={componentStyles.streamItemInfoInner}>
-					<Text style={styles.smallItemTitle}>{props.data.title}</Text>
+					<Text style={styles.smallItemTitle}>
+						<UnreadIndicator show={props.data.unread} />
+						{props.data.title}
+					</Text>
 					<Text style={componentStyles.streamItemContainer}>In {props.data.containerTitle}</Text>
 				</View>
 			</View>
