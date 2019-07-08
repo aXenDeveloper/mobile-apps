@@ -74,7 +74,7 @@ const componentStyles = StyleSheet.create({
 		display: "flex",
 		flexDirection: "row",
 		justifyContent: "space-between",
-		paddingBottom: styleVars.spacing.wide
+		paddingBottom: styleVars.spacing.standard
 	},
 	streamMetaInner: {
 		display: "flex",
