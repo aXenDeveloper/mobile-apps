@@ -219,6 +219,13 @@ const BootQuery = gql`
 					reason
 				}
 				mobileHomeBlocks
+				privacy_type
+				privacy_text
+				privacy_link
+				reg_rules
+				guidelines_type
+				guidelines_text
+				guidelines_link
 			}
 			loginHandlers {
 				id
