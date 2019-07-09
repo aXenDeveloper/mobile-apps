@@ -26,6 +26,7 @@ import RichTextContent from "../../ecosystems/RichTextContent";
 import { ProfileContent, ProfileTab, ProfileFollowers, ProfilePlaceholder, ProfileField } from "../../ecosystems/Profile";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 import getImageUrl from "../../utils/getImageUrl";
+import isIphoneX from "../../utils/isIphoneX";
 import styles, { styleVars } from "../../styles";
 
 const ProfileQuery = gql`
@@ -211,7 +212,7 @@ class ProfileScreen extends Component {
 	};
 
 	buildAnimations() {
-		const HEADER_HEIGHT = Platform.OS === "ios" ? 76 : 50;
+		const HEADER_HEIGHT = Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 50;
 		const SCROLL_HEIGHT = this.state.fullHeaderHeight - HEADER_HEIGHT;
 
 		// Interpolate methods for animations
@@ -425,7 +426,7 @@ class ProfileScreen extends Component {
 					>
 						<CustomHeader
 							content={
-								<View style={{ paddingTop: 26 }}>
+								<View style={{ paddingTop: isIphoneX() ? 46 : 26 }}>
 									<TwoLineHeader title={this.props.data.core.member.name} subtitle={this.props.data.core.member.group.name} />
 								</View>
 							}
