@@ -1,14 +1,6 @@
 import React from "react";
 import { Text, TouchableOpacity, Linking } from "react-native";
-
-import NavigationService from "../../utils/NavigationService";
-
-function isEmail(str) {
-	const pattern = new RegExp(
-		/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-	);
-	return pattern.test(str);
-}
+import isEmail from "validator/lib/isEmail";
 
 const EmailField = props => {
 	if (props.value.trim() === "") {
