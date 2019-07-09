@@ -104,7 +104,7 @@ class WebViewScreen extends Component {
 				}
 			}
 		} catch (err) {
-			console.error(err);
+			/* Ignore */
 		}
 	}
 
