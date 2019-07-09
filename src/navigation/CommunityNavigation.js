@@ -33,6 +33,8 @@ import ReportContentScreen from "../screens/core/ReportContentScreen";
 import LoginScreen from "../screens/core/LoginRegister/LoginScreen";
 import RegisterScreen from "../screens/core/LoginRegister/RegisterScreen";
 import WebViewScreen from "../screens/core/WebViewScreen";
+import LegalDocumentScreen from "../screens/core/LegalDocumentScreen";
+import LicensesScreen from "../screens/core/LicensesScreen";
 import AccountSettingsScreen from "../screens/core/AccountSettings/AccountSettingsScreen";
 // ----
 // Forums screens
@@ -98,7 +100,9 @@ class AppNavigation extends Component {
 					}
 				},
 				StreamView: { screen: StreamViewScreen },
-				WebView: { screen: WebViewScreen }
+				WebView: { screen: WebViewScreen },
+				LegalDocument: { screen: LegalDocumentScreen },
+				Licenses: { screen: LicensesScreen }
 			},
 			{
 				initialRouteName: initialRoute || "HomeScreen",

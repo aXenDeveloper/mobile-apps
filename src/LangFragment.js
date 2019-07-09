@@ -223,6 +223,11 @@ const LangFragment = gql`
 		notifications__profile_comment: phrase(key: "app_notifications__profile_comment")
 		notifications__profile_reply: phrase(key: "app_notifications__profile_reply")
 		notifications__new_status: phrase(key: "app_notifications__new_status")
+
+		legal_terms: phrase(key: "app_legal_terms")
+		legal_guidelines: phrase(key: "app_legal_guidelines")
+		legal_privacy: phrase(key: "app_legal_privacy")
+		third_party_licenses: phrase(key: "app_third_party_licenses")
 	}
 `;
 

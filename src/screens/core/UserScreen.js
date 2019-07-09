@@ -4,8 +4,11 @@ import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import { SafeAreaView } from "react-navigation";
 import gql from "graphql-tag";
+import ActionSheet from "react-native-actionsheet";
 import { graphql, withApollo, compose } from "react-apollo";
 import { connect } from "react-redux";
+import _ from "underscore";
+import isURL from "validator/lib/isURL";
 
 import { logOut } from "../../redux/actions/auth";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
@@ -13,6 +16,7 @@ import MenuItem from "../../atoms/MenuItem";
 import Lang from "../../utils/Lang";
 import UserPhoto from "../../atoms/UserPhoto";
 import getImageUrl from "../../utils/getImageUrl";
+import NavigationService from "../../utils/NavigationService";
 import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
 
@@ -52,12 +56,16 @@ class UserScreen extends Component {
 		super(props);
 
 		this._mounted = false;
+		this._actionSheetOptions = [];
+
 		this.state = {
 			loading: true
 		};
 
 		this.confirmLogOut = this.confirmLogOut.bind(this);
 		this.doLogOut = this.doLogOut.bind(this);
+		this.onPressLegal = this.onPressLegal.bind(this);
+		this.actionSheetPress = this.actionSheetPress.bind(this);
 	}
 
 	componentDidMount() {
@@ -72,6 +80,92 @@ class UserScreen extends Component {
 	componentDidUpdate(prevProps) {
 		if (this.props.auth.isAuthenticated !== prevProps.auth.isAuthenticated) {
 			this.updateDrawer();
+		}
+	}
+
+	/**
+	 * Handle tapping the 'Legal Notices' link
+	 *
+	 * @return 	void
+	 */
+	onPressLegal() {
+		this._actionSheet.show();
+	}
+
+	/**
+	 * Return the options to show in the legal notices actionsheet
+	 *
+	 * @return 	array
+	 */
+	getActionSheetOptions() {
+		const { settings } = this.props.site;
+		const options = [{ type: "cancel", title: Lang.get("cancel") }];
+
+		console.log(settings);
+
+		if (settings.privacy_type !== "NONE") {
+			if (settings.privacy_type === "INTERNAL" || (settings.privacy_type === "EXTERNAL" && isURL(settings.privacy_link))) {
+				options.push({
+					type: "privacy",
+					title: Lang.get("legal_privacy")
+				});
+			}
+		}
+
+		if (settings.guidelines_type !== "NONE") {
+			if (settings.guidelines_type === "INTERNAL" || (settings.guidelines_type === "EXTERNAL" && isURL(settings.guidelines_link))) {
+				options.push({
+					type: "guidelines",
+					title: Lang.get("legal_guidelines")
+				});
+			}
+		}
+
+		options.push({
+			type: "terms",
+			title: Lang.get("legal_terms")
+		});
+
+		options.push({
+			type: "licenses",
+			title: Lang.get("third_party_licenses")
+		});
+
+		this._actionSheetOptions = options;
+
+		// @todo language
+		return _.pluck(options, "title");
+	}
+
+	/**
+	 * Handle tapping an action sheet item. Triggers the relevant action.
+	 *
+	 * @param 	number 	i 	THe index of the item that was tapped
+	 * @return 	void
+	 */
+	actionSheetPress(i) {
+		const { settings } = this.props.site;
+		const itemPressed = this._actionSheetOptions[i];
+		const { type } = itemPressed;
+
+		if (type === "cancel") {
+			return;
+		} else if (type === "licenses") {
+			NavigationService.navigateToScreen("Licenses");
+		} else if (type === "terms") {
+			NavigationService.navigateToScreen("LegalDocument", {
+				type,
+				content: settings.reg_rules.original
+			});
+		} else {
+			if (settings[`${type}_type`] === "INTERNAL") {
+				NavigationService.navigateToScreen("LegalDocument", {
+					type,
+					content: settings[`${type}_text`].original
+				});
+			} else {
+				NavigationService.navigate(settings[`${type}_link`], {}, { forceBrowser: true });
+			}
 		}
 	}
 
@@ -259,8 +353,11 @@ class UserScreen extends Component {
 					</View>
 					<View style={componentStyles.footer}>
 						<Image source={icons.INFO_SOLID} resizeMode="contain" style={componentStyles.infoIcon} />
-						<Text style={[styles.veryLightText, componentStyles.footerText]}>{Lang.get("legal_notices")}</Text>
+						<TouchableOpacity onPress={this.onPressLegal}>
+							<Text style={[styles.veryLightText, componentStyles.footerText]}>{Lang.get("legal_notices")}</Text>
+						</TouchableOpacity>
 					</View>
+					<ActionSheet ref={o => (this._actionSheet = o)} cancelButtonIndex={0} options={this.getActionSheetOptions()} onPress={this.actionSheetPress} />
 				</SafeAreaView>
 			</View>
 		);
@@ -301,7 +398,8 @@ class UserScreen extends Component {
 
 export default compose(
 	connect(state => ({
-		auth: state.auth
+		auth: state.auth,
+		site: state.site
 	}))
 )(UserScreen);
 

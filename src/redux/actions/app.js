@@ -220,11 +220,17 @@ const BootQuery = gql`
 				}
 				mobileHomeBlocks
 				privacy_type
-				privacy_text
+				privacy_text {
+					original
+				}
 				privacy_link
-				reg_rules
+				reg_rules {
+					original
+				}
 				guidelines_type
-				guidelines_text
+				guidelines_text {
+					original
+				}
 				guidelines_link
 			}
 			loginHandlers {
