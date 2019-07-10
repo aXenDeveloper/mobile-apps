@@ -93,7 +93,8 @@ const styles = StyleSheet.create({
 		backgroundColor: "transparent",
 		paddingTop: 25,
 		shadowColor: "transparent",
-		borderBottomWidth: 0
+		borderBottomWidth: 0,
+		elevation: 0
 	},
 	altHeader: {
 		backgroundColor: "#252D31"
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
 		color: "white",
 		fontSize: 17,
 		backgroundColor: "transparent",
-		textAlign: "center",
+		//textAlign: "center",
 		fontWeight: "500"
 	},
 	headerBack: {
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
 	headerSubtitle: {
 		color: "white",
 		fontSize: 12,
-		textAlign: "center",
+		//textAlign: "center",
 		fontWeight: "300",
 		opacity: 0.9
 	},
@@ -563,22 +564,7 @@ const styles = StyleSheet.create({
 	pvStandard: { paddingVertical: styleVars.spacing.standard },
 	pvWide: { paddingVertical: styleVars.spacing.wide },
 	pvVeryWide: { paddingVertical: styleVars.spacing.veryWide },
-	pvExtraWide: { paddingVertical: styleVars.spacing.extraWide },
-
-	/* HEADER STYLES */
-	headerTitle: {
-		color: "white",
-		fontSize: 17,
-		fontWeight: "500",
-		textAlign: "center"
-	},
-	headerSubtitle: {
-		color: "white",
-		fontSize: 12,
-		textAlign: "center",
-		fontWeight: "300",
-		opacity: 0.9
-	}
+	pvExtraWide: { paddingVertical: styleVars.spacing.extraWide }
 });
 
 export default styles;

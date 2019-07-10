@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, StatusBar, SafeAreaView, TouchableHighlight, Button, StyleSheet } from "react-native";
+import { Text, View, StatusBar, SafeAreaView, TouchableHighlight, Button, StyleSheet, Platform } from "react-native";
 import { Header } from "react-navigation";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -51,26 +51,7 @@ export default class CustomHeader extends Component {
 
 const styles = StyleSheet.create({
 	headerWrap: {
-		height: isIphoneX() ? 96 : 76,
+		height: Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82,
 		overflow: "visible"
-	},
-	header: {
-		shadowColor: "transparent",
-		backgroundColor: "transparent",
-		borderBottomWidth: 0,
-		height: 36
-	},
-	title: {
-		color: styleVars.headerText,
-		fontSize: 17,
-		backgroundColor: "transparent",
-		textAlign: "center",
-		fontWeight: "500"
-	},
-	transparentHeader: {
-		position: "absolute",
-		top: 0,
-		left: 0,
-		right: 0
 	}
 });
