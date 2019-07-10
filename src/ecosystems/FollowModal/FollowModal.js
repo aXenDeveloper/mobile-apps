@@ -22,6 +22,9 @@ class FollowModal extends Component {
 			selectedFollowOption: selectedItem ? selectedItem.type : this.props.followData.followOptions[0].type,
 			isAnonymous
 		};
+
+		this.toggleNotificationOption = this.toggleNotificationOption.bind(this);
+		this.toggleAnonymousOption = this.toggleAnonymousOption.bind(this);
 	}
 
 	/*getFollowers() {
@@ -130,7 +133,7 @@ class FollowModal extends Component {
 			checked: this.state.selectedFollowOption === item.type
 		}));
 
-		return <CheckList type="radio" data={followOptions} onPress={this.toggleNotificationOption.bind(this)} />;
+		return <CheckList type="radio" data={followOptions} onPress={this.toggleNotificationOption} />;
 	}
 
 	/**
@@ -199,7 +202,7 @@ class FollowModal extends Component {
 		} else if (item.item === "followers") {
 			return this.getFollowers();
 		} else {
-			return <ToggleRow title={Lang.get("follow_anon")} value={this.state.isAnonymous} onToggle={this.toggleAnonymousOption.bind(this)} />;
+			return <ToggleRow title={Lang.get("follow_anon")} value={this.state.isAnonymous} onToggle={this.toggleAnonymousOption} />;
 		}
 	}
 
