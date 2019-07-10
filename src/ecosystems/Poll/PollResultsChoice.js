@@ -5,7 +5,6 @@ import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import ShadowedArea from "../../atoms/ShadowedArea";
-import PollChoiceResults from "./PollResultsChoice";
 import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
 
@@ -26,11 +25,11 @@ class PollResultsChoice extends Component {
 	}
 
 	getPercentage() {
-		if( this.props.data.votes === 0 || parseInt(this.props.totalVotes) === 0 ){
+		if (this.props.data.votes === 0 || parseInt(this.props.totalVotes) === 0) {
 			return 0;
 		}
-		
-		return Math.round( this.props.data.votes / parseInt(this.props.totalVotes) * 100 );
+
+		return Math.round((this.props.data.votes / parseInt(this.props.totalVotes)) * 100);
 	}
 
 	/**
