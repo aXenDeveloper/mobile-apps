@@ -11,9 +11,9 @@ import GoToMulti from "../../atoms/GoToMulti";
 import { Post } from "../../ecosystems/Post";
 import LargeTitle from "../../atoms/LargeTitle";
 import ErrorBox from "../../atoms/ErrorBox";
+import { NavBar } from "../../ecosystems/NavBar";
 import StreamCard from "../../ecosystems/Stream";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
-import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import getErrorMessage from "../../utils/getErrorMessage";
 import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
@@ -169,22 +169,6 @@ class HomeScreen extends Component {
 	}
 
 	/**
-	 * Memoization function that returns a handler for menu item onPress
-	 *
-	 * @param 	object 		item 		Item data
-	 * @return 	function
-	 */
-	getMenuPressHandler(item) {
-		if (_.isUndefined(this._menuHandlers[item.id])) {
-			this._menuHandlers[item.id] = () => {
-				NavigationService.navigate(item.url.full);
-			};
-		}
-
-		return this._menuHandlers[item.id];
-	}
-
-	/**
 	 * Build an array of navigation items
 	 *
 	 * @return 	array
@@ -199,65 +183,15 @@ class HomeScreen extends Component {
 		}));
 	}
 
-	/**
-	 * Render a nav bar item
-	 *
-	 * @param 	object 		item 		The nav bar item to render
-	 * @return 	void
-	 */
-	renderNavItem(item) {
-		let icon;
-
-		if (!_.isUndefined(item.icon) && !_.isUndefined(icons[item.icon])) {
-			icon = icons[item.icon];
-		} else if (NavigationService.isInternalUrl(item.url.full)) {
-			icon = icons.ARROW_RIGHT;
-		} else {
-			icon = icons.GLOBE;
-		}
-
-		return (
-			<TouchableOpacity style={componentStyles.navItem} onPress={this.getMenuPressHandler(item)}>
-				<React.Fragment>
-					<Image source={icon} resizeMode="contain" style={componentStyles.navItemIcon} />
-					<Text style={componentStyles.navItemText}>{item.title}</Text>
-				</React.Fragment>
-			</TouchableOpacity>
-		);
-	}
-
 	render() {
 		if (this.state.error) {
 			return <ErrorBox message={Lang.get("home_view_error")} refresh={() => this.refreshAfterError()} />;
 		} else {
-			const navConfig = this.getNavConfig();
-			let navigation;
-
-			if (navConfig.length) {
-				navigation = (
-					<FlatList
-						renderItem={({ item }) => this.renderNavItem(item)}
-						data={navConfig}
-						keyExtractor={item => item.key}
-						horizontal
-						showsHorizontalScrollIndicator={false}
-					/>
-				);
-			} else {
-				navigation = (
-					<PlaceholderContainer>
-						<PlaceholderElement width={120} top={0} left={15} height={40} style={{ borderRadius: 45 }} />
-						<PlaceholderElement width={120} top={0} left={145} height={40} style={{ borderRadius: 45 }} />
-						<PlaceholderElement width={120} top={0} left={275} height={40} style={{ borderRadius: 45 }} />
-					</PlaceholderContainer>
-				);
-			}
-
 			return (
 				<React.Fragment>
-					<View style={componentStyles.navigator}>{navigation}</View>
+					<NavBar items={this.getNavConfig()} />
 					{this.getLoginRegPrompt()}
-					<ScrollView style={componentStyles.browseWrapper} refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}>
+					<ScrollView refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}>
 						{HomeSectionsToShow.map(section => {
 							if (_.isUndefined(HomeSections[section])) {
 								return null;
@@ -289,36 +223,3 @@ export default connect(state => ({
 	site: state.site,
 	auth: state.auth
 }))(withApollo(HomeScreen));
-
-const componentStyles = StyleSheet.create({
-	navigator: {
-		backgroundColor: "#fff",
-		borderBottomWidth: 1,
-		borderBottomColor: "rgba(0,0,0,0.1)",
-		paddingVertical: styleVars.spacing.standard,
-		height: 64
-	},
-	navItem: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
-		marginLeft: styleVars.spacing.standard,
-		backgroundColor: "#F5F5F5",
-		paddingHorizontal: styleVars.spacing.wide,
-		paddingVertical: styleVars.spacing.standard,
-		borderRadius: 30
-	},
-	navItemText: {
-		fontSize: styleVars.fontSizes.small,
-		fontWeight: "500",
-		lineHeight: 13,
-		color: styleVars.tabActive
-	},
-	navItemIcon: {
-		width: 14,
-		height: 14,
-		marginRight: styleVars.spacing.tight,
-		tintColor: styleVars.tabActive,
-		marginTop: -1
-	}
-});
