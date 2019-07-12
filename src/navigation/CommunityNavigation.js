@@ -53,6 +53,7 @@ import { NavigationTabIcon, NavigationTabNotification } from "../ecosystems/Navi
 import CustomHeader from "../ecosystems/CustomHeader";
 import getImageUrl from "../utils/getImageUrl";
 import styles, { styleVars, tabStyles } from "../styles";
+import { navigationIcons } from "../icons";
 import Lang from "../utils/Lang";
 
 class AppNavigation extends Component {
@@ -256,16 +257,14 @@ class AppNavigation extends Component {
 			screen: this._CommunityStack,
 			navigationOptions: {
 				tabBarLabel: "Home",
-				tabBarIcon: props => <NavigationTabIcon {...props} active={require("../../resources/home_active.png")} inactive={require("../../resources/home.png")} />
+				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.HOME_ACTIVE} inactive={navigationIcons.HOME} />
 			}
 		};
 		const Search = {
 			screen: this._SearchStack,
 			navigationOptions: {
 				tabBarLabel: "Search",
-				tabBarIcon: props => (
-					<NavigationTabIcon {...props} active={require("../../resources/search_active.png")} inactive={require("../../resources/search.png")} />
-				)
+				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.SEARCH_ACTIVE} inactive={navigationIcons.SEARCH} />
 			}
 		};
 		const Streams = {
@@ -275,22 +274,14 @@ class AppNavigation extends Component {
 				header: props => {
 					return <CustomHeader {...props} title="Forums" />;
 				},
-				tabBarIcon: props => (
-					<NavigationTabIcon {...props} active={require("../../resources/activity_active.png")} inactive={require("../../resources/activity.png")} />
-				)
+				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.STREAMS_ACTIVE} inactive={navigationIcons.STREAMS} />
 			}
 		};
 		const Notifications = {
 			screen: this._NotificationStack,
 			navigationOptions: navigation => ({
 				tabBarLabel: "Notifications",
-				tabBarIcon: props => (
-					<NavigationTabNotification
-						{...props}
-						active={require("../../resources/notification_active.png")}
-						inactive={require("../../resources/notification.png")}
-					/>
-				)
+				tabBarIcon: props => <NavigationTabNotification {...props} active={navigationIcons.NOTIFICATIONS_ACTIVE} inactive={navigationIcons.NOTIFICATIONS} />
 			})
 		};
 		const User = {
@@ -308,9 +299,7 @@ class AppNavigation extends Component {
 			screen: this._LoginRegisterStack,
 			navigationOptions: navigation => ({
 				tabBarLabel: "Sign In/Up",
-				tabBarIcon: props => (
-					<NavigationTabIcon {...props} active={require("../../resources/login_active.png")} inactive={require("../../resources/login.png")} />
-				),
+				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.LOGIN_ACTIVE} inactive={navigationIcons.LOGIN} />,
 				tabBarOnPress: (tab, jumpToIndex) => {
 					NavigationService.launchAuth();
 					//navigation.navigation.navigate("LoginModal");
@@ -343,8 +332,8 @@ class AppNavigation extends Component {
 			tabBarPosition: "bottom",
 			tabBarOptions: {
 				showLabel: true,
-				inactiveTintColor: styleVars.tabInactive,
-				activeTintColor: styleVars.tabActive,
+				inactiveTintColor: styleVars.primaryTabInactive,
+				activeTintColor: styleVars.primaryTabActive,
 				style: styles.primaryTabBar
 			}
 		});
@@ -363,14 +352,7 @@ class AppNavigation extends Component {
 				</View>
 			);
 		} else {
-			return (
-				<NavigationTabIcon
-					focused={focused}
-					tintColor={tintColor}
-					active={require("../../resources/login_active.png")}
-					inactive={require("../../resources/login.png")}
-				/>
-			);
+			return <NavigationTabIcon focused={focused} tintColor={tintColor} active={navigationIcons.LOGIN_ACTIVE} inactive={navigationIcons.LOGIN} />;
 		}
 	}
 

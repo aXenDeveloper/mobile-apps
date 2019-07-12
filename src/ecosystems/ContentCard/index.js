@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, Image, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
+import { Text, View, Image, StyleSheet, TouchableHighlight, TouchableOpacity, Platform } from "react-native";
 import FadeIn from "react-native-fade-in-image";
 
 import Lang from "../../utils/Lang";
@@ -47,7 +47,7 @@ export default class ContentCard extends Component {
 
 const componentStyles = StyleSheet.create({
 	contentCard: {
-		borderRadius: 5,
+		borderRadius: Platform.OS === "ios" ? 5 : 2,
 		backgroundColor: "#fff",
 		shadowColor: "rgba(0,0,0,0.05)",
 		shadowOffset: {
@@ -56,10 +56,11 @@ const componentStyles = StyleSheet.create({
 		},
 		shadowOpacity: 1,
 		shadowRadius: 12,
+		elevation: 1,
 		marginBottom: styleVars.spacing.wide
 	},
 	contentCardInner: {
-		borderRadius: 5,
+		borderRadius: Platform.OS === "ios" ? 5 : 2,
 		overflow: "hidden",
 		display: "flex",
 		justifyContent: "flex-start",

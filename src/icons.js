@@ -74,4 +74,17 @@ export const illustrations = {
 	SEARCH_LIST: require("../resources/illustration_search.png")
 };
 
+export const navigationIcons = {
+	HOME: require("../resources/navigation/home.png"),
+	HOME_ACTIVE: require("../resources/navigation/home_active.png"),
+	SEARCH: require("../resources/navigation/search.png"),
+	SEARCH_ACTIVE: require("../resources/navigation/search_active.png"),
+	STREAMS: require("../resources/navigation/activity.png"),
+	STREAMS_ACTIVE: require("../resources/navigation/activity_active.png"),
+	NOTIFICATIONS: require("../resources/navigation/notification.png"),
+	NOTIFICATIONS_ACTIVE: require("../resources/navigation/notification_active.png"),
+	LOGIN: require("../resources/navigation/login.png"),
+	LOGIN_ACTIVE: require("../resources/navigation/login_active.png")
+};
+
 export default icons;
