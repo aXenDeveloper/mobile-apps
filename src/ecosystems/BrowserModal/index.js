@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, WebView } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
+import { WebView } from "react-native-webview";
 import Modal from "react-native-modal";
 import { compose } from "react-apollo";
 import { connect } from "react-redux";
@@ -28,7 +29,7 @@ class BrowserModal extends Component {
 						<Text>Toolbar</Text>
 					</View>
 					<View style={[styles.flex]}>
-						<WebView source={{uri: this.props.app.webview.url }} style={{ flex: 1 }} />
+						<WebView source={{ uri: this.props.app.webview.url }} style={{ flex: 1 }} />
 					</View>
 				</View>
 			</Modal>

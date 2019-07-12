@@ -1,5 +1,6 @@
 import React, { Fragment, Component } from "react";
-import { View, TextInput, Text, KeyboardAvoidingView, Button, WebView, StyleSheet, LayoutAnimation } from "react-native";
+import { View, TextInput, Text, KeyboardAvoidingView, Button, StyleSheet, LayoutAnimation } from "react-native";
+import { WebView } from 'react-native-webview';
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import Modal from "react-native-modal";

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, WebView, FlatList, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, FlatList, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { compose } from "react-apollo";
 import { connect } from "react-redux";
 import _ from "underscore";

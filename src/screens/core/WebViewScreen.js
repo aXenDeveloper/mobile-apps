@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Text, View, WebView } from "react-native";
+import { Text, View } from "react-native";
+import { WebView } from "react-native-webview";
 import { compose } from "react-apollo";
 import { connect } from "react-redux";
 import _ from "underscore";
