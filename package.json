@@ -37,6 +37,7 @@
 		"apollo-link-http": "^1.5.14",
 		"apollo-link-logger": "^1.2.3",
 		"buffer": "^5.2.1",
+		"deepmerge": "^4.0.0",
 		"expo": "^33.0.0",
 		"expo-image-manipulator": "^5.0.1",
 		"expo-image-picker": "^5.0.2",

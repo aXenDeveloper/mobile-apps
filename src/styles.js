@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 
 import { isIphoneX } from "./utils/isIphoneX";
 
@@ -14,6 +14,8 @@ export const styleVars = {
 	appBackground: "#F2F4F7",
 	tabActive: "#37454B",
 	tabInactive: "#6e797e",
+	primaryTabActive: Platform.OS === "ios" ? "#37454B" : "#3370AA",
+	primaryTabInactive: "#6e797e",
 	citationTextStyle: `color: #222222; fontSize: 13; fontWeight: bold;`,
 	placeholderColors: ["#ededed", "#f5f5f5"],
 	touchColor: "rgba(0,0,0,0.05)",
@@ -88,7 +90,7 @@ export const styleVars = {
 };
 
 /* REUSABLE STYLE CLASSES */
-const styles = StyleSheet.create({
+const baseStyles = StyleSheet.create({
 	header: {
 		backgroundColor: "transparent",
 		paddingTop: 25,
@@ -116,21 +118,14 @@ const styles = StyleSheet.create({
 		fontWeight: "300",
 		opacity: 0.9
 	},
-	tabIcon: {
-		width: 25,
-		height: 25
+	primaryTabBar: {
+		backgroundColor: "#fff",
+		height: 55,
+		paddingBottom: styleVars.spacing.tight,
+		paddingTop: styleVars.spacing.tight
 	},
 	userTabIcon: {
 		borderRadius: 12.5
-	},
-	primaryTabBar: {
-		/*backgroundColor: '#37454B',*/
-		//backgroundColor: "#252D31"
-		backgroundColor: "#fff",
-		height: isIphoneX() ? 60 : 55,
-		paddingBottom: styleVars.spacing.veryTight,
-		paddingTop: styleVars.spacing.tight,
-		borderTopColor: "rgba(0,0,0,0.1)"
 	},
 	swipeItemWrap: {
 		backgroundColor: styleVars.accentColor
@@ -567,6 +562,39 @@ const styles = StyleSheet.create({
 	pvExtraWide: { paddingVertical: styleVars.spacing.extraWide }
 });
 
+const platformStyles = {
+	ios: StyleSheet.create({
+		primaryTabBar: {
+			borderTopColor: "rgba(0,0,0,0.1)"
+		},
+		tabIcon: {
+			width: 25,
+			height: 25
+		}
+	}),
+	iosX: StyleSheet.create({
+		primaryTabBar: {
+			height: 60
+		}
+	}),
+	android: StyleSheet.create({
+		primaryTabBar: {
+			elevation: 2,
+			borderTopWidth: 0
+		},
+		tabIcon: {
+			width: 18,
+			height: 18
+		}
+	})
+};
+
+const deepmerge = require("deepmerge");
+const styles = deepmerge(
+	baseStyles,
+	Platform.OS === "ios" ? platformStyles.ios : platformStyles.android, // Add iOS or android styles as appropriate
+	Platform.OS === "ios" && isIphoneX() ? platformStyles.iosX : {} // If this is iPhone X, *also* add those (on top of regular iOS styles)
+);
 export default styles;
 
 /* STYLES FOR THE RICH TEXT COMPONENT */
