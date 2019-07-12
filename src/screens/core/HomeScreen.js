@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, Image, ScrollView, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl, LayoutAnimation } from "react-native";
+import { Text, Image, ScrollView, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl, LayoutAnimation, Dimensions } from "react-native";
 import gql from "graphql-tag";
 import { graphql, withApollo } from "react-apollo";
 import _ from "underscore";
@@ -55,6 +55,22 @@ class HomeScreen extends Component {
 
 	componentDidMount() {
 		this.startHomeQuery();
+	}
+
+	/**
+	 * Calculates the width of cards on the homescreen, ensuring some of the next card is
+	 * visible (providing the value is within bounds)
+	 *
+	 * @return 	number
+	 */
+	calculateCardWidth() {
+		const MAX_WIDTH = 320;
+		const MIN_WIDTH = 200;
+		const { width } = Dimensions.get("window");
+		const fullCardWidth = width - styleVars.spacing.wide * 2;
+		const idealWidth = fullCardWidth - fullCardWidth / 15;
+
+		return Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, idealWidth));
 	}
 
 	/**
@@ -205,7 +221,7 @@ class HomeScreen extends Component {
 										loading={this.state.loading}
 										refreshing={this.state.refreshing}
 										data={this.state.data}
-										cardWidth={HomeScreen.CARD_WIDTH}
+										cardWidth={this.calculateCardWidth()}
 										navigation={this.props.navigation}
 									/>
 								</React.Fragment>
