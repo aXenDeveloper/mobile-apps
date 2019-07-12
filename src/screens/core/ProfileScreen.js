@@ -26,7 +26,7 @@ import RichTextContent from "../../ecosystems/RichTextContent";
 import { ProfileContent, ProfileTab, ProfileFollowers, ProfilePlaceholder, ProfileField } from "../../ecosystems/Profile";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 import getImageUrl from "../../utils/getImageUrl";
-import isIphoneX from "../../utils/isIphoneX";
+import { isIphoneX } from "../../utils/isIphoneX";
 import styles, { styleVars } from "../../styles";
 
 const ProfileQuery = gql`
