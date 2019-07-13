@@ -4,8 +4,8 @@ import { isIphoneX } from "./utils/isIphoneX";
 
 /* VARIABLES USED THROUGHOUT THE APP */
 export const styleVars = {
-	text: "#141823",
-	lightText: "#6d727b",
+	text: "#464646",
+	lightText: "#898989",
 	veryLightText: "#9ba3ab",
 	reverseText: "#fff",
 	accentColor: "#3370AA",
