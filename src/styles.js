@@ -366,6 +366,10 @@ const baseStyles = StyleSheet.create({
 	},
 
 	/* Typography */
+	largeTitle: {
+		fontSize: 26,
+		color: "#141823"
+	},
 	contentTitle: {
 		fontSize: styleVars.fontSizes.extraLarge,
 		fontWeight: "600",

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { Text, Image, View, StyleSheet } from "react-native";
+import { Text, Image, View, StyleSheet, Platform } from "react-native";
 
-import { styleVars } from "../styles";
+import styles, { styleVars } from "../styles";
 
 export default class LargeTitle extends Component {
 	constructor(props) {
@@ -10,8 +10,8 @@ export default class LargeTitle extends Component {
 
 	render() {
 		return (
-			<View style={componentStyles.wrapper}>
-				<Text style={componentStyles.largeTitle}>{this.props.children}</Text>
+			<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyStart, styles.mhWide, styles.mtVeryWide, styles.mbWide, componentStyles.wrapper]}>
+				<Text style={[styles.largeTitle, componentStyles.largeTitle]}>{this.props.children}</Text>
 			</View>
 		);
 	}
@@ -20,15 +20,6 @@ export default class LargeTitle extends Component {
 //{this.props.icon && <View style={componentStyles.iconWrap}><Image source={this.props.icon} style={componentStyles.icon} resizeMode='contain' /></View>}
 
 const componentStyles = StyleSheet.create({
-	wrapper: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "flex-start",
-		marginHorizontal: styleVars.spacing.wide,
-		marginTop: styleVars.spacing.veryWide,
-		marginBottom: styleVars.spacing.wide
-	},
 	iconWrap: {
 		backgroundColor: "#009BA2",
 		borderRadius: 50,
@@ -43,11 +34,5 @@ const componentStyles = StyleSheet.create({
 		width: 18,
 		height: 18,
 		tintColor: "#fff"
-	},
-	largeTitle: {
-		fontWeight: "bold",
-		fontSize: 26,
-		color: "#000",
-		letterSpacing: -0.5
 	}
 });
