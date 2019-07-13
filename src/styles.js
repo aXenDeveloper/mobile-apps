@@ -104,9 +104,10 @@ const baseStyles = StyleSheet.create({
 	headerTitle: {
 		color: "white",
 		fontSize: 17,
-		backgroundColor: "transparent",
-		//textAlign: "center",
-		fontWeight: "500"
+		backgroundColor: "transparent"
+	},
+	headerIcon: {
+		tintColor: "white"
 	},
 	headerBack: {
 		color: "white"
@@ -574,6 +575,14 @@ const platformStyles = {
 		tabIcon: {
 			width: 25,
 			height: 25
+		},
+		headerTitle: {
+			fontWeight: "500",
+			textAlign: "center"
+		},
+		largeTitle: {
+			fontWeight: "bold",
+			letterSpacing: -0.5
 		}
 	}),
 	iosX: StyleSheet.create({
@@ -589,6 +598,13 @@ const platformStyles = {
 		tabIcon: {
 			width: 18,
 			height: 18
+		},
+		headerTitle: {
+			fontWeight: "400"
+		},
+		largeTitle: {
+			fontWeight: "500",
+			letterSpacing: -0.5
 		}
 	})
 };

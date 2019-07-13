@@ -1,38 +1,32 @@
-import React, { Component } from 'react';
-import { Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { Component } from "react";
+import { Text, TouchableOpacity, StyleSheet, Image, Platform } from "react-native";
 import _ from "underscore";
 
-import styles, { styleVars } from '../styles';
+import styles, { styleVars } from "../styles";
+import icons from "../icons";
 
-const icons = {
-	settings: require('../../resources/settings.png')
-};
-
-const HeaderButton = (props) => {
-	let imageToUse = null;
-
-	if( props.icon ){
-		imageToUse = ( !_.isUndefined(icons[ props.icon ]) ? icons[ props.icon ] : props.icon );
-	}
-
-	return (
-		<TouchableOpacity style={[componentStyles.wrapper, props.position == 'left' ? styles.mlWide : styles.mrWide, props.style]} onPress={props.onPress || null}>
-			{imageToUse !== null && <Image source={imageToUse} style={[ componentStyles.icon, { width: props.size || 26, height: props.size || 26 } ]} />}
-			{Boolean(props.label) && <Text style={componentStyles.label}>{props.label}</Text>}
-		</TouchableOpacity>
-	);
-}
+const HeaderButton = props => (
+	<TouchableOpacity style={[componentStyles.wrapper, props.position == "left" ? styles.mlWide : styles.mrWide, props.style]} onPress={props.onPress || null}>
+		{Boolean(props.icon) && (
+			<Image source={props.icon} style={[styles.headerIcon, props.size ? { width: props.size, height: props.size } : componentStyles.defaultSize]} />
+		)}
+		{Boolean(props.label) && <Text style={[styles.headerTitle]}>{props.label}</Text>}
+	</TouchableOpacity>
+);
 
 export default HeaderButton;
 
 const componentStyles = StyleSheet.create({
-	icon: {
-		tintColor: styleVars.headerText,
-		width: 26,
-		height: 26
-	},
-	label: {
-		color: styleVars.headerText,
-		fontSize: 17
+	defaultSize: {
+		...Platform.select({
+			ios: {
+				width: 26,
+				height: 26
+			},
+			android: {
+				width: 22,
+				height: 22
+			}
+		})
 	}
 });

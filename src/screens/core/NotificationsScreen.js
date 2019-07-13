@@ -15,6 +15,7 @@ import ErrorBox from "../../atoms/ErrorBox";
 import HeaderButton from "../../atoms/HeaderButton";
 import { updateNotificationCount } from "../../redux/actions/user";
 import EndOfComments from "../../atoms/EndOfComments";
+import icons from "../../icons";
 
 /* Main query, passed as a HOC */
 const NotificationQuery = gql`
@@ -49,7 +50,7 @@ class NotificationsScreen extends Component {
 		headerLeft: Expo.Constants.manifest.extra.multi ? { headerLeft: <GoToMulti /> } : null,
 		headerRight: (
 			<HeaderButton
-				icon="settings"
+				icon={icons.COG}
 				onPress={
 					!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.onPressSettings) ? navigation.state.params.onPressSettings : null
 				}
