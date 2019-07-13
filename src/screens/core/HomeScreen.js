@@ -32,11 +32,9 @@ class HomeScreen extends Component {
 	static navigationOptions = ({ navigation }) => {
 		return {
 			title: "Community",
-			headerLeft: <GoToMulti />
+			...(Expo.Constants.manifest.extra.multi ? { headerLeft: <GoToMulti /> } : null)
 		};
 	};
-
-	static CARD_WIDTH = 285;
 
 	constructor(props) {
 		super(props);

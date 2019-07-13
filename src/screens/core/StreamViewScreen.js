@@ -35,11 +35,6 @@ const StreamViewQuery = gql`
 const LIMIT = 25;
 
 const headerStyles = StyleSheet.create({
-	row: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center"
-	},
 	dropdownArrow: {
 		width: 13,
 		height: 13,
@@ -50,13 +45,13 @@ const headerStyles = StyleSheet.create({
 
 class StreamViewScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
-		headerLeft: <GoToMulti />,
+		headerLeft: Expo.Constants.manifest.extra.multi ? { headerLeft: <GoToMulti /> } : null,
 		headerTitle: (
 			<TouchableOpacity
 				onPress={!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.onPressTitle) ? navigation.state.params.onPressTitle : null}
 			>
-				<View style={headerStyles.row}>
-					<Text style={[styles.headerTitle, headerStyles.title]} numberOfLines={1}>
+				<View style={[styles.flexRow, styles.flexAlignCenter, styles.phWide]}>
+					<Text style={[styles.headerTitle]} numberOfLines={1}>
 						{!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.streamTitle) ? navigation.state.params.streamTitle : ""}
 					</Text>
 					{!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.moreAvailable) && navigation.state.params.moreAvailable && (
