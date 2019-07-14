@@ -1,10 +1,11 @@
 import React, { Fragment, Component } from "react";
 import { View, TextInput, Text, KeyboardAvoidingView, Button, StyleSheet, LayoutAnimation } from "react-native";
-import { WebView } from 'react-native-webview';
+import { Asset } from "expo-asset";
+import { WebView } from "react-native-webview";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import Modal from "react-native-modal";
-import { FileSystem } from "expo";
+import * as FileSystem from "expo-file-system";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
@@ -61,6 +62,7 @@ class QuillEditor extends Component {
 		super(props);
 		this.webview = null;
 		this._mentionHandlers = {};
+		this._editorFile = null;
 
 		// Set up initial state for our formatting options. Format types with options are
 		// created as camelCase keys in the state, e.g. listUnordered or listOrdered
@@ -75,6 +77,8 @@ class QuillEditor extends Component {
 				}
 			}
 		});
+
+		this.getEditorHtml();
 
 		this.state = {
 			debug: [],
@@ -99,6 +103,24 @@ class QuillEditor extends Component {
 				height: props.height
 			};
 		}
+	}
+
+	/**
+	 * Since react-native-webkit requires a URI source file, we need to download the
+	 * local HTMl file as an asset and get the localUri. This won't change so no need
+	 * to put it in state, but we will toggle our loading status.
+	 *
+	 * @return 	void
+	 */
+	async getEditorHtml() {
+		await Asset.fromModule(EDITOR_VIEW).downloadAsync();
+		const file = Asset.fromModule(EDITOR_VIEW);
+
+		this._editorFile = file.localUri;
+
+		this.setState({
+			loading: false
+		});
 	}
 
 	/**
@@ -713,17 +735,21 @@ class QuillEditor extends Component {
 					</View>
 				</Modal>
 				<View ref={measurer => (this.measurer = measurer)} style={{ height: 1, backgroundColor: "#fff" }} />
-				<WebView
-					source={EDITOR_VIEW}
-					onMessage={this.onMessage.bind(this)}
-					ref={webview => (this.webview = webview)}
-					javaScriptEnabled={true}
-					injectedJavaScript={injectedJavaScript}
-					mixedContentMode="always"
-					style={[editorStyles.editor, this.inlineStyles]}
-					hideAccessory={true}
-					useWebKit={true}
-				/>
+				{!this.state.loading && (
+					<WebView
+						source={{ uri: this._editorFile }}
+						originWhitelist={["*"]}
+						onMessage={this.onMessage.bind(this)}
+						ref={webview => (this.webview = webview)}
+						javaScriptEnabled={true}
+						injectedJavaScript={injectedJavaScript}
+						mixedContentMode="always"
+						style={[editorStyles.editor, this.inlineStyles]}
+						hideAccessory={true}
+						useWebKit={true}
+						allowFileAccess={true}
+					/>
+				)}
 			</View>
 		);
 	}
