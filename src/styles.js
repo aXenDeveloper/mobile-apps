@@ -583,6 +583,9 @@ const platformStyles = {
 			fontWeight: "500",
 			textAlign: "center"
 		},
+		headerSubtitle: {
+			textAlign: "center"
+		},
 		largeTitle: {
 			fontWeight: "bold",
 			letterSpacing: -0.5
