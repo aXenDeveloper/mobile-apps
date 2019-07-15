@@ -423,6 +423,9 @@ const baseStyles = StyleSheet.create({
 	accentText: {
 		color: styleVars.accentColor
 	},
+	standardLineHeight: {
+		lineHeight: styleVars.lineHeight.standard
+	},
 	centerText: {
 		textAlign: "center"
 	},

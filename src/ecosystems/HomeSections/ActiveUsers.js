@@ -56,7 +56,10 @@ class ActiveUsers extends Component {
 		const usersToShow = this.props.data.core.activeUsers.users.slice(0, 14);
 
 		return usersToShow.map(user => (
-			<View style={componentStyles.cell} key={user.user.name}>
+			<View
+				style={[styles.flexColumn, styles.flexJustifyCenter, styles.flexAlignStart, styles.mrStandard, styles.mbTight, componentStyles.cell]}
+				key={user.user.name}
+			>
 				<TouchableOpacity onPress={this.getPressHandler(user.user)}>
 					<UserPhoto url={user.user.photo || null} size={36} online={true} anon={user.anonymous} />
 				</TouchableOpacity>
@@ -89,8 +92,8 @@ class ActiveUsers extends Component {
 
 		if (activeUsersData.count - activeUsersData.users.length > 0) {
 			return (
-				<View style={componentStyles.andMore}>
-					<Text style={componentStyles.andMoreText}>+{Lang.pluralize(Lang.get("x_more"), activeUsersData.count - activeUsersData.users.length)}</Text>
+				<View style={[styles.flex, styles.flexJustifyCenter, styles.flexAlignCenter, componentStyles.andMore]}>
+					<Text style={[styles.lightText, styles.smallText]}>+{Lang.pluralize(Lang.get("x_more"), activeUsersData.count - activeUsersData.users.length)}</Text>
 				</View>
 			);
 		}
@@ -159,7 +162,7 @@ class ActiveUsers extends Component {
 
 			return (
 				<Animated.View key={user.user.id} style={[componentStyles.tickerItem, { opacity: opacity }]}>
-					<Text style={componentStyles.tickerText} numberOfLines={1}>
+					<Text style={[styles.text, styles.smallText]} numberOfLines={1}>
 						<Text style={styles.lightText}>{relativeTime.short(user.timestamp)} &nbsp;</Text>
 						<Text>{user.lang}</Text>
 					</Text>
@@ -183,21 +186,23 @@ class ActiveUsers extends Component {
 
 		if (!this.props.data.core.activeUsers.count) {
 			return (
-				<View style={[componentStyles.wrapper, styles.row]}>
+				<View style={[styles.row, styles.phWide, styles.ptStandard, styles.pbVeryTight, styles.mbWide, componentStyles.wrapper]}>
 					<Text style={[styles.lightText, styles.mbTight]}>{Lang.get("no_users_online")}</Text>
 				</View>
 			);
 		} else if (this.props.data.core.activeUsers.count && !this.props.data.core.activeUsers.users.length) {
 			return (
-				<View style={[componentStyles.wrapper, styles.row]}>
+				<View style={[styles.row, styles.phWide, styles.ptStandard, styles.pbVeryTight, styles.mbWide, componentStyles.wrapper]}>
 					<Text style={[styles.lightText, styles.mbTight]}>{Lang.pluralize(Lang.get("x_guests_online"), this.props.data.core.activeUsers.count)}</Text>
 				</View>
 			);
 		} else {
 			return (
-				<View style={[componentStyles.wrapper, styles.row]}>
-					{Boolean(this.state.tickerReady) && <View style={componentStyles.tickerWrapper}>{this.getTicker()}</View>}
-					<View style={componentStyles.cellContainer}>
+				<View style={[styles.row, styles.phWide, styles.ptStandard, styles.pbVeryTight, styles.mbWide, componentStyles.wrapper]}>
+					{Boolean(this.state.tickerReady) && (
+						<View style={[styles.pbTight, styles.mbStandard, styles.bBorder, styles.lightBorder, componentStyles.tickerWrapper]}>{this.getTicker()}</View>
+					)}
+					<View style={[styles.flexRow, styles.flexWrap, styles.flexJustifyBetween]}>
 						{this.getCells()}
 						{this.getMoreBubble()}
 					</View>
@@ -211,53 +216,18 @@ export default ActiveUsers;
 
 const componentStyles = StyleSheet.create({
 	wrapper: {
-		backgroundColor: "#fff",
-		paddingHorizontal: styleVars.spacing.wide,
-		paddingTop: styleVars.spacing.standard,
-		paddingBottom: styleVars.spacing.veryTight,
-		marginBottom: 15
-	},
-	cellContainer: {
-		display: "flex",
-		flexDirection: "row",
-		flexWrap: "wrap",
-		justifyContent: "space-between"
-	},
-	cell: {
-		display: "flex",
-		flexDirection: "column",
-		justifyContent: "center",
-		alignItems: "flex-start",
-		marginRight: styleVars.spacing.standard,
-		marginBottom: styleVars.spacing.tight
-	},
-	username: {
-		fontSize: 12
+		backgroundColor: "#fff"
 	},
 	andMore: {
 		height: 36,
-		borderRadius: 36,
-		display: "flex",
-		justifyContent: "center",
-		alignItems: "center"
-	},
-	andMoreText: {
-		color: "#888",
-		fontSize: 13
+		borderRadius: 36
 	},
 	tickerWrapper: {
-		paddingBottom: styleVars.spacing.tight,
-		borderBottomWidth: 1,
-		borderBottomColor: "#f0f0f0",
-		marginBottom: styleVars.spacing.standard,
 		height: 26
 	},
 	tickerItem: {
 		position: "absolute",
 		left: 0,
 		right: 0
-	},
-	tickerText: {
-		fontSize: 13
 	}
 });

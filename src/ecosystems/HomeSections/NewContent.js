@@ -51,7 +51,7 @@ class NewContent extends Component {
 			header: (
 				<React.Fragment>
 					<UserPhoto url={data.author.photo} size={20} />
-					<Text style={[componentStyles.streamMetaText, componentStyles.streamMetaAction]} numberOfLines={1}>
+					<Text style={[styles.smallText, styles.mlVeryTight]} numberOfLines={1}>
 						{Lang.buildActionString(data.isComment, data.isReview, data.firstCommentRequired, data.author.name, data.articleLang)}
 					</Text>
 				</React.Fragment>
@@ -63,19 +63,19 @@ class NewContent extends Component {
 			) : null,
 			content: (
 				<React.Fragment>
-					<View style={componentStyles.streamItemInfo}>
+					<View style={[styles.flexRow]}>
 						<View style={componentStyles.streamItemInfoInner}>
 							<Text style={[styles.itemTitle]} numberOfLines={1}>
 								<UnreadIndicator show={data.unread} />
 								{data.title}
 							</Text>
-							<Text style={componentStyles.streamItemContainer} numberOfLines={1}>
+							<Text style={[styles.lightText]} numberOfLines={1}>
 								In {data.containerTitle}
 							</Text>
 						</View>
 					</View>
-					<View style={componentStyles.snippetWrapper}>
-						<Text style={componentStyles.snippetText} numberOfLines={imageToUse ? 4 : 3}>
+					<View style={[styles.flex, styles.mtTight]}>
+						<Text style={[styles.text, styles.standardText, styles.standardLineHeight]} numberOfLines={imageToUse ? 4 : 2}>
 							{data.content}
 						</Text>
 					</View>
@@ -193,30 +193,6 @@ class NewContent extends Component {
 export default NewContent;
 
 const componentStyles = StyleSheet.create({
-	streamMetaText: {
-		fontSize: styleVars.fontSizes.small
-	},
-	streamMetaAction: {
-		marginLeft: 5,
-		letterSpacing: -0.2
-	},
-	streamItemInfo: {
-		flexDirection: "row"
-	},
-	streamItemInfoInnerWithPhoto: {
-		marginLeft: 9
-	},
-	streamItemContainer: {
-		color: "#8F8F8F"
-	},
-	snippetWrapper: {
-		flex: 1,
-		marginTop: 9
-	},
-	snippetText: {
-		fontSize: styleVars.fontSizes.standard,
-		lineHeight: styleVars.lineHeight.standard
-	},
 	imageContainer: {
 		height: 135,
 		width: "100%",

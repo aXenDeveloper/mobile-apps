@@ -101,8 +101,6 @@ class UserScreen extends Component {
 		const { settings } = this.props.site;
 		const options = [{ type: "cancel", title: Lang.get("cancel") }];
 
-		console.log(settings);
-
 		if (settings.privacy_type !== "NONE") {
 			if (settings.privacy_type === "INTERNAL" || (settings.privacy_type === "EXTERNAL" && isURL(settings.privacy_link))) {
 				options.push({

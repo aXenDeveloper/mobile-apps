@@ -79,7 +79,7 @@ class PopularContributors extends Component {
 	render() {
 		if (this.props.loading) {
 			return (
-				<View style={[componentStyles.wrapper, styles.row, styles.pvTight]}>
+				<View style={[styles.row, styles.pvTight, styles.mbWide, componentStyles.wrapper]}>
 					<PlaceholderRepeater repeat={5}>
 						<PlaceholderContainer>
 							<PlaceholderElement top={15} left={12} width={12} height={20} />
@@ -94,7 +94,7 @@ class PopularContributors extends Component {
 		}
 
 		return (
-			<View style={[componentStyles.wrapper, styles.row, styles.pvTight]}>
+			<View style={[styles.row, styles.pvTight, styles.mbWide, componentStyles.wrapper]}>
 				{this.props.data.core.popularContributors.length ? (
 					this.props.data.core.popularContributors.map((row, idx) => this.getRow(row, idx))
 				) : (
@@ -111,8 +111,7 @@ export default PopularContributors;
 
 const componentStyles = StyleSheet.create({
 	wrapper: {
-		backgroundColor: "#fff",
-		marginBottom: 15
+		backgroundColor: "#fff"
 	},
 	number: {
 		width: 20

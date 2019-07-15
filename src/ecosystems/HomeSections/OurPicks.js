@@ -52,26 +52,34 @@ class OurPicks extends Component {
 			),
 			content: (
 				<React.Fragment>
-					<View style={componentStyles.streamItemInfo}>
+					<View style={styles.flexRow}>
 						<View style={componentStyles.streamItemInfoInner}>
-							<Text style={[componentStyles.streamItemTitle, componentStyles.streamItemTitleSmall]} numberOfLines={2}>
+							<Text style={[styles.itemTitle]} numberOfLines={2}>
 								{data.title}
 							</Text>
 						</View>
 					</View>
-					<View style={componentStyles.snippetWrapper}>
-						<Text style={componentStyles.snippetText} numberOfLines={3}>
+					<View style={[styles.mtTight, styles.flexGrow]}>
+						<Text style={[styles.text, styles.standardText, styles.standardLineHeight]} numberOfLines={3}>
 							{data.description}
 						</Text>
 					</View>
 					{data.reputation && (Boolean(data.reputation.reactions.length) || (Boolean(data.dataCount) && Boolean(data.dataCount.count))) && (
-						<View style={componentStyles.infoFooter}>
+						<View
+							style={[
+								styles.flexRow,
+								styles.flexAlignCenter,
+								styles.flexJustifyBetween,
+								styles.mtStandard,
+								styles.ptVeryTight,
+								styles.tBorder,
+								styles.lightBorder
+							]}
+						>
 							{Boolean(data.reputation.reactions.length) && (
-								<ReactionOverview style={[styles.mtTight, componentStyles.reactionOverview]} reactions={data.reputation.reactions} />
+								<ReactionOverview style={[styles.mtTight, styles.mlStandard]} reactions={data.reputation.reactions} />
 							)}
-							{Boolean(data.dataCount) && Boolean(data.dataCount.count) && (
-								<Text style={[componentStyles.dataCount, styles.lightText]}>{data.dataCount.words}</Text>
-							)}
+							{Boolean(data.dataCount) && Boolean(data.dataCount.count) && <Text style={[styles.mtVeryTight, styles.lightText]}>{data.dataCount.words}</Text>}
 						</View>
 					)}
 				</React.Fragment>
@@ -151,39 +159,6 @@ class OurPicks extends Component {
 export default OurPicks;
 
 const componentStyles = StyleSheet.create({
-	streamMetaText: {
-		fontSize: styleVars.fontSizes.small
-	},
-	streamMetaAction: {
-		marginLeft: 5,
-		letterSpacing: -0.2
-	},
-	streamItemInfo: {
-		flex: 1,
-		flexDirection: "row"
-	},
-	streamItemInfoInnerWithPhoto: {
-		marginLeft: 9
-	},
-	streamItemTitle: {
-		fontSize: styleVars.fontSizes.large,
-		fontWeight: "600",
-		color: "#171717"
-	},
-	streamItemTitleSmall: {
-		fontSize: styleVars.fontSizes.large
-	},
-	streamItemContainer: {
-		color: "#8F8F8F"
-	},
-	snippetWrapper: {
-		marginTop: 9,
-		flexGrow: 1
-	},
-	snippetText: {
-		fontSize: styleVars.fontSizes.standard,
-		lineHeight: styleVars.lineHeight.standard
-	},
 	imageContainer: {
 		height: 135,
 		width: "100%",
@@ -192,19 +167,6 @@ const componentStyles = StyleSheet.create({
 	image: {
 		flex: 1,
 		width: "100%"
-	},
-	infoFooter: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		marginTop: styleVars.spacing.standard,
-		paddingTop: styleVars.spacing.veryTight,
-		borderTopWidth: 1,
-		borderTopColor: "#f0f0f0"
-	},
-	reactionOverview: {
-		marginLeft: styleVars.spacing.wide
 	},
 	dataCount: {
 		marginTop: 6
