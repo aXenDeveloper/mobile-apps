@@ -406,13 +406,26 @@ class QuillComponent extends Component {
 			...data
 		});
 
-		if (document.hasOwnProperty("postMessage")) {
+		try {
+			// see https://github.com/expo/expo/issues/4463#issuecomment-499743757
+			if (window.ReactABI33_0_0NativeWebView) {
+				window.ReactABI33_0_0NativeWebView.postMessage(messageToSend);
+			} else if (window.ReactNativeWebView) {
+				window.ReactNativeWebView.postMessage(messageToSend);
+			} else {
+				throw new Error("No postMessage method available");
+			}
+		} catch (err) {
+			this.addDebug(`Error sending message to window.ReactNativeWebView`);
+		}
+
+		/*if (document.hasOwnProperty("postMessage")) {
 			document.postMessage(messageToSend, "*");
 		} else if (window.hasOwnProperty("postMessage")) {
 			window.postMessage(messageToSend, "*");
 		} else {
 			this.addDebug(`ERROR: unable to send message`, false);
-		}
+		}*/
 	}
 
 	/**

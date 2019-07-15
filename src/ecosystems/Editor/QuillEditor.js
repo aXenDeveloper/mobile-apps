@@ -93,6 +93,7 @@ class QuillEditor extends Component {
 		};
 
 		this.blur = this.blur.bind(this);
+		this.onMessage = this.onMessage.bind(this);
 
 		// Optionally set a height on the webview
 		// We need this if we're showing the editor in a scrollview,
@@ -694,8 +695,13 @@ class QuillEditor extends Component {
 	render() {
 		const placeholder = this.props.placeholder ? `"${this.props.placeholder}"` : `null`;
 		const injectedJavaScript = `
+			if (!window.ReactNativeWebView) {
+				window.ReactNativeWebView = window['ReactABI33_0_0NativeWebView'];
+			}
+
 			window._PLACEHOLDER = ${placeholder};
 			window._readyToGo = true;
+			true;
 		`;
 
 		return (
@@ -739,7 +745,7 @@ class QuillEditor extends Component {
 					<WebView
 						source={{ uri: this._editorFile }}
 						originWhitelist={["*"]}
-						onMessage={this.onMessage.bind(this)}
+						onMessage={this.onMessage}
 						ref={webview => (this.webview = webview)}
 						javaScriptEnabled={true}
 						injectedJavaScript={injectedJavaScript}
