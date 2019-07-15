@@ -62,7 +62,7 @@ class HomeScreen extends Component {
 	 * @return 	number
 	 */
 	calculateCardWidth() {
-		const MAX_WIDTH = 320;
+		const MAX_WIDTH = 285;
 		const MIN_WIDTH = 200;
 		const { width } = Dimensions.get("window");
 		const fullCardWidth = width - styleVars.spacing.wide * 2;
