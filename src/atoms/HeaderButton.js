@@ -7,10 +7,10 @@ import icons from "../icons";
 
 const HeaderButton = props => (
 	<TouchableOpacity style={[componentStyles.wrapper, props.position == "left" ? styles.mlWide : styles.mrWide, props.style]} onPress={props.onPress || null}>
-		{Boolean(props.icon) && Platform.OS === "android" && (
+		{Boolean(props.icon) && (Platform.OS === "android" || props.alwaysShowIcon) && (
 			<Image source={props.icon} style={[styles.headerIcon, props.size ? { width: props.size, height: props.size } : componentStyles.defaultSize]} />
 		)}
-		{Boolean(props.label) && (!Platform.OS === "android" && !props.alwaysShowIcon) && <Text style={[styles.headerTitle]}>{props.label}</Text>}
+		{Boolean(props.label) && (Platform.OS !== "android" || !props.alwaysShowIcon) && <Text style={[styles.headerTitle]}>{props.label}</Text>}
 	</TouchableOpacity>
 );
 
