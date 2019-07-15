@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, Alert, Button, TextInput, View, KeyboardAvoidingView, ActivityIndicator } from "react-native";
+import { Text, Alert, Button, TextInput, View, KeyboardAvoidingView, ActivityIndicator, Platform } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
 import { NavigationActions, Header } from "react-navigation";
@@ -12,6 +12,7 @@ import { UPLOAD_STATUS } from "../../redux/actions/editor";
 import HeaderButton from "../../atoms/HeaderButton";
 import uniqueID from "../../utils/UniqueID";
 import styles from "../../styles";
+import icons from "../../icons";
 
 const CreateTopicMutation = gql`
 	mutation CreateTopicMutation($forumID: ID!, $title: String!, $content: String!, $tags: [String], $postKey: String!) {
@@ -45,8 +46,10 @@ class CreateTopicScreen extends Component {
 				"New Topic"
 			),
 			headerTintColor: "white",
-			headerLeft: navigation.getParam("submitting") ? null : <HeaderButton position="left" onPress={navigation.getParam("cancelTopic")} label="Cancel" />,
-			headerRight: navigation.getParam("submitting") ? null : <HeaderButton position="right" onPress={navigation.getParam("submitTopic")} label="Post" />
+			//headerLeft: navigation.getParam("submitting") ? null : <HeaderButton position="left" onPress={navigation.getParam("cancelTopic")} label="Cancel" />,
+			headerRight: navigation.getParam("submitting") ? null : (
+				<HeaderButton position="right" onPress={navigation.getParam("submitTopic")} label="Post" icon={icons.SUBMIT} />
+			)
 		};
 	};
 

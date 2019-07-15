@@ -16,6 +16,7 @@ import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import styles from "../../styles";
+import icons from "../../icons";
 
 const ReplyTopicMutation = gql`
 	mutation ReplyTopicMutation($topicID: ID!, $content: String!, $replyingTo: ID) {
@@ -40,8 +41,10 @@ class ReplyTopicScreen extends Component {
 				"Reply"
 			),
 			headerTintColor: "white",
-			headerLeft: navigation.getParam("submitting") ? null : <HeaderButton position="left" label="Cancel" onPress={navigation.getParam("cancelReply")} />,
-			headerRight: navigation.getParam("submitting") ? null : <HeaderButton position="right" label="Post" onPress={navigation.getParam("submitReply")} />
+			//headerLeft: navigation.getParam("submitting") ? null : <HeaderButton position="left" label="Cancel" onPress={navigation.getParam("cancelReply")} />,
+			headerRight: navigation.getParam("submitting") ? null : (
+				<HeaderButton position="right" label="Post" icon={icons.SUBMIT} onPress={navigation.getParam("submitReply")} />
+			)
 		};
 	};
 
