@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Alert, StyleSheet, AsyncStorage } from "react-native";
+import { View, Alert, StyleSheet, AsyncStorage, Platform } from "react-native";
 import { Linking, Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import { connect } from "react-redux";
@@ -24,6 +24,7 @@ import { PromptModal, LocalNotification } from "../../ecosystems/PushNotificatio
 import CommunityRoot from "./CommunityRoot";
 import AppLoading from "../../atoms/AppLoading";
 import NavigationService from "../../utils/NavigationService";
+import NotificationChannels from "../../NotificationChannels.json";
 import styles, { styleVars } from "../../styles";
 
 class AppRoot extends Component {
@@ -57,6 +58,7 @@ class AppRoot extends Component {
 	 */
 	async componentDidMount() {
 		// Push notification stuff
+		this.setUpNotificationChannels();
 		this.maybeDoNotificationPrompt();
 		this._notificationSubscription = Notifications.addListener(this.handleNotification);
 
@@ -98,6 +100,27 @@ class AppRoot extends Component {
 	 */
 	componentWillUnmount() {
 		clearTimeout(this._notificationPromptTimeout);
+	}
+
+	/**
+	 * Add the Android notification channels we need
+	 *
+	 * @return 	void
+	 */
+	setUpNotificationChannels() {
+		if (Platform.OS !== "android") {
+			return;
+		}
+
+		NotificationChannels.forEach(channel => {
+			Notifications.createChannelAndroidAsync(channel.id, {
+				name: channel.name,
+				...(channel.description ? { description: channel.description } : {}),
+				...(channel.sound ? { sound: channel.sound } : { sound: false })
+			});
+		});
+
+		console.log(`Set up ${NotificationChannels.length} Android notification channels`);
 	}
 
 	/**
