@@ -37,6 +37,7 @@
 			"bundleIdentifier": "com.invisioncommunity.app"
 		},
 		"android": {
+			"googleServicesFile": "./google-services.json",
 			"package": "com.invisioncommunity.app"
 		},
 		"splash": {
