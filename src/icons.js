@@ -23,6 +23,7 @@ const icons = {
 	HEART_SOLID: require("../resources/heart_solid.png"),
 	IMAGE: require("../resources/image.png"),
 	INFO_SOLID: require("../resources/info_filled.png"),
+	INFO: require("../resources/info.png"),
 	ITALIC: require("../resources/italic.png"),
 	LINK: require("../resources/link.png"),
 	LIST_ORDERED: require("../resources/list_ordered.png"),
