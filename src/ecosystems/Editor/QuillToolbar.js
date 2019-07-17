@@ -183,11 +183,13 @@ class QuillToolbar extends Component {
 	 * @return 	void
 	 */
 	getFormattingHandler(button, option = null) {
-		if (_.isUndefined(this._formattingHandlers[button])) {
-			this._formattingHandlers[button] = () => this.toggleFormatting(button, option);
+		const buttonID = `${button}${option ? "-" + option : ""}`;
+
+		if (_.isUndefined(this._formattingHandlers[buttonID])) {
+			this._formattingHandlers[buttonID] = () => this.toggleFormatting(button, option);
 		}
 
-		return this._formattingHandlers[button];
+		return this._formattingHandlers[buttonID];
 	}
 
 	getActionSheetOptions() {
