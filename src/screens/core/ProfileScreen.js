@@ -411,13 +411,15 @@ class ProfileScreen extends Component {
 			return (
 				<View>
 					<StatusBar barStyle="light-content" translucent />
-					<FollowModal
-						isVisible={this.state.followModalVisible}
-						followData={this.props.data.core.member.follow}
-						onFollow={this.onFollow}
-						onUnfollow={this.onUnfollow}
-						close={this.toggleFollowModal}
-					/>
+					{this.props.auth.isAuthenticated && (
+						<FollowModal
+							isVisible={this.state.followModalVisible}
+							followData={this.props.data.core.member.follow}
+							onFollow={this.onFollow}
+							onUnfollow={this.onUnfollow}
+							close={this.toggleFollowModal}
+						/>
+					)}
 					<Animated.View
 						style={[componentStyles.fixedProfileHeader, { opacity: this.fixedHeaderOpacity }]}
 						onLayout={e => {
@@ -622,6 +624,7 @@ export default compose(
 		})
 	}),
 	connect(state => ({
+		auth: state.auth,
 		user: state.user,
 		site: state.site
 	})),
