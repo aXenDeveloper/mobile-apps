@@ -499,6 +499,9 @@ export const launchAuth = () => {
 			console.log("LAUNCH_AUTH: Couldn't save updated authStore");
 		}
 
+		console.log(`LAUNCH_AUTH: Url ${urlToOpen}${urlQuery.join("&")}`);
+		console.log(`LAUNCH_AUTH: schemeUrl: ${schemeUrl}`);
+
 		// Launch Expo's webbrowser authentication flow which will handle receiving the redirect for us
 		WebBrowser.openAuthSessionAsync(`${urlToOpen}${urlQuery.join("&")}`, schemeUrl).then(resolved => {
 			if (resolved.type !== "success") {
