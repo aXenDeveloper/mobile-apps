@@ -44,7 +44,7 @@ const formattingOptions = {
 const MentionQuery = gql`
 	query MentionQuery($term: String) {
 		core {
-			search(term: $term, type: core_members, orderBy: name, limit: 10) {
+			search(term: $term, type: core_members, orderBy: name, orderDir: ASC, limit: 10) {
 				results {
 					... on core_Member {
 						id
