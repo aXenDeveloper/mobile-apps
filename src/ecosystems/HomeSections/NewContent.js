@@ -50,8 +50,8 @@ class NewContent extends Component {
 		const cardPieces = {
 			header: (
 				<React.Fragment>
-					<UserPhoto url={data.author.photo} size={20} />
-					<Text style={[styles.smallText, styles.mlVeryTight]} numberOfLines={1}>
+					<UserPhoto url={data.author.photo} size={30} />
+					<Text style={[styles.smallText, styles.mlTight]} numberOfLines={1}>
 						{Lang.buildActionString(data.isComment, data.isReview, data.firstCommentRequired, data.author.name, data.articleLang)}
 					</Text>
 				</React.Fragment>
@@ -88,7 +88,7 @@ class NewContent extends Component {
 				style={{
 					width: this.props.cardWidth,
 					marginLeft: styleVars.spacing.wide,
-					height: imageToUse ? 315 : 150
+					height: imageToUse ? 315 : 160
 				}}
 				key={data.indexID}
 				onPress={this.getPressHandler(data.indexID, data)}
