@@ -4,26 +4,19 @@ import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
 import HeaderBackButton from "react-navigation";
-//import ScrollableTabView, { ScrollableTabBar } from "react-native-scrollable-tab-view";
-import { List, ListItem as Item, ScrollableTab, Tab, TabHeading, Tabs, Title } from "native-base";
+import { TabView, TabBar } from "react-native-tab-view";
 import { Header } from "react-navigation";
 import FadeIn from "react-native-fade-in-image";
 
 import Lang from "../../utils/Lang";
 import { pushToast } from "../../redux/actions/app";
-import CustomTab from "../../atoms/CustomTab";
 import ErrorBox from "../../atoms/ErrorBox";
 import getErrorMessage from "../../utils/getErrorMessage";
-import FollowButton from "../../atoms/FollowButton";
 import Button from "../../atoms/Button";
-import ListItem from "../../atoms/ListItem";
-import SectionHeader from "../../atoms/SectionHeader";
-import relativeTime from "../../utils/RelativeTime";
 import UserPhoto from "../../atoms/UserPhoto";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
-import RichTextContent from "../../ecosystems/RichTextContent";
-import { ProfileContent, ProfileTab, ProfileFollowers, ProfilePlaceholder, ProfileField } from "../../ecosystems/Profile";
+import { ProfileContent, ProfileOverview, ProfileEditorField, ProfileFollowers, ProfilePlaceholder, ProfileField } from "../../ecosystems/Profile";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 import getImageUrl from "../../utils/getImageUrl";
 import { isIphoneX } from "../../utils/isIphoneX";
@@ -90,11 +83,16 @@ class ProfileScreen extends Component {
 		this._nScroll.addListener(Animated.event([{ value: this._scroll }], { useNativeDriver: false }));
 
 		this.state = {
-			tabHeight: 400,
-			activeTab: 0,
 			fullHeaderHeight: 250,
-			followModalVisible: false
+			followModalVisible: false,
+			index: 0
 		};
+
+		this.onFollow = this.onFollow.bind(this);
+		this.onUnfollow = this.onUnfollow.bind(this);
+		this.toggleFollowModal = this.toggleFollowModal.bind(this);
+		this.renderScene = this.renderScene.bind(this);
+		this.renderTabBar = this.renderTabBar.bind(this);
 
 		this.buildAnimations();
 	}
@@ -123,7 +121,7 @@ class ProfileScreen extends Component {
 	 * @param 	object 		followData 		Object with the selected values from the modal
 	 * @return 	void
 	 */
-	onFollow = followData => {
+	onFollow(followData) {
 		this.setState({
 			followModalVisible: false
 		});
@@ -163,14 +161,14 @@ class ProfileScreen extends Component {
 				Alert.alert(Lang.get("error"), Lang.get("error_following"), [{ text: Lang.get("ok") }], { cancelable: false });
 			}
 		}, 300);
-	};
+	}
 
 	/**
 	 * Event handler for unfollowing the forum
 	 *
 	 * @return 	void
 	 */
-	onUnfollow = () => {
+	onUnfollow() {
 		this.setState({
 			followModalVisible: false
 		});
@@ -209,7 +207,7 @@ class ProfileScreen extends Component {
 				Alert.alert(Lang.get("error"), Lang.get("error_unfollowing"), [{ text: Lang.get("ok") }], { cancelable: false });
 			}
 		}, 300);
-	};
+	}
 
 	buildAnimations() {
 		const HEADER_HEIGHT = Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 50;
@@ -238,29 +236,6 @@ class ProfileScreen extends Component {
 			inputRange: [0, SCROLL_HEIGHT / 2, SCROLL_HEIGHT * 0.8],
 			outputRange: [0, 0.1, 1]
 		});
-	}
-
-	tabContent(x, i) {
-		return (
-			<View style={{ height: this.state.height }}>
-				<List
-					onLayout={({
-						nativeEvent: {
-							layout: { height }
-						}
-					}) => {
-						this._heights[i] = height;
-						if (this.state.activeTab === i) this.setState({ height });
-					}}
-				>
-					{new Array(x).fill(null).map((_, i) => (
-						<Item key={i}>
-							<Text>Item {i}</Text>
-						</Item>
-					))}
-				</List>
-			</View>
-		);
 	}
 
 	/**
@@ -340,14 +315,14 @@ class ProfileScreen extends Component {
 	}
 
 	getAdditionalTabs() {
-		const additionalTabs = [];
+		const additionalTabs = {};
 
 		if (this.props.data.core.member.customFieldGroups.length) {
 			this.props.data.core.member.customFieldGroups.forEach(group => {
 				if (group.fields.length) {
 					group.fields.forEach(field => {
 						if (field.type == "Editor") {
-							additionalTabs.push(field);
+							additionalTabs[`field_${field.id}`] = field;
 						}
 					});
 				}
@@ -359,33 +334,66 @@ class ProfileScreen extends Component {
 
 	renderTabBar = props => {
 		return (
-			<Animated.View style={{ transform: [{ translateY: this.tabY }], zIndex: 1 }}>
-				<ScrollableTab
+			<Animated.View style={{ transform: [{ translateY: this.tabY }], backgroundColor: "red", zIndex: 1 }}>
+				<TabBar
 					{...props}
-					prerenderingSiblingsNumber={3}
-					renderTab={(name, page, active, onPress, onLayout) => (
-						<CustomTab key={name} name={name} page={page} active={active} onPress={onPress} onLayout={onLayout} />
-					)}
+					indicatorStyle={{ backgroundColor: "white" }}
+					scrollEnabled
+					bounces
+					tabStyle={{ minWidth: 50 }}
+					style={styles.tabBar}
+					indicatorStyle={styles.tabBarIndicator}
+					activeColor={styleVars.accentColor}
+					inactiveColor={styleVars.text}
+					getLabelText={({ route }) => route.title}
+					labelStyle={styles.tabBarLabelStyle}
 				/>
 			</Animated.View>
 		);
 	};
-	/*onTabLayout = ({height, tabIndex}) => {
-		const windowDims = Dimensions.get('window');
-		const HEADER_HEIGHT = Platform.OS === "ios" ? 76 : 50;
 
-		this._heights[tabIndex] = Math.max( (windowDims.height - this.state.smallHeaderHeight - HEADER_HEIGHT), this._heights[tabIndex] );
+	getTabRoutes() {
+		const additionalTabs = Object.entries(this.getAdditionalTabs());
+		const routes = [{ key: "overview", title: Lang.get("profile_overview") }, { key: "content", title: Lang.get("profile_content") }];
 
-		//console.log("Got height " + height + " for tabIndex " + tabIndex);
-
-		if( this.state.activeTab == tabIndex ){
-			//console.log("Tab " + tabIndex + " is active, set height state to " + Math.max( (windowDims.height - this.state.smallHeaderHeight - HEADER_HEIGHT), this._heights[tabIndex] ) );
-
-			this.setState({
-				tabHeight: this._heights[tabIndex]
+		if (this.props.data.core.member.allowFollow) {
+			routes.push({
+				key: "followers",
+				title: "Followers"
 			});
 		}
-	}*/
+
+		if (additionalTabs.length) {
+			additionalTabs.forEach(([key, tab]) => {
+				routes.push({
+					key,
+					title: tab.title
+				});
+			});
+		}
+
+		return routes;
+	}
+
+	renderScene({ route }) {
+		const routes = this.getTabRoutes();
+		const thisIndex = routes.findIndex(r => r.key === route.key);
+		const routeShouldBeActive = this.state.index === thisIndex;
+
+		switch (route.key) {
+			case "overview":
+				return <ProfileOverview profileData={this.getProfileFields()} isActive={routeShouldBeActive} />;
+			case "content":
+				return <ProfileContent showResults member={this.props.data.core.member.id} isActive={routeShouldBeActive} />;
+			case "followers":
+				return <ProfileFollowers id={this.props.data.core.member.id} isActive={routeShouldBeActive} />;
+		}
+
+		if (route.key.startsWith("field_")) {
+			const additionalTabs = this.getAdditionalTabs();
+			return <ProfileEditorField content={additionalTabs[route.key].value} isActive={routeShouldBeActive} />;
+		}
+	}
 
 	render() {
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
@@ -405,8 +413,10 @@ class ProfileScreen extends Component {
 				showFollowButton = true;
 			}
 
+			console.log(this.props.data.core.member);
+
 			// Additional tabs for custom profile fields
-			const additionalTabs = this.getAdditionalTabs();
+			//const additionalTabs = this.getAdditionalTabs();
 
 			return (
 				<View>
@@ -492,44 +502,19 @@ class ProfileScreen extends Component {
 								</View>
 							</Animated.View>
 						</Animated.View>
-						<Tabs
-							renderTabBar={this.renderTabBar}
-							onChangeTab={({ i }) => {
-								this.setState({
-									tabHeight: this._heights[i],
-									activeTab: i
-								});
+						<TabView
+							navigationState={{
+								index: this.state.index,
+								routes: this.getTabRoutes()
 							}}
-							tabBarUnderlineStyle={styleVars.tabBar.underline}
-						>
-							<ProfileTab tabIndex={0} heading={Lang.get("profile_overview")} active={this.state.activeTab == 0} minHeight={this.state.minHeight}>
-								<SectionList
-									scrollEnabled={false}
-									renderItem={({ item }) => <ProfileField key={item.key} title={item.data.title} value={item.data.value} type={item.data.type} />}
-									renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
-									sections={this.getProfileFields()}
-								/>
-							</ProfileTab>
-							<ProfileTab tabIndex={1} heading={Lang.get("profile_content")} active={this.state.activeTab == 1} minHeight={this.state.minHeight}>
-								<ProfileContent showResults={this.state.activeTab == 1} member={this.props.data.core.member.id} />
-							</ProfileTab>
-							{additionalTabs.map((tab, idx) => (
-								<ProfileTab key={tab.title} tabIndex={idx + 2} heading={tab.title} active={this.state.activeTab == idx + 2} minHeight={this.state.minHeight}>
-									<RichTextContent style={componentStyles.editorField}>{tab.content}</RichTextContent>
-								</ProfileTab>
-							))}
-							{Boolean(this.props.data.core.member.allowFollow) && (
-								<ProfileTab
-									key="followers"
-									tabIndex={additionalTabs.length + 2}
-									heading="Followers"
-									active={this.state.activeTab == additionalTabs.length + 2}
-									minHeight={this.state.minHeight}
-								>
-									<ProfileFollowers id={this.props.data.core.member.id} />
-								</ProfileTab>
-							)}
-						</Tabs>
+							onIndexChange={index => this.setState({ index })}
+							renderScene={this.renderScene}
+							renderTabBar={this.renderTabBar}
+							initialLayout={{
+								width: Dimensions.get("window").width
+							}}
+							lazy
+						/>
 					</Animated.ScrollView>
 				</View>
 			);

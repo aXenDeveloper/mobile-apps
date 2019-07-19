@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { compose } from "react-apollo";
 import { withNavigation } from "react-navigation";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 import UserPhoto from "../../atoms/UserPhoto";
 import ContentRow from "../../ecosystems/ContentRow";
@@ -17,7 +17,7 @@ class MemberRow extends Component {
 	}
 
 	onPress() {
-		if( this.props.preOnPressCallback ){
+		if (this.props.preOnPressCallback) {
 			this.props.preOnPressCallback();
 		}
 
@@ -46,7 +46,7 @@ class MemberRow extends Component {
 		}
 
 		return (
-			<ContentRow style={componentStyles.row} onPress={this.onPress}>
+			<ContentRow style={componentStyles.row} onPress={this.onPress} showArrow>
 				<UserPhoto url={this.props.photo} size={36} />
 				<View style={componentStyles.container}>
 					<Text style={styles.itemTitle}>{this.props.name}</Text>
@@ -55,11 +55,9 @@ class MemberRow extends Component {
 			</ContentRow>
 		);
 	}
-};
+}
 
-export default compose(
-	withNavigation
-)(MemberRow);
+export default compose(withNavigation)(MemberRow);
 
 const componentStyles = StyleSheet.create({
 	row: {
@@ -74,7 +72,7 @@ const componentStyles = StyleSheet.create({
 });
 
 MemberRow.defaultProps = {
-	loading: false,
+	loading: false
 };
 
 MemberRow.propTypes = {
@@ -84,4 +82,3 @@ MemberRow.propTypes = {
 	groupName: PropTypes.string,
 	loading: PropTypes.bool
 };
-

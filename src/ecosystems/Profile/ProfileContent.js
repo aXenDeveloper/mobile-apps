@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView, FlatList, StyleSheet, Image, StatusBar, Animated, Platform } from "react-native";
+import { Text, View, Dimensions, ScrollView, FlatList } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import _ from "underscore";
@@ -9,6 +9,7 @@ import { StreamCard, StreamCardFragment } from "../../ecosystems/Stream";
 import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import ErrorBox from "../../atoms/ErrorBox";
 import EndOfComments from "../../atoms/EndOfComments";
+import styles from "../../styles";
 
 const MemberContentQuery = gql`
 	query MemberContentQuery($id: ID!, $offset: Int, $limit: Int) {
@@ -38,14 +39,24 @@ class ProfileContent extends Component {
 		};
 	}
 
+	shouldComponentUpdate(nextProps, nextState) {
+		/*if (this.state === nextState || this.props.member === nextProps.member) {
+			return false;
+		}*/
+
+		return true;
+	}
+
 	componentDidMount() {
 		if (this.props.showResults) {
+			console.log("profile content mount");
 			this.fetchResults();
 		}
 	}
 
 	componentDidUpdate(prevProps) {
 		if (!prevProps.showResults && prevProps.showResults !== this.props.showResults) {
+			console.log("profile content changed showResults");
 			this.fetchResults();
 		}
 	}
@@ -54,6 +65,8 @@ class ProfileContent extends Component {
 		if (this.state.loading || this.state.reachedEnd) {
 			return;
 		}
+
+		console.log("Loading profile content");
 
 		this.setState({
 			loading: true
@@ -94,7 +107,7 @@ class ProfileContent extends Component {
 	 */
 	onEndReached = () => {
 		if (!this.state.loading && !this.state.reachedEnd) {
-			this.fetchResults();
+			//this.fetchResults();
 		}
 	};
 
@@ -139,6 +152,10 @@ class ProfileContent extends Component {
 	}
 
 	render() {
+		if (!this.props.isActive) {
+			return <View />;
+		}
+
 		if (this.state.loading && this.state.results == null) {
 			return this.getPlaceholder();
 		} else if (this.state.error) {
@@ -155,7 +172,6 @@ class ProfileContent extends Component {
 				data={this.state.results}
 				keyExtractor={item => item.indexID}
 				renderItem={({ item }) => <StreamCard data={item} />}
-				onEndReached={this.onEndReached}
 				ListFooterComponent={this.getFooterComponent}
 				ListEmptyComponent={this.getListEmptyComponent}
 			/>
