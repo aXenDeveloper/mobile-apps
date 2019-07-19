@@ -333,6 +333,17 @@ const baseStyles = StyleSheet.create({
 		...(isIphoneX() ? { paddingBottom: styleVars.spacing.extraWide + styleVars.spacing.wide } : {})
 	},
 
+	/* Tab bars */
+	tabBar: {
+		backgroundColor: "#fff"
+	},
+	tabBarIndicator: {
+		backgroundColor: styleVars.accentColor
+	},
+	tabBarLabelStyle: {
+		fontWeight: "500"
+	},
+
 	/* General purpose styles */
 	unreadBackground: {
 		backgroundColor: "#ffffff"

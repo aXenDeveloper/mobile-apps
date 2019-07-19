@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView, FlatList, StyleSheet, Image, StatusBar, Animated, Platform } from "react-native";
+import { Text, View, Dimensions, ScrollView, FlatList, StyleSheet, Image, StatusBar, Animated, Platform } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 
@@ -7,6 +7,7 @@ import Lang from "../../utils/Lang";
 import MemberRow from "../../ecosystems/MemberRow";
 import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import ErrorBox from "../../atoms/ErrorBox";
+import styles from "../../styles";
 
 const ProfileFollowersQuery = gql`
 	query ProfileFollowersQuery($member: ID!, $offset: Int, $limit: Int) {
@@ -38,35 +39,35 @@ class ProfileFollowers extends Component {
 	 *
 	 * @return 	void
 	 */
-	onEndReached = () => {
-		
-	};
+	onEndReached = () => {};
 
 	render() {
-		if( this.props.data.loading ){
+		if (!this.props.isActive) {
+			return <View />;
+		}
+
+		if (this.props.data.loading) {
 			return (
 				<PlaceholderRepeater repeat={5}>
 					<MemberRow loading={true} />
 				</PlaceholderRepeater>
 			);
-		} else if( this.props.data.error ){
-			console.log( this.props.data.error );
+		} else if (this.props.data.error) {
+			console.log(this.props.data.error);
 			return <Text>Error</Text>;
 		} else {
 			const ListEmptyComponent = <ErrorBox message={Lang.get("no_followers", { name: this.props.data.core.member.name })} showIcon={false} />;
 
 			return (
-				<View style={{ flex: 1 }}>
-					<FlatList
-						style={{ flex: 1 }}
-						data={this.props.data.core.member.follow.followers}
-						keyExtractor={member => member.id}
-						renderItem={({item}) => <MemberRow id={parseInt(item.id)} photo={item.photo} name={item.name} groupName={item.group.name} />}
-						refreshing={this.props.data.networkStatus == 4}
-						onEndReached={this.onEndReached}
-						ListEmptyComponent={ListEmptyComponent}
-					/>
-				</View>
+				<FlatList
+					style={{ flex: 1 }}
+					data={this.props.data.core.member.follow.followers}
+					keyExtractor={member => member.id}
+					renderItem={({ item }) => <MemberRow id={parseInt(item.id)} photo={item.photo} name={item.name} groupName={item.group.name} />}
+					refreshing={this.props.data.networkStatus == 4}
+					onEndReached={this.onEndReached}
+					ListEmptyComponent={ListEmptyComponent}
+				/>
 			);
 		}
 	}
@@ -81,5 +82,5 @@ export default compose(
 				limit: LIMIT
 			}
 		})
-	}),
+	})
 )(ProfileFollowers);
