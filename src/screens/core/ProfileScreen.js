@@ -210,7 +210,7 @@ class ProfileScreen extends Component {
 	}
 
 	buildAnimations() {
-		const HEADER_HEIGHT = Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 50;
+		const HEADER_HEIGHT = Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82;
 		const SCROLL_HEIGHT = this.state.fullHeaderHeight - HEADER_HEIGHT;
 
 		// Interpolate methods for animations
