@@ -4,7 +4,11 @@ import { Text, TouchableOpacity } from "react-native";
 const ListField = props => (
 	<React.Fragment>
 		{Boolean(props.value.length) ? (
-			props.value.map(item => <Text style={props.textStyles}>{item}</Text>)
+			props.value.map((item, idx) => (
+				<Text key={idx} style={props.textStyles}>
+					{item}
+				</Text>
+			))
 		) : (
 			<Text style={[props.textStyles, styles.lightText]}>No selection</Text>
 		)}
