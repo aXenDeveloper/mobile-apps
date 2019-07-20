@@ -109,7 +109,7 @@ class ActiveUsers extends Component {
 	 */
 	setUpTicker() {
 		this.setState({
-			tickerReady: true
+			tickerReady: false
 		});
 
 		const tickerNamesToUse = this.props.data.core.activeUsers.users.filter(user => _.isString(user.lang));
