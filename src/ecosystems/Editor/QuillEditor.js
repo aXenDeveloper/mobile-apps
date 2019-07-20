@@ -757,6 +757,8 @@ class QuillEditor extends Component {
 							mixedContentMode="always"
 							style={[editorStyles.editor, this.inlineStyles]}
 							hideAccessory={true}
+							hideKeyboardAccessoryView={true}
+							keyboardDisplayRequiresUserAction={false}
 							useWebKit={true}
 							allowFileAccess={true}
 						/>
