@@ -3,7 +3,7 @@ import { Text, View, ScrollView, SectionList, StyleSheet, Image, StatusBar, Anim
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
-import HeaderBackButton from "react-navigation";
+import { HeaderBackButton } from "react-navigation";
 import { TabView, TabBar } from "react-native-tab-view";
 import { Header } from "react-navigation";
 import FadeIn from "react-native-fade-in-image";
@@ -63,9 +63,7 @@ const ProfileQuery = gql`
 class ProfileScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
 		headerTransparent: true,
-		header: props => {
-			return <Header {...props} />;
-		}
+		header: null
 	});
 
 	static errors = {
@@ -93,6 +91,7 @@ class ProfileScreen extends Component {
 		this.toggleFollowModal = this.toggleFollowModal.bind(this);
 		this.renderScene = this.renderScene.bind(this);
 		this.renderTabBar = this.renderTabBar.bind(this);
+		this.onPressBack = this.onPressBack.bind(this);
 
 		this.buildAnimations();
 	}
@@ -105,14 +104,15 @@ class ProfileScreen extends Component {
 		if (prevState.fullHeaderHeight !== this.state.fullHeaderHeight) {
 			this.buildAnimations();
 		}
+	}
 
-		if (prevState.smallHeaderHeight !== this.state.smallHeaderHeight) {
-			const windowDims = Dimensions.get("window");
-
-			this.setState({
-				minHeight: windowDims.height - this.state.smallHeaderHeight - 100
-			});
-		}
+	/**
+	 * Event handler for floating back button
+	 *
+	 * @return 	void
+	 */
+	onPressBack() {
+		this.props.navigation.goBack();
 	}
 
 	/**
@@ -249,6 +249,11 @@ class ProfileScreen extends Component {
 		});
 	};
 
+	/**
+	 * Return the profile data we'll show in the first tab
+	 *
+	 * @return 	array
+	 */
 	getProfileFields() {
 		const customFields = [];
 
@@ -314,6 +319,11 @@ class ProfileScreen extends Component {
 		return customFields;
 	}
 
+	/**
+	 * Return additional tabs to show. Right now this means any Editor custom fields
+	 *
+	 * @return 	object
+	 */
 	getAdditionalTabs() {
 		const additionalTabs = {};
 
@@ -332,7 +342,13 @@ class ProfileScreen extends Component {
 		return additionalTabs;
 	}
 
-	renderTabBar = props => {
+	/**
+	 * Render a custom tab bar. Uses the normal tab bar, but wraps it in an animated view so that
+	 * the translateY pos can be animated to create a sticky header
+	 *
+	 * @return 	Component
+	 */
+	renderTabBar(props) {
 		return (
 			<Animated.View style={{ transform: [{ translateY: this.tabY }], backgroundColor: "red", zIndex: 1 }}>
 				<TabBar
@@ -350,8 +366,13 @@ class ProfileScreen extends Component {
 				/>
 			</Animated.View>
 		);
-	};
+	}
 
+	/**
+	 * Return the routes that the tab bar will render
+	 *
+	 * @return 	array
+	 */
 	getTabRoutes() {
 		const additionalTabs = Object.entries(this.getAdditionalTabs());
 		const routes = [{ key: "overview", title: Lang.get("profile_overview") }, { key: "content", title: Lang.get("profile_content") }];
@@ -375,6 +396,12 @@ class ProfileScreen extends Component {
 		return routes;
 	}
 
+	/**
+	 * Given a particular route, return the component that will render the tab panel
+	 *
+	 * @param 	object
+	 * @return 	Component
+	 */
 	renderScene({ route }) {
 		const routes = this.getTabRoutes();
 		const thisIndex = routes.findIndex(r => r.key === route.key);
@@ -413,13 +440,8 @@ class ProfileScreen extends Component {
 				showFollowButton = true;
 			}
 
-			console.log(this.props.data.core.member);
-
-			// Additional tabs for custom profile fields
-			//const additionalTabs = this.getAdditionalTabs();
-
 			return (
-				<View>
+				<View style={styles.flex}>
 					<StatusBar barStyle="light-content" translucent />
 					{this.props.auth.isAuthenticated && (
 						<FollowModal
@@ -430,20 +452,6 @@ class ProfileScreen extends Component {
 							close={this.toggleFollowModal}
 						/>
 					)}
-					<Animated.View
-						style={[componentStyles.fixedProfileHeader, { opacity: this.fixedHeaderOpacity }]}
-						onLayout={e => {
-							this.setState({ smallHeaderHeight: e.nativeEvent.layout.height });
-						}}
-					>
-						<CustomHeader
-							content={
-								<View style={{ paddingTop: isIphoneX() ? 46 : 26 }}>
-									<TwoLineHeader title={this.props.data.core.member.name} subtitle={this.props.data.core.member.group.name} />
-								</View>
-							}
-						/>
-					</Animated.View>
 					<Animated.ScrollView
 						showsVerticalScrollIndicator={false}
 						scrollEventThrottle={5}
@@ -516,6 +524,18 @@ class ProfileScreen extends Component {
 							lazy
 						/>
 					</Animated.ScrollView>
+					<Animated.View style={[componentStyles.fixedProfileHeader, { opacity: this.fixedHeaderOpacity }]}>
+						<CustomHeader
+							content={
+								<View style={[styles.flex, styles.flexJustifyCenter, componentStyles.customHeader]}>
+									<TwoLineHeader title={this.props.data.core.member.name} subtitle={this.props.data.core.member.group.name} />
+								</View>
+							}
+						/>
+					</Animated.View>
+					<View style={[styles.flex, styles.flexJustifyCenter, componentStyles.backButton]}>
+						<HeaderBackButton onPress={this.onPressBack} tintColor="#fff" />
+					</View>
 				</View>
 			);
 		}
@@ -523,6 +543,30 @@ class ProfileScreen extends Component {
 }
 
 const componentStyles = StyleSheet.create({
+	customHeader: {
+		...Platform.select({
+			android: {
+				paddingTop: StatusBar.currentHeight
+			},
+			ios: {
+				paddingTop: isIphoneX() ? 32 : 20
+			}
+		}),
+		paddingHorizontal: 56
+	},
+	backButton: {
+		position: "absolute",
+		left: 0,
+		zIndex: 1000,
+		...Platform.select({
+			android: {
+				top: StatusBar.currentHeight
+			},
+			ios: {
+				top: isIphoneX() ? 40 : 20
+			}
+		})
+	},
 	fixedProfileHeader: {
 		position: "absolute",
 		top: 0,
@@ -534,7 +578,7 @@ const componentStyles = StyleSheet.create({
 		backgroundColor: "#333"
 	},
 	profileHeaderInner: {
-		paddingTop: 40,
+		paddingTop: isIphoneX() ? 50 : 40,
 		backgroundColor: "rgba(49,68,83,0.4)",
 		display: "flex",
 		flexDirection: "column",
