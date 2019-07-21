@@ -1,26 +1,13 @@
 import React, { Component } from "react";
-import {
-	Text,
-	Image,
-	View,
-	Button,
-	ScrollView,
-	FlatList,
-	TouchableOpacity,
-	TextInput,
-	StyleSheet,
-	Alert,
-	LayoutAnimation,
-	Animated,
-	Platform
-} from "react-native";
+import { Text, Image, View, Button, AsyncStorage, StyleSheet, Alert, LayoutAnimation, Animated, Platform } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
 import Modal from "react-native-modal";
 import _ from "underscore";
-import shortNumber from "short-number";
+import { copilot, walkthroughable, CopilotStep } from "react-native-copilot";
 
+import shortNumber from "short-number";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
@@ -45,6 +32,7 @@ import EndOfComments from "../../atoms/EndOfComments";
 import TopicStatus from "../../atoms/TopicStatus";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import FollowButton from "../../atoms/FollowButton";
+import { Tooltip } from "../../ecosystems/Walkthrough";
 import UserPhoto from "../../atoms/UserPhoto";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 
@@ -241,6 +229,8 @@ class TopicViewScreen extends Component {
 		this._answerVoteUpHandlers = {}; // Stores memoized event handlers for voting answers up
 		this._answerVoteDownHandlers = {}; // Stores memoized event handlers for voting answers up
 		this._bestAnswerHandlers = {}; // Stores memoized event handlers for settings answers as best
+		this._showWalkthrough = false;
+		this._walkthroughTimeout = null;
 		this.state = {
 			reachedEnd: false,
 			earlierPostsAvailable: null,
@@ -263,6 +253,8 @@ class TopicViewScreen extends Component {
 		this._scroll = new Animated.Value(0);
 		this._nScroll.addListener(Animated.event([{ value: this._scroll }], { useNativeDriver: false }));
 
+		this.props.copilotEvents.on("stop", this.setWalkthroughFlag);
+
 		this.loadEarlierComments = this.loadEarlierComments.bind(this);
 		this.toggleFollowModal = this.toggleFollowModal.bind(this);
 		this.goToPollScreen = this.goToPollScreen.bind(this);
@@ -280,6 +272,7 @@ class TopicViewScreen extends Component {
 		this.onHeaderLayout = this.onHeaderLayout.bind(this);
 		this.onInnerHeaderLayout = this.onInnerHeaderLayout.bind(this);
 		this.onScrollEnd = this.onScrollEnd.bind(this);
+		this.setWalkthroughFlag = this.setWalkthroughFlag.bind(this);
 	}
 
 	/**
@@ -290,15 +283,50 @@ class TopicViewScreen extends Component {
 	componentDidMount() {
 		this.buildAnimations();
 		this.setHeaderParams();
+		this.checkWalkthrough();
 	}
 
 	/**
-	 * Clear timeouts
+	 * Clear timeouts/events
 	 *
 	 * @return 	void
 	 */
 	componentWillUnmount() {
 		clearTimeout(this._snapTimeout);
+		clearTimeout(this._walkthroughTimeout);
+		this.props.copilotEvents.off("stop");
+	}
+
+	/**
+	 * Checks whether we should show the pager walkthrough
+	 *
+	 * @return 	void
+	 */
+	async checkWalkthrough() {
+		let doShowWalkthrough = true;
+
+		try {
+			const value = await AsyncStorage.getItem("@walkthrough:topicPager");
+
+			if (value !== null) {
+				doShowWalkthrough = false;
+			}
+		} catch (err) {
+			console.log(err);
+		}
+
+		this._showWalkthrough = doShowWalkthrough;
+	}
+
+	/**
+	 * Set the flag that will hide the walkthrough on future loads
+	 *
+	 * @return 	void
+	 */
+	async setWalkthroughFlag() {
+		try {
+			await AsyncStorage.setItem("@walkthrough:topicPager", "true");
+		} catch (err) {}
 	}
 
 	/**
@@ -577,6 +605,12 @@ class TopicViewScreen extends Component {
 		// If we're no longer loading, set the header params
 		if (prevProps.data.loading && !this.props.data.loading) {
 			this.setHeaderParams();
+
+			if (this._showWalkthrough) {
+				this._walkthroughTimeout = setTimeout(() => {
+					this.props.start();
+				}, 1000);
+			}
 		}
 
 		// Update our offset tracker, but only if we haven't done it before, otherwise
@@ -1589,12 +1623,14 @@ class TopicViewScreen extends Component {
 							onScrollEndDrag={this.onScrollEnd}
 							onMomentumScrollEnd={this.onScrollEnd}
 						/>
-						<Pager
-							total={topicData.postCount}
-							currentPosition={Math.max(1, this.state.currentPosition)}
-							onChange={this.scrollToPost}
-							unreadIndicator={topicData.isUnread ? topicData.unreadCommentPosition : false}
-						/>
+						<CopilotStep text="The Pager bar shows your position in the topic. You can tap and drag to jump to another post." order={1} name="pager">
+							<Pager
+								total={topicData.postCount}
+								currentPosition={Math.max(1, this.state.currentPosition)}
+								onChange={this.scrollToPost}
+								unreadIndicator={topicData.isUnread ? topicData.unreadCommentPosition : false}
+							/>
+						</CopilotStep>
 						{!Boolean(topicData.isArchived) && Boolean(this.props.auth.isAuthenticated) && (
 							<FollowModal
 								isVisible={this.state.followModalVisible}
@@ -1663,7 +1699,11 @@ export default compose(
 			};
 		}
 	}),
-	withApollo
+	withApollo,
+	copilot({
+		stepNumberComponent: View,
+		tooltipComponent: Tooltip
+	})
 )(TopicViewScreen);
 
 const componentStyles = StyleSheet.create({

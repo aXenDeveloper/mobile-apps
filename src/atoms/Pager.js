@@ -67,12 +67,12 @@ export default class Pager extends PureComponent {
 	 */
 	onPanResponderMove(evt, gestureState) {
 		const moveX = gestureState.moveX;
-		const percentageX = (moveX / this._wrapperWidth * 100).toFixed(1);
+		const percentageX = ((moveX / this._wrapperWidth) * 100).toFixed(1);
 
 		this._trackerBarRef.transitionTo({ width: `${percentageX}%` });
 
 		this.setState({
-			jumpingToPost: Math.ceil(this.props.total / 100 * percentageX)
+			jumpingToPost: Math.ceil((this.props.total / 100) * percentageX)
 		});
 	}
 
@@ -132,7 +132,7 @@ export default class Pager extends PureComponent {
 	 * @return 	void
 	 */
 	_updateBar() {
-		const trackerWidth = Math.ceil(parseInt(this.props.currentPosition) / parseInt(this.props.total) * 100);
+		const trackerWidth = Math.ceil((parseInt(this.props.currentPosition) / parseInt(this.props.total)) * 100);
 		this._trackerBarRef.transitionTo({ width: `${trackerWidth}%` });
 	}
 
@@ -143,26 +143,23 @@ export default class Pager extends PureComponent {
 
 		let unreadPosition = 0;
 		if (this.props.unreadIndicator && this.props.unreadIndicator > 0) {
-			unreadPosition = Math.ceil(parseInt(this.props.unreadIndicator) / parseInt(this.props.total) * 100);
+			unreadPosition = Math.ceil((parseInt(this.props.unreadIndicator) / parseInt(this.props.total)) * 100);
 		}
+
+		console.log(this.props);
 
 		return (
 			<Animatable.View
-				style={[
-					styles.flex,
-					styles.flexAlignCenter,
-					styles.flexJustifyCenter,
-					componentStyles.pager
-				]}
+				style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.pager]}
 				ref={ref => (this._actionBarRef = ref)}
 				onLayout={this.onWrapperLayout}
 			>
-				<View style={[componentStyles.trackerWrapper]} {...this._panResponder.panHandlers}>
+				<View style={[componentStyles.trackerWrapper]} {...this._panResponder.panHandlers} {...this.props.copilot}>
 					<Animatable.View ref={ref => (this._trackerBarRef = ref)} style={[componentStyles.trackerBar, { width: "0%" }]} />
 				</View>
 				<Animatable.View ref={ref => (this._trackerTextRef = ref)} style={{ opacity: 1 }}>
 					<Text style={componentStyles.trackerText}>
-						{Lang.get('pagination', {
+						{Lang.get("pagination", {
 							from: this.state.isBeingTouched ? this.state.jumpingToPost : this.props.currentPosition,
 							to: this.props.total
 						})}
@@ -211,7 +208,7 @@ const componentStyles = StyleSheet.create({
 	trackerText: {
 		fontWeight: "500",
 		fontSize: styleVars.fontSizes.small,
-		color: styleVars.lightText,
+		color: styleVars.lightText
 	},
 	unreadBar: {
 		position: "absolute",
@@ -219,7 +216,7 @@ const componentStyles = StyleSheet.create({
 		bottom: 3,
 		width: 1,
 		borderRightWidth: 1,
-		borderRightColor: styleVars.greys.darker,
+		borderRightColor: styleVars.greys.darker
 	}
 });
 
