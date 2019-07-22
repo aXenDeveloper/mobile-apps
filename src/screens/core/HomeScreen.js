@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Text, Image, ScrollView, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl, LayoutAnimation, Dimensions } from "react-native";
+import { Notifications } from "expo";
+import * as Permissions from "expo-permissions";
 import gql from "graphql-tag";
 import { graphql, withApollo } from "react-apollo";
 import _ from "underscore";
@@ -43,7 +45,8 @@ class HomeScreen extends Component {
 			loading: true,
 			error: false,
 			data: null,
-			refreshing: false
+			refreshing: false,
+			token: null
 		};
 
 		this._menuHandlers = {};
@@ -51,8 +54,21 @@ class HomeScreen extends Component {
 		this.onRefresh = this.onRefresh.bind(this);
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		this.startHomeQuery();
+
+		const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+		let token = null;
+
+		// If they haven't granted access then we don't need to do anything here
+		if (status === "granted") {
+			try {
+				token = await Notifications.getExpoPushTokenAsync();
+				this.setState({
+					token
+				});
+			} catch (err) {}
+		}
 	}
 
 	/**
@@ -228,6 +244,7 @@ class HomeScreen extends Component {
 								</React.Fragment>
 							);
 						})}
+						{this.state.token && <Text style={[styles.smallText, styles.lightText, styles.phWide, styles.pvStandard]}>{this.state.token}</Text>}
 					</ScrollView>
 				</React.Fragment>
 			);
