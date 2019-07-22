@@ -91,12 +91,15 @@ class HomeScreen extends Component {
 	 * @return 	void
 	 */
 	onRefresh() {
-		this.setState({
-			refreshing: true,
-			error: false
-		});
-
-		this.doHomeQuery();
+		this.setState(
+			{
+				refreshing: true,
+				error: false
+			},
+			() => {
+				this.doHomeQuery();
+			}
+		);
 	}
 
 	/**

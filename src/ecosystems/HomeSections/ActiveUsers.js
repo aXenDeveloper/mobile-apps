@@ -13,10 +13,10 @@ import styles, { styleVars } from "../../styles";
 class ActiveUsers extends Component {
 	constructor(props) {
 		super(props);
-		this._animatedValue = {};
 		this._animations = [];
 		this.state = {
-			tickerReady: false
+			tickerReady: false,
+			tickerNames: []
 		};
 
 		this._pressHandlers = {};
@@ -112,31 +112,32 @@ class ActiveUsers extends Component {
 			tickerReady: false
 		});
 
-		const tickerNamesToUse = this.props.data.core.activeUsers.users.filter(user => _.isString(user.lang));
+		const tickerNames = [];
+		const animations = this.props.data.core.activeUsers.users
+			.filter(user => _.isString(user.lang))
+			.map((user, idx) => {
+				// First, save our user data and an animted value (this will go in state)
+				const animatedValue = new Animated.Value(0);
+				tickerNames.push({
+					user,
+					animatedValue
+				});
 
-		// No need to do anything with the ticker if we don't have much to show
-		if (tickerNamesToUse.length < ActiveUsers.minimumTickerNames) {
-			return;
-		}
-
-		this._animatedValue = {};
-
-		this._animations = tickerNamesToUse.map((user, idx) => {
-			// First, initialize a value for each user we're going to show in the ticker
-			this._animatedValue[user.user.id] = new Animated.Value(0);
-
-			// Now set up the timing function, along with an incremental delay
-			return Animated.timing(this._animatedValue[user.user.id], {
-				toValue: 1,
-				duration: ActiveUsers.animationDelay
+				// Now set up the timing function, along with an incremental delay
+				return Animated.timing(animatedValue, {
+					toValue: 1,
+					duration: ActiveUsers.animationDelay
+				});
 			});
-		});
 
-		Animated.loop(Animated.stagger(ActiveUsers.animationDelay, this._animations)).start();
+		if (animations.length) {
+			Animated.loop(Animated.stagger(ActiveUsers.animationDelay, animations)).start();
+		}
 
 		// Setting this state will now cause the ticker to render and begin animating
 		this.setState({
-			tickerReady: true
+			tickerReady: true,
+			tickerNames
 		});
 	}
 
@@ -146,16 +147,14 @@ class ActiveUsers extends Component {
 	 * @return 	array|null		Array of Animated.Text components
 	 */
 	getTicker() {
-		const tickerNamesToUse = this.props.data.core.activeUsers.users.filter(user => _.isString(user.lang));
-
-		if (tickerNamesToUse.length < ActiveUsers.minimumTickerNames) {
+		if (this.state.tickerNames.length < ActiveUsers.minimumTickerNames) {
 			return null;
 		}
 
-		return tickerNamesToUse.map(user => {
+		return this.state.tickerNames.map(({ animatedValue, user }) => {
 			// Since our animated value goes from 0 to 1, we'll use that to create a curve that
 			// fades in quickly, stays, then fades out quickly too.
-			const opacity = this._animatedValue[user.user.id].interpolate({
+			const opacity = animatedValue.interpolate({
 				inputRange: [0, 0.05, 0.95, 1],
 				outputRange: [0, 1, 1, 0]
 			});
