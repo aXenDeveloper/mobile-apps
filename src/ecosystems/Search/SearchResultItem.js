@@ -13,15 +13,16 @@ import styles, { styleVars } from "../../styles";
 
 const SearchResultItem = props => {
 	const imageToUse = getSuitableImage(props.data.contentImages || null);
+	const hidden = props.data.hiddenStatus !== null;
 
 	return (
 		<React.Fragment>
 			<View style={componentStyles.itemHeader}>
 				<View style={[componentStyles.itemUserInfo, styles.mrWide, styles.flexReset]}>
 					<UserPhoto size={22} url={props.data.author.photo} />
-					<Text style={[styles.contentText, styles.mlTight]}>{props.data.author.name}</Text>
+					<Text style={[styles.contentText, styles.text, styles.mlTight, hidden && styles.moderatedText]}>{props.data.author.name}</Text>
 				</View>
-				<Text style={[styles.lightText]}>{relativeTime.short(props.data.updated)}</Text>
+				<Text style={[styles.lightText, hidden && styles.moderatedLightText]}>{relativeTime.short(props.data.updated)}</Text>
 			</View>
 			{Boolean(imageToUse) && (
 				<FadeIn style={[componentStyles.imageContainer, styles.mtStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
@@ -29,16 +30,16 @@ const SearchResultItem = props => {
 				</FadeIn>
 			)}
 			<View style={componentStyles.itemBody}>
-				<Text style={styles.itemTitle} numberOfLines={1}>
+				<Text style={[styles.itemTitle, hidden && styles.moderatedTitle]} numberOfLines={1}>
 					<UnreadIndicator show={props.data.unread} />
 					{highlightTerms(props.data.title, props.term, styles.highlightedText)}
 				</Text>
-				<Text style={styles.contentText} numberOfLines={2}>
+				<Text style={[styles.contentText, styles.text, hidden && styles.moderatedText]} numberOfLines={2}>
 					{highlightTerms(props.data.content.trim(), props.term, styles.highlightedText)}
 				</Text>
 			</View>
 			<View style={componentStyles.itemMeta}>
-				<Text style={styles.lightText} numberOfLines={1}>
+				<Text style={[styles.lightText, hidden && styles.moderatedLightText]} numberOfLines={1}>
 					{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), props.data.replies)} - `}
 					{props.data.articleLang.definiteUC} in {props.data.containerTitle}
 				</Text>

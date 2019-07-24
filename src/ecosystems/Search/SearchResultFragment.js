@@ -17,7 +17,7 @@ const SearchResultFragment = gql`
 		content
 		contentImages
 		title
-		hidden
+		hiddenStatus
 		updated
 		created
 		replies

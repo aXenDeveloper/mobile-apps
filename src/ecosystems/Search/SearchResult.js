@@ -42,9 +42,10 @@ class SearchResult extends Component {
 		}
 
 		const ResultComponent = this.props.data.isComment || this.props.data.isReview ? SearchResultComment : SearchResultItem;
+		const hidden = this.props.data.hiddenStatus !== null;
 
 		return (
-			<ContentRow style={componentStyles.result} onPress={this.onPressHandler}>
+			<ContentRow style={componentStyles.result} onPress={this.onPressHandler} hidden={hidden}>
 				<ResultComponent data={this.props.data} term={this.props.term} />
 			</ContentRow>
 		);

@@ -8,32 +8,38 @@ import UnreadIndicator from "../../atoms/UnreadIndicator";
 import relativeTime from "../../utils/RelativeTime";
 import styles, { styleVars } from "../../styles";
 
-const SearchResultComment = props => (
-	<React.Fragment>
-		<View style={componentStyles.commentHeader}>
-			<View style={componentStyles.commentItemInfo}>
-				<Text style={[styles.smallItemTitle, styles.mrWide, styles.flexReset]} numberOfLines={1}>
-					<UnreadIndicator show={props.data.unread} />
-					{highlightTerms(props.data.title, props.term, styles.highlightedText)}
+const SearchResultComment = props => {
+	const hidden = props.data.hiddenStatus !== null;
+
+	return (
+		<React.Fragment>
+			<View style={componentStyles.commentHeader}>
+				<View style={componentStyles.commentItemInfo}>
+					<Text style={[styles.smallItemTitle, styles.mrWide, styles.flexReset, hidden && styles.moderatedTitle]} numberOfLines={1}>
+						<UnreadIndicator show={props.data.unread} />
+						{highlightTerms(props.data.title, props.term, styles.highlightedText)}
+					</Text>
+					<Text style={[styles.lightText, hidden && styles.moderatedLightText]}>{relativeTime.short(props.data.updated)}</Text>
+				</View>
+				<Text style={[styles.lightText, componentStyles.commentItemMeta, hidden && styles.moderatedLightText]}>
+					{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), props.data.replies)} - `}
+					{Lang.get("item_in_container", { item: props.data.articleLang.definiteUC, container: props.data.containerTitle })}
 				</Text>
-				<Text style={[styles.lightText]}>{relativeTime.short(props.data.updated)}</Text>
 			</View>
-			<Text style={[styles.lightText, componentStyles.commentItemMeta]}>
-				{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), props.data.replies)} - `}
-				{Lang.get("item_in_container", { item: props.data.articleLang.definiteUC, container: props.data.containerTitle })}
-			</Text>
-		</View>
-		<View style={[componentStyles.commentReplyWrap, styles.mtTight]}>
-			<View style={[componentStyles.commentUserInfo]}>
-				<UserPhoto size={18} url={props.data.author.photo} />
-				<Text style={[styles.standardText, styles.mlVeryTight]}>{Lang.get("name_replied", { name: props.data.author.name })}</Text>
+			<View style={[componentStyles.commentReplyWrap, styles.mtTight]}>
+				<View style={[componentStyles.commentUserInfo]}>
+					<UserPhoto size={18} url={props.data.author.photo} />
+					<Text style={[styles.standardText, styles.text, styles.mlVeryTight, hidden && styles.moderatedText]}>
+						{Lang.get("name_replied", { name: props.data.author.name })}
+					</Text>
+				</View>
+				<Text style={[styles.standardText, styles.text, styles.mtTight, hidden && styles.moderatedText]} numberOfLines={2}>
+					{highlightTerms(props.data.content.trim(), props.term, styles.highlightedText)}
+				</Text>
 			</View>
-			<Text style={[styles.standardText, styles.mtTight]} numberOfLines={2}>
-				{highlightTerms(props.data.content.trim(), props.term, styles.highlightedText)}
-			</Text>
-		</View>
-	</React.Fragment>
-);
+		</React.Fragment>
+	);
+};
 
 export default SearchResultComment;
 
