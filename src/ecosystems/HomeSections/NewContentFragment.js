@@ -25,7 +25,7 @@ const NewContentFragment = `
 				content
 				contentImages
 				title
-				hidden
+				hiddenStatus
 				updated
 				created
 				isComment

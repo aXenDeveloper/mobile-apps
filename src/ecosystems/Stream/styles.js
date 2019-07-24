@@ -1,11 +1,11 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 import styles, { styleVars } from "../../styles";
 
 const componentStyles = StyleSheet.create({
 	streamHeader: {
 		flex: 1,
-		flexDirection: 'column',
-		alignItems: 'flex-start',
+		flexDirection: "column",
+		alignItems: "flex-start",
 		paddingHorizontal: styleVars.spacing.wide,
 		paddingTop: styleVars.spacing.standard
 	},
@@ -13,43 +13,40 @@ const componentStyles = StyleSheet.create({
 		flex: 1
 	},
 	streamMeta: {
-		width: '100%',
-		display: 'flex',
-		flexDirection: 'row',
-		justifyContent: 'space-between',
+		width: "100%",
+		display: "flex",
+		flexDirection: "row",
+		justifyContent: "space-between",
 		borderBottomWidth: 1,
 		borderBottomColor: styleVars.borderColors.medium,
-		paddingBottom: styleVars.spacing.standard,
+		paddingBottom: styleVars.spacing.standard
 	},
 	streamMetaInner: {
-		display: 'flex',
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center'
+		display: "flex",
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center"
 	},
 	streamMetaText: {
-		fontSize: styleVars.fontSizes.standard,
-	},
-	streamMetaTime: {
-		color: '#8F8F8F'
+		fontSize: styleVars.fontSizes.standard
 	},
 	streamMetaAction: {
 		marginLeft: 5
 	},
 	streamItemInfo: {
 		flex: 1,
-		flexDirection: 'row',
+		flexDirection: "row"
 	},
 	streamItemTitle: {
 		fontSize: 17,
 		fontWeight: "600",
-		color: '#171717',
+		color: "#171717"
 	},
 	streamItemTitleSmall: {
 		fontSize: 15
 	},
 	streamItemContainer: {
-		color: '#8F8F8F',
+		color: "#8F8F8F"
 	},
 	streamContent: {
 		marginTop: styleVars.spacing.wide,
@@ -72,26 +69,26 @@ const componentStyles = StyleSheet.create({
 	},
 	streamFooter: {
 		marginTop: styleVars.spacing.standard,
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'flex-start'
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-start"
 	},
 	reactionOverview: {
 		marginLeft: styleVars.spacing.wide
 	},
 	blob: {
-		backgroundColor: '#888',
+		backgroundColor: "#888",
 		width: 11,
 		height: 11,
 		borderRadius: 11,
-		position: 'absolute',
+		position: "absolute",
 		left: -22,
 		top: 9
 	},
 	imageContainer: {
 		height: 150,
-		width: '100%',
+		width: "100%",
 		marginTop: 12
 	},
 	image: {
@@ -101,13 +98,13 @@ const componentStyles = StyleSheet.create({
 	// ============
 	metaTextWrapper: {
 		borderBottomWidth: 1,
-		borderBottomColor: '#F2F4F7',
+		borderBottomColor: "#F2F4F7",
 		padding: 9
 	},
 	metaText: {
-		fontSize: 13,
+		fontSize: 13
 	},
-	
+
 	placeholder: {
 		padding: styleVars.spacing.standard
 	},
@@ -116,22 +113,22 @@ const componentStyles = StyleSheet.create({
 	},
 	post: {
 		paddingBottom: 0
-	},	
+	},
 	postInfo: {
-		flexDirection: 'row',
-		alignItems: 'flex-start',
+		flexDirection: "row",
+		alignItems: "flex-start",
 		flex: 1
 	},
 	meta: {
 		flex: 1,
-		flexDirection: 'column',
-		justifyContent: 'center',
+		flexDirection: "column",
+		justifyContent: "center"
 		//marginLeft: 9
 	},
-	
+
 	date: {
 		fontSize: 14,
-		color: '#8F8F8F'
+		color: "#8F8F8F"
 	},
 	postContentContainer: {
 		marginTop: 16
@@ -144,13 +141,13 @@ const componentStyles = StyleSheet.create({
 		height: 24
 	},
 	postInfoButton: {
-		alignSelf: 'flex-start',
+		alignSelf: "flex-start"
 	},
 	postReactionList: {
-		display: 'flex',
-		justifyContent: 'flex-end',
-		flexWrap: 'wrap',
-		flexDirection: 'row',
+		display: "flex",
+		justifyContent: "flex-end",
+		flexWrap: "wrap",
+		flexDirection: "row",
 		marginTop: 15
 	},
 	reactionItem: {

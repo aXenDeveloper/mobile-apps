@@ -90,10 +90,11 @@ class StreamCard extends PureComponent {
 		}
 
 		const Component = !this.props.data.isComment && !this.props.data.isReview ? StreamItem : StreamComment;
+		const hidden = this.props.data.hiddenStatus !== null;
 
 		return (
 			<TouchableHighlight style={componentStyles.postWrapper} onPress={this.onPress}>
-				<ShadowedArea style={componentStyles.post}>
+				<ShadowedArea style={componentStyles.post} hidden={hidden}>
 					<View style={componentStyles.blob} />
 					<Component
 						data={this.props.data}

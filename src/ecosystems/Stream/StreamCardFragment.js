@@ -17,7 +17,7 @@ const StreamCardFragment = gql`
 		content
 		contentImages
 		title
-		hidden
+		hiddenStatus
 		updated
 		created
 		isComment
