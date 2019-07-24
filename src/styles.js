@@ -94,7 +94,7 @@ export const styleVars = {
 	moderatedText: {
 		light: "#BE909A",
 		medium: "#84263A",
-		text: "#AB5D6E",
+		text: "#863A4B",
 		title: "#821C32"
 	}
 };
