@@ -146,8 +146,6 @@ export default class Pager extends PureComponent {
 			unreadPosition = Math.ceil((parseInt(this.props.unreadIndicator) / parseInt(this.props.total)) * 100);
 		}
 
-		console.log(this.props);
-
 		return (
 			<Animatable.View
 				style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.pager]}

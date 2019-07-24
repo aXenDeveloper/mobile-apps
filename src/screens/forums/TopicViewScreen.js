@@ -620,17 +620,23 @@ class TopicViewScreen extends Component {
 			this._initialOffsetDone = false;
 		}
 
+		// CURRENTPOSITION NOTE:
+		// We add 1 here because topics require a first post, meaning offsets/positions returned by the API
+		// don't consider the first post as a 'comment'. However, for our app's purposes, we want to consider
+		// it when calculating our position in the topic.
 		if (!this._initialOffsetDone && !this.props.data.loading && !this.props.data.error) {
 			if (this.props.data.variables.offsetPosition == "ID" && this.props.data.forums.topic.findCommentPosition) {
 				// If we're starting at a specific post, then set the offset to that post's position
 				this.setState({
-					startingOffset: this.props.data.forums.topic.findCommentPosition
+					startingOffset: this.props.data.forums.topic.findCommentPosition,
+					currentPosition: this.props.data.forums.topic.findCommentPosition + 1 // See CURRENTPOSITION NOTE above this block
 				});
 				this._initialOffsetDone = true;
 			} else if (this.props.data.variables.offsetPosition == "UNREAD" && this.props.data.forums.topic.unreadCommentPosition) {
 				// If we're showing by unread, then the offset will be the last unread post position
 				this.setState({
-					startingOffset: this.props.data.forums.topic.unreadCommentPosition
+					startingOffset: this.props.data.forums.topic.unreadCommentPosition,
+					currentPosition: this.props.data.forums.topic.unreadCommentPosition + 1 // See CURRENTPOSITION NOTE above this block
 				});
 				this._initialOffsetDone = true;
 			} else if (this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0) {
