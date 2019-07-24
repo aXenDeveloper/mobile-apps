@@ -20,7 +20,7 @@ const CreateTopicMutation = gql`
 			createTopic(forumID: $forumID, title: $title, content: $content, tags: $tags, postKey: $postKey) {
 				__typename
 				id
-				isHidden
+				hiddenStatus
 				url {
 					__typename
 					full

@@ -62,12 +62,22 @@ class TopicRow extends Component {
 		// Only show as unread if we're a member and unread flag is true
 		const showAsUnread = this.props.auth.isAuthenticated && this.props.data.unread;
 		const InfoComponent = this.props.data.isQuestion ? QuestionInfo : TopicInfo;
+		const hidden = this.props.data.hiddenStatus !== null;
 
 		return (
-			<ContentRow withSpace unread={showAsUnread} onPress={this.props.onPress || this.onPress}>
+			<ContentRow withSpace hidden={hidden} unread={showAsUnread} onPress={this.props.onPress || this.onPress}>
 				<InfoComponent data={this.props.data} showCategory={this.props.showCategory} showAsUnread={showAsUnread} styles={componentStyles} />
-				<View style={componentStyles.topicStatusesWrap}>
+				<View style={[componentStyles.topicStatusesWrap, hidden ? componentStyles.topicStatusesWrapHidden : null]}>
 					<View style={componentStyles.topicMeta}>
+						{Boolean(this.props.data.hiddenStatus === "DELETED") && (
+							<TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="deleted" />
+						)}
+						{Boolean(this.props.data.hiddenStatus === "PENDING") && (
+							<TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="unapproved" />
+						)}
+						{Boolean(this.props.data.hiddenStatus === "HIDDEN") && (
+							<TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="hidden" />
+						)}
 						{Boolean(this.props.data.isHot) && <TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="hot" />}
 						{Boolean(this.props.data.isPinned) && (
 							<TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="pinned" />
@@ -76,11 +86,18 @@ class TopicRow extends Component {
 							<TopicStatus style={componentStyles.topicStatus} textStyle={componentStyles.topicStatusesText} type="featured" />
 						)}
 
-						<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText, componentStyles.lastPostTime]}>
+						<Text
+							style={[
+								componentStyles.topicStatusesText,
+								componentStyles.topicMetaText,
+								componentStyles.lastPostTime,
+								hidden ? componentStyles.topicMetaTextHidden : null
+							]}
+						>
 							{relativeTime.short(this.props.data.lastPostDate)}
 						</Text>
 
-						<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText]}>
+						<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText, hidden ? componentStyles.topicMetaTextHidden : null]}>
 							{Lang.pluralize(Lang.get("replies"), this.props.data.replies)}
 						</Text>
 					</View>
@@ -157,7 +174,6 @@ const componentStyles = StyleSheet.create({
 	},
 	topicSnippet: {
 		fontSize: 15,
-		color: "#000",
 		marginBottom: 4
 	},
 	lastPoster: {
@@ -177,7 +193,7 @@ const componentStyles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		backgroundColor: "#FAFAFA",
+		backgroundColor: styleVars.greys.light,
 		height: 32,
 		paddingHorizontal: 15
 	},
@@ -188,13 +204,19 @@ const componentStyles = StyleSheet.create({
 		fontSize: 13,
 		color: styleVars.lightText
 	},
+	topicStatusesWrapHidden: {
+		backgroundColor: styleVars.moderatedBackground.medium
+	},
 	topicMeta: {
 		display: "flex",
 		flexDirection: "row",
 		alignItems: "center"
 	},
 	topicMetaText: {
-		opacity: 0.9
+		color: styleVars.lightText
+	},
+	topicMetaTextHidden: {
+		color: styleVars.moderatedText.light
 	},
 	repliesIcon: {
 		width: 14,

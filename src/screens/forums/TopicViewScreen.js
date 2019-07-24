@@ -65,6 +65,7 @@ const TopicViewQuery = gql`
 				isHot
 				isPinned
 				isFeatured
+				hiddenStatus
 				author {
 					__typename
 					id
@@ -994,11 +995,12 @@ class TopicViewScreen extends Component {
 	getHeaderComponent() {
 		const topicData = this.props.data.forums.topic;
 		const headerAlignClass = topicData.isQuestion ? styles.leftText : styles.centerText;
+		const hidden = topicData.hiddenStatus !== null;
 		// @todo language abstraction
 
 		return (
 			<ViewMeasure onLayout={this.onHeaderLayout}>
-				<ShadowedArea style={[styles.mbStandard]}>
+				<ShadowedArea style={[styles.mbStandard]} hidden={hidden}>
 					<ViewMeasure onLayout={this.onInnerHeaderLayout} style={[componentStyles.innerHeader, styles.pbExtraWide]}>
 						<Animated.View
 							style={[styles.flexRow, styles.flexAlignStretch, { opacity: this._titleOpacity || 1, transform: [{ scale: this._titleScale || 1 }] }]}
@@ -1019,12 +1021,12 @@ class TopicViewScreen extends Component {
 							)}
 							<View style={[styles.flexGrow, styles.flexBasisZero, styles.flexAlignSelfCenter, topicData.isQuestion ? styles.prWide : styles.phWide]}>
 								<View>
-									<Text style={[styles.contentTitle, headerAlignClass]}>{topicData.title}</Text>
-									<Text style={[styles.lightText, styles.standardText, headerAlignClass, styles.mtVeryTight]}>
+									<Text style={[styles.contentTitle, headerAlignClass, hidden && styles.moderatedTitle]}>{topicData.title}</Text>
+									<Text style={[styles.lightText, styles.standardText, headerAlignClass, styles.mtVeryTight, hidden && styles.moderatedLightText]}>
 										Started by {topicData.author.name}, {relativeTime.long(topicData.started)}
 									</Text>
 								</View>
-								{Boolean(topicData.tags.length || topicData.isLocked || topicData.isHot || topicData.isPinned || topicData.isFeatured) && (
+								{Boolean(topicData.tags.length || topicData.isLocked || topicData.isHot || topicData.isPinned || topicData.isFeatured || hidden) && (
 									<View>
 										{Boolean(topicData.tags.length) && (
 											<TagList centered={!topicData.isQuestion} style={styles.mtTight}>
@@ -1042,6 +1044,9 @@ class TopicViewScreen extends Component {
 												componentStyles.metaInfo
 											]}
 										>
+											{Boolean(topicData.hiddenStatus === "DELETED") && <TopicStatus style={styles.mrStandard} type="deleted" />}
+											{Boolean(topicData.hiddenStatus === "PENDING") && <TopicStatus style={styles.mrStandard} type="unapproved" />}
+											{Boolean(topicData.hiddenStatus === "HIDDEN") && <TopicStatus style={styles.mrStandard} type="hidden" />}
 											{Boolean(topicData.isArchived) && <TopicStatus style={styles.mrStandard} type="archived" />}
 											{Boolean(topicData.isLocked) && <TopicStatus style={styles.mrStandard} type="locked" />}
 											{Boolean(topicData.isHot) && <TopicStatus style={styles.mrStandard} type="hot" />}

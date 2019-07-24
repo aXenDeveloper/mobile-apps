@@ -32,6 +32,7 @@ const TopicListQuery = gql`
 					content {
 						plain(truncateLength: 100)
 					}
+					hiddenStatus
 					isPinned
 					isLocked
 					isHot
@@ -266,6 +267,9 @@ class TopicListScreen extends Component {
 			isPinned: topic.isPinned,
 			isLocked: topic.isLocked,
 			isFeatured: topic.isFeatured,
+			hiddenStatus: topic.hiddenStatus,
+			isAwaitingApproval: topic.isAwaitingApproval,
+			isDeleted: topic.isDeleted,
 			lastPostDate: topic.lastPostDate,
 			lastPostPhoto: topic.lastPostAuthor.photo,
 			lastPostAuthor: topic.lastPostAuthor,

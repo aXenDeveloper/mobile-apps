@@ -25,6 +25,7 @@ const PostFragment = gql`
 		isFirstPost
 		isIgnored
 		isFeatured
+		hiddenStatus
 		reportStatus {
 			id
 			hasReported

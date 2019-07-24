@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Image } from "react-native";
-import { styleVars } from "../styles";
+import styles, { styleVars } from "../styles";
 
 export default class ShadowedArea extends Component {
 	constructor(props) {
@@ -12,17 +12,17 @@ export default class ShadowedArea extends Component {
 	}
 
 	render() {
-		const { style, children, ...props } = this.props;
+		const { style, hidden, children, ...props } = this.props;
 
 		return (
-			<View ref={component => (this._root = component)} style={[styles.shadowedArea, style]} {...props}>
+			<View ref={component => (this._root = component)} style={[componentStyles.shadowedArea, hidden && styles.moderatedBackground, style]} {...props}>
 				{children}
 			</View>
 		);
 	}
 }
 
-const styles = StyleSheet.create({
+const componentStyles = StyleSheet.create({
 	shadowedArea: {
 		backgroundColor: "#fff",
 		borderBottomWidth: 1,

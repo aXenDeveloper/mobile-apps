@@ -82,10 +82,20 @@ export const styleVars = {
 	badgeBackground: "#e52418",
 	badgeText: "#fff",
 	greys: {
-		light: "#F7F9FA",
+		light: "#fafafa",
 		medium: "#F2F4F5",
 		darker: "#DADDE0",
 		placeholder: "#7E8387"
+	},
+	moderatedBackground: {
+		light: "#FFF5F7",
+		medium: "#FCEBEE"
+	},
+	moderatedText: {
+		light: "#BE909A",
+		medium: "#84263A",
+		text: "#AB5D6E",
+		title: "#821C32"
 	}
 };
 
@@ -353,6 +363,18 @@ const baseStyles = StyleSheet.create({
 	},
 	lightBackground: {
 		backgroundColor: styleVars.greys.light
+	},
+	moderatedBackground: {
+		backgroundColor: styleVars.moderatedBackground.light
+	},
+	moderatedText: {
+		color: styleVars.moderatedText.text
+	},
+	moderatedLightText: {
+		color: styleVars.moderatedText.light
+	},
+	moderatedTitle: {
+		color: styleVars.moderatedText.title
 	},
 	text: {
 		color: styleVars.text

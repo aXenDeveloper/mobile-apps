@@ -499,6 +499,11 @@ class Post extends Component {
 		);
 	}
 
+	/**
+	 * Render the corner 'highlighted' badge if necessary
+	 *
+	 * @return 	Component|null
+	 */
 	renderCommentFlag() {
 		if (!this.props.site.settings.reputation_enabled || !this.props.site.settings.reputation_highlight) {
 			return null;
@@ -509,6 +514,35 @@ class Post extends Component {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Render a message explaining the post is hidden
+	 *
+	 * @return 	Component|null
+	 */
+	renderHiddenMessage() {
+		const data = this.props.data;
+
+		if (data.hiddenStatus === null) {
+			return null;
+		}
+
+		const statuses = {
+			HIDDEN: ["Hidden", "This post is only visible to moderators", icons.HIDDEN],
+			DELETED: ["Deleted", "This post is pending deletion", icons.CROSS_CIRCLE_SOLID],
+			PENDING: ["Pending Approval", "This post is pending approval by a moderator", icons.PENDING]
+		};
+
+		return (
+			<View style={[styles.moderatedBackground, styles.mtWide, styles.pWide, styles.flexRow, componentStyles.hiddenMessage]}>
+				<Image source={statuses[data.hiddenStatus][2]} resizeMode="contain" style={componentStyles.hiddenMessageIcon} />
+				<View style={[styles.flexGrow, styles.flexBasisZero, styles.mlTight]}>
+					<Text style={[styles.contentText, styles.mediumText, styles.moderatedTitle]}>{statuses[data.hiddenStatus][0]}</Text>
+					<Text style={[styles.standardText, styles.moderatedText]}>{statuses[data.hiddenStatus][1]}</Text>
+				</View>
+			</View>
+		);
 	}
 
 	render() {
@@ -549,6 +583,7 @@ class Post extends Component {
 										</TouchableOpacity>
 									)}
 								</View>
+								{Boolean(postData.hiddenStatus !== null) && this.renderHiddenMessage()}
 								<View style={styles.mvWide}>
 									<RichTextContent>{postData.content.original}</RichTextContent>
 									<Animatable.View ref={r => (this._reactionWrap = r)}>
@@ -574,7 +609,9 @@ class Post extends Component {
 						</View>
 						{Boolean(repButton || this.props.canReply) && (
 							<PostControls style={styles.mhWide}>
-								{Boolean(this.props.canReply) && <PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />}
+								{Boolean(this.props.canReply) && this.props.hiddenStatus === null && (
+									<PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />
+								)}
 								{repButton}
 							</PostControls>
 						)}
@@ -631,5 +668,14 @@ const componentStyles = StyleSheet.create({
 		width: 24,
 		height: 24,
 		opacity: 0.5
+	},
+	hiddenMessage: {
+		marginHorizontal: styleVars.spacing.wide * -1
+	},
+	hiddenMessageIcon: {
+		width: 14,
+		height: 14,
+		tintColor: styleVars.moderatedText.title,
+		marginTop: 2
 	}
 });

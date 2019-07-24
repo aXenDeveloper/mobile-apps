@@ -21,7 +21,11 @@ const componentStyles = StyleSheet.create({
 });
 
 const ContentRow = props => {
-	const rowClass = props.unread ? styles.unreadBackground : styles.readBackground;
+	let rowClass = styles.unreadBackground;
+
+	if (props.hidden) {
+		rowClass = styles.moderatedBackground;
+	}
 
 	return (
 		<TouchableHighlight style={props.withSpace ? componentStyles.outerContentRowWithSpace : componentStyles.outerContentRow} onPress={props.onPress || null}>
