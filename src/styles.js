@@ -131,7 +131,7 @@ const baseStyles = StyleSheet.create({
 	},
 	primaryTabBar: {
 		backgroundColor: "#fff",
-		height: 55,
+		height: isIphoneX() ? 55 : 58,
 		paddingBottom: styleVars.spacing.tight,
 		paddingTop: styleVars.spacing.tight
 	},
