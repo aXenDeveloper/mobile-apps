@@ -27,7 +27,8 @@ export default class Pager extends PureComponent {
 
 		this.state = {
 			isBeingTouched: false,
-			jumpingToPost: 1
+			jumpingToPost: 1,
+			showBar: this.props.currentPosition !== null
 		};
 	}
 
@@ -112,7 +113,14 @@ export default class Pager extends PureComponent {
 		}
 
 		if (!this.state.isBeingTouched && prevProps.currentPosition !== this.props.currentPosition) {
-			this._updateBar();
+			if (prevProps.currentPosition === null && this.props.currentPosition !== null) {
+				this._updateBar(false);
+				this.setState({
+					showBar: true
+				});
+			} else {
+				this._updateBar();
+			}
 		}
 
 		if (!prevState.isBeingTouched && this.state.isBeingTouched) {
@@ -131,9 +139,13 @@ export default class Pager extends PureComponent {
 	 *
 	 * @return 	void
 	 */
-	_updateBar() {
+	_updateBar(animate = true) {
+		if (this.props.currentPosition === null) {
+			return;
+		}
+
 		const trackerWidth = Math.ceil((parseInt(this.props.currentPosition) / parseInt(this.props.total)) * 100);
-		this._trackerBarRef.transitionTo({ width: `${trackerWidth}%` });
+		this._trackerBarRef.transitionTo({ width: `${trackerWidth}%` }, animate ? 400 : 1);
 	}
 
 	render() {
@@ -148,9 +160,10 @@ export default class Pager extends PureComponent {
 
 		return (
 			<Animatable.View
-				style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.pager]}
+				style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.pager, { opacity: this.state.showBar ? 1 : 0 }]}
 				ref={ref => (this._actionBarRef = ref)}
 				onLayout={this.onWrapperLayout}
+				useNativeDriver={true}
 			>
 				<View style={[componentStyles.trackerWrapper]} {...this._panResponder.panHandlers} {...this.props.copilot}>
 					<Animatable.View ref={ref => (this._trackerBarRef = ref)} style={[componentStyles.trackerBar, { width: "0%" }]} />
@@ -177,6 +190,7 @@ const componentStyles = StyleSheet.create({
 	pager: {
 		height: 33,
 		maxHeight: 33,
+		opacity: 0,
 		backgroundColor: styleVars.greys.light,
 		borderTopWidth: 1,
 		borderTopColor: styleVars.borderColors.dark,
@@ -219,12 +233,12 @@ const componentStyles = StyleSheet.create({
 });
 
 Pager.defaultProps = {
-	currentPosition: 1,
+	currentPosition: null,
 	onChange: () => {}
 };
 
 Pager.propTypes = {
-	currentPosition: PropTypes.number.isRequired,
+	currentPosition: PropTypes.number,
 	total: PropTypes.number.isRequired,
 	onChange: PropTypes.func
 };
