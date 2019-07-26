@@ -117,9 +117,6 @@ class QuillEditor extends Component {
 	async getEditorHtml() {
 		const file = await AssetUtils.resolveAsync(EDITOR_VIEW);
 		const fileContents = await FileSystem.readAsStringAsync(file.localUri);
-		//;
-
-		console.log(fileContents);
 
 		this._editorHtml = fileContents;
 
