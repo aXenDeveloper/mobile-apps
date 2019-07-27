@@ -313,13 +313,14 @@ class QuillComponent extends Component {
 		// Todo: validate link/text
 
 		const range = this.state.quill.getSelection(true);
-		this.addDebug(`Range index: ${range.index}, length: ${range.length}`);
+		this.addDebug(`Range index before adding: ${range.index}, length: ${range.length}`);
+		this.addDebug(`About to insert ${data.text} with link ${data.url}`);
 
 		const delta = {
 			ops: [
-				{
+				...(range.index > 1 && {
 					retain: range.index || 0
-				},
+				}: {}),
 				{
 					insert: data.text,
 					attributes: {
@@ -328,10 +329,15 @@ class QuillComponent extends Component {
 				}
 			]
 		};
-		this.state.quill.updateContents(delta);
-		this.state.quill.setSelection(range.index + range.length + data.text.length, 0);
 
-		this.addDebug(`Range index: ${range.index + range.length + data.text.length}, length: 0`);
+		try {
+			this.state.quill.updateContents(delta, "user");
+			this.state.quill.setSelection(range.index + range.length + data.text.length, 0, "user");
+		} catch (err) {
+			this.addDebug(`Adding link failed: ${err}`);
+		}
+
+		this.addDebug(`Range index after adding: ${range.index + range.length + data.text.length}, length: 0`);
 
 		this.setState({
 			range: {
