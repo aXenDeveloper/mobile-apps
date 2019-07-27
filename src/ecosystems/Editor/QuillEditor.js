@@ -1,5 +1,5 @@
 import React, { Fragment, Component } from "react";
-import { View, TextInput, Text, KeyboardAvoidingView, Button, StyleSheet, LayoutAnimation } from "react-native";
+import { View, TextInput, Alert, Text, KeyboardAvoidingView, TouchableOpacity, Image, StyleSheet, LayoutAnimation } from "react-native";
 import { Asset } from "expo-asset";
 import { WebView } from "react-native-webview";
 import gql from "graphql-tag";
@@ -12,6 +12,8 @@ import * as ImageManipulator from "expo-image-manipulator";
 import AssetUtils from "expo-asset-utils";
 import _ from "lodash";
 import { connect } from "react-redux";
+import isURL from "validator/lib/isURL";
+
 import {
 	setFocus,
 	setFormatting,
@@ -19,6 +21,7 @@ import {
 	resetImagePicker,
 	resetCamera,
 	addImageToUpload,
+	closeLinkModal,
 	showMentionBar,
 	hideMentionBar,
 	loadingMentions,
@@ -28,6 +31,8 @@ import {
 	setUploadStatus,
 	UPLOAD_STATUS
 } from "../../redux/actions/editor";
+import ContentRow from "../../ecosystems/ContentRow";
+import Button from "../../atoms/Button";
 import styles, { styleVars } from "../../styles";
 
 const EDITOR_VIEW = require("../../../web/dist/index.html");
@@ -62,6 +67,7 @@ class QuillEditor extends Component {
 	constructor(props) {
 		super(props);
 		this.webview = null;
+		this.urlInput = null;
 		this._mentionHandlers = {};
 		this._editorHtml = null;
 
@@ -95,6 +101,8 @@ class QuillEditor extends Component {
 
 		this.blur = this.blur.bind(this);
 		this.onMessage = this.onMessage.bind(this);
+		this.closeLinkModal = this.closeLinkModal.bind(this);
+		this.insertLink = this.insertLink.bind(this);
 
 		// Optionally set a height on the webview
 		// We need this if we're showing the editor in a scrollview,
@@ -178,6 +186,8 @@ class QuillEditor extends Component {
 		// Are we opening the link modal?
 		if (!prevProps.editor.linkModalActive && this.props.editor.linkModalActive) {
 			this.showLinkModal();
+		} else if (prevProps.editor.linkModalActive && !this.props.editor.linkModalActive) {
+			this.doHideLinkModal();
 		}
 
 		// Are we opening the image picker?
@@ -486,13 +496,20 @@ class QuillEditor extends Component {
 	 * @return 	void
 	 */
 	showLinkModal() {
-		this.setState({
-			linkModal: {
-				visible: true,
-				url: "",
-				text: ""
+		this.setState(
+			{
+				linkModal: {
+					visible: true,
+					url: "",
+					text: ""
+				}
+			},
+			() => {
+				setTimeout(() => {
+					this.urlInput.focus();
+				}, 250);
 			}
-		});
+		);
 
 		this.props.dispatch(
 			setFocus({
@@ -501,12 +518,16 @@ class QuillEditor extends Component {
 		);
 	}
 
+	closeLinkModal() {
+		this.props.dispatch(closeLinkModal());
+	}
+
 	/**
 	 * Hide the Insert Link modal
 	 *
 	 * @return 	void
 	 */
-	hideLinkModal() {
+	doHideLinkModal() {
 		this.setState({
 			linkModal: {
 				visible: false,
@@ -528,16 +549,19 @@ class QuillEditor extends Component {
 	 * @return 	void
 	 */
 	insertLink() {
-		this.setState({
-			linkModal: {
-				visible: false
-			}
-		});
+		if (!isURL(this.state.linkModal.url)) {
+			Alert.alert("Invalid Link", "The URL you entered isn't valid. Please check and try again.", [{ text: "OK" }], { cancelable: false });
+			return;
+		}
+
+		this.closeLinkModal();
+
+		const linkText = this.state.linkModal.text.trim();
 
 		this.sendMessage("FOCUS");
 		this.sendMessage("INSERT_LINK", {
 			url: this.state.linkModal.url,
-			text: this.state.linkModal.text
+			text: linkText !== "" ? linkText : this.state.linkModal.url
 		});
 
 		console.log("Insert:", this.state.linkModal.url, this.state.linkModal.text);
@@ -707,38 +731,45 @@ class QuillEditor extends Component {
 
 		return (
 			<View style={{ flex: 1, backgroundColor: "#fff" }}>
-				<Modal
-					style={modalStyles.modal}
-					avoidKeyboard={true}
-					animationIn="bounceIn"
-					isVisible={this.state.linkModal.visible}
-					onBackdropPress={() => this.hideLinkModal()}
-				>
-					<View style={[styles.modal, styles.modalHorizontalPadding, modalStyles.modalInner]}>
-						<View style={styles.modalHeader}>
-							<Text style={styles.modalTitle}>Insert Link</Text>
+				<Modal style={styles.flex} avoidKeyboard={true} animationIn="fadeInUp" isVisible={this.state.linkModal.visible} onBackdropPress={this.closeLinkModal}>
+					<View style={[styles.modal, componentStyles.modal]}>
+						<View style={[styles.modalInner, componentStyles.modalInner]}>
+							<View style={styles.pvWide}>
+								<View style={[styles.flexRow, styles.flexJustifyCenter, styles.flexAlignCenter]}>
+									<Text style={[styles.modalTitle]}>Insert Link</Text>
+								</View>
+								<TouchableOpacity onPress={this.closeLinkModal}>
+									<Image source={require("../../../resources/close_circle.png")} resizeMode="contain" style={styles.modalClose} />
+								</TouchableOpacity>
+							</View>
+							<View style={[styles.pbWide, styles.phWide]}>
+								<TextInput
+									onChangeText={url =>
+										this.setState({
+											linkModal: { ...this.state.linkModal, url }
+										})
+									}
+									value={this.state.linkModal.url}
+									placeholder="Link URL"
+									style={[styles.textInput, styles.pStandard]}
+									ref={urlInput => (this.urlInput = urlInput)}
+									textContentType="URL"
+									autoCapitalize="none"
+								/>
+
+								<TextInput
+									onChangeText={text =>
+										this.setState({
+											linkModal: { ...this.state.linkModal, text }
+										})
+									}
+									value={this.state.linkModal.text}
+									placeholder="Link text (optional)"
+									style={[styles.textInput, styles.pStandard]}
+								/>
+								<Button filled type="primary" size="medium" title="Insert" style={styles.mtWide} onPress={this.insertLink} />
+							</View>
 						</View>
-						<TextInput
-							onChangeText={url =>
-								this.setState({
-									linkModal: { ...this.state.linkModal, url }
-								})
-							}
-							value={this.state.linkModal.url}
-							style={styles.textInput}
-							placeholder="Link URL"
-						/>
-						<TextInput
-							onChangeText={text =>
-								this.setState({
-									linkModal: { ...this.state.linkModal, text }
-								})
-							}
-							value={this.state.linkModal.text}
-							style={styles.textInput}
-							placeholder="Link text"
-						/>
-						<Button title="Insert link" onPress={() => this.insertLink()} />
 					</View>
 				</Modal>
 				<View ref={measurer => (this.measurer = measurer)} style={{ height: 1, backgroundColor: "#fff" }} />
@@ -774,11 +805,14 @@ export default compose(
 	}))
 )(QuillEditor);
 
-const modalStyles = StyleSheet.create({
+const componentStyles = StyleSheet.create({
 	modal: {
-		flex: 1
+		backgroundColor: styleVars.greys.medium
 	},
-	modalInner: {}
+	modalInner: {
+		backgroundColor: styleVars.appBackground,
+		paddingBottom: 0
+	}
 });
 
 const editorStyles = StyleSheet.create({

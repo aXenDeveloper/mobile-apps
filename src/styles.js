@@ -250,7 +250,7 @@ const baseStyles = StyleSheet.create({
 
 	/* Modal styles */
 	modal: {
-		backgroundColor: "#f3f3f3",
+		backgroundColor: styleVars.greys.medium,
 		borderRadius: 5
 	},
 	modalAlignBottom: {
