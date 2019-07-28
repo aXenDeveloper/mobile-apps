@@ -85,8 +85,16 @@ class StreamViewScreen extends Component {
 			error: null, // Was there an error?
 			streamListVisible: false, // Is the stream list modal visible?
 			reachedEnd: false, // Have we reached the end of the results list?
-			offset: 0 // What offset are we loading from?
+			offset: 0, // What offset are we loading from?
+			refreshing: false
 		};
+
+		this.onRefresh = this.onRefresh.bind(this);
+		this.showStreamModal = this.showStreamModal.bind(this);
+		this.closeStreamModal = this.closeStreamModal.bind(this);
+		this.switchStream = this.switchStream.bind(this);
+		this.onEndReached = this.onEndReached.bind(this);
+		this.getFooterComponent = this.getFooterComponent.bind(this);
 	}
 
 	componentDidMount() {
@@ -187,13 +195,15 @@ class StreamViewScreen extends Component {
 				sectionData,
 				reachedEnd: !data.core.stream.items.length || data.core.stream.items.length < LIMIT,
 				offset: results.length,
-				loading: false
+				loading: false,
+				refreshing: false
 			});
 		} catch (err) {
 			console.log(err);
 			this.setState({
 				error: true,
-				loading: false
+				loading: false,
+				refreshing: false
 			});
 		}
 	}
@@ -203,22 +213,35 @@ class StreamViewScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	showStreamModal = () => {
+	showStreamModal() {
 		this.setState({
 			streamListVisible: true
 		});
-	};
+	}
 
 	/**
 	 * Hide the stream modal
 	 *
 	 * @return 	void
 	 */
-	closeStreamModal = () => {
+	closeStreamModal() {
 		this.setState({
 			streamListVisible: false
 		});
-	};
+	}
+
+	onRefresh() {
+		this.setState(
+			{
+				refreshing: true,
+				offset: 0,
+				results: []
+			},
+			() => {
+				this.fetchStream();
+			}
+		);
+	}
 
 	/**
 	 * Build the section data we need for SectionList
@@ -288,7 +311,7 @@ class StreamViewScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	switchStream = item => {
+	switchStream(item) {
 		this.setState({
 			streamListVisible: false
 		});
@@ -317,31 +340,31 @@ class StreamViewScreen extends Component {
 				}
 			);
 		}, 450);
-	};
+	}
 
 	/**
 	 * Handles infinite loading when user scrolls to end
 	 *
 	 * @return 	void
 	 */
-	onEndReached = () => {
+	onEndReached() {
 		if (!this.state.loading && !this.state.reachedEnd) {
 			this.fetchStream();
 		}
-	};
+	}
 
 	/**
 	 * Returns placeholder components if our state indicates we need them
 	 *
 	 * @return 	Component|null
 	 */
-	getFooterComponent = () => {
+	getFooterComponent() {
 		if (this.state.loading && !this.state.reachedEnd) {
 			return this.getPlaceholder();
 		}
 
 		return null;
-	};
+	}
 
 	/**
 	 * Build placeholder components
@@ -393,6 +416,8 @@ class StreamViewScreen extends Component {
 							stickySectionHeadersEnabled={true}
 							onEndReached={this.onEndReached}
 							ListFooterComponent={this.getFooterComponent}
+							refreshing={this.state.refreshing}
+							onRefresh={this.onRefresh}
 						/>
 					</Animatable.View>
 				</React.Fragment>
