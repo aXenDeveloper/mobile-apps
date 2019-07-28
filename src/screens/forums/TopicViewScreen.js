@@ -177,13 +177,11 @@ class TopicViewScreen extends Component {
 	 */
 	static navigationOptions = ({ navigation }) => {
 		const { params } = navigation.state;
-		const animValues = {
-			headerBarOpacity: params.header
-		};
+
 		return {
 			headerTitle: params.ready ? (
 				<React.Fragment>
-					<Animated.View style={{ opacity: params.headerBarOpacity || 1 }}>
+					<Animated.View style={{ opacity: params.headerBarOpacity || 0 }}>
 						<TwoLineHeader
 							title={params.title}
 							subtitle={`Started by ${params.author.name}`} //@todo lang abstraction
@@ -199,7 +197,11 @@ class TopicViewScreen extends Component {
 					</Animated.View>
 				</React.Fragment>
 			) : null,
-			headerRight: params.showFollowControl && <FollowButton followed={params.isFollowed} onPress={params.onPressFollow} />
+			headerRight: (
+				<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyEnd, componentStyles.headerRight]}>
+					{params.showFollowControl && <FollowButton followed={params.isFollowed} onPress={params.onPressFollow} />}
+				</View>
+			)
 		};
 	};
 
@@ -1729,7 +1731,21 @@ const componentStyles = StyleSheet.create({
 		position: "absolute",
 		top: 15,
 		left: "50%",
-		marginLeft: -30,
+		...Platform.select({
+			ios: {
+				marginLeft: -30
+			},
+			android: {
+				marginLeft: -31
+			}
+		}),
 		zIndex: 100
+	},
+	headerRight: {
+		...Platform.select({
+			android: {
+				width: 80
+			}
+		})
 	}
 });
