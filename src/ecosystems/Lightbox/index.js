@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, Image, View, StatusBar, StyleSheet } from "react-native";
+import { Text, Image, View, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
 import Modal from "react-native-modal";
 import ImageViewer from "react-native-image-zoom-viewer";
 import _ from "underscore";
@@ -7,10 +7,16 @@ import _ from "underscore";
 import Lang from "../../utils/Lang";
 import getImageUrl from "../../utils/getImageUrl";
 import styles, { styleVars } from "../../styles";
+import icons from "../../icons";
 
 export default class Lightbox extends Component {
 	constructor(props) {
 		super(props);
+		this.close = this.close.bind(this);
+	}
+
+	close() {
+		this.props.close();
 	}
 
 	/**
@@ -48,7 +54,10 @@ export default class Lightbox extends Component {
 		return (
 			<Modal style={componentStyles.modal} avoidKeyboard={true} animationIn="fadeIn" isVisible={this.props.isVisible}>
 				<StatusBar hidden showHideTransition="fade" />
-				<ImageViewer imageUrls={this.getImages()} index={this.getInitialIndex()} enableSwipeDown onSwipeDown={() => this.props.close()} />
+				<ImageViewer imageUrls={this.getImages()} index={this.getInitialIndex()} enableSwipeDown onSwipeDown={this.close} />
+				<TouchableOpacity style={componentStyles.closeButton} onPress={this.close}>
+					<Image source={icons.CROSS} style={componentStyles.closeButtonIcon} />
+				</TouchableOpacity>
 			</Modal>
 		);
 	}
@@ -59,5 +68,15 @@ const componentStyles = StyleSheet.create({
 		...StyleSheet.absoluteFillObject,
 		padding: 0,
 		margin: 0
+	},
+	closeButton: {
+		position: "absolute",
+		top: 30,
+		left: 20
+	},
+	closeButtonIcon: {
+		tintColor: "#fff",
+		width: 34,
+		height: 34
 	}
 });
