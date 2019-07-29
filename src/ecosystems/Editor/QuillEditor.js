@@ -602,7 +602,7 @@ class QuillEditor extends Component {
 			throw new Error("Permission not granted");
 		}
 
-		const { status: statusCamera } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+		const { status: statusCamera } = await Permissions.askAsync(Permissions.CAMERA);
 		if (statusCamera !== "granted") {
 			throw new Error("Permission not granted");
 		}
