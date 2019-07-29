@@ -386,14 +386,15 @@ class TopicViewScreen extends Component {
 	 */
 	onScrollEnd(e) {
 		const y = e.nativeEvent.contentOffset.y;
+		const halfway = this.state.innerHeaderHeight / 2;
 
-		if (this._flatList && this._flatList.getNode() && !this._isSnapping) {
-			if (0 < y && y < this.state.innerHeaderHeight) {
-				this._flatList.getNode().scrollToOffset({ y: 0 });
+		if (this._flatList && this._flatList.getNode() && !this._isSnapping && y > 0) {
+			if (y < halfway) {
 				this.setIsSnapping();
-			} else if (this.state.innerHeaderHeight / 2 <= y && y < this.state.innerHeaderHeight) {
-				this._flatList.getNode().scrollToOffset({ y: this.state.innerHeaderHeight });
+				this._flatList.getNode().scrollToOffset({ offset: 0 });
+			} else if (y >= halfway && y < this.state.innerHeaderHeight) {
 				this.setIsSnapping();
+				this._flatList.getNode().scrollToOffset({ offset: this.state.innerHeaderHeight });
 			}
 		}
 	}
