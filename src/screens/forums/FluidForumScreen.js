@@ -31,6 +31,7 @@ const FluidForumQuery = gql`
 				isLocked
 				started
 				isUnread
+				hiddenStatus
 				author {
 					id
 					name
@@ -154,6 +155,7 @@ class FluidForumScreen extends Component {
 			started: topic.started,
 			snippet: topic.content.plain,
 			isHot: false,
+			hiddenStatus: topic.hiddenStatus,
 			isPinned: topic.isPinned,
 			isLocked: topic.isLocked,
 			lastPostDate: topic.lastPostDate,
