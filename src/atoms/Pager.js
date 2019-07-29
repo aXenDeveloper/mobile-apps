@@ -163,7 +163,6 @@ export default class Pager extends PureComponent {
 				style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.pager, { opacity: this.state.showBar ? 1 : 0 }]}
 				ref={ref => (this._actionBarRef = ref)}
 				onLayout={this.onWrapperLayout}
-				useNativeDriver={true}
 			>
 				<View style={[componentStyles.trackerWrapper]} {...this._panResponder.panHandlers} {...this.props.copilot}>
 					<Animatable.View ref={ref => (this._trackerBarRef = ref)} style={[componentStyles.trackerBar, { width: "0%" }]} />
@@ -190,7 +189,6 @@ const componentStyles = StyleSheet.create({
 	pager: {
 		height: 33,
 		maxHeight: 33,
-		opacity: 0,
 		backgroundColor: styleVars.greys.light,
 		borderTopWidth: 1,
 		borderTopColor: styleVars.borderColors.dark,
