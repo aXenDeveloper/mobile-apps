@@ -15,7 +15,7 @@
 				}
 			]
 		},
-		"assetBundlePatterns": ["web/dist/index.html"],
+		"assetBundlePatterns": ["web/dist/index.html", "resources/splash.png"],
 		"platforms": ["android", "ios"],
 		"extra": {
 			"multi": false,
@@ -30,7 +30,7 @@
 		},
 		"name": "invision-community",
 		"slug": "invision-community",
-		"version": "0.1.3",
+		"version": "0.1.4",
 		"description": "",
 		"scheme": "invision-community",
 		"ios": {
