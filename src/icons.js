@@ -91,4 +91,6 @@ export const navigationIcons = {
 	LOGIN_ACTIVE: require("../resources/navigation/login_active.png")
 };
 
+export const splashImage = require("../resources/splash.png");
+
 export default icons;
