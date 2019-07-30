@@ -28,7 +28,7 @@ this.props.client.query on mount. This allows us to build a dynamic query based
 on the homepage widgets that have been configured on the site.
 */
 
-const HomeSectionsToShow = ["new_content", "active_users", "our_picks", "popular_contributors"];
+//const HomeSectionsToShow = ["new_content", "active_users", "our_picks", "popular_contributors"];
 
 class HomeScreen extends Component {
 	static navigationOptions = ({ navigation }) => {
@@ -128,7 +128,8 @@ class HomeScreen extends Component {
 		let queryIncludes = [];
 
 		// Dynamically build the fragments we'll need
-		HomeSectionsToShow.forEach(section => {
+		this.props.site.settings.mobileHomeBlocks.forEach(section => {
+			console.log(section);
 			if (!_.isUndefined(HomeSections[section])) {
 				queryFragments.push("..." + HomeSections[section].fragmentName);
 				queryIncludes.push(HomeSections[section].fragment);
@@ -225,7 +226,7 @@ class HomeScreen extends Component {
 					<NavBar items={this.getNavConfig()} />
 					{this.getLoginRegPrompt()}
 					<ScrollView refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}>
-						{HomeSectionsToShow.map(section => {
+						{this.props.site.settings.mobileHomeBlocks.map(section => {
 							if (_.isUndefined(HomeSections[section])) {
 								return null;
 							}
