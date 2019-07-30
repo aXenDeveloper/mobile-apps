@@ -11,34 +11,27 @@ const MESSAGE_PREFIX = Expo.Constants.manifest.extra.message_prefix;
 
 class WebViewScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
-		headerTitle: navigation.state.params.title
+		headerTitle: navigation.state.params.title || "Loading..."
 	});
 
 	static injectedJavaScript = `
-		// Post message hack fix
-		var originalPostMessage = window.postMessage;
-		var patchedPostMessage = function(message, targetOrigin, transfer) { 
-			originalPostMessage(message, targetOrigin, transfer);
-		};
-
-		patchedPostMessage.toString = function() { 
-			return String(Object.hasOwnProperty).replace('hasOwnProperty', 'postMessage');
-		};
-
-		window.postMessage = patchedPostMessage;
-
 		function sendTitle() {
 			sendMessage('DOCUMENT_TITLE', { title: document.title });
 		}
 
 		function sendMessage(message, data = {}) {
-			console.log( data );
 			const messageToSend = JSON.stringify({
 				message: '${MESSAGE_PREFIX}' + message,
 				...data
 			});
 
-			window.postMessage(messageToSend, "*");
+			if (window.ReactABI33_0_0NativeWebView) {
+				window.ReactABI33_0_0NativeWebView.postMessage(messageToSend);
+			} else if (window.ReactNativeWebView) {
+				window.ReactNativeWebView.postMessage(messageToSend);
+			} else {
+				throw new Error("No postMessage method available");
+			}
 		}
 
 		function shouldSendLinkToNative(link) {
@@ -73,7 +66,7 @@ class WebViewScreen extends Component {
 			}
 		}
 
-		setInterval( sendTitle, 500 );
+		setInterval( sendTitle, 250 );
 		document.addEventListener('click', clickHandler);
 	`;
 
