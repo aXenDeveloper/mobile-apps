@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, Image, View, Button, AsyncStorage, StyleSheet, Alert, LayoutAnimation, Animated, Platform } from "react-native";
+import { Text, Image, View, Button, AsyncStorage, StyleSheet, Alert, LayoutAnimation, Animated, Platform, Share } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
@@ -30,6 +30,7 @@ import UnreadBar from "../../atoms/UnreadBar";
 import LoadMoreComments from "../../atoms/LoadMoreComments";
 import EndOfComments from "../../atoms/EndOfComments";
 import TopicStatus from "../../atoms/TopicStatus";
+import HeaderButton from "../../atoms/HeaderButton";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import FollowButton from "../../atoms/FollowButton";
 import { Tooltip } from "../../ecosystems/Walkthrough";
@@ -82,6 +83,7 @@ const TopicViewQuery = gql`
 				}
 				itemPermissions {
 					__typename
+					canShare
 					canComment
 					canCommentIfSignedIn
 					canMarkAsRead
@@ -97,6 +99,9 @@ const TopicViewQuery = gql`
 				}
 				follow {
 					...FollowModalFragment
+				}
+				articleLang {
+					definite
 				}
 				isQuestion
 				questionVotes
@@ -199,6 +204,7 @@ class TopicViewScreen extends Component {
 			) : null,
 			headerRight: (
 				<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyEnd, componentStyles.headerRight]}>
+					{params.showShareControl && <HeaderButton position="right" icon={icons.SHARE} onPress={params.onPressShare} style={{ marginTop: -5 }} />}
 					{params.showFollowControl && <FollowButton followed={params.isFollowed} onPress={params.onPressFollow} />}
 				</View>
 			)
@@ -276,6 +282,7 @@ class TopicViewScreen extends Component {
 		this.onInnerHeaderLayout = this.onInnerHeaderLayout.bind(this);
 		this.onScrollEnd = this.onScrollEnd.bind(this);
 		this.setWalkthroughFlag = this.setWalkthroughFlag.bind(this);
+		this.onPressShare = this.onPressShare.bind(this);
 	}
 
 	/**
@@ -559,8 +566,10 @@ class TopicViewScreen extends Component {
 		if (_.isUndefined(this.props.data) || _.isUndefined(this.props.data.forums) || this.props.data.error) {
 			this.props.navigation.setParams({
 				showFollowControl: false,
+				showShareControl: false,
 				isFollowed: false,
-				onPressFollow: this.toggleFollowModal
+				onPressFollow: this.toggleFollowModal,
+				onPressShare: this.onPressShare
 			});
 			return;
 		}
@@ -575,8 +584,10 @@ class TopicViewScreen extends Component {
 		if (!this.props.data.forums.topic.passwordProtected && !this.props.data.forums.topic.isArchived && this.props.auth.isAuthenticated) {
 			this.props.navigation.setParams({
 				showFollowControl: true,
+				showShareControl: this.props.data.forums.topic.itemPermissions.canShare || false,
 				isFollowed: this.props.data.forums.topic.follow.isFollowing,
-				onPressFollow: this.toggleFollowModal
+				onPressFollow: this.toggleFollowModal,
+				onPressShare: this.onPressShare
 			});
 		}
 	}
@@ -846,6 +857,40 @@ class TopicViewScreen extends Component {
 		});
 
 		this.props.data.refetch();
+	}
+
+	/**
+	 * Handle topic sharing
+	 *
+	 * @return 	void
+	 */
+	async onPressShare() {
+		const topicData = this.props.data.forums.topic;
+		const shortShareTitle = Lang.get("share_x", {
+			name: topicData.author.name,
+			thing: topicData.articleLang.definite
+		});
+
+		try {
+			const result = await Share.share(
+				{
+					message: Lang.get("share_x_on_x_at_x", {
+						name: topicData.author.name,
+						thing: topicData.articleLang.definite,
+						title: topicData.title,
+						site: this.props.site.settings.board_name
+					}),
+					url: topicData.url.full
+				},
+				{
+					dialogTitle: shortShareTitle,
+					subject: shortShareTitle
+				}
+			);
+		} catch (err) {
+			console.warn("Failed to share");
+			Alert.alert(Lang.get("error"), Lang.get("error_sharing_content"), [{ text: Lang.get("ok") }], { cancelable: false });
+		}
 	}
 
 	/**
@@ -1146,11 +1191,13 @@ class TopicViewScreen extends Component {
 				style={additionalPostStyle}
 				onLayout={this.onPostLayout}
 				position={this.state.startingOffset + index + 1}
-				shortShareTitle={Lang.get("share_x_post", {
-					name: item.author.name
-				})}
-				shareTitle={Lang.get("share_x_post_on_x", {
+				shortShareTitle={Lang.get("share_x", {
 					name: item.author.name,
+					thing: item.articleLang.definiteNoItem
+				})}
+				shareTitle={Lang.get("share_x_on_x_at_x", {
+					name: item.author.name,
+					thing: item.articleLang.definiteNoItem,
 					title: topicData.title,
 					site: settings.board_name
 				})}
@@ -1743,10 +1790,6 @@ const componentStyles = StyleSheet.create({
 		zIndex: 100
 	},
 	headerRight: {
-		...Platform.select({
-			android: {
-				width: 80
-			}
-		})
+		width: 80
 	}
 });

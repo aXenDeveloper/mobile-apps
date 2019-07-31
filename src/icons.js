@@ -51,6 +51,7 @@ const icons = {
 	REPLY: require("../resources/reply.png"),
 	ROW_ARROW: require("../resources/row_arrow.png"),
 	SEARCH: require("../resources/search.png"),
+	SHARE: require("../resources/share.png"),
 	SIGN_OUT: require("../resources/signout.png"),
 	STAR_SOLID: require("../resources/star_solid.png"),
 	STAR_HALF_SOLID: require("../resources/star_half_solid.png"),

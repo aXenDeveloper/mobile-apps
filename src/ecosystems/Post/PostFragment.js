@@ -38,6 +38,9 @@ const PostFragment = gql`
 			canReport
 			canReportOrRevoke
 		}
+		articleLang {
+			definiteNoItem: definite(withItem: false)
+		}
 		reputation {
 			__typename
 			reactionCount
