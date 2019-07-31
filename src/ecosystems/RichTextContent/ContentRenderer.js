@@ -166,7 +166,14 @@ class ContentRenderer extends PureComponent {
 			},
 			a: (htmlAttribs, children, convertedCSSStyles, passProps) => {
 				if (!_.isUndefined(htmlAttribs["data-mentionid"])) {
-					return <Mention userid={parseInt(htmlAttribs["data-mentionid"])} name={passProps.rawChildren[0].data} key={passProps.key} />;
+					return (
+						<Mention
+							userid={parseInt(htmlAttribs["data-mentionid"])}
+							name={passProps.rawChildren[0].data}
+							key={passProps.key}
+							baseFontStyle={passProps.baseFontStyle}
+						/>
+					);
 				}
 
 				return a(htmlAttribs, children, convertedCSSStyles, passProps);

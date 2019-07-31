@@ -29,20 +29,19 @@ class Mention extends Component {
 	 */
 	render() {
 		return (
-			<React.Fragment>
-				<Text onPress={this.onPress} style={[componentStyles.mentionWrapper, styles.phVeryTight]}>
-					<Text>{" "}</Text>
-					<Text style={[componentStyles.mention, styles.smallText]}>{this.props.name}</Text>
-					<Text>{" "}</Text>
+			<Text style={this.props.baseFontStyle}>
+				<Text> </Text>
+				<Text onPress={this.onPress} style={[componentStyles.mentionWrapper, componentStyles.mention, styles.smallText, styles.phVeryTight]}>
+					{" "}
+					{this.props.name}{" "}
 				</Text>
-			</React.Fragment>
-		)
+				<Text> </Text>
+			</Text>
+		);
 	}
 }
 
-export default compose(
-	withNavigation
-)(Mention);
+export default compose(withNavigation)(Mention);
 
 const componentStyles = StyleSheet.create({
 	mentionWrapper: {
@@ -53,6 +52,6 @@ const componentStyles = StyleSheet.create({
 	mention: {
 		color: styleVars.reverseText,
 		includeFontPadding: false,
-		textAlignVertical: 'center'
+		textAlignVertical: "center"
 	}
 });
