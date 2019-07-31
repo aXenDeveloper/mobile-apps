@@ -55,7 +55,7 @@ const TopicViewQuery = gql`
 				}
 				isUnread
 				timeLastRead
-				postCount
+				postCount(includeHidden: true)
 				views
 				unreadCommentPosition
 				findCommentPosition(findComment: $findComment)
