@@ -129,7 +129,6 @@ class HomeScreen extends Component {
 
 		// Dynamically build the fragments we'll need
 		this.props.site.settings.mobileHomeBlocks.forEach(section => {
-			console.log(section);
 			if (!_.isUndefined(HomeSections[section])) {
 				queryFragments.push("..." + HomeSections[section].fragmentName);
 				queryIncludes.push(HomeSections[section].fragment);
