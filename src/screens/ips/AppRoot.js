@@ -224,8 +224,8 @@ class AppRoot extends Component {
 			NavigationService.setBaseUrl(this.props.site.settings.base_url);
 
 			this.setState({
-				waitingForClient: this._isSingleApp ? false : null,
-				redirectToNotification: null // reset to null in case we loaded this community via a notification
+				waitingForClient: this._isSingleApp ? false : null
+				//redirectToNotification: null // reset to null in case we loaded this community via a notification
 			});
 		}
 
@@ -238,7 +238,8 @@ class AppRoot extends Component {
 
 		// --------------------------------------------------------------------
 		// Handle incoming notifications
-		if (prevProps.app.notification !== this.props.app.notification && this.props.app.notification !== null) {
+		if (this.props.app.notification !== null) {
+			console.log("got notification data in componentDidUpdate");
 			this.redirectFromNotification();
 		}
 
@@ -294,6 +295,8 @@ class AppRoot extends Component {
 	 * @return void
 	 */
 	async redirectFromNotification() {
+		this.props.dispatch(clearCurrentNotification());
+
 		// If we're in the multi-app, we need to figure out which community this notification is for,
 		// and then boot it if it isn't already loaded.
 		if (Expo.Constants.manifest.extra.multi) {
@@ -340,14 +343,13 @@ class AppRoot extends Component {
 			}
 		}
 
+		console.log("Setting redirectToNotification");
 		// Set the notification data in state so we can pass it into CommunityRoot
 		this.setState({
 			redirectToNotification: {
 				...this.props.app.notification
 			}
 		});
-
-		this.props.dispatch(clearCurrentNotification());
 	}
 
 	/**
