@@ -33,7 +33,7 @@ const StreamCardFragment = gql`
 		articleLang {
 			indefinite
 			definite
-			definiteUC
+			definiteUC: definite(uppercase: true)
 		}
 		itemAuthor {
 			id
