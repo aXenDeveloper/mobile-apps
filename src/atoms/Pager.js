@@ -160,7 +160,7 @@ export default class Pager extends PureComponent {
 
 		return (
 			<Animatable.View
-				style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.pager, { opacity: this.state.showBar ? 1 : 0 }]}
+				style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.pager]}
 				ref={ref => (this._actionBarRef = ref)}
 				onLayout={this.onWrapperLayout}
 			>
