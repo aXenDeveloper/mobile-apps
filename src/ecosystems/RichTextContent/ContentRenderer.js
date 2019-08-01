@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
-import { Text, View, StyleSheet, Image, Dimensions } from "react-native";
+import { Text, View, StyleSheet, Image, Dimensions, TouchableOpacity } from "react-native";
 import HTML from "react-native-render-html";
-import { iframe, a } from "react-native-render-html/src/HTMLRenderers";
+import { iframe, a, img } from "react-native-render-html/src/HTMLRenderers";
 import { compose } from "react-apollo";
 import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
@@ -22,6 +22,7 @@ class ContentRenderer extends PureComponent {
 	constructor(props) {
 		super(props);
 		this._lightboxedImages = {};
+		this._imagePressHandlers = {};
 		this._renderers = this.renderers();
 		this.state = {
 			lightboxVisible: false
@@ -29,10 +30,13 @@ class ContentRenderer extends PureComponent {
 
 		this.ignoreNodesFunction = this.ignoreNodesFunction.bind(this);
 		this.onLinkPress = this.onLinkPress.bind(this);
+		this.onImagePress = this.onImagePress.bind(this);
 		this.alterChildren = this.alterChildren.bind(this);
 		this.alterData = this.alterData.bind(this);
 		this.alterNode = this.alterNode.bind(this);
 		this.closeLightbox = this.closeLightbox.bind(this);
+
+		this.maxImagesWidth = parseInt(Dimensions.get("window").width) - 35;
 	}
 
 	/**
@@ -115,9 +119,21 @@ class ContentRenderer extends PureComponent {
 			}
 
 			// Add to lightbox if this is an attachment
-			if (!_.isUndefined(node.attribs["data-fileid"])) {
-				this._lightboxedImages[parent.attribs.href] = true;
+			if (!_.isUndefined(node.attribs["data-fileid"]) || (!_.isUndefined(node.attribs["width"]) && parseInt(node.attribs["width"]) > this.maxImagesWidth)) {
+				if (parent.name === "a") {
+					this._lightboxedImages[parent.attribs.href] = true;
+				} else {
+					node.attribs = {
+						...node.attribs,
+						needsLightbox: true
+					};
+
+					this._lightboxedImages[node.attribs["src"]] = true;
+				}
 			}
+
+			// Delete width attrib here to let react-native-render-html size the image according to max width setting
+			delete node.attribs.width;
 		}
 
 		// If this is a Text node within the citation, add the citation text styling
@@ -177,6 +193,17 @@ class ContentRenderer extends PureComponent {
 				}
 
 				return a(htmlAttribs, children, convertedCSSStyles, passProps);
+			},
+			img: (htmlAttribs, children, convertedCSSStyles, passProps) => {
+				if (!_.isUndefined(htmlAttribs["needsLightbox"])) {
+					return (
+						<TouchableOpacity onPress={this.getImagePressHandler(htmlAttribs.src)}>
+							{img(htmlAttribs, children, convertedCSSStyles, passProps)}
+						</TouchableOpacity>
+					);
+				}
+
+				return img(htmlAttribs, children, convertedCSSStyles, passProps);
 			}
 		};
 	}
@@ -201,6 +228,21 @@ class ContentRenderer extends PureComponent {
 		}
 
 		NavigationService.navigate(data);
+	}
+
+	getImagePressHandler(url) {
+		if (_.isUndefined(this._imagePressHandlers[url])) {
+			this._imagePressHandlers[url] = () => this.onImagePress(url);
+		}
+
+		return this._imagePressHandlers[url];
+	}
+
+	onImagePress(url) {
+		this.setState({
+			lightboxVisible: true,
+			defaultImage: url
+		});
 	}
 
 	/**
@@ -243,8 +285,8 @@ class ContentRenderer extends PureComponent {
 					baseFontStyle={this.props.baseFontStyle || richTextStyles(this.props.dark).defaultTextStyle}
 					ignoredStyles={["font-family", "letter-spacing", "line-height"]}
 					html={this.props.children}
-					imagesMaxWidth={parseInt(Dimensions.get("window").width) - 35}
-					staticContentMaxWidth={parseInt(Dimensions.get("window").width) - 35}
+					imagesMaxWidth={this.maxImagesWidth}
+					staticContentMaxWidth={this.maxImagesWidth}
 					onLinkPress={this.props.onLinkPress || this.onLinkPress}
 					ignoreNodesFunction={this.ignoreNodesFunction}
 				/>
