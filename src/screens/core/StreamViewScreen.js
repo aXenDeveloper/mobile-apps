@@ -8,6 +8,7 @@ import Modal from "react-native-modal";
 import * as Animatable from "react-native-animatable";
 
 import Lang from "../../utils/Lang";
+import ErrorBox from "../../atoms/ErrorBox";
 import { Post } from "../../ecosystems/Post";
 import GoToMulti from "../../atoms/GoToMulti";
 import StreamHeader from "../../atoms/StreamHeader";
@@ -391,7 +392,8 @@ class StreamViewScreen extends Component {
 			return this.getPlaceholder();
 		} else if (this.state.error) {
 			const error = getErrorMessage(this.state.error, {});
-			return <Text>{error}</Text>;
+			const message = error ? error : "Error loading this stream";
+			return <ErrorBox message={message} />;
 		} else {
 			return (
 				<React.Fragment>
