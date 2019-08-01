@@ -202,18 +202,29 @@ class CommunityRoot extends Component {
 		}
 
 		const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-		let token = null;
+		const isMulti = Expo.Constants.manifest.extra.multi;
+		const activeCommunity = this.props.app.currentCommunity;
 
-		// If they haven't granted access then we don't need to do anything here
-		if (status === "granted") {
-			try {
-				token = await Notifications.getExpoPushTokenAsync();
-			} catch (err) {}
+		let token = null;
+		let isSaved = false;
+
+		if (isMulti) {
+			isSaved = _.find(this.props.app.communities.data, community => community.url === activeCommunity.apiUrl);
+		}
+
+		// Only send token if this is single-community app, or we've saved this community
+		if (!isMulti || (isMulti && isSaved)) {
+			// If they haven't granted access then we don't need to do anything here
+			if (status === "granted") {
+				try {
+					token = await Notifications.getExpoPushTokenAsync();
+				} catch (err) {}
+			}
 		}
 
 		// Get the token that uniquely identifies this device
 		try {
-			console.log(`COMMUNITY_ROOT: Starting session...`);
+			console.log(`COMMUNITY_ROOT: Starting session with token ${token}...`);
 			const { data } = await this.props.auth.client.mutate({
 				mutation: SessionStartMutation,
 				variables: {
