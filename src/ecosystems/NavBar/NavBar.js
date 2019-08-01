@@ -41,12 +41,16 @@ export class NavBar extends Component {
 	renderNavItem({ item }) {
 		let icon;
 
-		if (!_.isUndefined(item.icon) && !_.isUndefined(icons[item.icon])) {
-			icon = icons[item.icon];
-		} else if (NavigationService.isInternalUrl(item.url.full)) {
-			icon = icons.ARROW_RIGHT;
-		} else {
-			icon = icons.GLOBE;
+		try {
+			if (!_.isUndefined(item.icon) && !_.isUndefined(icons[item.icon])) {
+				icon = icons[item.icon];
+			} else if (NavigationService.isInternalUrl(item.url.full)) {
+				icon = icons.ARROW_RIGHT;
+			} else {
+				icon = icons.GLOBE;
+			}
+		} catch (err) {
+			return null;
 		}
 
 		return <NavItem icon={icon} onPress={this.getMenuPressHandler(item)} title={item.title.replace("mobilenavigation_", "")} />;
