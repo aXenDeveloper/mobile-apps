@@ -1636,7 +1636,7 @@ class TopicViewScreen extends Component {
 		const lastPostIndex = this.props.data.forums.topic.posts.findIndex(post => parseInt(post.id) === lastItemID);
 
 		// Now check whether the last post in our viewable array matches the last post of the topic
-		if (lastPostIndex == this.props.data.forums.topic.postCount - 1) {
+		if (this.state.startingOffset + lastPostIndex === this.props.data.forums.topic.postCount - 1) {
 			realIndex = this.state.startingOffset + lastPostIndex + 1;
 		}
 
