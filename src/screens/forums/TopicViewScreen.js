@@ -247,7 +247,7 @@ class TopicViewScreen extends Component {
 			startingOffset: this.props.data.variables.offset || 0,
 			pollModalVisible: false,
 			followModalVisible: false,
-			currentPosition: null,
+			currentPosition: 1,
 			loadingUnseenPosts: false,
 			innerHeaderHeight: 200
 		};
@@ -1687,7 +1687,7 @@ class TopicViewScreen extends Component {
 						<CopilotStep text="The Pager bar shows your position in the topic. You can tap and drag to jump to another post." order={1} name="pager">
 							<Pager
 								total={topicData.postCount}
-								currentPosition={this.state.currentPosition ? Math.max(1, this.state.currentPosition) : null}
+								currentPosition={Math.max(1, this.state.currentPosition)}
 								onChange={this.scrollToPost}
 								unreadIndicator={topicData.isUnread ? topicData.unreadCommentPosition : false}
 							/>
