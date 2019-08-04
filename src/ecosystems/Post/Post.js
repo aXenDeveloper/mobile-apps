@@ -609,7 +609,7 @@ class Post extends Component {
 						</View>
 						{Boolean(repButton || this.props.canReply) && (
 							<PostControls style={styles.mhWide}>
-								{Boolean(this.props.canReply) && this.props.hiddenStatus === null && (
+								{Boolean(this.props.canReply) && postData.hiddenStatus === null && (
 									<PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />
 								)}
 								{repButton}
