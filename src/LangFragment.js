@@ -13,7 +13,6 @@ const LangFragment = gql`
 		save: phrase(key: "app_save")
 		confirm: phrase(key: "app_confirm")
 		add: phrase(key: "app_add")
-		share: phrase(key: "app_share")
 		report: phrase(key: "app_report")
 		show: phrase(key: "app_show")
 		hide: phrase(key: "app_hide")
@@ -74,9 +73,13 @@ const LangFragment = gql`
 		no_matching_members: phrase(key: "app_no_matching_members")
 		rep: phrase(key: "app_rep")
 		no_rep_this_week: phrase(key: "app_no_rep_this_week")
+		list_two: phrase(key: "app_list_two")
+		list_three: phrase(key: "app_list_three")
+
+		share: phrase(key: "app_share")
 		error_sharing_content: phrase(key: "app_error_sharing_content")
-		share_x: phrase(key: "app_share_x_post")
-		share_x_on_x_at_x: phrase(key: "app_share_x_post_on_x_at_x")
+		share_x: phrase(key: "app_share_x")
+		share_x_on_x_at_x: phrase(key: "app_share_x_on_x_at_x")
 
 		followed_member: phrase(key: "app_followed_member")
 		unfollowed_member: phrase(key: "app_unfollowed_member")
@@ -156,6 +159,7 @@ const LangFragment = gql`
 		notifications_unread: phrase(key: "app_notifications_unread")
 		notifications_read: phrase(key: "app_notifications_read")
 		no_notifications: phrase(key: "app_no_notifications")
+		notification_group_core: phrase(key: "app_notification_group_core")
 
 		switch_stream: phrase(key: "app_switch_stream")
 		past_hour: phrase(key: "app_past_hour")
@@ -223,6 +227,10 @@ const LangFragment = gql`
 		notifications__profile_comment: phrase(key: "app_notifications__profile_comment")
 		notifications__profile_reply: phrase(key: "app_notifications__profile_reply")
 		notifications__new_status: phrase(key: "app_notifications__new_status")
+
+		notification_type_push: phrase(key: "app_notification_type_push")
+		notification_type_email: phrase(key: "app_notification_type_email")
+		notification_type_inline: phrase(key: "app_notification_type_inline")
 
 		legal_terms: phrase(key: "app_legal_terms")
 		legal_guidelines: phrase(key: "app_legal_guidelines")

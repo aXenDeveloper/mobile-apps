@@ -26,6 +26,7 @@ import StreamsScreen from "../screens/core/StreamsScreen";
 import StreamViewScreen from "../screens/core/StreamViewScreen";
 import NotificationsScreen from "../screens/core/NotificationsScreen";
 import NotificationsSettingsScreen from "../screens/core/NotificationsSettingsScreen";
+import NotificationsSettingsTypeScreen from "../screens/core/NotificationsSettingsTypeScreen";
 import ProfileScreen from "../screens/core/ProfileScreen";
 import UserScreen from "../screens/core/UserScreen";
 import PollScreen from "../screens/core/PollScreen";
@@ -94,6 +95,7 @@ class AppNavigation extends Component {
 				SearchStack: { screen: SearchScreen },
 				NotificationsStack: { screen: NotificationsScreen },
 				NotificationsSettings: { screen: NotificationsSettingsScreen },
+				NotificationsSettingsType: { screen: NotificationsSettingsTypeScreen },
 				AccountSettings: {
 					screen: this._getSettingsStack(),
 					navigationOptions: {

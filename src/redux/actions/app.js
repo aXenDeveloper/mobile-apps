@@ -183,6 +183,7 @@ const BootQuery = gql`
 				defaultStream
 				notificationCount
 				maxUploadSize
+				email
 				group {
 					canAccessSite
 					canAccessOffline

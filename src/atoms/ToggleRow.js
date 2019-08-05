@@ -12,9 +12,9 @@ export default class ToggleRow extends Component {
 
 	render() {
 		return (
-			<View style={[styles.row, componentStyles.menuItemWrap]}>
+			<View style={[styles.row, this.props.lastRow && styles.lastRow, componentStyles.menuItemWrap]}>
 				<View style={componentStyles.menuItem}>
-					<Text style={componentStyles.label}>{this.props.title}</Text>
+					<Text style={[styles.text, styles.contentText]}>{this.props.title}</Text>
 					{Boolean(this.props.subText) && <Text style={componentStyles.metaText}>{this.props.subText}</Text>}
 				</View>
 				<Switch
@@ -45,11 +45,6 @@ const componentStyles = StyleSheet.create({
 	},
 	menuItem: {
 		flex: 1
-	},
-	label: {
-		fontSize: 15,
-		color: styleVars.text,
-		fontWeight: "500"
 	},
 	metaText: {
 		color: styleVars.veryLightText,

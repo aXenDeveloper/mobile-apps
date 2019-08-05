@@ -1,46 +1,89 @@
-import React, { Component } from 'react';
-import { Text, View, Image, Switch, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { Component } from "react";
+import { Text, View, Image, Switch, StyleSheet, TouchableOpacity } from "react-native";
+import _ from "underscore";
 
 import { PlaceholderContainer, PlaceholderElement } from "../ecosystems/Placeholder";
-import Lang from '../utils/Lang';
-import styles, { styleVars } from '../styles';
+import NavigationService from "../utils/NavigationService";
+import ContentRow from "../ecosystems/ContentRow";
+import Lang from "../utils/Lang";
+import styles, { styleVars } from "../styles";
 
-// @todo abstract this to a more general toggle row
-export default class NotificationSettingRow extends Component {	
+export default class NotificationSettingRow extends Component {
 	constructor(props) {
 		super(props);
+
+		this.onPressRow = this.onPressRow.bind(this);
+	}
+
+	buildTypeString() {
+		const types = [];
+		const { data } = this.props;
+
+		["push", "inline", "email"].forEach(type => {
+			if (!_.isUndefined(data[type]) && !_.isNull(data[type]) && data[type].value === true) {
+				types.push(Lang.get(`notification_type_${type}`));
+			}
+		});
+
+		switch (types.length) {
+			case 0:
+				return Lang.get("notification_type_none");
+			case 1:
+				return types[0];
+			case 2:
+				return Lang.get("list_two", {
+					one: types[0],
+					two: types[1]
+				});
+			case 3:
+				return Lang.get("list_three", {
+					one: types[0],
+					two: types[1],
+					three: types[2]
+				});
+		}
+	}
+
+	onPressRow() {
+		const { data } = this.props;
+
+		NavigationService.navigateToScreen("NotificationsSettingsType", {
+			id: data.id,
+			title: data.lang,
+			key: data.name,
+			extension: data.extension,
+			description: data.description,
+			type: data.type,
+			email: data.email,
+			inline: data.inline,
+			push: data.push
+		});
 	}
 
 	render() {
-		if( this.props.loading ){
+		if (this.props.loading) {
 			return (
-				<View style={[styles.row, { height: 40 }, componentStyles.menuItemWrap]}>
-					<PlaceholderElement width='60%' top={12} left={styleVars.spacing.wide} height={16} />
+				<ContentRow style={[styles.row, { height: 40 }, componentStyles.menuItemWrap]}>
+					<PlaceholderElement width="60%" top={12} left={styleVars.spacing.wide} height={16} />
 					<PlaceholderElement width={40} top={6} right={styleVars.spacing.wide} height={26} />
-				</View>
+				</ContentRow>
 			);
 		}
 
 		return (
-			<View style={[styles.row, componentStyles.menuItemWrap]}>
-				<View style={componentStyles.menuItem}>
-					<Text style={componentStyles.label}>{this.props.data.title}</Text>
-					{!Boolean(this.props.data.enabled) && <Text style={componentStyles.metaText}>{Lang.get('disabled_notification')}</Text>}
+			<ContentRow showArrow style={[styles.flexRow, styles.flexAlignCenter, styles.phWide, styles.pvStandard]} onPress={this.onPressRow}>
+				<View style={styles.flex}>
+					<Text style={[styles.itemTitle, styles.mbVeryTight]} numberOfLines={1}>
+						{this.props.data.lang}
+					</Text>
+					<Text style={[styles.smallText, styles.text]}>{this.buildTypeString()}</Text>
 				</View>
-				<Switch onTintColor={styleVars.toggleTint} value={this.props.data.on} disabled={!this.props.data.enabled} style={componentStyles.switch} />
-			</View>
+			</ContentRow>
 		);
 	}
 }
 
 const componentStyles = StyleSheet.create({
-	menuItemWrap: {
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingVertical: styleVars.spacing.tight,
-		paddingHorizontal: styleVars.spacing.wide
-	},
 	icon: {
 		width: 24,
 		height: 24,
@@ -53,7 +96,7 @@ const componentStyles = StyleSheet.create({
 	label: {
 		fontSize: 15,
 		color: styleVars.text,
-		fontWeight: '500',
+		fontWeight: "500"
 	},
 	metaText: {
 		color: styleVars.veryLightText,

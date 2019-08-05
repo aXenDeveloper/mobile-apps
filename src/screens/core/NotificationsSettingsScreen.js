@@ -20,10 +20,23 @@ const NotificationQuery = gql`
 		core {
 			notificationTypes {
 				id
-				name
+				extension
 				group
+				type
+				name
+				description
 				lang
 				inline {
+					disabled
+					default
+					value
+				}
+				push {
+					disabled
+					default
+					value
+				}
+				email {
 					disabled
 					default
 					value
@@ -32,6 +45,8 @@ const NotificationQuery = gql`
 		}
 	}
 `;
+
+const COMBINED_GROUPS = ["core_content", "core_mystuff", "core_messenger", "core_clubs", "core_profile"];
 
 class NotificationsSettingsScreen extends Component {
 	static navigationOptions = {
@@ -53,8 +68,6 @@ class NotificationsSettingsScreen extends Component {
 	async checkNotificationPermissions() {
 		const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
 
-		console.log(status);
-
 		if (status !== "granted") {
 			this.setState({
 				hasPermission: false
@@ -67,24 +80,29 @@ class NotificationsSettingsScreen extends Component {
 		const types = this.props.data.core.notificationTypes;
 
 		types.forEach(type => {
-			if (_.isUndefined(sections[type.group])) {
-				sections[type.group] = {
-					title: type.group,
+			let section = "core";
+
+			if (COMBINED_GROUPS.indexOf(type.extension.toLowerCase()) === -1) {
+				section = type.extension;
+			}
+
+			if (_.isUndefined(sections[section])) {
+				sections[section] = {
+					title: section === "core" ? Lang.get("notification_group_core") : type.group,
 					data: []
 				};
 			}
 
-			const langKey = `notifications__${type.id}`;
+			if (type.push !== null) {
+				sections[section].data.push(type);
+			}
 
-			sections[type.group].data.push({
-				key: type.id,
-				title: Lang.get(langKey) !== langKey ? Lang.get(langKey) : type.lang,
-				on: type.inline.value,
-				enabled: !type.inline.disabled
-			});
+			if (type.type === "content") {
+				console.log(type);
+			}
 		});
 
-		return Object.values(sections);
+		return Object.values(sections).filter(section => section.data.length);
 	}
 
 	getListFooter() {
@@ -118,7 +136,7 @@ class NotificationsSettingsScreen extends Component {
 		return (
 			<View style={[styles.pWide, styles.mtStandard, styles.flexRow, styles.flexAlignStart]}>
 				<Image source={icons.INFO} resizeMode="contain" style={[{ width: 20, height: 20 }, styles.mrStandard, styles.lightImage]} />
-				<Text style={[styles.standardText, styles.text, styles.flexBasisZero, styles.flexGrow]}>
+				<Text style={[styles.smallText, styles.lightText, styles.flexBasisZero, styles.flexGrow]}>
 					You have not yet granted notification permissions on this device. {platformInstructions}
 				</Text>
 			</View>
@@ -141,6 +159,8 @@ class NotificationsSettingsScreen extends Component {
 				<View style={{ flex: 1 }}>
 					<SectionList
 						sections={this.getNotificationSections()}
+						extraData={this.props.data.core.notificationTypes}
+						keyExtractor={item => item.id}
 						renderItem={({ item }) => <NotificationSettingRow data={item} />}
 						renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
 						ListFooterComponent={this.getListFooter()}
