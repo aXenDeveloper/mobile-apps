@@ -172,7 +172,15 @@ export const bootSite = apiInfo => {
 	};
 };
 
-import LangFragment from "../../LangFragment";
+import langStrings from "../../langStrings";
+
+const processLangString = langString => `${langString}: phrase(key: "app_${langString}")`;
+const LangFragment = gql`
+	fragment LangFragment on core_Language {
+		${langStrings.map(processLangString).join("\n")}
+	}
+`;
+
 const BootQuery = gql`
 	query BootQuery {
 		core {
