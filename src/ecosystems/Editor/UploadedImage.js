@@ -71,7 +71,7 @@ export class UploadedImage extends PureComponent {
 
 	onPressImage() {
 		if (this.props.status === UPLOAD_STATUS.ERROR) {
-			Alert.alert("Error", this.props.error, [{ text: "OK" }], { cancelable: false });
+			Alert.alert(Lang.get("error"), this.props.error, [{ text: Lang.get("ok") }], { cancelable: false });
 		} else if (this.props.status === UPLOAD_STATUS.UPLOADING) {
 			// If progress is already 100, we can't abort so just ignore
 			if (this.props.progress !== 100) {
@@ -118,7 +118,7 @@ export class UploadedImage extends PureComponent {
 			return (
 				<View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.uploadingOverlay]}>
 					<Image source={icons.ERROR} resizeMode="contain" style={componentStyles.errorIcon} />
-					<Text style={[componentStyles.errorText]}>FAILED</Text>
+					<Text style={[componentStyles.errorText]}>{Lang.get("failed")}</Text>
 				</View>
 			);
 		}

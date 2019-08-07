@@ -103,6 +103,13 @@ class TopicListScreen extends Component {
 			reachedEnd: false,
 			followModalVisible: false
 		};
+
+		this.onRefresh = this.onRefresh.bind(this);
+		this.toggleFollowModal = this.toggleFollowModal.bind(this);
+		this.onEndReached = this.onEndReached.bind(this);
+		this.onFollow = this.onFollow.bind(this);
+		this.onUnfollow = this.onUnfollow.bind(this);
+		this.createTopic = this.createTopic.bind(this);
 	}
 
 	getSnapshotBeforeUpdate(prevProps) {
@@ -117,11 +124,11 @@ class TopicListScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	toggleFollowModal = () => {
+	toggleFollowModal() {
 		this.setState({
 			followModalVisible: !this.state.followModalVisible
 		});
-	};
+	}
 
 	/**
 	 * Component mount
@@ -179,7 +186,7 @@ class TopicListScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	onEndReached = () => {
+	onEndReached() {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
 			this.props.data.fetchMore({
 				variables: {
@@ -215,20 +222,20 @@ class TopicListScreen extends Component {
 				}
 			});
 		}
-	};
+	}
 
 	/**
 	 * Handle refreshing the view
 	 *
 	 * @return 	void
 	 */
-	onRefresh = () => {
+	onRefresh() {
 		this.setState({
 			reachedEnd: false
 		});
 
 		this.props.data.refetch();
-	};
+	}
 
 	/**
 	 * Return the footer component. Show a spacer by default, but a loading post
@@ -334,7 +341,7 @@ class TopicListScreen extends Component {
 	 * @param 	object 		followData 		Object with the selected values from the modal
 	 * @return 	void
 	 */
-	onFollow = async followData => {
+	async onFollow(followData) {
 		this.setState({
 			followModalVisible: false
 		});
@@ -357,14 +364,14 @@ class TopicListScreen extends Component {
 		} catch (err) {
 			Alert.alert(Lang.get("error"), Lang.get("error_following"), [{ text: Lang.get("ok") }], { cancelable: false });
 		}
-	};
+	}
 
 	/**
 	 * Event handler for unfollowing the forum
 	 *
 	 * @return 	void
 	 */
-	onUnfollow = async () => {
+	async onUnfollow() {
 		this.setState({
 			followModalVisible: false
 		});
@@ -386,14 +393,14 @@ class TopicListScreen extends Component {
 		} catch (err) {
 			Alert.alert(Lang.get("error"), Lang.get("error_unfollowing"), [{ text: Lang.get("ok") }], { cancelable: false });
 		}
-	};
+	}
 
 	/**
 	 * Event handler for tapping Create New Topic
 	 *
 	 * @return 	void
 	 */
-	createTopic = () => {
+	createTopic() {
 		const forumData = this.props.data.forums.forum;
 		const { enabled: tagsEnabled, definedTags } = forumData.tagPermissions;
 
@@ -403,7 +410,7 @@ class TopicListScreen extends Component {
 			definedTags,
 			requiresApproval: forumData.nodePermissions.itemsRequireApproval
 		});
-	};
+	}
 
 	render() {
 		// status 3 == fetchMore, status 4 == refreshing
@@ -442,13 +449,15 @@ class TopicListScreen extends Component {
 
 			return (
 				<View contentContainerStyle={{ flex: 1 }} style={{ flex: 1 }}>
-					<FollowModal
-						isVisible={this.state.followModalVisible}
-						followData={forumData.follow}
-						onFollow={this.onFollow}
-						onUnfollow={this.onUnfollow}
-						close={this.toggleFollowModal}
-					/>
+					{this.props.user.isAuthenticated && (
+						<FollowModal
+							isVisible={this.state.followModalVisible}
+							followData={forumData.follow}
+							onFollow={this.onFollow}
+							onUnfollow={this.onUnfollow}
+							close={this.toggleFollowModal}
+						/>
+					)}
 					<View style={{ flex: 1 }}>
 						<SectionList
 							style={{ flex: 1 }}

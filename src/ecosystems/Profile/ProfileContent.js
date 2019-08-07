@@ -37,6 +37,9 @@ class ProfileContent extends Component {
 			reachedEnd: false,
 			offset: 0
 		};
+
+		this.getFooterComponent = this.getFooterComponent.bind(this);
+		this.getListEmptyComponent = this.getListEmptyComponent.bind(this);
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
@@ -49,14 +52,12 @@ class ProfileContent extends Component {
 
 	componentDidMount() {
 		if (this.props.showResults) {
-			console.log("profile content mount");
 			this.fetchResults();
 		}
 	}
 
 	componentDidUpdate(prevProps) {
 		if (!prevProps.showResults && prevProps.showResults !== this.props.showResults) {
-			console.log("profile content changed showResults");
 			this.fetchResults();
 		}
 	}
@@ -65,8 +66,6 @@ class ProfileContent extends Component {
 		if (this.state.loading || this.state.reachedEnd) {
 			return;
 		}
-
-		console.log("Loading profile content");
 
 		this.setState({
 			loading: true
@@ -101,42 +100,31 @@ class ProfileContent extends Component {
 	}
 
 	/**
-	 * Handles infinite loading when user scrolls to end
-	 *
-	 * @return 	void
-	 */
-	onEndReached = () => {
-		if (!this.state.loading && !this.state.reachedEnd) {
-			//this.fetchResults();
-		}
-	};
-
-	/**
 	 * Returns placeholder components if our state indicates we need them
 	 *
 	 * @return 	Component|null
 	 */
-	getFooterComponent = () => {
+	getFooterComponent() {
 		if (this.state.loading && !this.state.reachedEnd) {
 			return this.getPlaceholder();
 		}
 
 		return <EndOfComments label={Lang.get("end_of_profile_content")} />;
-	};
+	}
 
 	/**
 	 * Return the list empty component
 	 *
 	 * @return 	Component
 	 */
-	getListEmptyComponent = () => {
+	getListEmptyComponent() {
 		return (
 			<ErrorBox
-				message="No results" // @todo language
+				message={Lang.get("no_results")} // @todo language
 				showIcon={false}
 			/>
 		);
-	};
+	}
 
 	/**
 	 * Build placeholder components

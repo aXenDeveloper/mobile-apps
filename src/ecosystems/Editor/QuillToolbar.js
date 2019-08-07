@@ -5,10 +5,10 @@ import { connect } from "react-redux";
 import * as Animatable from "react-native-animatable";
 import _ from "underscore";
 
-import { QuillToolbarButton } from "./QuillToolbarButton";
-import { QuillToolbarSeparator } from "./QuillToolbarSeparator";
-import { MentionRow } from "./MentionRow";
-import { UploadedImage } from "./UploadedImage";
+import QuillToolbarButton from "./QuillToolbarButton";
+import QuillToolbarSeparator from "./QuillToolbarSeparator";
+import MentionRow from "./MentionRow";
+import UploadedImage from "./UploadedImage";
 import {
 	setFocus,
 	setButtonState,
@@ -194,7 +194,7 @@ class QuillToolbar extends Component {
 
 	getActionSheetOptions() {
 		// @todo language
-		return [Lang.get("cancel"), Lang.get("Take Photo"), Lang.get("Choose from Camera Roll")];
+		return [Lang.get("cancel"), Lang.get("take_photo"), Lang.get("camera_roll")];
 	}
 
 	getAbortUploadHandler(id) {

@@ -11,6 +11,8 @@ export default [
 	"post_action",
 	"save",
 	"confirm",
+	"yes",
+	"no",
 	"add",
 	"report",
 	"show",
@@ -65,6 +67,7 @@ export default [
 	"editor_quote_line",
 	"ignoring_user",
 	"pagination",
+	"insert",
 	"insert_into_post",
 	"delete_image",
 	"cancel_upload",
@@ -74,6 +77,75 @@ export default [
 	"no_rep_this_week",
 	"list_two",
 	"list_three",
+	"take_photo",
+	"camera_roll",
+	"failed",
+	"error_loading",
+	"try_again",
+	"load_earlier_comments",
+	"unread_comments",
+	"order_start_unread",
+	"order_start_first",
+	"order_start_last",
+	"content_view_desc",
+	"error_marking_read",
+	"error_marking_read_desc",
+	"someones_x",
+	"no_results",
+	"who_reacted",
+	"account_settings",
+	"reply_screen",
+	"tab_home",
+	"tab_search",
+	"tab_streams",
+	"tab_notifications",
+	"tab_user",
+	"tab_signin",
+	"confirm_logout",
+	"submitting",
+	"discard",
+	"stay_here",
+	"upload_in_progress",
+	"upload_in_progress_desc",
+	"quoting_x",
+	"your_reply",
+	"started_by_x",
+
+	//------------------------------------
+	// Editor
+	"link_url",
+	"link_text",
+	"invalid_link",
+	"invalid_link_desc",
+	"error_upload_type",
+	"error_upload_space",
+	"error_upload_other",
+
+	//------------------------------------
+	// Custom fields
+	"no_address",
+	"no_color",
+	"no_date",
+	"no_email",
+	"no_selection",
+	"no_member",
+	"no_value",
+	"not_available",
+	"no_url",
+
+	//------------------------------------
+	// Itme statuses
+	"status_pinned",
+	"status_hidden",
+	"status_hidden_desc",
+	"status_deleted",
+	"status_deleted_desc",
+	"status_unapproved",
+	"status_unapproved_desc",
+	"status_hot",
+	"status_featured",
+	"status_locked",
+	"status_archived",
 
 	//------------------------------------
 	// Sharing
@@ -95,6 +167,7 @@ export default [
 	"joined",
 	"email_address",
 	"end_of_profile_content",
+	"profile_error",
 
 	//------------------------------------
 	// Login
@@ -115,6 +188,7 @@ export default [
 	"see_all",
 	"name_replied",
 	"item_in_container",
+	"in_container",
 	"overview",
 	"top_content",
 	"top_members",
@@ -123,6 +197,7 @@ export default [
 
 	//------------------------------------
 	// Topics
+	"forums",
 	"create_new_topic",
 	"topics_title",
 	"subforums_title",
@@ -138,6 +213,19 @@ export default [
 	"replace_best_answer_text",
 	"question_asked_by",
 	"this_is_best_answer",
+	"all_topics",
+	"all_topics_desc",
+	"create_topic",
+	"confirm_discard_topic",
+	"confirm_discard_post",
+	"title_required",
+	"title_required_desc",
+	"post_required",
+	"post_required_desc",
+	"error_posting_topic",
+	"error_posting_post",
+	"topic_title",
+	"post_title",
 
 	//------------------------------------
 	// Polls
@@ -154,12 +242,17 @@ export default [
 	"poll_multiple_choice",
 	"poll_view_confirm",
 	"poll_no_permission",
+	"poll_submit_votes",
+	"poll_change_vote",
+	"poll_update_vote",
 
 	//------------------------------------
 	// Tags
 	"tags_min_max",
 	"tags_min",
+	"tags_min_error",
 	"tags_max",
+	"tags_max_error",
 	"tags_len_min_max",
 	"tags_len_min",
 	"tags_len_max",
@@ -167,6 +260,8 @@ export default [
 	"enter_tag",
 	"tags",
 	"tag_suggestions",
+	"too_many_tags",
+	"too_few_tags",
 
 	//------------------------------------
 	// Notification list
@@ -176,6 +271,25 @@ export default [
 	"no_notifications",
 
 	//------------------------------------
+	// Notification settings
+	"notification_instructions",
+	"notification_instructions_ios",
+	"notification_instructions_android",
+	"notification_android_extra",
+	"notification_android_extra_desc",
+	"email_notification",
+	"email_notification_desc",
+	"notification_types",
+	"notification_both",
+	"notification_inline",
+	"notification_none",
+	"notification_type_push",
+	"notification_type_email",
+	"notification_type_inline",
+	"notification_type_none",
+	"notification_inline_only",
+
+	//------------------------------------
 	// Streams
 	"switch_stream",
 	"past_hour",
@@ -183,6 +297,8 @@ export default [
 	"today",
 	"last_week",
 	"earlier",
+	"all_activity",
+	"stream_error",
 
 	//------------------------------------
 	// Follows
@@ -198,6 +314,7 @@ export default [
 	"follow_save",
 	"unfollow",
 	"error_select_follow_option",
+	"no_followers",
 
 	//------------------------------------
 	// Reports
@@ -222,6 +339,7 @@ export default [
 	"no_additional_info",
 	"report_info_placeholder",
 	"report_unknown",
+	"report_content_screen",
 
 	//------------------------------------
 	// Notification settings
@@ -250,10 +368,6 @@ export default [
 	"notifications__profile_comment",
 	"notifications__profile_reply",
 	"notifications__new_status",
-	"notification_type_push",
-	"notification_type_email",
-	"notification_type_inline",
-	"notification_type_none",
 
 	//------------------------------------
 	// Legal

@@ -1,22 +1,10 @@
-import React, { Component } from "react";
+import React, { PureComponent, memo } from "react";
 import { View, StyleSheet } from "react-native";
 
-export default class PlaceholderContainer extends Component {
-	constructor(props) {
-		super(props);
-	}
+const PlaceholderContainer = props => (
+	<View style={props.style || {}}>
+		<View style={{ height: props.height || 50 }}>{props.children}</View>
+	</View>
+);
 
-	render() {
-		return (
-			<View style={this.props.style || {}}>
-				<View style={{ height: this.props.height || 50 }}>
-					{this.props.children}
-				</View>
-			</View>
-		);
-	}
-}
-
-const componentStyles = StyleSheet.create({
-	
-});
+export default memo(PlaceholderContainer);

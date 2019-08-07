@@ -1,36 +1,30 @@
-import React, { Component } from 'react';
-import { StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
+import React, { memo } from "react";
+import { StyleSheet, Image, TouchableOpacity, Text } from "react-native";
 
-export default class AddButton extends Component {	
-	constructor(props) {
-		super(props);
-	}
+const AddButton = props => (
+	<TouchableOpacity style={componentStyles.button} onPress={props.onPress}>
+		<React.Fragment>
+			<Image style={componentStyles.icon} resizeMode="stretch" source={props.icon} />
+			<Text style={componentStyles.text}>{props.title}</Text>
+		</React.Fragment>
+	</TouchableOpacity>
+);
 
-	render() {
-		return (
-			<TouchableOpacity style={styles.button} onPress={this.props.onPress}>
-				<React.Fragment>
-					<Image style={styles.icon} resizeMode='stretch' source={this.props.icon} /> 
-					<Text style={styles.text}>{this.props.title}</Text>
-				</React.Fragment>
-			</TouchableOpacity>
-		);
-	}
-}
+export default memo(AddButton);
 
-const styles = StyleSheet.create({
+const componentStyles = StyleSheet.create({
 	button: {
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center'
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center"
 	},
 	icon: {
 		width: 16,
 		height: 16
 	},
 	text: {
-		color: '#fff',
+		color: "#fff",
 		fontSize: 15,
 		marginLeft: 6
 	}

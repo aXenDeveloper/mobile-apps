@@ -94,7 +94,7 @@ class NotificationsSettingsTypeScreen extends Component {
 
 	getInlineToggle() {
 		const { inline } = this.props.navigation.state.params;
-		return <ToggleRow title="Show in Notification List" value={this.state.inline} enabled={!inline.disabled} onToggle={this.updateFromToggle} />;
+		return <ToggleRow title={Lang.get("notification_inline_only")} value={this.state.inline} enabled={!inline.disabled} onToggle={this.updateFromToggle} />;
 	}
 
 	updateFromChecklist(item) {
@@ -118,24 +118,24 @@ class NotificationsSettingsTypeScreen extends Component {
 		const data = [
 			{
 				key: "push",
-				title: "Mobile app & notification list",
+				title: Lang.get("notification_both"),
 				checked: this.state.push
 			},
 			{
 				key: "inline",
-				title: "Notification list only",
+				title: Lang.get("notification_inline"),
 				checked: this.state.inline
 			},
 			{
 				key: "none",
-				title: "No app or list notifications",
+				title: Lang.get("notification_none"),
 				checked: !this.state.push && !this.state.inline
 			}
 		];
 
 		return (
 			<React.Fragment>
-				<SectionHeader title="Notification Types" />
+				<SectionHeader title={Lang.get("notification_types")} />
 				<CheckList data={data} onPress={this.updateFromChecklist} />
 			</React.Fragment>
 		);
@@ -156,10 +156,10 @@ class NotificationsSettingsTypeScreen extends Component {
 				{!_.isNull(email) && (
 					<View style={styles.mtWide}>
 						<View style={styles.rowsWrap}>
-							<ToggleRow title="Email notification" lastRow={true} value={this.state.email} enabled={!email.disabled} onToggle={this.updateEmail} />
+							<ToggleRow title={Lang.get("email_notification")} lastRow={true} value={this.state.email} enabled={!email.disabled} onToggle={this.updateEmail} />
 						</View>
 						<View style={[styles.mtTight, styles.mhWide]}>
-							<Text style={[styles.lightText, styles.smallText]}>Email notifications will be sent to {this.props.user.email}</Text>
+							<Text style={[styles.lightText, styles.smallText]}>{Lang.get("email_notification_desc", { email: this.props.user.email })}</Text>
 						</View>
 					</View>
 				)}

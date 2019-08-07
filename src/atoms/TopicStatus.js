@@ -1,60 +1,55 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 
+import Lang from "../utils/Lang";
 import { styleVars } from "../styles";
 import icons from "../icons";
 
-export default class TopicStatus extends Component {
-	constructor(props) {
-		super(props);
-	}
+const TopicStatus = props => {
+	const statuses = {
+		pinned: {
+			text: Lang.get("status_pinned"),
+			icon: <Image style={[componentStyles.statusIcon, componentStyles.pinnedIcon]} resizeMode="stretch" source={icons.PINNED} />
+		},
+		hidden: {
+			text: Lang.get("status_hidden"),
+			icon: <Image style={[componentStyles.statusIcon, componentStyles.hiddenIcon]} resizeMode="stretch" source={icons.HIDDEN} />
+		},
+		deleted: {
+			text: Lang.get("status_deleted"),
+			icon: <Image style={[componentStyles.statusIcon, componentStyles.hiddenIcon]} resizeMode="stretch" source={icons.CROSS_CIRCLE_SOLID} />
+		},
+		unapproved: {
+			text: Lang.get("status_unapproved"),
+			icon: <Image style={[componentStyles.statusIcon, componentStyles.hiddenIcon]} resizeMode="stretch" source={icons.PENDING} />
+		},
+		hot: {
+			text: Lang.get("status_hot"),
+			icon: <Image style={[componentStyles.statusIcon, componentStyles.hotIcon]} resizeMode="stretch" source={icons.FIRE} />
+		},
+		featured: {
+			text: Lang.get("status_featured"),
+			icon: <Image style={[componentStyles.statusIcon, componentStyles.featuredIcon]} resizeMode="stretch" source={icons.STAR_SOLID} />
+		},
+		locked: {
+			text: Lang.get("status_locked"),
+			icon: <Image style={[componentStyles.statusIcon, componentStyles.lockedIcon]} resizeMode="stretch" source={icons.LOCKED} />
+		},
+		archived: {
+			text: Lang.get("status_archived"),
+			icon: <Image style={[componentStyles.statusIcon, componentStyles.lockedIcon]} resizeMode="stretch" source={icons.ARCHIVED} />
+		}
+	};
 
-	render() {
-		const statuses = {
-			pinned: {
-				text: "Pinned",
-				icon: <Image style={[componentStyles.statusIcon, componentStyles.pinnedIcon]} resizeMode="stretch" source={icons.PINNED} />
-			},
-			hidden: {
-				text: "Hidden",
-				icon: <Image style={[componentStyles.statusIcon, componentStyles.hiddenIcon]} resizeMode="stretch" source={icons.HIDDEN} />
-			},
-			deleted: {
-				text: "Deleted",
-				icon: <Image style={[componentStyles.statusIcon, componentStyles.hiddenIcon]} resizeMode="stretch" source={icons.CROSS_CIRCLE_SOLID} />
-			},
-			unapproved: {
-				text: "Pending",
-				icon: <Image style={[componentStyles.statusIcon, componentStyles.hiddenIcon]} resizeMode="stretch" source={icons.PENDING} />
-			},
-			hot: {
-				text: "Hot",
-				icon: <Image style={[componentStyles.statusIcon, componentStyles.hotIcon]} resizeMode="stretch" source={icons.FIRE} />
-			},
-			featured: {
-				text: "Featured",
-				icon: <Image style={[componentStyles.statusIcon, componentStyles.featuredIcon]} resizeMode="stretch" source={icons.STAR_SOLID} />
-			},
-			locked: {
-				text: "Locked",
-				icon: <Image style={[componentStyles.statusIcon, componentStyles.lockedIcon]} resizeMode="stretch" source={icons.LOCKED} />
-			},
-			archived: {
-				text: "Archived",
-				icon: <Image style={[componentStyles.statusIcon, componentStyles.lockedIcon]} resizeMode="stretch" source={icons.ARCHIVED} />
-			}
-		};
+	return (
+		<View style={[componentStyles.wrapper, props.style || null]}>
+			{statuses[props.type]["icon"]}
+			{!Boolean(props.noLabel) && <Text style={[props.textStyle, componentStyles.status, componentStyles[props.type]]}>{statuses[props.type]["text"]}</Text>}
+		</View>
+	);
+};
 
-		return (
-			<View style={[componentStyles.wrapper, this.props.style || null]}>
-				{statuses[this.props.type]["icon"]}
-				{!Boolean(this.props.noLabel) && (
-					<Text style={[this.props.textStyle, componentStyles.status, componentStyles[this.props.type]]}>{statuses[this.props.type]["text"]}</Text>
-				)}
-			</View>
-		);
-	}
-}
+export default memo(TopicStatus);
 
 const componentStyles = StyleSheet.create({
 	wrapper: {

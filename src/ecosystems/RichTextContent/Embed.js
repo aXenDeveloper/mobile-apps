@@ -171,8 +171,6 @@ class Embed extends Component {
 				</View>
 			);
 		} else if (this.props.data.error || _.isNull(this.props.data.core.content)) {
-			console.log(this.props.data);
-
 			return (
 				<View style={[componentStyles.wrapper, componentStyles.error]}>
 					<View style={componentStyles.innerWrapper}>
@@ -180,7 +178,7 @@ class Embed extends Component {
 							<Image source={require("../../../resources/error.png")} style={componentStyles.errorIcon} />
 						</View>
 						<View style={[componentStyles.body, componentStyles.errorBody]}>
-							<Text style={componentStyles.errorText}>Sorry, we can't load this content.</Text>
+							<Text style={componentStyles.errorText}>{Lang.get("error_loading")}</Text>
 						</View>
 					</View>
 				</View>

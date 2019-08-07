@@ -1,47 +1,46 @@
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { Text, Image, View, StyleSheet, TouchableOpacity } from "react-native";
 
 import Lang from "../../utils/Lang";
 import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
 
-export default class BestAnswer extends PureComponent {
-	constructor(props) {
-		super(props);
-	}
-
-	render() {
-
-		if( this.props.setBestAnswer == null ){
-			return (
-				<View style={[componentStyles.wrapper, componentStyles.bestAnswer]}>
-					<Image source={icons.CHECKMARK} resizeMode='contain' style={[componentStyles.bestAnswerIcon, componentStyles.bestAnswerIconActive]} />
-				</View>
-			);
-		}
-
+const BestAnswer = props => {
+	if (props.setBestAnswer == null) {
 		return (
-			<TouchableOpacity onPress={this.props.setBestAnswer} style={[componentStyles.wrapper, this.props.isBestAnswer ? componentStyles.bestAnswer : null]}>
-				<Image source={icons.CHECKMARK} resizeMode='contain' style={[componentStyles.bestAnswerIcon, this.props.isBestAnswer ? componentStyles.bestAnswerIconActive : null]} />
-			</TouchableOpacity>
+			<View style={[componentStyles.wrapper, componentStyles.bestAnswer]}>
+				<Image source={icons.CHECKMARK} resizeMode="contain" style={[componentStyles.bestAnswerIcon, componentStyles.bestAnswerIconActive]} />
+			</View>
 		);
 	}
-}
+
+	return (
+		<TouchableOpacity onPress={props.setBestAnswer} style={[componentStyles.wrapper, props.isBestAnswer ? componentStyles.bestAnswer : null]}>
+			<Image
+				source={icons.CHECKMARK}
+				resizeMode="contain"
+				style={[componentStyles.bestAnswerIcon, props.isBestAnswer ? componentStyles.bestAnswerIconActive : null]}
+			/>
+		</TouchableOpacity>
+	);
+};
+
+export default memo(BestAnswer);
 
 const componentStyles = StyleSheet.create({
 	wrapper: {
 		width: 34,
 		height: 34,
 		borderRadius: 34,
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
 		borderWidth: 1,
 		borderColor: styleVars.veryLightText
 	},
 	bestAnswer: {
 		backgroundColor: styleVars.positive,
-		borderColor: 'transparent'
+		borderColor: "transparent"
 	},
 	bestAnswerIcon: {
 		width: 18,
@@ -49,6 +48,6 @@ const componentStyles = StyleSheet.create({
 		tintColor: styleVars.veryLightText
 	},
 	bestAnswerIconActive: {
-		tintColor: '#fff'
+		tintColor: "#fff"
 	}
 });

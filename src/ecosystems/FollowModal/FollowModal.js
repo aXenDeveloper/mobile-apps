@@ -133,7 +133,11 @@ class FollowModal extends Component {
 			checked: this.state.selectedFollowOption === item.type
 		}));
 
-		return <CheckList type="radio" data={followOptions} onPress={this.toggleNotificationOption} />;
+		return (
+			<View style={styles.rowsWrap}>
+				<CheckList type="radio" data={followOptions} onPress={this.toggleNotificationOption} />
+			</View>
+		);
 	}
 
 	/**
@@ -202,7 +206,11 @@ class FollowModal extends Component {
 		} else if (item.item === "followers") {
 			return this.getFollowers();
 		} else {
-			return <ToggleRow title={Lang.get("follow_anon")} value={this.state.isAnonymous} onToggle={this.toggleAnonymousOption} />;
+			return (
+				<View style={styles.rowsWrap}>
+					<ToggleRow title={Lang.get("follow_anon")} value={this.state.isAnonymous} onToggle={this.toggleAnonymousOption} />
+				</View>
+			);
 		}
 	}
 

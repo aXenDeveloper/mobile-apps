@@ -302,7 +302,7 @@ class StreamViewScreen extends Component {
 						<Image source={require("../../../resources/close_circle.png")} resizeMode="contain" style={styles.modalClose} />
 					</TouchableOpacity>
 				</View>
-				<CheckList data={data} onPress={this.switchStream} style={styles.flex} />
+				<CheckList data={data} onPress={this.switchStream} />
 			</View>
 		);
 	}
@@ -392,7 +392,7 @@ class StreamViewScreen extends Component {
 			return this.getPlaceholder();
 		} else if (this.state.error) {
 			const error = getErrorMessage(this.state.error, {});
-			const message = error ? error : "Error loading this stream";
+			const message = error ? error : Lang.get("stream_error");
 			return <ErrorBox message={message} />;
 		} else {
 			return (

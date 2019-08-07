@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import _ from "underscore";
 import Image from "react-native-remote-svg";
@@ -7,51 +7,47 @@ import FadeIn from "react-native-fade-in-image";
 import getImageUrl from "../utils/getImageUrl";
 import { styleVars } from "../styles";
 
-export default class UserPhoto extends Component {
-	constructor(props) {
-		super(props);
-	}
+const UserPhoto = props => {
+	const size = props.size || 40;
 
-	render() {
-		const size = this.props.size || 40;
+	const photoSize = {
+		width: size,
+		height: size
+	};
 
-		const photoSize = {
-			width: size,
-			height: size
-		};
+	const wrap = {
+		borderRadius: size / 2,
+		overflow: "hidden"
+	};
 
-		const wrap = {
-			borderRadius: size / 2,
-			overflow: "hidden"
-		};
-
-		return (
-			<View style={this.props.style || null}>
-				<View style={wrap}>
-					<FadeIn>
-						<Image
-							source={{ uri: getImageUrl(unescape(this.props.url)) }}
-							style={[photoSize, componentStyles.photo, !_.isUndefined(this.props.anon) && this.props.anon ? componentStyles.anonymous : null]}
-							resizeMode="cover"
-							testId="userPhoto"
-						/>
-					</FadeIn>
-				</View>
-				{_.isBoolean(this.props.online) && (
-					<View
-						testId="onlineIndicator"
-						style={[
-							componentStyles.onlineBubble,
-							{
-								backgroundColor: this.props.online ? styleVars.positive : styleVars.negative
-							}
-						]}
+	return (
+		<View style={props.style || null}>
+			<View style={wrap}>
+				<FadeIn>
+					<Image
+						source={{ uri: getImageUrl(unescape(props.url)) }}
+						style={[photoSize, componentStyles.photo, !_.isUndefined(props.anon) && props.anon ? componentStyles.anonymous : null]}
+						resizeMode="cover"
+						testId="userPhoto"
 					/>
-				)}
+				</FadeIn>
 			</View>
-		);
-	}
-}
+			{_.isBoolean(props.online) && (
+				<View
+					testId="onlineIndicator"
+					style={[
+						componentStyles.onlineBubble,
+						{
+							backgroundColor: props.online ? styleVars.positive : styleVars.negative
+						}
+					]}
+				/>
+			)}
+		</View>
+	);
+};
+
+export default memo(UserPhoto);
 
 const componentStyles = StyleSheet.create({
 	photo: {

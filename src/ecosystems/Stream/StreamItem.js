@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
 
 import Lang from "../../utils/Lang";
@@ -55,4 +55,4 @@ const StreamItem = props => {
 	);
 };
 
-export default StreamItem;
+export default memo(StreamItem);

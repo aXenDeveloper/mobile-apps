@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import _ from "underscore";
-import { styleVars } from '../../styles';
+import { styleVars } from "../../styles";
 
-export default class PlaceholderElement extends Component {
+export default class PlaceholderElement extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -14,16 +14,16 @@ export default class PlaceholderElement extends Component {
 	componentDidMount() {
 		this.state.backgroundColor.setValue(0);
 		Animated.loop(
-			 Animated.sequence([
-			 	Animated.timing( this.state.backgroundColor, {
+			Animated.sequence([
+				Animated.timing(this.state.backgroundColor, {
 					toValue: 1,
 					duration: 500,
 					delay: 500
 				}),
-				Animated.timing( this.state.backgroundColor, {
+				Animated.timing(this.state.backgroundColor, {
 					toValue: 0,
 					duration: 500
-				}),
+				})
 			])
 		).start();
 	}
@@ -31,16 +31,16 @@ export default class PlaceholderElement extends Component {
 	render() {
 		const shapeStyles = {};
 
-		if( this.props.circle ){
-			shapeStyles['width'] = this.props.radius || 30;
-			shapeStyles['height'] = this.props.radius || 30;
+		if (this.props.circle) {
+			shapeStyles["width"] = this.props.radius || 30;
+			shapeStyles["height"] = this.props.radius || 30;
 		} else {
-			shapeStyles['width'] = this.props.width || '50%';
-			shapeStyles['height'] = this.props.height || 15;
+			shapeStyles["width"] = this.props.width || "50%";
+			shapeStyles["height"] = this.props.height || 15;
 		}
 
-		['left', 'right', 'top', 'bottom'].forEach( prop => {
-			if( !_.isUndefined( this.props[prop] ) ){
+		["left", "right", "top", "bottom"].forEach(prop => {
+			if (!_.isUndefined(this.props[prop])) {
 				shapeStyles[prop] = this.props[prop];
 			}
 		});
@@ -49,17 +49,12 @@ export default class PlaceholderElement extends Component {
 
 		// Animated background
 		const backgroundColor = this.state.backgroundColor.interpolate({
-			inputRange: [ 0, 1 ],
+			inputRange: [0, 1],
 			outputRange: this.props.from ? [this.props.from, this.props.to] : styleVars.placeholderColors
 		});
 
 		return (
-			<Animated.View style={[
-				{ backgroundColor },
-				componentStyles.base, 
-				this.props.circle ? componentStyles.circle : componentStyles.rect,
-				styles
-			]}>
+			<Animated.View style={[{ backgroundColor }, componentStyles.base, this.props.circle ? componentStyles.circle : componentStyles.rect, styles]}>
 				<Text>&nbsp;</Text>
 			</Animated.View>
 		);
@@ -68,7 +63,7 @@ export default class PlaceholderElement extends Component {
 
 const componentStyles = StyleSheet.create({
 	base: {
-		position: 'absolute'
+		position: "absolute"
 	},
 	circle: {
 		borderRadius: 150

@@ -2,6 +2,7 @@ import React from "react";
 import { Text, TouchableOpacity } from "react-native";
 import _ from "underscore";
 
+import Lang from "../../utils/Lang";
 import styles from "../../styles";
 
 const AddressField = props => {
@@ -10,7 +11,7 @@ const AddressField = props => {
 	if (_.isUndefined(props.value.addressLines) || !props.value.addressLines.length) {
 		const hasOtherValue = ["city", "region", "postalCode", "country"].find(item => !_.isUndefined(props.value[item]) && props.value[item].trim() !== "");
 		if (!hasOtherValue) {
-			return <Text style={[props.textStyles, styles.lightText]}>No address</Text>;
+			return <Text style={[props.textStyles, styles.lightText]}>{Lang.get("no_address")}</Text>;
 		}
 	}
 

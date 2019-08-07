@@ -20,9 +20,7 @@ import "react-native-gesture-handler";
 import TestScreen from "../screens/core/TestScreen";
 import NoopScreen from "../screens/core/NoopScreen";
 import HomeScreen from "../screens/core/HomeScreen";
-import BrowseCommunityScreen from "../screens/core/BrowseCommunityScreen";
 import SearchScreen from "../screens/core/SearchScreen";
-import StreamsScreen from "../screens/core/StreamsScreen";
 import StreamViewScreen from "../screens/core/StreamViewScreen";
 import NotificationsScreen from "../screens/core/NotificationsScreen";
 import NotificationsSettingsScreen from "../screens/core/NotificationsSettingsScreen";
@@ -41,13 +39,11 @@ import AccountSettingsScreen from "../screens/core/AccountSettings/AccountSettin
 // Forums screens
 import ForumListScreen from "../screens/forums/ForumListScreen";
 import FluidForumScreen from "../screens/forums/FluidForumScreen";
-import ForumFollowedScreen from "../screens/forums/ForumFollowedScreen";
 import TopicListScreen from "../screens/forums/TopicListScreen";
 import TopicViewScreen from "../screens/forums/TopicViewScreen";
 import CreateTopicScreen from "../screens/forums/CreateTopicScreen";
 import ReplyTopicScreen from "../screens/forums/ReplyTopicScreen";
 
-//import BrowserModal from "../ecosystems/BrowserModal";
 import NavigationService from "../utils/NavigationService";
 import { resetModalWebview } from "../redux/actions/app";
 import { NavigationTabIcon, NavigationTabNotification } from "../ecosystems/Navigation";
@@ -85,7 +81,7 @@ class AppNavigation extends Component {
 				FluidForum: {
 					screen: FluidForumScreen,
 					navigationOptions: {
-						title: "All Topics"
+						title: Lang.get("all_topics")
 					}
 				},
 				TopicList: { screen: TopicListScreen },
@@ -99,7 +95,7 @@ class AppNavigation extends Component {
 				AccountSettings: {
 					screen: this._getSettingsStack(),
 					navigationOptions: {
-						title: "Account Settings"
+						title: Lang.get("account_settings")
 					}
 				},
 				StreamView: { screen: StreamViewScreen },
@@ -137,7 +133,7 @@ class AppNavigation extends Component {
 				cardStyle: styles.stackCardStyle,
 				defaultNavigationOptions: Object.assign(
 					{
-						title: "Settings",
+						title: Lang.get("account_settings"),
 						header: null
 					},
 					options || null
@@ -188,14 +184,14 @@ class AppNavigation extends Component {
 					screen: CreateTopicScreen,
 					headerMode: "float",
 					navigationOptions: {
-						title: "Create Topic"
+						title: Lang.get("create_topic")
 					}
 				},
 				ReplyTopic: {
 					screen: ReplyTopicScreen,
 					headerMode: "screen",
 					navigationOptions: {
-						title: "Reply"
+						title: Lang.get("reply_screen")
 					}
 				},
 				LoginModal: {
@@ -208,7 +204,7 @@ class AppNavigation extends Component {
 				ReportContent: {
 					screen: ReportContentScreen,
 					navigationOptions: {
-						title: "Report Content"
+						title: Lang.get("report_content_screen")
 					}
 				}
 			},
@@ -258,21 +254,21 @@ class AppNavigation extends Component {
 		const Home = {
 			screen: this._CommunityStack,
 			navigationOptions: {
-				tabBarLabel: "Home",
+				tabBarLabel: Lang.get("tab_home"),
 				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.HOME_ACTIVE} inactive={navigationIcons.HOME} />
 			}
 		};
 		const Search = {
 			screen: this._SearchStack,
 			navigationOptions: {
-				tabBarLabel: "Search",
+				tabBarLabel: Lang.get("tab_search"),
 				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.SEARCH_ACTIVE} inactive={navigationIcons.SEARCH} />
 			}
 		};
 		const Streams = {
 			screen: this._StreamStack,
 			navigationOptions: {
-				tabBarLabel: "Streams",
+				tabBarLabel: Lang.get("tab_streams"),
 				header: props => {
 					return <CustomHeader {...props} title="Forums" />;
 				},
@@ -282,14 +278,14 @@ class AppNavigation extends Component {
 		const Notifications = {
 			screen: this._NotificationStack,
 			navigationOptions: navigation => ({
-				tabBarLabel: "Notifications",
+				tabBarLabel: Lang.get("tab_notifications"),
 				tabBarIcon: props => <NavigationTabNotification {...props} active={navigationIcons.NOTIFICATIONS_ACTIVE} inactive={navigationIcons.NOTIFICATIONS} />
 			})
 		};
 		const User = {
 			screen: NoopScreen,
 			navigationOptions: navigation => ({
-				tabBarLabel: "You",
+				tabBarLabel: Lang.get("tab_user"),
 				tabBarIcon: ({ focused, tintColor }) => this._getUserPhoto(focused, tintColor),
 				tabBarOnPress: (tab, jumpToIndex) => {
 					navigation.navigation.openDrawer();
@@ -300,7 +296,7 @@ class AppNavigation extends Component {
 		const Login = {
 			screen: this._LoginRegisterStack,
 			navigationOptions: navigation => ({
-				tabBarLabel: "Sign In/Up",
+				tabBarLabel: Lang.get("tab_signin"),
 				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.LOGIN_ACTIVE} inactive={navigationIcons.LOGIN} />,
 				tabBarOnPress: (tab, jumpToIndex) => {
 					NavigationService.launchAuth();

@@ -54,6 +54,7 @@ const OverviewSearchQuery = gql`
 	${SearchResultFragment}
 `;
 
+// @todo replace tabs
 class SearchScreen extends Component {
 	static navigationOptions = {
 		header: null

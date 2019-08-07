@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Text, Image, View, Animated, Easing, AsyncStorage, TouchableOpacity, StyleSheet } from "react-native";
 
 import NavigationService from "../../utils/NavigationService";
@@ -8,7 +8,7 @@ import ViewMeasure from "../../atoms/ViewMeasure";
 import Lang from "../../utils/Lang";
 import styles, { styleVars } from "../../styles";
 
-export default class LoginRegisterPrompt extends Component {
+export default class LoginRegisterPrompt extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -134,6 +134,8 @@ export default class LoginRegisterPrompt extends Component {
 		if (height === 0 || !this.state.showPopup) {
 			return null;
 		}
+
+		// @todo image refs
 
 		return (
 			<ViewMeasure onLayout={this.props.onLayout} id="loginPrompt">

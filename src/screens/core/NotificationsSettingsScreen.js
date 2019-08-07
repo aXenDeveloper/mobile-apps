@@ -49,9 +49,9 @@ const NotificationQuery = gql`
 const COMBINED_GROUPS = ["core_content", "core_mystuff", "core_messenger", "core_clubs", "core_profile"];
 
 class NotificationsSettingsScreen extends Component {
-	static navigationOptions = {
-		title: "Notification Settings"
-	};
+	static navigationOptions = ({ navigation }) => ({
+		title: Lang.get("notification_settings")
+	});
 
 	constructor(props) {
 		super(props);
@@ -112,10 +112,8 @@ class NotificationsSettingsScreen extends Component {
 
 		return (
 			<View style={styles.pWide}>
-				<Text style={[styles.lightText, styles.standardText]}>Notifications you receive are also configurable in your Android system settings.</Text>
-				<Text style={[styles.lightText, styles.standardText]}>
-					You'll only receive notifications if you have granted permission both in Android settings and on this screen.
-				</Text>
+				<Text style={[styles.lightText, styles.standardText]}>{Lang.get("notification_android_extra")}</Text>
+				<Text style={[styles.lightText, styles.standardText]}>{Lang.get("notification_android_extra_desc")}</Text>
 			</View>
 		);
 	}
@@ -128,16 +126,16 @@ class NotificationsSettingsScreen extends Component {
 		let platformInstructions;
 
 		if (Platform.OS === "ios") {
-			platformInstructions = "To check permissions, go to the Settings app from your home screen, then tap Notifications.";
+			platformInstructions = Lang.get("notification_instructions_ios");
 		} else {
-			platformInstructions = "To check permissions, go to the Settings app on your Android device, then tap Apps & Notifications.";
+			platformInstructions = Lang.get("notification_instructions_android");
 		}
 
 		return (
 			<View style={[styles.pWide, styles.mtStandard, styles.flexRow, styles.flexAlignStart]}>
 				<Image source={icons.INFO} resizeMode="contain" style={[{ width: 20, height: 20 }, styles.mrStandard, styles.lightImage]} />
 				<Text style={[styles.smallText, styles.lightText, styles.flexBasisZero, styles.flexGrow]}>
-					You have not yet granted notification permissions on this device. {platformInstructions}
+					{Lang.get("notification_instructions")} {platformInstructions}
 				</Text>
 			</View>
 		);
@@ -153,8 +151,6 @@ class NotificationsSettingsScreen extends Component {
 		} else if (this.props.data.error) {
 			return <ErrorBox message={Lang.get("notifications_error")} />;
 		} else {
-			const ListEmptyComponent = <ErrorBox message={Lang.get("notifications_error")} />;
-
 			return (
 				<View style={{ flex: 1 }}>
 					<SectionList

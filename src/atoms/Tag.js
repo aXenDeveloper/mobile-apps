@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { Text, View, StyleSheet } from "react-native";
 
 import styles, { styleVars } from "../styles";
@@ -9,7 +9,7 @@ const Tag = props => (
 	</View>
 );
 
-export default Tag;
+export default memo(Tag);
 
 const componentStyles = StyleSheet.create({
 	tagWrapper: {

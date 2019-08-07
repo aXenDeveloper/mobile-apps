@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Text, View, TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
 import _ from "underscore";
 
+import Lang from "../../utils/Lang";
 import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
 
@@ -132,7 +133,7 @@ class SearchBox extends Component {
 				</View>
 				{Boolean(this.state.textInputActive) && (
 					<TouchableOpacity style={componentStyles.cancelLink} onPress={this.cancelSearch}>
-						<Text style={componentStyles.cancelLinkText}>Cancel</Text>
+						<Text style={componentStyles.cancelLinkText}>{Lang.get("cancel")}</Text>
 					</TouchableOpacity>
 				)}
 			</View>

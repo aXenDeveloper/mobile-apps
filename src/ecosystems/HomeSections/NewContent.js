@@ -70,7 +70,7 @@ class NewContent extends Component {
 								{data.title}
 							</Text>
 							<Text style={[styles.lightText]} numberOfLines={1}>
-								In {data.containerTitle}
+								{Lang.get("in_container", { container: data.containerTitle })}
 							</Text>
 						</View>
 					</View>

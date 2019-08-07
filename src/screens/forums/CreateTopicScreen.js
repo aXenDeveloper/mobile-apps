@@ -11,6 +11,7 @@ import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
 import { UPLOAD_STATUS } from "../../redux/actions/editor";
 import HeaderButton from "../../atoms/HeaderButton";
 import uniqueID from "../../utils/UniqueID";
+import Lang from "../../utils/Lang";
 import styles from "../../styles";
 import icons from "../../icons";
 
@@ -40,15 +41,15 @@ class CreateTopicScreen extends Component {
 			headerTitle: navigation.getParam("submitting") ? (
 				<React.Fragment>
 					<ActivityIndicator size="small" color="#fff" />
-					<Text style={styles.headerTitle}> Submitting...</Text>
+					<Text style={styles.headerTitle}> {Lang.get("submitting")}...</Text>
 				</React.Fragment>
 			) : (
-				"New Topic"
+				Lang.get("create_topic")
 			),
 			headerTintColor: "white",
 			//headerLeft: navigation.getParam("submitting") ? null : <HeaderButton position="left" onPress={navigation.getParam("cancelTopic")} label="Cancel" />,
 			headerRight: navigation.getParam("submitting") ? null : (
-				<HeaderButton position="right" onPress={navigation.getParam("submitTopic")} label="Post" icon={icons.SUBMIT} />
+				<HeaderButton position="right" onPress={navigation.getParam("submitTopic")} label={Lang.get("post_action")} icon={icons.SUBMIT} />
 			)
 		};
 	};
@@ -116,18 +117,18 @@ class CreateTopicScreen extends Component {
 		// @todo language
 		if (this.state.title || this.state.content) {
 			Alert.alert(
-				"Confirm",
-				"Are you sure you want to discard this topic without posting?",
+				Lang.get("confirm"),
+				Lang.get("confirm_discard_topic"),
 				[
 					{
-						text: "Discard",
+						text: Lang.get("discard"),
 						onPress: () => {
 							this.props.navigation.goBack();
 						},
 						style: "cancel"
 					},
 					{
-						text: "Stay Here",
+						text: Lang.get("stay_here"),
 						onPress: () => console.log("OK Pressed")
 					}
 				],
@@ -148,23 +149,27 @@ class CreateTopicScreen extends Component {
 
 		// @todo language
 		if (!this.state.title) {
-			Alert.alert("Title Required", "You must enter a topic title.", [{ text: "OK" }], { cancelable: false });
+			Alert.alert(Lang.get("title_required"), Lang.get("title_required_desc"), [{ text: Lang.get("ok") }], { cancelable: false });
 			return;
 		}
 
 		if (!this.state.content) {
-			Alert.alert("Post Required", "You must enter a post.", [{ text: "OK" }], { cancelable: false });
+			Alert.alert(Lang.get("post_required"), Lang.get("post_required_desc"), [{ text: Lang.get("ok") }], { cancelable: false });
 			return;
 		}
 
 		if (this.props.site.settings.tags_enabled && this.props.user.group.canTag) {
 			if (this.props.site.settings.tags_max && this.state.tags.length > this.props.site.settings.tags_max) {
-				Alert.alert("Too Many Tags", `There is a maximum of ${this.props.site.settings.tags_max} tags allowed.`, [{ text: "OK" }], { cancelable: false });
+				Alert.alert(Lang.get("too_many_tags"), Lang.pluralize(Lang.get("tags_max_error"), this.props.site.settings.tags_max), [{ text: Lang.get("ok") }], {
+					cancelable: false
+				});
 				return;
 			}
 
 			if (this.props.site.settings.tags_min && this.state.tags.length < this.props.site.settings.tags_min) {
-				Alert.alert("Not Enough Tags", `You must provide at least ${this.props.site.settings.tags_min} tags.`, [{ text: "OK" }], { cancelable: false });
+				Alert.alert(Lang.get("too_few_tags"), Lang.pluralize(Lang.get("tags_min_error"), this.props.site.settings.tags_min), [{ text: Lang.get("ok") }], {
+					cancelable: false
+				});
 				return;
 			}
 		}
@@ -176,7 +181,7 @@ class CreateTopicScreen extends Component {
 		);
 
 		if (!_.isUndefined(uploadingFiles)) {
-			Alert.alert("Uploads In Progress", "Please wait until your uploaded images have finished processing, then submit again.", [{ text: "OK" }], {
+			Alert.alert(Lang.get("upload_in_progress"), Lang.get("upload_in_progress_desc"), [{ text: Lang.get("ok") }], {
 				cancelable: false
 			});
 			return;
@@ -213,7 +218,7 @@ class CreateTopicScreen extends Component {
 			});
 
 			const errorMessage = getErrorMessage(err, CreateTopicScreen.errors);
-			Alert.alert("Error", "Sorry, there was an error posting this topic." + errorMessage, [{ text: "OK" }], { cancelable: false });
+			Alert.alert(Lang.get("error"), Lang.get("error_posting_topic") + errorMessage, [{ text: Lang.get("ok") }], { cancelable: false });
 		}
 	}
 
@@ -246,7 +251,7 @@ class CreateTopicScreen extends Component {
 				<KeyboardAvoidingView style={styles.flex} enabled behavior="padding">
 					<TextInput
 						style={[styles.field, styles.fieldText]}
-						placeholder="Topic Title"
+						placeholder={Lang.get("topic_title")}
 						editable={!this.state.submitting}
 						onChangeText={text => this.setState({ title: text })}
 					/>
@@ -263,7 +268,7 @@ class CreateTopicScreen extends Component {
 						/>
 					)}
 					<QuillEditor
-						placeholder="Post"
+						placeholder={Lang.get("post_title")}
 						update={this.updateContentState}
 						style={styles.flex}
 						editorID={this.editorID}

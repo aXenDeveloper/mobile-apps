@@ -1,36 +1,35 @@
-import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { readableColor } from 'polished';
+import React, { memo } from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { readableColor } from "polished";
 
-import styles, { styleVars } from '../styles';
+import Lang from "../utils/Lang";
+import styles, { styleVars } from "../styles";
 
-export default class ErrorBox extends Component {	
-	constructor(props) {
-		super(props);
-	}
+const ErrorBox = props => (
+	<View style={[componentStyles.wrapper, props.transparent ? componentStyles.transparent : null, props.style]}>
+		{props.showIcon !== false && <Image source={require("../../resources/error.png")} style={componentStyles.icon} />}
+		<Text style={componentStyles.message}>{props.message ? props.message : Lang.get("error_loading")}</Text>
+		{Boolean(props.refresh) && (
+			<TouchableOpacity onPress={props.refresh} style={componentStyles.refresh}>
+				<Text style={componentStyles.refreshText}>{Lang.get("try_again")}</Text>
+			</TouchableOpacity>
+		)}
+		{Boolean(props.errorCode) && <Text style={componentStyles.errorCode}>Code {props.errorCode}</Text>}
+	</View>
+);
 
-	render() {
-		return (
-			<View style={[componentStyles.wrapper, this.props.transparent ? componentStyles.transparent : null, this.props.style]}>
-				{this.props.showIcon !== false && <Image source={require("../../resources/error.png")} style={componentStyles.icon} />}
-				<Text style={componentStyles.message}>{this.props.message ? this.props.message : "Sorry, there was a problem loading this"}</Text>
-				{Boolean(this.props.refresh) && <TouchableOpacity onPress={this.props.refresh} style={componentStyles.refresh}><Text style={componentStyles.refreshText}>Try Again</Text></TouchableOpacity>}
-				{Boolean(this.props.errorCode) && <Text style={componentStyles.errorCode}>Code {this.props.errorCode}</Text>}
-			</View>
-		);
-	}
-}
+export default memo(ErrorBox);
 
 const componentStyles = StyleSheet.create({
 	wrapper: {
 		backgroundColor: styleVars.appBackground,
 		padding: styleVars.spacing.wide,
 		margin: styleVars.spacing.wide,
-		display: 'flex',
-		alignItems: 'center'
+		display: "flex",
+		alignItems: "center"
 	},
 	transparent: {
-		backgroundColor: 'transparent'
+		backgroundColor: "transparent"
 	},
 	icon: {
 		width: 30,
@@ -43,11 +42,11 @@ const componentStyles = StyleSheet.create({
 		fontSize: styleVars.fontSizes.large,
 		color: readableColor(styleVars.appBackground),
 		opacity: 0.7,
-		textAlign: 'center'
+		textAlign: "center"
 	},
 	refresh: {
 		borderWidth: 1,
-		borderColor: 'rgba(51,51,51,0.4)',
+		borderColor: "rgba(51,51,51,0.4)",
 		borderRadius: 3,
 		paddingVertical: styleVars.spacing.tight,
 		paddingHorizontal: styleVars.spacing.wide,
@@ -57,7 +56,7 @@ const componentStyles = StyleSheet.create({
 		color: readableColor(styleVars.appBackground),
 		opacity: 0.7,
 		fontSize: styleVars.fontSizes.standard,
-		textAlign: 'center'
+		textAlign: "center"
 	},
 	errorCode: {
 		fontSize: styleVars.fontSizes.small,

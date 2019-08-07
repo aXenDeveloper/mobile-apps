@@ -153,7 +153,7 @@ export const bootSite = apiInfo => {
 				setUserStreams([
 					{
 						id: "all",
-						title: "All Activity",
+						title: Lang.get("all_activity"),
 						isDefault: true
 					},
 					...data.core.streams

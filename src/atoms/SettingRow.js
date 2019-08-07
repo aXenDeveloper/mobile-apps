@@ -1,34 +1,27 @@
-import React, { Component } from 'react';
-import { Text, View, Image, Switch, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { memo } from "react";
+import { Text, View, Image, Switch, StyleSheet, TouchableOpacity } from "react-native";
 
-import Lang from '../utils/Lang';
-import styles, { styleVars } from '../styles';
+import Lang from "../utils/Lang";
+import styles, { styleVars } from "../styles";
 
-export default class SettingRow extends Component {	
-	constructor(props) {
-		super(props);
-	}
+// @todo image refs
+const SettingRow = props => (
+	<TouchableOpacity style={[styles.row, componentStyles.menuItemWrap]} onPress={props.data.onPress || null}>
+		<View style={componentStyles.menuItem}>
+			<Text style={componentStyles.label}>{props.data.title}</Text>
+			<Text style={componentStyles.value}>{props.data.value}</Text>
+		</View>
+		<Image source={require("../../resources/row_arrow.png")} style={componentStyles.arrow} resizeMode="cover" />
+	</TouchableOpacity>
+);
 
-	render() {
-		return (
-			<TouchableOpacity style={[styles.row, componentStyles.menuItemWrap]} onPress={this.props.data.onPress || null}>
-				<View style={componentStyles.menuItem}>
-					<Text style={componentStyles.label}>{this.props.data.title}</Text>
-					<Text style={componentStyles.value}>
-						{this.props.data.value}
-					</Text>
-				</View>
-				<Image source={require('../../resources/row_arrow.png')} style={componentStyles.arrow} resizeMode='cover' />
-			</TouchableOpacity>
-		);
-	}
-}
+export default memo(SettingRow);
 
 const componentStyles = StyleSheet.create({
 	menuItemWrap: {
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
 		paddingVertical: styleVars.spacing.standard,
 		paddingHorizontal: styleVars.spacing.wide
 	},
@@ -44,7 +37,7 @@ const componentStyles = StyleSheet.create({
 	label: {
 		fontSize: 17,
 		color: styleVars.text,
-		fontWeight: '500',
+		fontWeight: "500"
 	},
 	value: {
 		color: styleVars.lightText,

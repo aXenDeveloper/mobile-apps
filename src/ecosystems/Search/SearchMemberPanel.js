@@ -59,8 +59,6 @@ class SearchMemberPanel extends Component {
 	 * @return 	void
 	 */
 	componentDidUpdate(prevProps) {
-		console.log("componentDidUpdate");
-
 		// If we were not previously showing results but now we are, then start fetching them
 		// so they can be displayed when loaded
 		if (!prevProps.showResults && this.props.showResults) {

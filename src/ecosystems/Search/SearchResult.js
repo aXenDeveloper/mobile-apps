@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Text, View, FlatList, TouchableHighlight, StyleSheet } from "react-native";
 
 import NavigationService from "../../utils/NavigationService";
@@ -10,7 +10,7 @@ import SearchResultItem from "./SearchResultItem";
 import SearchResultComment from "./SearchResultComment";
 import styles, { styleVars } from "../../styles";
 
-class SearchResult extends Component {
+class SearchResult extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.onPressHandler = this.onPressHandler.bind(this);
@@ -26,7 +26,7 @@ class SearchResult extends Component {
 	render() {
 		if (this.props.loading) {
 			return (
-				<ContentRow style={componentStyles.result}>
+				<ContentRow style={styles.pvWide}>
 					<PlaceholderContainer height={115}>
 						<PlaceholderElement circle radius={22} left={styleVars.spacing.wide} top={0} />
 						<PlaceholderElement width={40} height={15} top={3} right={styleVars.spacing.wide} />
@@ -45,7 +45,7 @@ class SearchResult extends Component {
 		const hidden = this.props.data.hiddenStatus !== null;
 
 		return (
-			<ContentRow style={componentStyles.result} onPress={this.onPressHandler} hidden={hidden}>
+			<ContentRow style={styles.pvWide} onPress={this.onPressHandler} hidden={hidden}>
 				<ResultComponent data={this.props.data} term={this.props.term} />
 			</ContentRow>
 		);
@@ -53,9 +53,3 @@ class SearchResult extends Component {
 }
 
 export default SearchResult;
-
-const componentStyles = StyleSheet.create({
-	result: {
-		paddingVertical: styleVars.spacing.wide
-	}
-});

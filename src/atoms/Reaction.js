@@ -6,6 +6,7 @@ import getImageUrl from "../utils/getImageUrl";
 export default class Reaction extends Component {
 	constructor(props) {
 		super(props);
+		this.onPress = this.onPress.bind(this);
 	}
 
 	/**
@@ -13,13 +14,13 @@ export default class Reaction extends Component {
 	 *
 	 * @return 	void
 	 */
-	onPress = () => {
+	onPress() {
 		this.props.onPress({
 			id: this.props.id,
 			count: this.props.count,
 			image: this.props.image
 		});
-	};
+	}
 
 	render() {
 		return (

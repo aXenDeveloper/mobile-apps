@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { View, TouchableOpacity, StyleSheet, Image, FlatList, Text, Platform } from "react-native";
 import _ from "underscore";
 
@@ -8,7 +8,7 @@ import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from ".
 import icons from "../../icons";
 import styles, { styleVars } from "../../styles";
 
-export class NavBar extends Component {
+export class NavBar extends PureComponent {
 	constructor(props) {
 		super(props);
 		this._menuHandlers = {};

@@ -39,7 +39,7 @@ const SearchResultFragment = gql`
 		articleLang {
 			indefinite
 			definite
-			definiteUC: definite(uppercase: true)
+			definiteUC
 		}
 	}
 `;

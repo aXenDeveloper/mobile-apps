@@ -1,58 +1,43 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet, Image, TouchableOpacity, Text, ViewPropTypes, ActivityIndicator } from "react-native";
 import PropTypes from "prop-types";
 import { transparentize } from "polished";
 
 import styles, { styleVars } from "../styles";
 
-export default class Button extends Component {
-	constructor(props) {
-		super(props);
-	}
+const Button = props => {
+	const buttonStyle = props.filled ? "Filled" : "Outlined";
+	const buttonType = props.type + buttonStyle;
+	const textType = buttonType + "Text";
+	const textSize = props.size + "Text";
+	const rounded = props.rounded ? componentStyles.rounded : null;
+	const imageType = buttonType + "Image";
+	const colorStyle = props.color ? { backgroundColor: props.color } : null;
+	const disabledStyle = props.disabled ? { opacity: 0.4 } : null;
+	const fullWidth = props.fullWidth ? [styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter] : null;
 
-	render() {
-		const buttonStyle = this.props.filled ? "Filled" : "Outlined";
-		const buttonType = this.props.type + buttonStyle;
-		const textType = buttonType + "Text";
-		const textSize = this.props.size + "Text";
-		const rounded = this.props.rounded ? componentStyles.rounded : null;
-		const imageType = buttonType + "Image";
-		const colorStyle = this.props.color ? { backgroundColor: this.props.color } : null;
-		const disabledStyle = this.props.disabled ? { opacity: 0.4 } : null;
-		const fullWidth = this.props.fullWidth ? [styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter] : null;
+	return (
+		<TouchableOpacity
+			style={[componentStyles.button, componentStyles[buttonType], componentStyles[props.size], fullWidth, rounded, colorStyle, disabledStyle, props.style]}
+			onPress={!props.disabled ? props.onPress : null}
+			disabled={props.disabled}
+		>
+			<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter]}>
+				{Boolean(props.icon) && <Image style={[componentStyles.icon, componentStyles[imageType]]} resizeMode="stretch" source={props.icon} />}
+				{Boolean(props.showActivity) && <ActivityIndicator size="small" color="#fff" />}
+				{props.title && (
+					<View style={componentStyles.textWrapper}>
+						<Text style={[componentStyles[textType], componentStyles.text, componentStyles[textSize]]} numberOfLines={1}>
+							{props.title}
+						</Text>
+					</View>
+				)}
+			</View>
+		</TouchableOpacity>
+	);
+};
 
-		return (
-			<TouchableOpacity
-				style={[
-					componentStyles.button,
-					componentStyles[buttonType],
-					componentStyles[this.props.size],
-					fullWidth,
-					rounded,
-					colorStyle,
-					disabledStyle,
-					this.props.style
-				]}
-				onPress={!this.props.disabled ? this.props.onPress : null}
-				disabled={this.props.disabled}
-			>
-				<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter]}>
-					{Boolean(this.props.icon) && <Image style={[componentStyles.icon, componentStyles[imageType]]} resizeMode="stretch" source={this.props.icon} />}
-					{Boolean(this.props.showActivity) && <ActivityIndicator size="small" color="#fff" />}
-					{this.props.title && (
-						<View style={componentStyles.textWrapper}>
-							<Text style={[componentStyles[textType], componentStyles.text, componentStyles[textSize]]} numberOfLines={1}>
-								{this.props.title}
-							</Text>
-						</View>
-					)}
-				</View>
-			</TouchableOpacity>
-		);
-	}
-}
-
-//
+export default memo(Button);
 
 const componentStyles = StyleSheet.create({
 	button: {

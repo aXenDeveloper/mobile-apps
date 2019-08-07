@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { compose } from "react-apollo";
 import { withNavigation } from "react-navigation";
@@ -10,7 +10,7 @@ import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Place
 
 import styles, { styleVars } from "../../styles";
 
-class MemberRow extends Component {
+class MemberRow extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.onPress = this.onPress.bind(this);

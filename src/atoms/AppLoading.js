@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { StyleSheet, StatusBar, ActivityIndicator, View, Text, Image, Dimensions } from "react-native";
 
 import Button from "./Button";
@@ -43,11 +43,11 @@ const AppLoading = props => {
 	);
 };
 
-export default AppLoading;
+export default memo(AppLoading);
 
 const componentStyles = StyleSheet.create({
 	wrapper: {
-		backgroundColor: "#2c76a9"
+		backgroundColor: "#2c76a9" // @todo style
 	},
 	message: {
 		maxWidth: "75%"
