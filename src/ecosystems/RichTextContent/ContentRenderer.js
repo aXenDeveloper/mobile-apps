@@ -2,6 +2,7 @@ import React, { PureComponent } from "react";
 import { Text, View, StyleSheet, Image, Dimensions, TouchableOpacity } from "react-native";
 import HTML from "react-native-render-html";
 import { iframe, a, img } from "react-native-render-html/src/HTMLRenderers";
+import { TEXT_TAGS } from "react-native-render-html/src/HTMLUtils";
 import { compose } from "react-apollo";
 import { withNavigation } from "react-navigation";
 import { connect } from "react-redux";
@@ -144,6 +145,29 @@ class ContentRenderer extends PureComponent {
 			};
 			return node;
 		}
+
+		/*
+		// This was an attempt to fix an issue where regular text with a larger font-size would be clipped because
+		// the base line height is being applied. However, this approach doesn't seem to work - react-native-render-html
+		// may still be overwriting the manual line-height with the base value.
+		if (TEXT_TAGS.indexOf(name) !== -1) {
+			if (!_.isUndefined(node.attribs) && !_.isUndefined(node.attribs.style)) {
+				const fontSize = node.attribs.style.match(/(font-size:(.+?)px)/);
+
+				if (fontSize && fontSize.length) {
+					try {
+						console.log(`${node.attribs.style ? node.attribs.style : ""}line-height:${parseInt(fontSize[2]) * 1.4}px;`);
+
+						node.attribs = {
+							...(node.attribs || {}),
+							style: `${node.attribs.style ? node.attribs.style : ""}line-height:${parseInt(fontSize[2]) * 1.4}px;`
+						};
+					} catch (err) {
+						console.log(err);
+					}
+				}
+			}
+		}*/
 	}
 
 	/**
