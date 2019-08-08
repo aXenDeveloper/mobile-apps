@@ -145,7 +145,11 @@ export default class Pager extends PureComponent {
 		}
 
 		const trackerWidth = Math.ceil((parseInt(this.props.currentPosition) / parseInt(this.props.total)) * 100);
-		this._trackerBarRef.transitionTo({ width: `${trackerWidth}%` }, animate ? 400 : 1);
+		try {
+			this._trackerBarRef.transitionTo({ width: `${trackerWidth}%` }, animate ? 400 : 1);
+		} catch (err) {
+			console.log(err);
+		}
 	}
 
 	render() {
