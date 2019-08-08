@@ -118,9 +118,9 @@ class WebViewScreen extends Component {
 	}
 
 	GO_TO_URL(data) {
-		console.log("Navigating to " + data.url);
+		console.log("Navigating to " + data.url.trim());
 		NavigationService.navigate({
-			url: data.url
+			url: data.url.trim()
 		});
 	}
 
