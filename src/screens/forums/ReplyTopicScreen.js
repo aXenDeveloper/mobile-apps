@@ -35,10 +35,10 @@ class ReplyTopicScreen extends Component {
 			headerTitle: navigation.getParam("submitting") ? (
 				<React.Fragment>
 					<ActivityIndicator size="small" color="#fff" />
-					<Text style={styles.headerTitle}> Submitting...</Text>
+					<Text style={styles.headerTitle}> {Lang.get("submitting")}...</Text>
 				</React.Fragment>
 			) : (
-				"Reply"
+				Lang.get("reply_screen")
 			),
 			headerTintColor: "white",
 			//headerLeft: navigation.getParam("submitting") ? null : <HeaderButton position="left" label="Cancel" onPress={navigation.getParam("cancelReply")} />,
@@ -110,7 +110,7 @@ class ReplyTopicScreen extends Component {
 	 */
 	async submitReply() {
 		if (!this.state.content) {
-			Alert.alert("Post Required", "You must enter a post.", [{ text: "OK" }], { cancelable: false });
+			Alert.alert(Lang.get("post_required"), Lang.get("post_required_desc"), [{ text: Lang.get("ok") }], { cancelable: false });
 			return;
 		}
 
@@ -142,7 +142,7 @@ class ReplyTopicScreen extends Component {
 			});
 
 			const errorMessage = getErrorMessage(err, ReplyTopicScreen.errors);
-			Alert.alert("Error", "Sorry, there was an error posting this reply. " + err, [{ text: "OK" }], { cancelable: false });
+			Alert.alert(Lang.get("error"), Lang.get("error_posting_post") + err, [{ text: Lang.get("ok") }], { cancelable: false });
 		}
 	}
 
@@ -154,18 +154,18 @@ class ReplyTopicScreen extends Component {
 	cancelReply() {
 		if (this.state.content) {
 			Alert.alert(
-				"Confirm",
-				"Are you sure you want to discard this reply without posting?",
+				Lang.get("confirm"),
+				Lang.get("confirm_discard_post"),
 				[
 					{
-						text: "Discard",
+						text: Lang.get("discard"),
 						onPress: () => {
 							this.props.navigation.goBack();
 						},
 						style: "cancel"
 					},
 					{
-						text: "Stay Here",
+						text: Lang.get("stay_here"),
 						onPress: () => console.log("OK Pressed")
 					}
 				],
@@ -186,7 +186,7 @@ class ReplyTopicScreen extends Component {
 				<View style={componentStyles.postInfo}>
 					<UserPhoto url={quotedPost.author.photo} size={36} />
 					<View style={componentStyles.postContent}>
-						<Text style={componentStyles.quotingTitle}>Quoting {quotedPost.author.name}:</Text>
+						<Text style={componentStyles.quotingTitle}>{Lang.get("quoting_x", { name: quotedPost.author.name })}</Text>
 						<RichTextContent removeQuotes>{quotedPost.content.original}</RichTextContent>
 					</View>
 				</View>
@@ -199,7 +199,7 @@ class ReplyTopicScreen extends Component {
 					{quotedPostComponent}
 					<KeyboardAvoidingView style={{ flex: 1 }} enabled>
 						<QuillEditor
-							placeholder="Your Reply"
+							placeholder={Lang.get("your_reply")}
 							update={this.updateContentState}
 							height={400}
 							autoFocus={!_.isObject(this.props.navigation.state.params.quotedPost)}

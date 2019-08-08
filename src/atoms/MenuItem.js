@@ -1,28 +1,22 @@
-import React, { Component } from 'react';
-import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { memo } from "react";
+import { Text, View, Image, StyleSheet, TouchableOpacity } from "react-native";
 
-import { styles, styleVars } from '../styles';
+import styles, { styleVars } from "../styles";
 
-export default class MenuItem extends Component {	
-	constructor(props) {
-		super(props);
-	}
+const MenuItem = props => (
+	<TouchableOpacity onPress={props.data.onPress || null} style={componentStyles.menuItemWrap}>
+		{Boolean(props.data.icon) && <Image source={props.data.icon} style={componentStyles.icon} />}
+		<Text style={componentStyles.menuItem}>{props.data.text}</Text>
+	</TouchableOpacity>
+);
 
-	render() {
-		return (
-			<TouchableOpacity onPress={this.props.data.onPress || null} style={componentStyles.menuItemWrap}>
-				{Boolean(this.props.data.icon) && <Image source={this.props.data.icon} style={componentStyles.icon} />}
-				<Text style={componentStyles.menuItem}>{this.props.data.text}</Text>
-			</TouchableOpacity>
-		);
-	}
-}
+export default memo(MenuItem);
 
 const componentStyles = StyleSheet.create({
 	menuItemWrap: {
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
 		paddingVertical: 9
 	},
 	icon: {

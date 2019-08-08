@@ -1,6 +1,8 @@
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
 
+import Lang from "../../utils/Lang";
+
 const ListField = props => (
 	<React.Fragment>
 		{Boolean(props.value.length) ? (
@@ -10,7 +12,7 @@ const ListField = props => (
 				</Text>
 			))
 		) : (
-			<Text style={[props.textStyles, styles.lightText]}>No selection</Text>
+			<Text style={[props.textStyles, styles.lightText]}>{Lang.get("no_selection")}</Text>
 		)}
 	</React.Fragment>
 );

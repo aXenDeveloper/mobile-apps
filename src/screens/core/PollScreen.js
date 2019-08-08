@@ -43,9 +43,7 @@ const PollVoteMutation = gql`
 
 class PollScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
-		headerTitle: (
-			<TwoLineHeader title={navigation.state.params.data.title} subtitle={Lang.pluralize(Lang.get("votes"), navigation.state.params.data.votes)} />
-		)
+		headerTitle: <TwoLineHeader title={navigation.state.params.data.title} subtitle={Lang.pluralize(Lang.get("votes"), navigation.state.params.data.votes)} />
 	});
 
 	constructor(props) {
@@ -87,7 +85,7 @@ class PollScreen extends Component {
 			});
 		} catch (err) {
 			// @todo show error
-			console.log( err );
+			console.log(err);
 		}
 	}
 
@@ -95,11 +93,11 @@ class PollScreen extends Component {
 		// Turns: {"0": { "0": true, "1": false }, "1": { "0": true, "1": true, "2": true } }
 		// Into: [ { id: 1, choices: [1] }, { id: 2, choices, [0, 1, 2] } ]
 		const data = Object.keys(this.state.votes).map(questionIndex => {
-			const choices = _.filter(Object.keys(this.state.votes[questionIndex]), val => this.state.votes[questionIndex][val] === true).map(val =>
-				parseInt(val) + 1 // Choices are 1-indexed for some reason,
+			const choices = _.filter(Object.keys(this.state.votes[questionIndex]), val => this.state.votes[questionIndex][val] === true).map(
+				val => parseInt(val) + 1 // Choices are 1-indexed for some reason,
 			);
 			return {
-				id: parseInt( questionIndex ) + 1, // Questions are 1-indexed for some reason
+				id: parseInt(questionIndex) + 1, // Questions are 1-indexed for some reason
 				choices
 			};
 		});
@@ -125,9 +123,8 @@ class PollScreen extends Component {
 			});
 		} catch (err) {
 			// @todo show error
-			console.log( err );
+			console.log(err);
 		}
-
 	}
 
 	toggleVoting() {
@@ -157,28 +154,22 @@ class PollScreen extends Component {
 
 		if (this.props.data.forums.topic.poll.canVote && !this.props.data.forums.topic.poll.hasVoted) {
 			buttons = [
-				<Button key='submit' type="primary" size="large" filled onPress={this.submitVotes} title="Submit Votes" />,
-				<Button key='view' type="light" size="large" filled onPress={this.viewResults} title="View Results" style={styles.mtStandard} />
+				<Button key="submit" type="primary" size="large" filled onPress={this.submitVotes} title={Lang.get("poll_submit_votes")} />,
+				<Button key="view" type="light" size="large" filled onPress={this.viewResults} title={Lang.get("poll_view_results")} style={styles.mtStandard} />
 			];
 		} else if (this.props.data.forums.topic.poll.canVote && this.props.data.forums.topic.poll.hasVoted) {
 			if (showResult) {
-				buttons = [
-					<Button key='change' type="light" size="large" filled onPress={this.toggleVoting} title="Change My Vote" />
-				];
+				buttons = [<Button key="change" type="light" size="large" filled onPress={this.toggleVoting} title={Lang.get("poll_change_vote")} />];
 			} else {
 				buttons = [
-					<Button key='update' type="primary" size="large" filled onPress={this.submitVotes} title="Update My Vote" />,
-					<Button key='cancel' type="light" size="large" filled onPress={this.toggleVoting} title="Cancel" style={styles.mtStandard} />
+					<Button key="update" type="primary" size="large" filled onPress={this.submitVotes} title={Lang.get("poll_update_vote")} />,
+					<Button key="cancel" type="light" size="large" filled onPress={this.toggleVoting} title={Lang.get("cancel")} style={styles.mtStandard} />
 				];
 			}
 		}
 
-		if( buttons ){
-			return (
-				<ShadowedArea style={styles.pWide}>
-					{buttons}
-				</ShadowedArea>
-			);
+		if (buttons) {
+			return <ShadowedArea style={styles.pWide}>{buttons}</ShadowedArea>;
 		}
 	}
 
@@ -194,11 +185,10 @@ class PollScreen extends Component {
 	}
 
 	render() {
-
-		if( this.props.data.loading ){
+		if (this.props.data.loading) {
 			return <Text>Loading</Text>;
 		} else if (this.props.data.error) {
-			return <Text>Error</Text>
+			return <Text>Error</Text>;
 		} else {
 			const pollData = this.props.data.forums.topic.poll;
 			const canVote = !pollData.hasVoted && pollData.canVote;
@@ -224,7 +214,7 @@ export default compose(
 			return {
 				notifyOnNetworkStatusChange: true,
 				variables: {
-					id: props.navigation.state.params.itemID,
+					id: props.navigation.state.params.itemID
 				}
 			};
 		}

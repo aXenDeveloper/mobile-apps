@@ -21,7 +21,7 @@ const MemberField = props => (
 				</TouchableOpacity>
 			))
 		) : (
-			<Text style={[props.textStyles, styles.lightText]}>No member chosen</Text>
+			<Text style={[props.textStyles, styles.lightText]}>{Lang.get("no_member")}</Text>
 		)}
 	</React.Fragment>
 );

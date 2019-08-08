@@ -1,33 +1,27 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { Text, View, Image, Switch, StyleSheet, TouchableOpacity } from "react-native";
 import _ from "underscore";
 
 import Lang from "../utils/Lang";
 import styles, { styleVars } from "../styles";
 
-export default class ToggleRow extends Component {
-	constructor(props) {
-		super(props);
-	}
+const ToggleRow = props => (
+	<View style={[styles.row, props.lastRow && styles.lastRow, componentStyles.menuItemWrap]}>
+		<View style={componentStyles.menuItem}>
+			<Text style={[styles.text, styles.contentText]}>{props.title}</Text>
+			{Boolean(props.subText) && <Text style={componentStyles.metaText}>{props.subText}</Text>}
+		</View>
+		<Switch
+			trackColor={{ true: styleVars.toggleTint }}
+			value={props.value}
+			disabled={!_.isUndefined(props.enabled) ? !props.enabled : false}
+			style={componentStyles.switch}
+			onValueChange={props.onToggle || null}
+		/>
+	</View>
+);
 
-	render() {
-		return (
-			<View style={[styles.row, componentStyles.menuItemWrap]}>
-				<View style={componentStyles.menuItem}>
-					<Text style={componentStyles.label}>{this.props.title}</Text>
-					{Boolean(this.props.subText) && <Text style={componentStyles.metaText}>{this.props.subText}</Text>}
-				</View>
-				<Switch
-					trackColor={{ true: styleVars.toggleTint }}
-					value={this.props.value}
-					disabled={!_.isUndefined(this.props.enabled) ? !this.props.enabled : false}
-					style={componentStyles.switch}
-					onValueChange={this.props.onToggle || null}
-				/>
-			</View>
-		);
-	}
-}
+export default memo(ToggleRow);
 
 const componentStyles = StyleSheet.create({
 	menuItemWrap: {
@@ -45,11 +39,6 @@ const componentStyles = StyleSheet.create({
 	},
 	menuItem: {
 		flex: 1
-	},
-	label: {
-		fontSize: 15,
-		color: styleVars.text,
-		fontWeight: "500"
 	},
 	metaText: {
 		color: styleVars.veryLightText,

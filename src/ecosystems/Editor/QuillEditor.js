@@ -33,6 +33,7 @@ import {
 } from "../../redux/actions/editor";
 import ContentRow from "../../ecosystems/ContentRow";
 import Button from "../../atoms/Button";
+import Lang from "../../utils/Lang";
 import styles, { styleVars } from "../../styles";
 
 const EDITOR_VIEW = require("../../../web/dist/index.html");
@@ -550,7 +551,7 @@ class QuillEditor extends Component {
 	 */
 	insertLink() {
 		if (!isURL(this.state.linkModal.url)) {
-			Alert.alert("Invalid Link", "The URL you entered isn't valid. Please check and try again.", [{ text: "OK" }], { cancelable: false });
+			Alert.alert(Lang.get("invalid_link"), Lang.get("invalid_link_desc"), [{ text: Lang.get("ok") }], { cancelable: false });
 			return;
 		}
 
@@ -658,7 +659,7 @@ class QuillEditor extends Component {
 				});
 			} else {
 				// Nope, not even that. wtf.
-				Alert.alert("Error", "Sorry, you can't upload images of this type.", [{ text: "OK" }], { cancelable: false });
+				Alert.alert(Lang.get("error"), Lang.get("error_upload_type"), [{ text: Lang.get("ok") }], { cancelable: false });
 				return;
 			}
 		}
@@ -682,7 +683,7 @@ class QuillEditor extends Component {
 			// Check we have space for it
 			if (this.props.user.maxUploadSize !== null) {
 				if (fileBuffer.length > parseInt(this.props.user.maxUploadSize) - this.getCurrentUploadSize()) {
-					Alert.alert("Error", "You do not have enough space left to upload this image.", [{ text: "OK" }], { cancelable: false });
+					Alert.alert(Lang.get("error"), Lang.get("error_upload_space"), [{ text: Lang.get("ok") }], { cancelable: false });
 					return;
 				}
 			}
@@ -693,7 +694,7 @@ class QuillEditor extends Component {
 				setUploadStatus({
 					id: selectedFile.uri,
 					status: UPLOAD_STATUS.ERROR,
-					error: "There was a problem uploading this image." + err
+					error: Lang.get("error_upload_other")
 				})
 			);
 		}
@@ -750,7 +751,7 @@ class QuillEditor extends Component {
 										})
 									}
 									value={this.state.linkModal.url}
-									placeholder="Link URL"
+									placeholder={Lang.get("link_url")}
 									style={[styles.textInput, styles.pStandard]}
 									ref={urlInput => (this.urlInput = urlInput)}
 									textContentType="URL"
@@ -764,10 +765,10 @@ class QuillEditor extends Component {
 										})
 									}
 									value={this.state.linkModal.text}
-									placeholder="Link text (optional)"
+									placeholder={Lang.get("link_text")}
 									style={[styles.textInput, styles.pStandard]}
 								/>
-								<Button filled type="primary" size="medium" title="Insert" style={styles.mtWide} onPress={this.insertLink} />
+								<Button filled type="primary" size="medium" title={Lang.get("insert")} style={styles.mtWide} onPress={this.insertLink} />
 							</View>
 						</View>
 					</View>

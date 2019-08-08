@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import styles, { styleVars } from "../styles";
 
-export default class ShadowedArea extends Component {
+export default class ShadowedArea extends PureComponent {
 	constructor(props) {
 		super(props);
 	}

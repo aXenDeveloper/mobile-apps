@@ -49,7 +49,7 @@ const SessionEndMutation = gql`
 
 class UserScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
-		headerTitle: "Account"
+		headerTitle: Lang.get("tab_user")
 	});
 
 	constructor(props) {
@@ -201,10 +201,10 @@ class UserScreen extends Component {
 	 * @return 	void
 	 */
 	confirmLogOut() {
-		Alert.alert("Confirm", "Are you sure you want to log out on this device?", [
-			{ text: "Cancel", onPress: () => console.log("USERSCREEN: Canceled logout") },
+		Alert.alert(Lang.get("confirm"), Lang.get("confirm_logout"), [
+			{ text: Lang.get("cancel"), onPress: () => console.log("USERSCREEN: Canceled logout") },
 			{
-				text: "Log Out",
+				text: Lang.get("sign_out"),
 				onPress: this.doLogOut,
 				style: "destructive"
 			}

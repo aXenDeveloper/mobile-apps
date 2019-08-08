@@ -50,7 +50,7 @@ const FluidForumQuery = gql`
 
 class FluidForumScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
-		headerTitle: <TwoLineHeader title="All Topics" subtitle="Showing all topics from all forums" />
+		headerTitle: <TwoLineHeader title={Lang.get("all_topics")} subtitle={Lang.get("all_topics_desc")} />
 	});
 
 	/**

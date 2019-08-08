@@ -1,23 +1,17 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import PropTypes from "prop-types";
 
 import ViewMeasure from "./ViewMeasure";
 import { styleVars } from "../styles";
 
-export default class UnreadBar extends Component {
-	constructor(props) {
-		super(props);
-	}
+const UnreadBar = ({ label = Lang.get("unread_comments"), ...props }) => (
+	<ViewMeasure style={styles.wrapper} onLayout={props.onLayout} id="unread">
+		<Text style={styles.text}>{label.toUpperCase()}</Text>
+	</ViewMeasure>
+);
 
-	render() {
-		return (
-			<ViewMeasure style={styles.wrapper} onLayout={this.props.onLayout} id="unread">
-				<Text style={styles.text}>{this.props.label.toUpperCase()}</Text>
-			</ViewMeasure>
-		);
-	}
-}
+export default memo(UnreadBar);
 
 const styles = StyleSheet.create({
 	wrapper: {

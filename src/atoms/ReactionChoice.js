@@ -1,24 +1,18 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { Image, Text, View, StyleSheet, TouchableHighlight } from "react-native";
 
 import getImageUrl from "../utils/getImageUrl";
 
-export default class ReactionChoice extends Component {
-	constructor(props) {
-		super(props);
-	}
+const ReactionChoice = props => (
+	<TouchableHighlight activeOpacity={0.8} onPress={props.onPress} style={componentStyles.reaction}>
+		<React.Fragment>
+			<Image source={{ uri: getImageUrl(props.image) }} style={componentStyles.image} />
+			<Text style={componentStyles.text}>{props.name}</Text>
+		</React.Fragment>
+	</TouchableHighlight>
+);
 
-	render() {
-		return (
-			<TouchableHighlight activeOpacity={0.8} onPress={this.props.onPress} style={componentStyles.reaction}>
-				<React.Fragment>
-					<Image source={{ uri: getImageUrl(this.props.image) }} style={componentStyles.image} />
-					<Text style={componentStyles.text}>{this.props.name}</Text>
-				</React.Fragment>
-			</TouchableHighlight>
-		);
-	}
-}
+export default memo(ReactionChoice);
 
 const componentStyles = StyleSheet.create({
 	reaction: {

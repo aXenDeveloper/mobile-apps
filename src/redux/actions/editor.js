@@ -137,6 +137,7 @@ export const UPLOAD_STATUS = {
 	REMOVING: "removing"
 };
 
+import Lang from "../../utils/Lang";
 import { LayoutAnimation } from "react-native";
 import gql from "graphql-tag";
 import _ from "underscore";
@@ -213,7 +214,7 @@ export const uploadImage = (file, uploadData) => {
 					setUploadStatus({
 						id,
 						status: UPLOAD_STATUS.ERROR,
-						error: "There is not enough space to upload this image."
+						error: Lang.get("error_upload_space")
 					})
 				);
 				return;
@@ -269,7 +270,7 @@ export const uploadImage = (file, uploadData) => {
 				setUploadStatus({
 					id,
 					status: UPLOAD_STATUS.ERROR,
-					error: "There was a problem uploading this image." + err
+					error: Lang.get("error_upload_other")
 				})
 			);
 		}

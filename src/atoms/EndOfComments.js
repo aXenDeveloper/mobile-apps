@@ -1,22 +1,16 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import PropTypes from "prop-types";
 
 import { styleVars } from "../styles";
 
-export default class EndOfComments extends Component {
-	constructor(props) {
-		super(props);
-	}
+const EndOfComments = props => (
+	<View style={componentStyles.wrapper}>
+		<Text style={componentStyles.text}>{props.label}</Text>
+	</View>
+);
 
-	render() {
-		return (
-			<View style={componentStyles.wrapper}>
-				<Text style={componentStyles.text}>{this.props.label}</Text>
-			</View>
-		);
-	}
-}
+export default memo(EndOfComments);
 
 const componentStyles = StyleSheet.create({
 	wrapper: {
@@ -27,14 +21,14 @@ const componentStyles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 13,
-		color: 'rgba(0,0,0,0.3)'
+		color: "rgba(0,0,0,0.3)"
 	}
 });
 
 EndOfComments.defaultProps = {
-	label: "You're up to date!",
+	label: "You're up to date!"
 };
 
 EndOfComments.propTypes = {
-	label: PropTypes.string,
+	label: PropTypes.string
 };

@@ -380,7 +380,7 @@ class ProfileScreen extends Component {
 		if (this.props.data.core.member.allowFollow) {
 			routes.push({
 				key: "followers",
-				title: "Followers"
+				title: Lang.get("profile_followers")
 			});
 		}
 
@@ -427,7 +427,7 @@ class ProfileScreen extends Component {
 			return <ProfilePlaceholder />;
 		} else if (this.props.data.error) {
 			const error = getErrorMessage(this.props.data.error, ProfileScreen.errors);
-			const message = error ? error : Lang.get("topic_view_error");
+			const message = error ? error : Lang.get("profile_error");
 			return <ErrorBox message={message} />;
 		} else {
 			// Follow button

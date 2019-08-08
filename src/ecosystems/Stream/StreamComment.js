@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
 
 import UserPhoto from "../../atoms/UserPhoto";
@@ -48,4 +48,4 @@ const StreamComment = props => {
 	);
 };
 
-export default StreamComment;
+export default memo(StreamComment);

@@ -153,7 +153,7 @@ export const bootSite = apiInfo => {
 				setUserStreams([
 					{
 						id: "all",
-						title: "All Activity",
+						title: Lang.get("all_activity"),
 						isDefault: true
 					},
 					...data.core.streams
@@ -172,7 +172,15 @@ export const bootSite = apiInfo => {
 	};
 };
 
-import LangFragment from "../../LangFragment";
+import langStrings from "../../langStrings";
+
+const processLangString = langString => `${langString}: phrase(key: "app_${langString}")`;
+const LangFragment = gql`
+	fragment LangFragment on core_Language {
+		${langStrings.map(processLangString).join("\n")}
+	}
+`;
+
 const BootQuery = gql`
 	query BootQuery {
 		core {
@@ -183,6 +191,7 @@ const BootQuery = gql`
 				defaultStream
 				notificationCount
 				maxUploadSize
+				email
 				group {
 					canAccessSite
 					canAccessOffline

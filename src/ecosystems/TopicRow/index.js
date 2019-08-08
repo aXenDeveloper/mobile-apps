@@ -17,6 +17,7 @@ import styles, { styleVars } from "../../styles";
 class TopicRow extends Component {
 	constructor(props) {
 		super(props);
+		this.onPress = this.onPress.bind(this);
 	}
 
 	/**
@@ -44,7 +45,7 @@ class TopicRow extends Component {
 	 *
 	 * @return 	void
 	 */
-	onPress = () => {
+	onPress() {
 		this.props.navigation.navigate("TopicView", {
 			id: this.props.data.id,
 			title: this.props.data.title,
@@ -52,7 +53,7 @@ class TopicRow extends Component {
 			posts: this.props.data.replies,
 			started: this.props.data.started
 		});
-	};
+	}
 
 	render() {
 		if (this.props.loading) {

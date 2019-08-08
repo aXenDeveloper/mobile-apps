@@ -1,15 +1,9 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 
-export default class TagList extends Component {
-	constructor(props) {
-		super(props);
-	}
+const TagList = props => <View style={[styles.tagList, props.centered ? { justifyContent: "center" } : null, props.style]}>{props.children}</View>;
 
-	render() {
-		return <View style={[styles.tagList, this.props.centered ? { justifyContent: "center" } : null, this.props.style]}>{this.props.children}</View>;
-	}
-}
+export default memo(TagList);
 
 const styles = StyleSheet.create({
 	tagList: {

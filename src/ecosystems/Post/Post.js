@@ -467,7 +467,7 @@ class Post extends Component {
 		this.props.navigation.navigate("ReportContent", {
 			id: this.props.data.id,
 			contentTitle: this.props.topic.title,
-			thingTitle: `${this.props.data.author.name}'s post`,
+			thingTitle: this.props.reportTitle,
 			reportData: this.props.data.reportStatus,
 			reportMutation: ReportPostMutation,
 			revokeReportMutation: RevokeReportMutation
@@ -529,9 +529,9 @@ class Post extends Component {
 		}
 
 		const statuses = {
-			HIDDEN: ["Hidden", "This post is only visible to moderators", icons.HIDDEN],
-			DELETED: ["Deleted", "This post is pending deletion", icons.CROSS_CIRCLE_SOLID],
-			PENDING: ["Pending Approval", "This post is pending approval by a moderator", icons.PENDING]
+			HIDDEN: [Lang.get("status_hidden"), Lang.get("status_hidden_desc"), icons.HIDDEN],
+			DELETED: [Lang.get("status_deleted"), Lang.get("status_deleted_desc"), icons.CROSS_CIRCLE_SOLID],
+			PENDING: [Lang.get("status_unapproved"), Lang.get("status_unapproved_desc"), icons.PENDING]
 		};
 
 		return (
@@ -609,7 +609,7 @@ class Post extends Component {
 						</View>
 						{Boolean(repButton || this.props.canReply) && (
 							<PostControls style={styles.mhWide}>
-								{Boolean(this.props.canReply) && this.props.hiddenStatus === null && (
+								{Boolean(this.props.canReply) && postData.hiddenStatus === null && (
 									<PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />
 								)}
 								{repButton}

@@ -189,7 +189,7 @@ class TopicViewScreen extends Component {
 					<Animated.View style={{ opacity: params.headerBarOpacity || 0 }}>
 						<TwoLineHeader
 							title={params.title}
-							subtitle={`Started by ${params.author.name}`} //@todo lang abstraction
+							subtitle={Lang.get("started_by_x", { name: params.author.name })} //@todo lang abstraction
 						/>
 					</Animated.View>
 					<Animated.View
@@ -1077,7 +1077,7 @@ class TopicViewScreen extends Component {
 								<View>
 									<Text style={[styles.contentTitle, headerAlignClass, hidden && styles.moderatedTitle]}>{topicData.title}</Text>
 									<Text style={[styles.lightText, styles.standardText, headerAlignClass, styles.mtVeryTight, hidden && styles.moderatedLightText]}>
-										Started by {topicData.author.name}, {relativeTime.long(topicData.started)}
+										{Lang.get("started_by_x", { name: topicData.author.name })}, {relativeTime.long(topicData.started)}
 									</Text>
 								</View>
 								{Boolean(topicData.tags.length || topicData.isLocked || topicData.isHot || topicData.isPinned || topicData.isFeatured || hidden) && (
@@ -1191,6 +1191,10 @@ class TopicViewScreen extends Component {
 				style={additionalPostStyle}
 				onLayout={this.onPostLayout}
 				position={this.state.startingOffset + index + 1}
+				reportTitle={Lang.get("someones_x", {
+					name: item.author.name,
+					thing: item.articleLang.definiteNoItem
+				})}
 				shortShareTitle={Lang.get("share_x", {
 					name: item.author.name,
 					thing: item.articleLang.definiteNoItem

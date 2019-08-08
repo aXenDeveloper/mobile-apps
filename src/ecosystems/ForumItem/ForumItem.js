@@ -79,7 +79,7 @@ class ForumItem extends Component {
 			} catch (err) {
 				console.log(err);
 
-				Alert.alert("Couldn't mark as read", "There was an error marking this forum as read", [{ text: Lang.get("ok") }], { cancelable: false });
+				Alert.alert(Lang.get("error_marking_read"), Lang.get("error_marking_read_desc"), [{ text: Lang.get("ok") }], { cancelable: false });
 			}
 		}, 500);
 	}
@@ -106,10 +106,7 @@ class ForumItem extends Component {
 		}
 
 		const rightButtons = [
-			<TouchableHighlight
-				style={[styles.flex, styles.flexJustifyCenter, styles.swipeItemWrap]}
-				onPress={this.markForumRead}
-			>
+			<TouchableHighlight style={[styles.flex, styles.flexJustifyCenter, styles.swipeItemWrap]} onPress={this.markForumRead}>
 				<View style={[styles.flexColumn, styles.flexAlignCenter, styles.swipeItem]}>
 					<Image source={icons.CHECKMARK2} style={styles.swipeItemIcon} resizeMode="contain" />
 					<Text style={styles.swipeItemText}>Read</Text>
@@ -146,7 +143,10 @@ class ForumItem extends Component {
 	}
 }
 
-export default compose(withNavigation, withApollo)(ForumItem);
+export default compose(
+	withNavigation,
+	withApollo
+)(ForumItem);
 
 export { ForumItem as TestForumItem }; // For test runner only
 

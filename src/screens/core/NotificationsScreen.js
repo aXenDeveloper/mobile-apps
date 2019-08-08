@@ -46,7 +46,7 @@ const MarkReadMutation = gql`
 
 class NotificationsScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
-		title: "Notifications",
+		title: Lang.get("tab_notifications"),
 		headerLeft: Expo.Constants.manifest.extra.multi ? { headerLeft: <GoToMulti /> } : null,
 		headerRight: (
 			<HeaderButton

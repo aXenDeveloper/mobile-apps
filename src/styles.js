@@ -1,4 +1,5 @@
 import { StyleSheet, Platform } from "react-native";
+import { transparentize } from "polished";
 
 import { isIphoneX } from "./utils/isIphoneX";
 
@@ -242,10 +243,22 @@ const baseStyles = StyleSheet.create({
 	},
 
 	/* Rows */
+	listBackground: {
+		backgroundColor: "#fff"
+	},
 	row: {
-		backgroundColor: "#fff",
+		backgroundColor: "#fff"
+	},
+	rowSeparator: {
 		borderBottomWidth: 1,
-		borderBottomColor: "#F2F4F7"
+		borderBottomColor: styleVars.borderColors.light,
+		marginLeft: styleVars.spacing.wide
+	},
+	rowsWrap: {
+		borderTopWidth: 1,
+		borderBottomWidth: 1,
+		borderTopColor: transparentize(0.6, styleVars.greys.darker),
+		borderBottomColor: transparentize(0.6, styleVars.greys.darker)
 	},
 
 	/* Modal styles */

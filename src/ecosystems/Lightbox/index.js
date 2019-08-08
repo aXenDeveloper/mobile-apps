@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Text, Image, View, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
 import Modal from "react-native-modal";
 import ImageViewer from "react-native-image-zoom-viewer";
@@ -9,7 +9,7 @@ import getImageUrl from "../../utils/getImageUrl";
 import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
 
-export default class Lightbox extends Component {
+export default class Lightbox extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.close = this.close.bind(this);

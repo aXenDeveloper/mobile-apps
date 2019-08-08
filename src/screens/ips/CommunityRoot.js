@@ -27,7 +27,6 @@ import { bootSite } from "../../redux/actions/app";
 import { refreshToken } from "../../redux/actions/auth";
 import CommunityNavigation from "../../navigation/CommunityNavigation";
 import ToFormData from "../../utils/ToFormData";
-import LangFragment from "../../LangFragment";
 import { styleVars } from "../../styles";
 import icons from "../../icons";
 

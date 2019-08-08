@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { Text, TouchableOpacity, StyleSheet, Image, Platform } from "react-native";
 import _ from "underscore";
 
@@ -31,7 +31,7 @@ const HeaderButton = props => {
 	);
 };
 
-export default HeaderButton;
+export default memo(HeaderButton);
 
 const componentStyles = StyleSheet.create({
 	defaultSize: {
