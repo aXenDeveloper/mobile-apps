@@ -16,6 +16,17 @@ function withTheme(WrappedComponent) {
 			};
 		}
 
+		componentDidMount() {
+			setTimeout(() => {
+				this.setState({
+					styleVars: {
+						...this.state.styleVars,
+						accentColor: "red"
+					}
+				});
+			}, 4000);
+		}
+
 		render() {
 			return <WrappedComponent styleVars={this.state.styleVars} theme={this.state.styles} {...this.props} />;
 		}
