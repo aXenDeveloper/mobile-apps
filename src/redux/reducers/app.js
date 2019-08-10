@@ -31,7 +31,9 @@ const initialState = {
 	settings: {
 		contentView: "first"
 	},
-	toast: []
+	toast: [],
+	currentTheme: null,
+	darkMode: false
 };
 
 export default function app(state = initialState, { type, payload }) {
