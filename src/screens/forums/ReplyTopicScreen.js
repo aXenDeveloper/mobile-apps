@@ -15,7 +15,7 @@ import HeaderButton from "../../atoms/HeaderButton";
 import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
-import styles from "../../styles";
+import { withTheme, currentStyleSheet } from "../../themes";
 import icons from "../../icons";
 
 const ReplyTopicMutation = gql`
@@ -35,7 +35,7 @@ class ReplyTopicScreen extends Component {
 			headerTitle: navigation.getParam("submitting") ? (
 				<React.Fragment>
 					<ActivityIndicator size="small" color="#fff" />
-					<Text style={styles.headerTitle}> {Lang.get("submitting")}...</Text>
+					<Text style={currentStyleSheet.headerTitle}> {Lang.get("submitting")}...</Text>
 				</React.Fragment>
 			) : (
 				Lang.get("reply_screen")
@@ -177,6 +177,8 @@ class ReplyTopicScreen extends Component {
 	}
 
 	render() {
+		const { componentStyles } = this.props;
+
 		// If we're quoting an existing post, build that now
 		let quotedPostComponent = null;
 		if (this.props.navigation.state.params.quotedPost) {
@@ -237,14 +239,7 @@ class ReplyTopicScreen extends Component {
 	}
 }
 
-export default compose(
-	graphql(ReplyTopicMutation),
-	connect(state => ({
-		attachedImages: state.editor.attachedImages
-	}))
-)(ReplyTopicScreen);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	postInfo: {
 		flexDirection: "row",
 		alignItems: "flex-start",
@@ -265,4 +260,12 @@ const componentStyles = StyleSheet.create({
 		color: "#171717",
 		marginBottom: 3
 	}
-});
+};
+
+export default compose(
+	graphql(ReplyTopicMutation),
+	connect(state => ({
+		attachedImages: state.editor.attachedImages
+	})),
+	withTheme(_componentStyles)
+)(ReplyTopicScreen);

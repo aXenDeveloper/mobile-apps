@@ -11,7 +11,7 @@ import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import NotificationSettingRow from "../../atoms/NotificationSettingRow";
 import SectionHeader from "../../atoms/SectionHeader";
 import ErrorBox from "../../atoms/ErrorBox";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 /* Main query, passed as a HOC */
@@ -110,6 +110,8 @@ class NotificationsSettingsScreen extends Component {
 			return;
 		}
 
+		const { styles } = this.props;
+
 		return (
 			<View style={styles.pWide}>
 				<Text style={[styles.lightText, styles.standardText]}>{Lang.get("notification_android_extra")}</Text>
@@ -130,6 +132,8 @@ class NotificationsSettingsScreen extends Component {
 		} else {
 			platformInstructions = Lang.get("notification_instructions_android");
 		}
+
+		const { styles } = this.props;
 
 		return (
 			<View style={[styles.pWide, styles.mtStandard, styles.flexRow, styles.flexAlignStart]}>
@@ -173,5 +177,6 @@ export default compose(
 		user: state.user
 	})),
 	withApollo,
-	graphql(NotificationQuery)
+	graphql(NotificationQuery),
+	withTheme()
 )(NotificationsSettingsScreen);

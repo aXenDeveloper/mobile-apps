@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { View, Alert, StyleSheet, AsyncStorage, Platform } from "react-native";
+import { compose } from "react-apollo";
 import { Linking, Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import { connect } from "react-redux";
@@ -25,7 +26,7 @@ import CommunityRoot from "./CommunityRoot";
 import AppLoading from "../../atoms/AppLoading";
 import NavigationService from "../../utils/NavigationService";
 import NotificationChannels from "../../NotificationChannels.json";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class AppRoot extends Component {
 	constructor(props) {
@@ -208,7 +209,7 @@ class AppRoot extends Component {
 	 * @return
 	 */
 	async componentDidUpdate(prevProps) {
-		const { dispatch } = this.props;
+		const { dispatch, componentStyles } = this.props;
 		const { apiKey, apiUrl } = this.props.app.currentCommunity;
 		const prevApiUrl = prevProps.app.currentCommunity.apiUrl;
 
@@ -533,14 +534,7 @@ class AppRoot extends Component {
 	style={{ backgroundColor: "#fff", position: "absolute", left: 10, right: 10, top: 10 }}
 />*/
 
-export default connect(state => ({
-	auth: state.auth,
-	app: state.app,
-	site: state.site,
-	user: state.user
-}))(AppRoot);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	toastContainerStyle: {
 		padding: styleVars.spacing.wide,
 		backgroundColor: "#363636",
@@ -551,3 +545,13 @@ const componentStyles = StyleSheet.create({
 		color: "#fff"
 	}
 });
+
+export default compose(
+	connect(state => ({
+		auth: state.auth,
+		app: state.app,
+		site: state.site,
+		user: state.user
+	})),
+	withTheme(_componentStyles)
+)(AppRoot);

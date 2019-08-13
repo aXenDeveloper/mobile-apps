@@ -6,6 +6,7 @@ import { graphql } from "react-apollo";
 import SectionHeader from "../../../atoms/SectionHeader";
 import SettingRow from "../../../atoms/SettingRow";
 import { ContentView } from "../../../ecosystems/AppSettings";
+import { withTheme } from "../../../themes";
 
 class AccountSettingsScreen extends Component {
 	static navigationOptions = {
@@ -55,6 +56,7 @@ class AccountSettingsScreen extends Component {
 	}
 
 	renderSectionHeader({ section }) {
+		const { styles } = this.props;
 		return (
 			<View style={!section.first ? styles.mtExtraWide : null}>
 				<SectionHeader title={section.title} />
@@ -75,4 +77,4 @@ class AccountSettingsScreen extends Component {
 	}
 }
 
-export default AccountSettingsScreen;
+export default withTheme()(AccountSettingsScreen);

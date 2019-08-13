@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView, Image, StyleSheet, AsyncStorage, SectionList, FlatList, TouchableOpacity } from "react-native";
+import { Text, View, Image, StyleSheet, SectionList, TouchableOpacity } from "react-native";
 import gql from "graphql-tag";
-import { graphql, compose, withApollo } from "react-apollo";
+import { compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
 import _ from "underscore";
 import Modal from "react-native-modal";
@@ -14,10 +14,9 @@ import GoToMulti from "../../atoms/GoToMulti";
 import StreamHeader from "../../atoms/StreamHeader";
 import { StreamCard, StreamCardFragment } from "../../ecosystems/Stream";
 import CheckList from "../../ecosystems/CheckList";
-import CustomHeader from "../../ecosystems/CustomHeader";
 import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import getErrorMessage from "../../utils/getErrorMessage";
-import styles from "../../styles";
+import { withTheme, getCurrentStyleSheet } from "../../themes";
 
 const StreamViewQuery = gql`
 	query StreamViewQuery($id: ID, $offset: Int, $limit: Int) {
@@ -35,33 +34,40 @@ const StreamViewQuery = gql`
 
 const LIMIT = 25;
 
-const headerStyles = StyleSheet.create({
-	dropdownArrow: {
-		width: 13,
-		height: 13,
-		tintColor: "#fff",
-		marginLeft: 5
-	}
-});
-
 class StreamViewScreen extends Component {
-	static navigationOptions = ({ navigation }) => ({
-		headerLeft: Expo.Constants.manifest.extra.multi ? { headerLeft: <GoToMulti /> } : null,
-		headerTitle: (
-			<TouchableOpacity
-				onPress={!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.onPressTitle) ? navigation.state.params.onPressTitle : null}
-			>
-				<View style={[styles.flexRow, styles.flexAlignCenter, styles.phWide]}>
-					<Text style={[styles.headerTitle]} numberOfLines={1}>
-						{!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.streamTitle) ? navigation.state.params.streamTitle : ""}
-					</Text>
-					{!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.moreAvailable) && navigation.state.params.moreAvailable && (
-						<Image source={require("../../../resources/arrow_down.png")} resizeMode="contain" style={headerStyles.dropdownArrow} />
-					)}
-				</View>
-			</TouchableOpacity>
-		)
-	});
+	static navigationOptions = ({ navigation }) => {
+		const menuStyle = StyleSheet.create({
+			dropdownArrow: {
+				width: 13,
+				height: 13,
+				tintColor: "#fff",
+				marginLeft: 5
+			}
+		});
+		const currentStyleSheet = getCurrentStyleSheet();
+
+		console.log(currentStyleSheet);
+
+		return {
+			headerLeft: Expo.Constants.manifest.extra.multi ? { headerLeft: <GoToMulti /> } : null,
+			headerTitle: (
+				<TouchableOpacity
+					onPress={
+						!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.onPressTitle) ? navigation.state.params.onPressTitle : null
+					}
+				>
+					<View style={[currentStyleSheet.flexRow, currentStyleSheet.flexAlignCenter, currentStyleSheet.phWide]}>
+						<Text style={[currentStyleSheet.headerTitle]} numberOfLines={1}>
+							{!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.streamTitle) ? navigation.state.params.streamTitle : ""}
+						</Text>
+						{!_.isUndefined(navigation.state.params) && !_.isUndefined(navigation.state.params.moreAvailable) && navigation.state.params.moreAvailable && (
+							<Image source={require("../../../resources/arrow_down.png")} resizeMode="contain" style={menuStyle.dropdownArrow} />
+						)}
+					</View>
+				</TouchableOpacity>
+			)
+		};
+	};
 
 	sectionTitles = {
 		past_hour: Lang.get("past_hour"),
@@ -286,6 +292,7 @@ class StreamViewScreen extends Component {
 	 * @return 	Component
 	 */
 	buildStreamList() {
+		const { styles, componentStyles } = this.props;
 		const data = this.props.user.streams.map(stream => ({
 			id: stream.id,
 			key: stream.id,
@@ -388,6 +395,8 @@ class StreamViewScreen extends Component {
 	}
 
 	render() {
+		const { componentStyles } = this.props;
+
 		if (this.state.loading && this.state.sectionData === []) {
 			return this.getPlaceholder();
 		} else if (this.state.error) {
@@ -428,14 +437,7 @@ class StreamViewScreen extends Component {
 	}
 }
 
-export default compose(
-	connect(state => ({
-		user: state.user
-	})),
-	withApollo
-)(StreamViewScreen);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	modal: {
 		justifyContent: "flex-end",
 		margin: 0,
@@ -444,4 +446,12 @@ const componentStyles = StyleSheet.create({
 	modalInner: {
 		height: "80%"
 	}
-});
+};
+
+export default compose(
+	connect(state => ({
+		user: state.user
+	})),
+	withApollo,
+	withTheme(_componentStyles)
+)(StreamViewScreen);

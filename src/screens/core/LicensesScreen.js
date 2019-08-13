@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, memo } from "react";
 import { Text, View, FlatList, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { compose } from "react-apollo";
 import { connect } from "react-redux";
@@ -8,18 +8,19 @@ import NavigationService from "../../utils/NavigationService";
 import ContentRow from "../../ecosystems/ContentRow";
 import LargeTitle from "../../atoms/LargeTitle";
 import licenseJson from "../../../licenses.json";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 
-const LicenseListItem = props => (
-	<ContentRow unread style={[styles.pvStandard, styles.phWide]} showArrow>
+let _LicenseListItem = props => (
+	<ContentRow unread style={[props.styles.pvStandard, props.styles.phWide]} showArrow>
 		<TouchableOpacity onPress={() => props.licenseUrl && NavigationService.navigate(props.licenseUrl, {}, { forceBrowser: true })}>
-			<Text style={styles.smallItemTitle}>
+			<Text style={props.styles.smallItemTitle}>
 				{props.name} by {props.username}
 			</Text>
-			<Text style={styles.lightText}>{props.licenses}</Text>
+			<Text style={props.styles.lightText}>{props.licenses}</Text>
 		</TouchableOpacity>
 	</ContentRow>
 );
+const LicenseListItem = withTheme(memo(_LicenseListItem));
 const reg = /((https?:\/\/)?(www\.)?github\.com\/)?(@|#!\/)?([A-Za-z0-9_]{1,15})(\/([-a-z]{1,20}))?/i;
 
 class LicensesScreen extends Component {
@@ -83,6 +84,7 @@ class LicensesScreen extends Component {
 	}
 
 	getHeaderComponent() {
+		const { styles } = this.props;
 		return (
 			<React.Fragment>
 				<LargeTitle>Third-party Licenses</LargeTitle>
@@ -96,6 +98,7 @@ class LicensesScreen extends Component {
 	}
 
 	render() {
+		const { styles } = this.props;
 		const licenseData = this.getLicenseData();
 		return (
 			<FlatList
@@ -112,7 +115,8 @@ class LicensesScreen extends Component {
 export default compose(
 	connect(state => ({
 		site: state.site
-	}))
+	})),
+	withTheme()
 )(LicensesScreen);
 
 const componentStyles = StyleSheet.create({

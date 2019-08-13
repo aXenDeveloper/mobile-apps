@@ -1,11 +1,10 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView, SectionList, StyleSheet, Image, StatusBar, Animated, Platform, Dimensions, Alert } from "react-native";
+import { Text, View, StyleSheet, Image, StatusBar, Animated, Platform, Dimensions, Alert } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
 import { HeaderBackButton } from "react-navigation";
 import { TabView, TabBar } from "react-native-tab-view";
-import { Header } from "react-navigation";
 import FadeIn from "react-native-fade-in-image";
 
 import Lang from "../../utils/Lang";
@@ -20,7 +19,7 @@ import { ProfileContent, ProfileOverview, ProfileEditorField, ProfileFollowers, 
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 import getImageUrl from "../../utils/getImageUrl";
 import { isIphoneX } from "../../utils/isIphoneX";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const ProfileQuery = gql`
 	query ProfileQuery($member: ID!) {
@@ -349,8 +348,9 @@ class ProfileScreen extends Component {
 	 * @return 	Component
 	 */
 	renderTabBar(props) {
+		const { styles, styleVars } = this.props;
 		return (
-			<Animated.View style={{ transform: [{ translateY: this.tabY }], backgroundColor: "red", zIndex: 1 }}>
+			<Animated.View style={{ transform: [{ translateY: this.tabY }], zIndex: 1 }}>
 				<TabBar
 					{...props}
 					indicatorStyle={{ backgroundColor: "white" }}
@@ -423,6 +423,8 @@ class ProfileScreen extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return <ProfilePlaceholder />;
 		} else if (this.props.data.error) {
@@ -542,7 +544,7 @@ class ProfileScreen extends Component {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	customHeader: {
 		...Platform.select({
 			android: {
@@ -657,5 +659,6 @@ export default compose(
 		user: state.user,
 		site: state.site
 	})),
-	withApollo
+	withApollo,
+	withTheme(_componentStyles)
 )(ProfileScreen);

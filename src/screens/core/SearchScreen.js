@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView, StyleSheet, TextInput, Image, SectionList, AsyncStorage, ActivityIndicator, TouchableOpacity } from "react-native";
+import { Text, View, TextInput, Image, SectionList, AsyncStorage, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import _ from "underscore";
-//import ScrollableTabView, { ScrollableTabBar } from "react-native-scrollable-tab-view";
 import gql from "graphql-tag";
-import { graphql, compose, withApollo } from "react-apollo";
+import { compose, withApollo } from "react-apollo";
 import { ScrollableTab, Tab, TabHeading, Tabs } from "native-base";
 
 import Lang from "../../utils/Lang";
@@ -16,7 +15,7 @@ import ErrorBox from "../../atoms/ErrorBox";
 import ContentRow from "../../ecosystems/ContentRow";
 import CustomTab from "../../atoms/CustomTab";
 import { SearchContentPanel, SearchMemberPanel, SearchResultFragment, SearchResult } from "../../ecosystems/Search";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 const OverviewSearchQuery = gql`
@@ -323,6 +322,8 @@ class SearchScreen extends Component {
 			text = Lang.get("no_trending_searches");
 		}
 
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<ContentRow style={componentStyles.leftAlign}>
 				<Text numberOfLines={1} style={[componentStyles.leftAlignText, styles.veryLightText]}>
@@ -358,6 +359,7 @@ class SearchScreen extends Component {
 	 * @return 	Component
 	 */
 	renderShortcutItem(item) {
+		const { componentStyles } = this.props;
 		return (
 			<ContentRow style={componentStyles.leftAlign} onPress={() => this.recentSearchClick(item)}>
 				<Text numberOfLines={1} style={componentStyles.leftAlignText}>
@@ -429,6 +431,7 @@ class SearchScreen extends Component {
 	 * @return 	Component|null
 	 */
 	renderOverviewSectionFooter(section) {
+		const { componentStyles } = this.props;
 		if (section.data.length) {
 			if (section.count > section.data.length) {
 				return (
@@ -474,6 +477,7 @@ class SearchScreen extends Component {
 	 * @return 	Component
 	 */
 	getResultsViews() {
+		const { componentStyles, styleVars } = this.props;
 		let currentTab = null;
 
 		if (this.state.currentTab) {
@@ -524,6 +528,7 @@ class SearchScreen extends Component {
 	 * @return 	Component
 	 */
 	getResultsPlaceholder() {
+		const { componentStyles } = this.props;
 		return (
 			<View style={{ flex: 1 }}>
 				<PlaceholderContainer height={48} style={componentStyles.loadingTabBar}>
@@ -543,6 +548,7 @@ class SearchScreen extends Component {
 	}
 
 	render() {
+		const { componentStyles } = this.props;
 		const searchBox = (
 			<View style={componentStyles.searchWrap}>
 				<View style={[componentStyles.searchBox, this.state.textInputActive ? componentStyles.searchBoxActive : null]}>
@@ -591,15 +597,7 @@ class SearchScreen extends Component {
 	}
 }
 
-export default compose(
-	connect(state => ({
-		app: state.app,
-		site: state.site
-	})),
-	withApollo
-)(SearchScreen);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	searchWrap: {
 		paddingHorizontal: styleVars.spacing.tight,
 		paddingBottom: styleVars.spacing.tight,
@@ -690,3 +688,12 @@ const componentStyles = StyleSheet.create({
 		borderBottomColor: "#cccccc"
 	}
 });
+
+export default compose(
+	connect(state => ({
+		app: state.app,
+		site: state.site
+	})),
+	withApollo,
+	withTheme(_componentStyles)
+)(SearchScreen);

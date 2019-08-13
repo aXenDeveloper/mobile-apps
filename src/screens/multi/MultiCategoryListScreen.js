@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Text, View, ScrollView, FlatList, StyleSheet, Image, TextInput, TouchableOpacity } from "react-native";
+import { compose } from "react-apollo";
 import { connect } from "react-redux";
 import _ from "underscore";
 
@@ -15,7 +16,7 @@ import LargeTitle from "../../atoms/LargeTitle";
 import { CommunityBox } from "../../ecosystems/MultiCommunity";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import getUserAgent from "../../utils/getUserAgent";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons, { illustrations } from "../../icons";
 
 const SEARCH_MIN_LEN = 4;
@@ -176,6 +177,8 @@ class MultiCategoryListScreen extends Component {
 	 * @return 	Component
 	 */
 	getCategoryList() {
+		const { styles } = this.props;
+
 		if (this.props.app.categoryList.loading) {
 			return (
 				<PlaceholderRepeater repeat={3}>
@@ -306,6 +309,8 @@ class MultiCategoryListScreen extends Component {
 	 * @return 	Component
 	 */
 	getSearchDisplay() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.state.searchResults.length && this.state.searchTerm.length >= SEARCH_MIN_LEN) {
 			return (
 				<FlatList
@@ -386,6 +391,8 @@ class MultiCategoryListScreen extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		const searchBox = (
 			<SearchBox
 				placeholder="Search Communities"
@@ -419,14 +426,17 @@ class MultiCategoryListScreen extends Component {
 	}
 }
 
-export default connect(state => ({
-	app: state.app
-}))(MultiCategoryListScreen);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	emptyImage: {
 		width: "100%",
 		height: 150,
 		marginTop: styleVars.spacing.extraWide * 2
 	}
 });
+
+export default compose(
+	connect(state => ({
+		app: state.app
+	})),
+	withTheme(_componentStyles)
+)(MultiCategoryListScreen);

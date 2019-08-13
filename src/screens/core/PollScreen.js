@@ -1,17 +1,16 @@
 import React, { Component } from "react";
-import { Text, View, FlatList, StyleSheet, Alert } from "react-native";
+import { Text, FlatList, Alert } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
-import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import Button from "../../atoms/Button";
 import { PollQuestion, PollFragment } from "../../ecosystems/Poll";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const PollQuery = gql`
 	query TopicViewQuery($id: ID!) {
@@ -150,6 +149,7 @@ class PollScreen extends Component {
 
 	getPollFooter() {
 		const showResult = this.shouldShowResults();
+		const { styles } = this.props;
 		let buttons;
 
 		if (this.props.data.forums.topic.poll.canVote && !this.props.data.forums.topic.poll.hasVoted) {
@@ -222,5 +222,6 @@ export default compose(
 	withApollo,
 	connect(state => ({
 		site: state.site
-	}))
+	})),
+	withTheme()
 )(PollScreen);

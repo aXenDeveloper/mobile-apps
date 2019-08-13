@@ -7,8 +7,7 @@ import _ from "underscore";
 import Lang from "../../utils/Lang";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import LargeTitle from "../../atoms/LargeTitle";
-import NavigationService from "../../utils/NavigationService";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 
 class LegalDocumentScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
@@ -20,6 +19,8 @@ class LegalDocumentScreen extends Component {
 	}
 
 	render() {
+		const { styles } = this.props;
+
 		return (
 			<ScrollView style={styles.flex}>
 				<LargeTitle>{Lang.get(`legal_${this.props.navigation.getParam("type")}`)}</LargeTitle>
@@ -34,5 +35,6 @@ class LegalDocumentScreen extends Component {
 export default compose(
 	connect(state => ({
 		site: state.site
-	}))
+	})),
+	withTheme()
 )(LegalDocumentScreen);

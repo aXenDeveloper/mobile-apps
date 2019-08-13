@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Text, View, FlatList, ScrollView, TouchableOpacity, StatusBar, StyleSheet, Image, Animated, Platform } from "react-native";
+import { compose } from "react-apollo";
 import { connect } from "react-redux";
 import _ from "underscore";
 import { LinearGradient } from "expo-linear-gradient";
@@ -15,7 +16,7 @@ import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import NavigationService from "../../utils/NavigationService";
 import icons, { illustrations } from "../../icons";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import { categoryIcons, categoryImages } from "../../categories";
 
 class MultiCategoryScreen extends Component {
@@ -214,6 +215,7 @@ class MultiCategoryScreen extends Component {
 	 * @return 	Component
 	 */
 	renderEmptyList() {
+		const { styles } = this.props;
 		return (
 			<View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter]}>
 				<Text style={[styles.mtExtraWide, styles.centerText, styles.itemTitle]}>No Communities</Text>
@@ -225,6 +227,7 @@ class MultiCategoryScreen extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
 		const { categoryID } = this.props.navigation.state.params;
 		const thisCategory = this.props.app.categories[categoryID];
 		const title = thisCategory.name || "Loading...";
@@ -300,11 +303,7 @@ class MultiCategoryScreen extends Component {
 	}
 }
 
-export default connect(state => ({
-	app: state.app
-}))(MultiCategoryScreen);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	fixedProfileHeader: {
 		position: "absolute",
 		top: 0,
@@ -333,3 +332,10 @@ const componentStyles = StyleSheet.create({
 		marginTop: styleVars.spacing.extraWide * 2
 	}
 });
+
+export default compose(
+	connect(state => ({
+		app: state.app
+	})),
+	withTheme(_componentStyles)
+)(MultiCategoryScreen);

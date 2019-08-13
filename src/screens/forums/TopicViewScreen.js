@@ -37,7 +37,8 @@ import { Tooltip } from "../../ecosystems/Walkthrough";
 import UserPhoto from "../../atoms/UserPhoto";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 
-import styles, { styleVars } from "../../styles";
+//import styles from "../../styles";
+import { withTheme, currentStyleSheet } from "../../themes";
 import icons from "../../icons";
 
 const TopicViewQuery = gql`
@@ -176,6 +177,26 @@ const SetBestAnswer = gql`
 
 const LOAD_MORE_HEIGHT = 0;
 
+const headerStyles = StyleSheet.create({
+	authorPhoto: {
+		position: "absolute",
+		top: 15,
+		left: "50%",
+		...Platform.select({
+			ios: {
+				marginLeft: -30
+			},
+			android: {
+				marginLeft: -31
+			}
+		}),
+		zIndex: 100
+	},
+	headerRight: {
+		width: 80
+	}
+});
+
 class TopicViewScreen extends Component {
 	/**
 	 * React Navigation config
@@ -195,7 +216,7 @@ class TopicViewScreen extends Component {
 					<Animated.View
 						style={[
 							{ opacity: params.authorOpacity || 0, transform: [{ scale: params.authorScale || 0.6 }, { translateY: params.authorTranslate || -35 }] },
-							componentStyles.authorPhoto
+							headerStyles.authorPhoto
 						]}
 					>
 						<UserPhoto url={params.author.photo} size={60} />
@@ -203,7 +224,7 @@ class TopicViewScreen extends Component {
 				</React.Fragment>
 			) : null,
 			headerRight: (
-				<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyEnd, componentStyles.headerRight]}>
+				<View style={[currentStyleSheet.flexRow, currentStyleSheet.flexAlignCenter, currentStyleSheet.flexJustifyEnd, headerStyles.headerRight]}>
 					{params.showShareControl && <HeaderButton position="right" icon={icons.SHARE} onPress={params.onPressShare} style={{ marginTop: -5 }} />}
 					{params.showFollowControl && <FollowButton followed={params.isFollowed} onPress={params.onPressFollow} />}
 				</View>
@@ -1047,6 +1068,7 @@ class TopicViewScreen extends Component {
 	 * @return 	Component
 	 */
 	getHeaderComponent() {
+		const { styles, componentStyles } = this.props;
 		const topicData = this.props.data.forums.topic;
 		const headerAlignClass = topicData.isQuestion ? styles.leftText : styles.centerText;
 		const hidden = topicData.hiddenStatus !== null;
@@ -1255,6 +1277,8 @@ class TopicViewScreen extends Component {
 	 * @return 	array|null
 	 */
 	getAdditionalPostStyles(post) {
+		const { styles } = this.props;
+
 		if (!this.props.data.forums.topic.isQuestion) {
 			return null;
 		}
@@ -1275,6 +1299,8 @@ class TopicViewScreen extends Component {
 		if (!this.props.data.forums.topic.isQuestion) {
 			return null;
 		}
+
+		const { styles } = this.props;
 
 		if (post.isQuestion) {
 			return (
@@ -1305,6 +1331,8 @@ class TopicViewScreen extends Component {
 		if (!topicData.isQuestion || post.isQuestion) {
 			return null;
 		}
+
+		const { styles } = this.props;
 
 		return (
 			<View>
@@ -1651,6 +1679,8 @@ class TopicViewScreen extends Component {
 	}
 
 	render() {
+		const { styles } = this.props;
+
 		// status 3 == fetchMore, status 4 == refreshing
 		if ((this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) || this.state.loadingUnseenPosts) {
 			return (
@@ -1718,10 +1748,11 @@ class TopicViewScreen extends Component {
 	}
 }
 
-/*
-
-
-*/
+const _componentStyles = {
+	innerHeader: {
+		paddingTop: 44
+	}
+};
 
 export default compose(
 	connect(state => ({
@@ -1768,32 +1799,6 @@ export default compose(
 	copilot({
 		stepNumberComponent: View,
 		tooltipComponent: Tooltip
-	})
+	}),
+	withTheme(_componentStyles)
 )(TopicViewScreen);
-
-const componentStyles = StyleSheet.create({
-	/*metaInfo: {
-		borderTopWidth: 1,
-		borderTopColor: styleVars.borderColors.medium
-	},*/
-	innerHeader: {
-		paddingTop: 44
-	},
-	authorPhoto: {
-		position: "absolute",
-		top: 15,
-		left: "50%",
-		...Platform.select({
-			ios: {
-				marginLeft: -30
-			},
-			android: {
-				marginLeft: -31
-			}
-		}),
-		zIndex: 100
-	},
-	headerRight: {
-		width: 80
-	}
-});

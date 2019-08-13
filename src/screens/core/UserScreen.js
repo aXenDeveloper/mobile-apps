@@ -17,7 +17,7 @@ import Lang from "../../utils/Lang";
 import UserPhoto from "../../atoms/UserPhoto";
 import getImageUrl from "../../utils/getImageUrl";
 import NavigationService from "../../utils/NavigationService";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 const UserQuery = gql`
@@ -325,6 +325,8 @@ class UserScreen extends Component {
 			return null;
 		}
 
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<View style={componentStyles.container}>
 				<StatusBar barStyle="light-content" translucent />
@@ -362,6 +364,8 @@ class UserScreen extends Component {
 	}
 
 	render() {
+		const { styles } = this.props;
+
 		if (this.state.loading) {
 			return (
 				<View style={styles.flex}>
@@ -394,14 +398,7 @@ class UserScreen extends Component {
 	}
 }
 
-export default compose(
-	connect(state => ({
-		auth: state.auth,
-		site: state.site
-	}))
-)(UserScreen);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	container: {
 		backgroundColor: "#fff",
 		display: "flex",
@@ -461,3 +458,11 @@ const componentStyles = StyleSheet.create({
 		tintColor: styleVars.veryLightText
 	}
 });
+
+export default compose(
+	connect(state => ({
+		auth: state.auth,
+		site: state.site
+	})),
+	withTheme(_componentStyles)
+)(UserScreen);

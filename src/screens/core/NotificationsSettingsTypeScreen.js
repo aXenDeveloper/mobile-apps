@@ -13,7 +13,8 @@ import SectionHeader from "../../atoms/SectionHeader";
 import ContentRow from "../../ecosystems/ContentRow";
 import ToggleRow from "../../atoms/ToggleRow";
 import CheckList from "../../ecosystems/CheckList";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
+//import styles from "../../styles";
 import icons from "../../icons";
 
 const NotificationSettingMutation = gql`
@@ -143,6 +144,7 @@ class NotificationsSettingsTypeScreen extends Component {
 
 	render() {
 		const { email, inline, push, description } = this.props.navigation.state.params;
+		const { styles } = this.props;
 
 		return (
 			<View style={styles.flex}>
@@ -172,5 +174,6 @@ export default compose(
 	connect(state => ({
 		user: state.user
 	})),
-	withApollo
+	withApollo,
+	withTheme()
 )(NotificationsSettingsTypeScreen);

@@ -3,11 +3,12 @@ import { Text, View, StatusBar, SafeAreaView, TouchableHighlight, Button, StyleS
 import { Header } from "react-navigation";
 import { LinearGradient } from "expo-linear-gradient";
 
-import withTheme from "../../hocs/WithTheme";
+import withTheme from "../../themes/withTheme";
 import { isIphoneX } from "../../utils/isIphoneX";
-import { styleVars } from "../../styles";
+//import { styleVars } from "../../styles";
 
 const CustomHeader = props => {
+	const { styleVars } = props;
 	let content;
 
 	if (props.content) {
@@ -20,16 +21,16 @@ const CustomHeader = props => {
 		<LinearGradient
 			start={[0, 0]}
 			end={[1, 0]}
-			colors={props.transparent ? ["rgba(0,0,0,0)", "rgba(0,0,0,0)"] : [props.styleVars.accentColor, props.styleVars.accentColor]}
+			colors={props.transparent ? ["rgba(0,0,0,0)", "rgba(0,0,0,0)"] : styleVars.primaryBrand}
 			style={componentStyles.headerWrap}
 		>
-			<StatusBar barStyle="light-content" translucent />
+			<StatusBar barStyle={styleVars.statusBarStyle} translucent />
 			{content}
 		</LinearGradient>
 	);
 };
 
-export default withTheme(CustomHeader);
+export default withTheme()(CustomHeader);
 
 const componentStyles = StyleSheet.create({
 	headerWrap: {

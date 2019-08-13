@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView, StyleSheet, TextInput, KeyboardAvoidingView, Image, LayoutAnimation, Alert } from "react-native";
+import { Text, View, ScrollView, TextInput, Image, LayoutAnimation, Alert } from "react-native";
 import { connect } from "react-redux";
 import _ from "underscore";
-import { graphql, compose, withApollo } from "react-apollo";
+import { compose, withApollo } from "react-apollo";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as Animatable from "react-native-animatable";
 
@@ -14,7 +14,7 @@ import CheckList from "../../ecosystems/CheckList";
 import ContentRow from "../../ecosystems/ContentRow";
 import LargeTitle from "../../atoms/LargeTitle";
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 class ReportContentScreen extends Component {
@@ -102,7 +102,7 @@ class ReportContentScreen extends Component {
 	 * @return 	array
 	 */
 	buildLangSummary(lang) {
-		const { navigation } = this.props;
+		const { navigation, styles } = this.props;
 		const langPieces = lang
 			.split("{")
 			.join("||")
@@ -273,6 +273,7 @@ class ReportContentScreen extends Component {
 	 */
 	getReportForm() {
 		let reasonChooser = null;
+		const { styles, styleVars, componentStyles } = this.props;
 
 		if (this.props.site.settings.automoderationEnabled) {
 			reasonChooser = (
@@ -313,8 +314,7 @@ class ReportContentScreen extends Component {
 	 * @return 	Component
 	 */
 	getRevokeForm() {
-		console.log(this.props.navigation.getParam("reportData"));
-
+		const { styles } = this.props;
 		const { reportType, reportContent } = this.props.navigation.getParam("reportData");
 		const reportTypeData = this.props.site.settings.reportReasons[reportType];
 
@@ -343,6 +343,7 @@ class ReportContentScreen extends Component {
 	}
 
 	render() {
+		const { styles } = this.props;
 		const { hasReported } = this.props.navigation.getParam("reportData");
 		let buttonTitle;
 
@@ -375,15 +376,16 @@ class ReportContentScreen extends Component {
 	}
 }
 
+const _componentStyles = {
+	infoTextInput: {
+		minHeight: 100
+	}
+};
+
 export default compose(
 	connect(state => ({
 		site: state.site
 	})),
-	withApollo
+	withApollo,
+	withTheme(_componentStyles)
 )(ReportContentScreen);
-
-const componentStyles = StyleSheet.create({
-	infoTextInput: {
-		minHeight: 100
-	}
-});

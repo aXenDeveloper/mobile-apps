@@ -3,7 +3,7 @@ import { Text, Image, ScrollView, View, StyleSheet, FlatList, TouchableOpacity, 
 import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import gql from "graphql-tag";
-import { graphql, withApollo } from "react-apollo";
+import { graphql, withApollo, compose } from "react-apollo";
 import _ from "underscore";
 import { connect } from "react-redux";
 
@@ -17,7 +17,7 @@ import { NavBar } from "../../ecosystems/NavBar";
 import StreamCard from "../../ecosystems/Stream";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import getErrorMessage from "../../utils/getErrorMessage";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 import { HomeSections } from "../../ecosystems/HomeSections";
@@ -81,7 +81,7 @@ class HomeScreen extends Component {
 		const MAX_WIDTH = 285;
 		const MIN_WIDTH = 200;
 		const { width } = Dimensions.get("window");
-		const fullCardWidth = width - styleVars.spacing.wide * 2;
+		const fullCardWidth = width - this.props.styleVars.spacing.wide * 2;
 		const idealWidth = fullCardWidth - fullCardWidth / 15;
 
 		return Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, idealWidth));
@@ -217,6 +217,8 @@ class HomeScreen extends Component {
 	}
 
 	render() {
+		const { styles } = this.props;
+
 		if (this.state.error) {
 			return <ErrorBox message={Lang.get("home_view_error")} refresh={() => this.refreshAfterError()} />;
 		} else {
@@ -252,8 +254,12 @@ class HomeScreen extends Component {
 	}
 }
 
-export default connect(state => ({
-	user: state.user,
-	site: state.site,
-	auth: state.auth
-}))(withApollo(HomeScreen));
+export default compose(
+	connect(state => ({
+		user: state.user,
+		site: state.site,
+		auth: state.auth
+	})),
+	withApollo,
+	withTheme()
+)(HomeScreen);
