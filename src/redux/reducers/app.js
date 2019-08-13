@@ -81,6 +81,19 @@ export default function app(state = initialState, { type, payload }) {
 			};
 
 		// --------------------------------------------------------------
+		// Theme actions
+		case actions.SET_THEME:
+			return {
+				...state,
+				currentTheme: payload.theme
+			};
+		case actions.TOGGLE_DARK_MODE:
+			return {
+				...state,
+				darkMode: payload.enableDarkMode
+			};
+
+		// --------------------------------------------------------------
 		// Notification actions
 		case actions.RECEIVE_NOTIFICATION:
 			console.log("Notification reducer");

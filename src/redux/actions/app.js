@@ -50,6 +50,22 @@ export const shiftToast = data => ({
 	type: SHIFT_TOAST
 });
 
+export const SET_THEME = "SET_THEME";
+export const setTheme = data => ({
+	type: SET_THEME,
+	payload: {
+		...data
+	}
+});
+
+export const TOGGLE_DARK_MODE = "TOGGLE_DARK_MODE";
+export const toggleDarkMode = data => ({
+	type: TOGGLE_DARK_MODE,
+	payload: {
+		...data
+	}
+});
+
 // =================================================================
 
 export const RECEIVE_NOTIFICATION = "RECEIVE_NOTIFICATION";
