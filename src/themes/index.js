@@ -9,6 +9,7 @@ const deepmerge = require("deepmerge");
 const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray;
 
 let currentStyleVars = {};
+let currentStyleSheet = {};
 
 const buildStyleVars = (theme = null, darkMode = false) => {
 	let themeStyleVars = {};
@@ -44,7 +45,11 @@ const buildStyleVars = (theme = null, darkMode = false) => {
 const generateStyleSheet = (theme = baseStyleVars, darkMode = false) => {
 	const styleVars = buildStyleVars(theme, darkMode);
 	const generatedStyleObject = baseStyleSheet(styleVars, darkMode);
-	return StyleSheet.create(generatedStyleObject);
+	currentStyleSheet = StyleSheet.create(generatedStyleObject);
+	return currentStyleSheet;
 };
 
-export { generateStyleSheet, buildStyleVars, currentStyleVars, withTheme };
+const getCurrentStyleVars = () => currentStyleVars;
+const getCurrentStyleSheet = () => currentStyleSheet;
+
+export { generateStyleSheet, buildStyleVars, currentStyleVars, currentStyleSheet, withTheme, getCurrentStyleVars, getCurrentStyleSheet };
