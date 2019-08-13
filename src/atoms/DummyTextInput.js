@@ -1,22 +1,23 @@
 import React, { memo } from "react";
-import { View, StyleSheet, Image, TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Text } from "react-native";
 
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-const DummyTextInput = props => (
-	<TouchableOpacity style={[styles.phWide, styles.flex, styles.flexJustifyCenter, componentStyles.textbox]} onPress={props.onPress}>
-		<Text style={componentStyles.placeholder}>{props.placeholder}</Text>
-	</TouchableOpacity>
-);
+const DummyTextInput = props => {
+	const { styles, componentStyles } = props;
+	return (
+		<TouchableOpacity style={[styles.phWide, styles.flex, styles.flexJustifyCenter, componentStyles.textbox]} onPress={props.onPress}>
+			<Text style={componentStyles.placeholder}>{props.placeholder}</Text>
+		</TouchableOpacity>
+	);
+};
 
-export default memo(DummyTextInput);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	textbox: {
-		backgroundColor: "#fff",
+		backgroundColor: "#fff", // @todo color
 		height: 38,
 		borderWidth: 1,
-		borderColor: "rgba(0,0,0,0.075)",
+		borderColor: "rgba(0,0,0,0.075)", // @todo color
 		borderRadius: 20,
 		width: "100%"
 	},
@@ -24,3 +25,5 @@ const componentStyles = StyleSheet.create({
 		color: styleVars.greys.placeholder
 	}
 });
+
+export default withTheme(_componentStyles)(memo(DummyTextInput));

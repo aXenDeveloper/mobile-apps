@@ -1,19 +1,20 @@
 import React, { memo } from "react";
-import { Image, View, StyleSheet } from "react-native";
+import { Image, View } from "react-native";
 
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 import icons from "../icons";
 
-const CommentFlag = props => (
-	<View style={componentStyles.wrapper}>
-		<Image source={require("../../resources/comment_flag.png")} resizeMode="contain" style={componentStyles.background} />
-		<Image source={icons.HEART_SOLID} resizeMode="contain" style={componentStyles.icon} />
-	</View>
-);
+const CommentFlag = props => {
+	const { componentStyles } = props;
+	return (
+		<View style={componentStyles.wrapper}>
+			<Image source={require("../../resources/comment_flag.png")} resizeMode="contain" style={componentStyles.background} />
+			<Image source={icons.HEART_SOLID} resizeMode="contain" style={componentStyles.icon} />
+		</View>
+	);
+};
 
-export default memo(CommentFlag);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	wrapper: {
 		position: "absolute",
 		top: 0,
@@ -35,3 +36,5 @@ const componentStyles = StyleSheet.create({
 		left: 4
 	}
 });
+
+export default withTheme(_componentStyles)(memo(CommentFlag));

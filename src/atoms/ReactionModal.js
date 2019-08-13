@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Image, Text, View, StyleSheet, Animated, TouchableOpacity } from "react-native";
+import { View, Animated } from "react-native";
 import Modal from "react-native-modal";
 import _ from "underscore";
 
 import ReactionChoice from "./ReactionChoice";
+import { withTheme } from "../themes";
 
-export default class ReactionModal extends Component {
+class ReactionModal extends Component {
 	constructor(props) {
 		super(props);
 		this.animatedValue = [];
@@ -81,6 +82,7 @@ export default class ReactionModal extends Component {
 	}
 
 	render() {
+		const { componentStyles } = this.props;
 		const animatedComponents = this.props.reactions.map(reaction => (
 			<View key={reaction.id} style={{ height: 50 }}>
 				<Animated.View style={{ position: "absolute", right: this.animatedValue[reaction.id] }}>
@@ -104,10 +106,12 @@ export default class ReactionModal extends Component {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	modal: {
 		flex: 1,
 		display: "flex",
 		justifyContent: "flex-end"
 	}
-});
+};
+
+export default withTheme(_componentStyles)(ReactionModal);

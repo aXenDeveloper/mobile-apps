@@ -1,14 +1,13 @@
 import React, { PureComponent } from "react";
-import { Text, View, Button, StyleSheet, TouchableHighlight, Animated, PanResponder } from "react-native";
+import { Text, View, PanResponder } from "react-native";
 import * as Animatable from "react-native-animatable";
 import PropTypes from "prop-types";
 import _ from "underscore";
 
 import Lang from "../utils/Lang";
-import ActionBar from "./ActionBar";
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-export default class Pager extends PureComponent {
+class Pager extends PureComponent {
 	constructor(props) {
 		super(props);
 		this._panResponder = PanResponder.create({
@@ -149,6 +148,8 @@ export default class Pager extends PureComponent {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.props.total < 1) {
 			return null;
 		}
@@ -185,7 +186,7 @@ export default class Pager extends PureComponent {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	pager: {
 		height: 33,
 		maxHeight: 33,
@@ -212,9 +213,6 @@ const componentStyles = StyleSheet.create({
 		left: 0,
 		backgroundColor: styleVars.greys.darker
 	},
-	trackerActiveText: {
-		color: "#fff"
-	},
 	trackerText: {
 		fontWeight: "500",
 		fontSize: styleVars.fontSizes.small,
@@ -229,6 +227,8 @@ const componentStyles = StyleSheet.create({
 		borderRightColor: styleVars.greys.darker
 	}
 });
+
+export default withTheme(_componentStyles)(Pager);
 
 Pager.defaultProps = {
 	currentPosition: null,

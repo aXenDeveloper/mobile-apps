@@ -5,11 +5,11 @@ import Image from "react-native-remote-svg";
 import FadeIn from "react-native-fade-in-image";
 
 import getImageUrl from "../utils/getImageUrl";
-import { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
 const UserPhoto = props => {
 	const size = props.size || 40;
-
+	const { styleVars, componentStyles } = props;
 	const photoSize = {
 		width: size,
 		height: size
@@ -47,11 +47,9 @@ const UserPhoto = props => {
 	);
 };
 
-export default memo(UserPhoto);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	photo: {
-		backgroundColor: "#f0f0f0"
+		backgroundColor: "#f0f0f0" // @todo color
 	},
 	anonymous: {
 		opacity: 0.3
@@ -65,6 +63,8 @@ const componentStyles = StyleSheet.create({
 		borderRadius: 12,
 		borderWidth: 2,
 		borderStyle: "solid",
-		borderColor: "#fff"
+		borderColor: "#fff" // @todo color
 	}
-});
+};
+
+export default withTheme(_componentStyles)(memo(UserPhoto));

@@ -1,14 +1,10 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 
-const TagList = props => <View style={[styles.tagList, props.centered ? { justifyContent: "center" } : null, props.style]}>{props.children}</View>;
+import { withTheme } from "../themes";
 
-export default memo(TagList);
+const TagList = ({ styles, ...props }) => (
+	<View style={[styles.flexRow, styles.flexWrap, styles.flexAlignCenter, props.centered ? styles.flexJustifyCenter : null, props.style]}>{props.children}</View>
+);
 
-const styles = StyleSheet.create({
-	tagList: {
-		flexWrap: "wrap",
-		alignItems: "center",
-		flexDirection: "row"
-	}
-});
+export default withTheme()(memo(TagList));

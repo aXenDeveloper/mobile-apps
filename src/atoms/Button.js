@@ -1,11 +1,11 @@
 import React, { memo } from "react";
-import { View, StyleSheet, Image, TouchableOpacity, Text, ViewPropTypes, ActivityIndicator } from "react-native";
+import { View, Image, TouchableOpacity, Text, ViewPropTypes, ActivityIndicator } from "react-native";
 import PropTypes from "prop-types";
-import { transparentize } from "polished";
 
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
 const Button = props => {
+	const { styles, componentStyles } = props;
 	const buttonStyle = props.filled ? "Filled" : "Outlined";
 	const buttonType = props.type + buttonStyle;
 	const textType = buttonType + "Text";
@@ -37,9 +37,7 @@ const Button = props => {
 	);
 };
 
-export default memo(Button);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	button: {
 		borderRadius: 3
 	},
@@ -167,6 +165,8 @@ const componentStyles = StyleSheet.create({
 		tintColor: styleVars.warningButton.inverseColor
 	}
 });
+
+export default withTheme(_componentStyles)(memo(Button));
 
 Button.defaultProps = {
 	filled: false,

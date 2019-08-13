@@ -2,10 +2,12 @@ import React, { memo } from "react";
 import { StyleSheet, StatusBar, ActivityIndicator, View, Text, Image, Dimensions } from "react-native";
 
 import Button from "./Button";
-import styles from "../styles";
+import { withTheme } from "../themes";
 import { splashImage } from "../icons";
 
 const AppLoading = props => {
+	const { styles, componentStyles } = props;
+
 	// If we're in a single community app and *just* loading, nothing else, then show the splash screen
 	if (props.loading && !props.title && !props.message && !props.children && !props.buttonText && !Expo.Constants.manifest.extra.multi) {
 		return (
@@ -43,11 +45,9 @@ const AppLoading = props => {
 	);
 };
 
-export default memo(AppLoading);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	wrapper: {
-		backgroundColor: "#2c76a9" // @todo style
+		backgroundColor: "#2c76a9" // @todo color
 	},
 	message: {
 		maxWidth: "75%"
@@ -58,11 +58,11 @@ const componentStyles = StyleSheet.create({
 	icon: {
 		width: 60,
 		height: 60,
-		tintColor: "#fff",
+		tintColor: "#fff", // @todo color
 		opacity: 0.3
 	},
 	tryAgainText: {
-		color: "rgba(255,255,255,0.5)",
+		color: "rgba(255,255,255,0.5)", // @todo color
 		fontSize: 15
 	},
 	splash: {
@@ -80,4 +80,6 @@ const componentStyles = StyleSheet.create({
 		left: "50%",
 		marginLeft: -18
 	}
-});
+};
+
+export default withTheme(_componentStyles)(memo(AppLoading));

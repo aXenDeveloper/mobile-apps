@@ -2,8 +2,9 @@ import React, { memo } from "react";
 import { Image, Text, View, StyleSheet, TouchableHighlight } from "react-native";
 
 import getImageUrl from "../utils/getImageUrl";
+import { withTheme } from "../themes";
 
-const ReactionChoice = props => (
+const ReactionChoice = ({ componentStyles, ...props }) => (
 	<TouchableHighlight activeOpacity={0.8} onPress={props.onPress} style={componentStyles.reaction}>
 		<React.Fragment>
 			<Image source={{ uri: getImageUrl(props.image) }} style={componentStyles.image} />
@@ -12,11 +13,9 @@ const ReactionChoice = props => (
 	</TouchableHighlight>
 );
 
-export default memo(ReactionChoice);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	reaction: {
-		backgroundColor: "#f5f5f5",
+		backgroundColor: "#f5f5f5", // @todo color
 		borderRadius: 50,
 		width: 200,
 		height: 40,
@@ -36,4 +35,6 @@ const componentStyles = StyleSheet.create({
 		fontSize: 17,
 		fontWeight: "500"
 	}
-});
+};
+
+export default withTheme(_componentStyles)(memo(ReactionChoice));

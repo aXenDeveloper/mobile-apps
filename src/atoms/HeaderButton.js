@@ -2,10 +2,10 @@ import React, { memo } from "react";
 import { Text, TouchableOpacity, StyleSheet, Image, Platform } from "react-native";
 import _ from "underscore";
 
-import styles, { styleVars } from "../styles";
-import icons from "../icons";
+import { withTheme } from "../themes";
 
 const HeaderButton = props => {
+	const { styles, componentStyles } = props;
 	let showIcon = false;
 	let showLabel = false;
 
@@ -31,9 +31,7 @@ const HeaderButton = props => {
 	);
 };
 
-export default memo(HeaderButton);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	defaultSize: {
 		...Platform.select({
 			ios: {
@@ -46,4 +44,6 @@ const componentStyles = StyleSheet.create({
 			}
 		})
 	}
-});
+};
+
+export default withTheme(_componentStyles)(memo(HeaderButton));

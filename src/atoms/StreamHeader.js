@@ -1,7 +1,9 @@
 import React, { memo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-const StreamHeader = props => (
+import { withTheme } from "../themes";
+
+const StreamHeader = ({ componentStyles, ...props }) => (
 	<View style={[componentStyles.container, props.style]}>
 		<View style={componentStyles.header}>
 			<Text style={componentStyles.text}>{props.title}</Text>
@@ -9,9 +11,7 @@ const StreamHeader = props => (
 	</View>
 );
 
-export default memo(StreamHeader);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	container: {
 		display: "flex",
 		alignItems: "flex-start",
@@ -20,7 +20,7 @@ const componentStyles = StyleSheet.create({
 		marginBottom: 15
 	},
 	header: {
-		backgroundColor: "#000",
+		backgroundColor: "#000", // @todo color
 		height: 28,
 		borderRadius: 30,
 		paddingHorizontal: 15,
@@ -28,7 +28,9 @@ const componentStyles = StyleSheet.create({
 		justifyContent: "center"
 	},
 	text: {
-		color: "#fff",
+		color: "#fff", // @todo color
 		fontSize: 13
 	}
-});
+};
+
+export default withTheme(_componentStyles)(memo(StreamHeader));

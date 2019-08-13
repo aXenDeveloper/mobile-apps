@@ -1,18 +1,22 @@
 import React, { memo } from "react";
-import { StyleSheet, Image, TouchableOpacity, Text } from "react-native";
+import { Image, TouchableOpacity, Text } from "react-native";
 
-const AddButton = props => (
-	<TouchableOpacity style={componentStyles.button} onPress={props.onPress}>
-		<React.Fragment>
-			<Image style={componentStyles.icon} resizeMode="stretch" source={props.icon} />
-			<Text style={componentStyles.text}>{props.title}</Text>
-		</React.Fragment>
-	</TouchableOpacity>
-);
+import { withTheme } from "../themes";
 
-export default memo(AddButton);
+const AddButton = props => {
+	const { componentStyles } = props;
 
-const componentStyles = StyleSheet.create({
+	return (
+		<TouchableOpacity style={componentStyles.button} onPress={props.onPress}>
+			<React.Fragment>
+				<Image style={componentStyles.icon} resizeMode="stretch" source={props.icon} />
+				<Text style={componentStyles.text}>{props.title}</Text>
+			</React.Fragment>
+		</TouchableOpacity>
+	);
+};
+
+const _componentStyles = {
 	button: {
 		display: "flex",
 		flexDirection: "row",
@@ -24,8 +28,10 @@ const componentStyles = StyleSheet.create({
 		height: 16
 	},
 	text: {
-		color: "#fff",
+		color: "#fff", // @todo color
 		fontSize: 15,
 		marginLeft: 6
 	}
-});
+};
+
+export default withTheme(_componentStyles)(memo(AddButton));

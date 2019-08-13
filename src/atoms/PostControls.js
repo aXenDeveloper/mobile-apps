@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import React from "react";
+import { View, Platform } from "react-native";
 
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-const PostControls = props => {
+const PostControls = ({ styles, componentStyles, ...props }) => {
 	return (
 		<View
 			style={[
@@ -20,11 +20,11 @@ const PostControls = props => {
 	);
 };
 
-export default PostControls;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	postControls: {
 		borderTopWidth: 1,
 		borderTopColor: styleVars.borderColors.medium
 	}
 });
+
+export default withTheme(_componentStyles)(PostControls);

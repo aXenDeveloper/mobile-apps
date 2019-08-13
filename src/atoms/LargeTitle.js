@@ -1,14 +1,15 @@
 import React, { memo } from "react";
-import { Text, Image, View, StyleSheet, Platform } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-const LargeTitle = props => (
-	<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyStart, styles.mhWide, styles.mtVeryWide, styles.mbWide, componentStyles.wrapper]}>
-		<Text style={[styles.largeTitle, componentStyles.largeTitle]}>{props.children}</Text>
-	</View>
-);
+const LargeTitle = props => {
+	const { styles } = props;
+	return (
+		<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyStart, styles.mhWide, styles.mtVeryWide, styles.mbWide]}>
+			<Text style={[styles.largeTitle]}>{props.children}</Text>
+		</View>
+	);
+};
 
-export default memo(LargeTitle);
-
-const componentStyles = StyleSheet.create({});
+export default withTheme()(memo(LargeTitle));

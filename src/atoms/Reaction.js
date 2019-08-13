@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Image, TouchableHighlight } from "react-native";
+import { Text, View, Image, TouchableHighlight } from "react-native";
 
 import getImageUrl from "../utils/getImageUrl";
+import { withTheme } from "../themes";
 
-export default class Reaction extends Component {
+class Reaction extends Component {
 	constructor(props) {
 		super(props);
 		this.onPress = this.onPress.bind(this);
@@ -23,23 +24,24 @@ export default class Reaction extends Component {
 	}
 
 	render() {
+		const { componentStyles } = this.props;
 		return (
-			<TouchableHighlight onPress={this.props.onPress ? this.onPress : null} key={this.props.id} style={[this.props.style, styles.reactionWrapper]}>
-				<View style={styles.reaction}>
-					<Image source={{ uri: getImageUrl(this.props.image) }} style={styles.reactionImage} resizeMode="cover" />
-					<Text style={styles.reactionCount}>{this.props.count}</Text>
+			<TouchableHighlight onPress={this.props.onPress ? this.onPress : null} key={this.props.id} style={[this.props.style, componentStyles.reactionWrapper]}>
+				<View style={componentStyles.reaction}>
+					<Image source={{ uri: getImageUrl(this.props.image) }} style={componentStyles.reactionImage} resizeMode="cover" />
+					<Text style={componentStyles.reactionCount}>{this.props.count}</Text>
 				</View>
 			</TouchableHighlight>
 		);
 	}
 }
 
-const styles = StyleSheet.create({
+const _componentStyles = {
 	reactionWrapper: {
 		borderRadius: 4
 	},
 	reaction: {
-		backgroundColor: "#F0F0F0",
+		backgroundColor: "#F0F0F0", // @todo color
 		padding: 5,
 		borderRadius: 4,
 		flexGrow: 0,
@@ -53,10 +55,12 @@ const styles = StyleSheet.create({
 		height: 16
 	},
 	reactionCount: {
-		color: "#000",
+		color: "#000", // @todo color
 		fontSize: 12,
 		fontWeight: "bold",
 		paddingLeft: 5,
 		paddingRight: 5
 	}
-});
+};
+
+export default withTheme(_componentStyles)(Reaction);

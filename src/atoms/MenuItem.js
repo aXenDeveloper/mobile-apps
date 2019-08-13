@@ -1,18 +1,16 @@
 import React, { memo } from "react";
-import { Text, View, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, Image, TouchableOpacity } from "react-native";
 
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-const MenuItem = props => (
+const MenuItem = ({ componentStyles, ...props }) => (
 	<TouchableOpacity onPress={props.data.onPress || null} style={componentStyles.menuItemWrap}>
 		{Boolean(props.data.icon) && <Image source={props.data.icon} style={componentStyles.icon} />}
 		<Text style={componentStyles.menuItem}>{props.data.text}</Text>
 	</TouchableOpacity>
 );
 
-export default memo(MenuItem);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	menuItemWrap: {
 		display: "flex",
 		flexDirection: "row",
@@ -30,3 +28,5 @@ const componentStyles = StyleSheet.create({
 		color: styleVars.text
 	}
 });
+
+export default withTheme(_componentStyles)(memo(MenuItem));

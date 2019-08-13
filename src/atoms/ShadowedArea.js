@@ -1,8 +1,9 @@
 import React, { PureComponent } from "react";
-import { View, StyleSheet, Image } from "react-native";
-import styles, { styleVars } from "../styles";
+import { View } from "react-native";
 
-export default class ShadowedArea extends PureComponent {
+import { withTheme } from "../themes";
+
+class ShadowedArea extends PureComponent {
 	constructor(props) {
 		super(props);
 	}
@@ -12,7 +13,7 @@ export default class ShadowedArea extends PureComponent {
 	}
 
 	render() {
-		const { style, hidden, children, ...props } = this.props;
+		const { styles, componentStyles, style, hidden, children, ...props } = this.props;
 
 		return (
 			<View ref={component => (this._root = component)} style={[componentStyles.shadowedArea, hidden && styles.moderatedBackground, style]} {...props}>
@@ -22,14 +23,12 @@ export default class ShadowedArea extends PureComponent {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	shadowedArea: {
-		backgroundColor: "#fff",
+		backgroundColor: "#fff", // @todo color
 		borderBottomWidth: 1,
 		borderBottomColor: styleVars.borderColors.medium
-		/*shadowColor: '#C8C7CC',
-		shadowOffset: { width: 0, height: 5 },
-		shadowOpacity: 0.4,
-		shadowRadius: 6*/
 	}
 });
+
+export default withTheme(_componentStyles)(ShadowedArea);

@@ -1,11 +1,10 @@
 import React, { memo } from "react";
-import { Text, View, Image, Switch, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, Image, TouchableOpacity } from "react-native";
 
-import Lang from "../utils/Lang";
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
 // @todo image refs
-const SettingRow = props => (
+const SettingRow = ({ styles, componentStyles, ...props }) => (
 	<TouchableOpacity style={[styles.row, componentStyles.menuItemWrap]} onPress={props.data.onPress || null}>
 		<View style={componentStyles.menuItem}>
 			<Text style={componentStyles.label}>{props.data.title}</Text>
@@ -15,9 +14,7 @@ const SettingRow = props => (
 	</TouchableOpacity>
 );
 
-export default memo(SettingRow);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	menuItemWrap: {
 		display: "flex",
 		flexDirection: "row",
@@ -51,3 +48,5 @@ const componentStyles = StyleSheet.create({
 		marginLeft: styleVars.spacing.standard
 	}
 });
+
+export default withTheme(_componentStyles)(memo(SettingRow));

@@ -1,17 +1,15 @@
 import React, { memo } from "react";
 import { Text, View, StyleSheet } from "react-native";
 
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-const Tag = props => (
+const Tag = ({ componentStyles, styles, ...props }) => (
 	<View style={[componentStyles.tagWrapper, styles.phTight, styles.mvVeryTight, styles.mrStandard]}>
 		<Text style={[componentStyles.tag, styles.tinyText, props.style]}>{props.children}</Text>
 	</View>
 );
 
-export default memo(Tag);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	tagWrapper: {
 		borderColor: styleVars.accentColor,
 		borderWidth: 1,
@@ -22,3 +20,5 @@ const componentStyles = StyleSheet.create({
 		color: styleVars.accentColor
 	}
 });
+
+export default withTheme(_componentStyles)(memo(Tag));

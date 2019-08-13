@@ -1,15 +1,16 @@
-import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableHighlight } from 'react-native';
+import React, { Component } from "react";
+import { Text, View, StyleSheet } from "react-native";
 
-import { ContentRenderer } from '../ecosystems/RichTextContent';
-import styles from '../styles';
+import { withTheme } from "../themes";
 
-export default class ListItem extends Component {	
+class ListItem extends Component {
 	constructor(props) {
 		super(props);
 	}
 
 	render() {
+		const { componentStyles } = this.props;
+
 		return (
 			<View style={componentStyles.listItemWrap}>
 				<View style={componentStyles.listItem}>
@@ -17,9 +18,11 @@ export default class ListItem extends Component {
 						{this.props.data.title}
 					</Text>
 					<View style={componentStyles.listValue}>
-						{this.props.data.html ? 
-							<RichTextContent baseFontStyle={{ color: '#8E8E93', fontSize: 15 }}>{this.props.data.value}</RichTextContent> 
-							: <Text style={componentStyles.listValueText}>{this.props.data.value}</Text>}
+						{this.props.data.html ? (
+							<RichTextContent baseFontStyle={{ color: "#8E8E93", fontSize: 15 }}>{this.props.data.value}</RichTextContent>
+						) : (
+							<Text style={componentStyles.listValueText}>{this.props.data.value}</Text>
+						)}
 					</View>
 				</View>
 			</View>
@@ -27,35 +30,37 @@ export default class ListItem extends Component {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	listItemWrap: {
-		backgroundColor: '#fff',
+		backgroundColor: "#fff", // @todo color
 		paddingHorizontal: 16,
 		paddingVertical: 13,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignContent: 'stretch',
-		alignItems: 'center',
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignContent: "stretch",
+		alignItems: "center",
 		borderBottomWidth: 1,
-		borderBottomColor: '#F2F4F7',
+		borderBottomColor: "#F2F4F7", // @todo color
 		minHeight: 60
 	},
 	listTitle: {
 		fontSize: 17,
-		color: '#000',
+		color: "#000", // @todo color
 		fontWeight: "400",
 		lineHeight: 18,
 		marginBottom: 3,
 		letterSpacing: -0.2
 	},
 	listValueText: {
-		color: '#8E8E93',
+		color: "#8E8E93", // @todo color
 		fontSize: 15
 	},
 	listItem: {
-		display: 'flex',
-		flexDirection: 'column',
-		justifyContent: 'center',
-		alignContent: 'center'
+		display: "flex",
+		flexDirection: "column",
+		justifyContent: "center",
+		alignContent: "center"
 	}
 });
+
+export default withTheme(_componentStyles)(ListItem);

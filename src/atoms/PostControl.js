@@ -1,17 +1,17 @@
-import React, { Component } from "react";
-import { View, TouchableOpacity, StyleSheet, Text, Image, Platform } from "react-native";
+import React, { PureComponent } from "react";
+import { View, TouchableOpacity, Text, Image, Platform } from "react-native";
 import _ from "underscore";
 
 import getImageUrl from "../utils/getImageUrl";
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-export default class PostControl extends Component {
+class PostControl extends PureComponent {
 	constructor(props) {
 		super(props);
 	}
 
 	getIcon() {
-		let image;
+		const { componentStyles } = this.props;
 
 		if (!this.props.image) {
 			return null;
@@ -25,6 +25,8 @@ export default class PostControl extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<TouchableOpacity style={[componentStyles.wrapper, this.props.style]} onLongPress={this.props.onLongPress || null} onPress={this.props.onPress || null}>
 				<View
@@ -49,7 +51,7 @@ export default class PostControl extends Component {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	wrapper: {
 		...Platform.select({
 			ios: {
@@ -63,7 +65,7 @@ const componentStyles = StyleSheet.create({
 		})
 	},
 	selected: {
-		backgroundColor: "#f5f5f5",
+		backgroundColor: "#f5f5f5", // @todo color
 		borderRadius: 2
 	},
 	image: {
@@ -95,6 +97,8 @@ const componentStyles = StyleSheet.create({
 		})
 	},
 	selectedText: {
-		color: "#000"
+		color: "#000" // @todo color
 	}
 });
+
+export default withTheme(_componentStyles)(PostControl);
