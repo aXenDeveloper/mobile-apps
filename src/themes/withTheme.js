@@ -11,7 +11,13 @@ const withTheme = (passedComponentStyles = null) => WrappedComponent => {
 	class wrappedClass extends Component {
 		constructor(props) {
 			super(props);
-			this.updateThemeState();
+			const { styleVars, styles, componentStyles } = this.getThemeValues();
+
+			this.state = {
+				styleVars,
+				styles,
+				componentStyles
+			};
 		}
 
 		getComponentStyles(styleVars) {
@@ -27,20 +33,31 @@ const withTheme = (passedComponentStyles = null) => WrappedComponent => {
 
 		componentDidUpdate(prevProps) {
 			if (prevProps.theme !== this.props.theme || prevProps.darkMode !== this.props.darkMode) {
-				this.updateThemeState();
+				const { styleVars, styles, componentStyles } = this.getThemeValues();
+
+				this.setState({
+					styleVars,
+					styles,
+					componentStyles
+				});
 			}
 		}
 
-		updateThemeState() {
-			const styleVars = buildStyleVars(this.props.theme, this.props.darkMode);
-			const styles = generateStyleSheet(this.props.theme, this.props.darkMode);
+		getThemeValues() {
+			const themeObj = this.getThemeFromKey(this.props.theme);
+			const styleVars = buildStyleVars(themeObj, this.props.darkMode);
+			const styles = generateStyleSheet(themeObj, this.props.darkMode);
 			const componentStyles = this.getComponentStyles(styleVars);
 
-			this.state = {
-				styleVars,
-				styles,
-				componentStyles
-			};
+			return { styleVars, styles, componentStyles };
+		}
+
+		getThemeFromKey(theme) {
+			if (_.isString(theme)) {
+				return themes[theme];
+			} else {
+				return theme;
+			}
 		}
 
 		render() {
@@ -48,6 +65,7 @@ const withTheme = (passedComponentStyles = null) => WrappedComponent => {
 		}
 	}
 
+	// This is necessary to bring static properties (e.g. react-navigation data) from components into the wrapped component
 	hoistNonReactStatics(wrappedClass, WrappedComponent);
 
 	return connect(state => ({
