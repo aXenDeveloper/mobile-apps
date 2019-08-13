@@ -537,12 +537,12 @@ class AppRoot extends Component {
 const _componentStyles = styleVars => ({
 	toastContainerStyle: {
 		padding: styleVars.spacing.wide,
-		backgroundColor: "#363636",
+		backgroundColor: "#363636", // @todo color
 		borderRadius: 5
 	},
 	toastTextStyle: {
 		fontSize: styleVars.fontSizes.standard,
-		color: "#fff"
+		color: "#fff" // @todo color
 	}
 });
 

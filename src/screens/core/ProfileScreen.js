@@ -577,11 +577,11 @@ const _componentStyles = styleVars => ({
 		zIndex: 100
 	},
 	profileHeader: {
-		backgroundColor: "#333"
+		backgroundColor: "#333" // @todo color
 	},
 	profileHeaderInner: {
 		paddingTop: isIphoneX() ? 50 : 40,
-		backgroundColor: "rgba(49,68,83,0.4)",
+		backgroundColor: "rgba(49,68,83,0.4)", // @todo color
 		display: "flex",
 		flexDirection: "column",
 		justifyContent: "center",
@@ -592,21 +592,21 @@ const _componentStyles = styleVars => ({
 		alignItems: "center"
 	},
 	usernameText: {
-		color: "#fff",
+		color: "#fff", // @todo color
 		fontSize: 22,
 		fontWeight: "bold",
 		marginTop: 7,
-		textShadowColor: "rgba(0,0,0,0.8)",
+		textShadowColor: "rgba(0,0,0,0.8)", // @todo color
 		textShadowOffset: { width: 1, height: 1 }
 	},
 	groupText: {
-		color: "#fff",
+		color: "#fff", // @todo color
 		fontSize: 15,
-		textShadowColor: "rgba(0,0,0,0.8)",
+		textShadowColor: "rgba(0,0,0,0.8)", // @todo color
 		textShadowOffset: { width: 1, height: 1 }
 	},
 	profileStats: {
-		backgroundColor: "rgba(20,20,20,0.8)",
+		backgroundColor: "rgba(20,20,20,0.8)", // @todo color
 		paddingTop: styleVars.spacing.standard,
 		paddingBottom: styleVars.spacing.standard,
 		display: "flex",
@@ -617,16 +617,16 @@ const _componentStyles = styleVars => ({
 	},
 	profileStatSectionBorder: {
 		borderRightWidth: 1,
-		borderRightColor: "rgba(255,255,255,0.1)"
+		borderRightColor: "rgba(255,255,255,0.1)" // @todo color
 	},
 	profileStatCount: {
-		color: "#fff",
+		color: "#fff", // @todo color
 		textAlign: "center",
 		fontSize: 17,
 		fontWeight: "500"
 	},
 	profileStatTitle: {
-		color: "#8F8F8F",
+		color: "#8F8F8F", // @todo color
 		fontSize: 11,
 		textAlign: "center"
 	},
@@ -641,7 +641,7 @@ const _componentStyles = styleVars => ({
 		marginHorizontal: styleVars.spacing.tight
 	},
 	editorField: {
-		backgroundColor: "#fff",
+		backgroundColor: "#fff", // @todo color
 		padding: styleVars.spacing.wide
 	}
 });

@@ -611,7 +611,7 @@ const _componentStyles = styleVars => ({
 		alignItems: "center"
 	},
 	searchBox: {
-		backgroundColor: "rgba(255,255,255,0.1)",
+		backgroundColor: "rgba(255,255,255,0.1)", // @todo color
 		paddingVertical: styleVars.spacing.tight,
 		paddingHorizontal: styleVars.spacing.tight,
 		borderRadius: 5,
@@ -620,7 +620,7 @@ const _componentStyles = styleVars => ({
 		alignItems: "center"
 	},
 	searchBoxActive: {
-		backgroundColor: "rgba(0,0,0,0.2)"
+		backgroundColor: "rgba(0,0,0,0.2)" // @todo color
 	},
 	textInput: {
 		color: "#fff",
@@ -629,14 +629,14 @@ const _componentStyles = styleVars => ({
 	searchIcon: {
 		width: 14,
 		height: 14,
-		tintColor: "rgba(255,255,255,0.6)",
+		tintColor: "rgba(255,255,255,0.6)", // @todo color
 		marginRight: styleVars.spacing.veryTight
 	},
 	cancelLink: {
 		marginLeft: styleVars.spacing.standard
 	},
 	cancelLinkText: {
-		color: "#fff",
+		color: "#fff", // @todo color
 		fontSize: styleVars.fontSizes.content
 	},
 	tabBarText: {
@@ -668,7 +668,7 @@ const _componentStyles = styleVars => ({
 		fontSize: styleVars.fontSizes.content
 	},
 	leftAlignIcon: {
-		tintColor: "rgba(0,0,0,0.6)",
+		tintColor: "rgba(0,0,0,0.6)", // @todo color
 		width: 15,
 		height: 15
 	},
@@ -683,7 +683,7 @@ const _componentStyles = styleVars => ({
 		fontWeight: "500"
 	},
 	loadingTabBar: {
-		backgroundColor: "#fff",
+		backgroundColor: "#fff", // @todo color
 		borderBottomWidth: 1,
 		borderBottomColor: "#cccccc"
 	}

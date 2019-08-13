@@ -244,9 +244,9 @@ const _componentStyles = {
 		flexDirection: "row",
 		alignItems: "flex-start",
 		padding: 12,
-		backgroundColor: "#fafafa",
+		backgroundColor: "#fafafa", // @todo color
 		borderBottomWidth: 1,
-		borderBottomColor: "rgba(0,0,0,0.05)"
+		borderBottomColor: "rgba(0,0,0,0.05)" // @todo color
 	},
 	postContent: {
 		flex: 1,
@@ -257,7 +257,7 @@ const _componentStyles = {
 	quotingTitle: {
 		fontSize: 15,
 		fontWeight: "600",
-		color: "#171717",
+		color: "#171717", // @todo color
 		marginBottom: 3
 	}
 };

@@ -400,7 +400,7 @@ class UserScreen extends Component {
 
 const _componentStyles = styleVars => ({
 	container: {
-		backgroundColor: "#fff",
+		backgroundColor: "#fff", // @todo color
 		display: "flex",
 		flex: 1
 	},
@@ -420,7 +420,7 @@ const _componentStyles = styleVars => ({
 		right: 0,
 		bottom: 0,
 		height: 90,
-		backgroundColor: "#f0f0f0"
+		backgroundColor: "#f0f0f0" // @todo color
 	},
 	mainArea: {
 		display: "flex",
