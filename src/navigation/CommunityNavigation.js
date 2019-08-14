@@ -11,6 +11,7 @@ import { BottomTabBar } from "react-navigation-tabs";
 import { View } from "react-native";
 import Image from "react-native-remote-svg";
 import { connect } from "react-redux";
+import { compose } from "react-apollo";
 import * as WebBrowser from "expo";
 import { LinearGradient } from "expo-linear-gradient";
 import "react-native-gesture-handler";
@@ -49,7 +50,7 @@ import { resetModalWebview } from "../redux/actions/app";
 import { NavigationTabIcon, NavigationTabNotification } from "../ecosystems/Navigation";
 import CustomHeader from "../ecosystems/CustomHeader";
 import getImageUrl from "../utils/getImageUrl";
-import styles, { styleVars, tabStyles } from "../styles";
+import { withTheme } from "../themes";
 import { navigationIcons } from "../icons";
 import Lang from "../utils/Lang";
 
@@ -69,6 +70,7 @@ class AppNavigation extends Component {
 	}
 
 	_getMainStack(options, initialRoute) {
+		const { styles } = this.props;
 		return createStackNavigator(
 			{
 				HomeScreen: {
@@ -124,6 +126,8 @@ class AppNavigation extends Component {
 	}
 
 	_getSettingsStack(options) {
+		const { styles } = this.props;
+
 		return createStackNavigator(
 			{
 				AccountSettingsScreen: { screen: AccountSettingsScreen }
@@ -143,6 +147,8 @@ class AppNavigation extends Component {
 	}
 
 	_getLoginRegisterStack() {
+		const { styles } = this.props;
+
 		return createStackNavigator(
 			{
 				LoginScreen: { screen: LoginScreen },
@@ -172,6 +178,8 @@ class AppNavigation extends Component {
 	 * @return StackNavigator
 	 */
 	_getMasterNavigation() {
+		const { styles } = this.props;
+
 		const masterStack = createStackNavigator(
 			{
 				Root: {
@@ -251,6 +259,8 @@ class AppNavigation extends Component {
 	 * @return TabNavigator
 	 */
 	_getPrimaryTabBar() {
+		const { styles, styleVars } = this.props;
+
 		const Home = {
 			screen: this._CommunityStack,
 			navigationOptions: {
@@ -343,6 +353,8 @@ class AppNavigation extends Component {
 	 * @return object|file resource
 	 */
 	_getUserPhoto(focused, tintColor) {
+		const { styles } = this.props;
+
 		if (this.props.auth.isAuthenticated && this.props.user.photo) {
 			return (
 				<View style={{ borderRadius: 24, overflow: "hidden" }}>
@@ -385,9 +397,12 @@ class AppNavigation extends Component {
 	}
 }
 
-export default connect(state => ({
-	app: state.app,
-	user: state.user,
-	auth: state.auth,
-	site: state.site
-}))(AppNavigation);
+export default compose(
+	connect(state => ({
+		app: state.app,
+		user: state.user,
+		auth: state.auth,
+		site: state.site
+	})),
+	withTheme()
+)(AppNavigation);

@@ -20,14 +20,15 @@ import MultiSettingsScreen from "../screens/multi/MultiSettingsScreen";
 
 import { NavigationTabIcon, NavigationTabNotification } from "../ecosystems/Navigation";
 import CustomHeader from "../ecosystems/CustomHeader";
-import styles, { styleVars, tabStyles } from "../styles";
+import { withTheme } from "../themes";
 import icons from "../icons";
 import Lang from "../utils/Lang";
 
-export default class MultiCommunityNavigation extends Component {
+class MultiCommunityNavigation extends Component {
 	constructor(props) {
 		super(props);
 
+		const { styles, styleVars } = this.props;
 		const TabNavigator = createBottomTabNavigator(
 			{
 				MultiHome: {
@@ -144,3 +145,5 @@ export default class MultiCommunityNavigation extends Component {
 		);
 	}
 }
+
+export default withTheme()(MultiCommunityNavigation);
