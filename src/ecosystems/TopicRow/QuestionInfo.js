@@ -12,7 +12,6 @@ const QuestionInfo = props => (
 	<View style={[props.styles.topicRowInner, componentStyles.questionRowInner]}>
 		<View style={props.styles.topicInfo}>
 			<View style={props.styles.topicTitle}>
-				{Boolean(props.showAsUnread) && <TopicIcon style={props.styles.topicIcon} unread={props.data.unread} />}
 				{Boolean(props.data.isLocked) && <LockedIcon style={props.styles.lockedIcon} />}
 				<Text style={[props.styles.topicTitleText, props.showAsUnread ? styles.title : styles.titleRead]} numberOfLines={1}>
 					<UnreadIndicator show={props.data.unread} />
