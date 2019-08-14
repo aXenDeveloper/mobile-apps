@@ -449,7 +449,7 @@ class TopicListScreen extends Component {
 
 			return (
 				<View contentContainerStyle={{ flex: 1 }} style={{ flex: 1 }}>
-					{this.props.user.isAuthenticated && (
+					{this.props.auth.isAuthenticated && (
 						<FollowModal
 							isVisible={this.state.followModalVisible}
 							followData={forumData.follow}
