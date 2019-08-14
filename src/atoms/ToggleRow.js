@@ -4,7 +4,7 @@ import _ from "underscore";
 
 import { withTheme } from "../themes";
 
-const ToggleRow = ({ styles, componentStyles, ...props }) => (
+const ToggleRow = ({ styles, componentStyles, styleVars, ...props }) => (
 	<View style={[styles.row, props.lastRow && styles.lastRow, styles.flexRow, styles.flexAlignCenter, styles.pvStandard, styles.phWide]}>
 		<View style={[styles.flex]}>
 			<Text style={[styles.text, styles.contentText]}>{props.title}</Text>
