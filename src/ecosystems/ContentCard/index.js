@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import { Text, View, Image, StyleSheet, TouchableHighlight, TouchableOpacity, Platform } from "react-native";
-import FadeIn from "react-native-fade-in-image";
+import { View, TouchableOpacity, Platform } from "react-native";
 
-import Lang from "../../utils/Lang";
-import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
-import { styleVars } from "../../styles";
+import { PlaceholderElement } from "../../ecosystems/Placeholder";
+import { withTheme } from "../../themes";
 
 const ContentCard = props => {
+	const { componentStyles, styleVars } = props;
+
 	if (props.loading) {
 		return (
 			<View style={[componentStyles.contentCard, props.style, { height: 300 }]}>
@@ -39,13 +39,11 @@ const ContentCard = props => {
 	);
 };
 
-export default ContentCard;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	contentCard: {
 		borderRadius: Platform.OS === "ios" ? 5 : 2,
 		backgroundColor: "#fff",
-		shadowColor: "rgba(0,0,0,0.05)",
+		shadowColor: "rgba(0,0,0,0.05)", // @todo color
 		shadowOffset: {
 			width: 0,
 			height: 5
@@ -85,3 +83,5 @@ const componentStyles = StyleSheet.create({
 		flexGrow: 1
 	}
 });
+
+export default withTheme(_componentStyles)(ContentCard);

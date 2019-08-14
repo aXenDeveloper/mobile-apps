@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { Text, View, FlatList, Image, StyleSheet, ActivityIndicator } from "react-native";
+import React from "react";
+import { Text, View, Image } from "react-native";
 import FadeIn from "react-native-fade-in-image";
 
 import Lang from "../../utils/Lang";
@@ -9,9 +9,10 @@ import getSuitableImage from "../../utils/getSuitableImage";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import UserPhoto from "../../atoms/UserPhoto";
 import relativeTime from "../../utils/RelativeTime";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const SearchResultItem = props => {
+	const { styles, componentStyles, styleVars } = props;
 	const imageToUse = getSuitableImage(props.data.contentImages || null);
 	const hidden = props.data.hiddenStatus !== null;
 
@@ -48,9 +49,7 @@ const SearchResultItem = props => {
 	);
 };
 
-export default SearchResultItem;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	itemHeader: {
 		display: "flex",
 		flexDirection: "row",
@@ -82,3 +81,5 @@ const componentStyles = StyleSheet.create({
 		width: "100%"
 	}
 });
+
+export default withTheme(_componentStyles)(SearchResultItem);

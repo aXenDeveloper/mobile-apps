@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Text, View, FlatList, ScrollView } from "react-native";
+import { Text, View } from "react-native";
+import { compose } from "react-apollo";
 import { connect } from "react-redux";
 
 import Lang from "../../utils/Lang";
 import { setContentView } from "../../redux/actions/app";
 import CheckList from "../../ecosystems/CheckList";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 
 class ContentView extends Component {
 	constructor(props) {
@@ -51,6 +52,7 @@ class ContentView extends Component {
 	}
 
 	render() {
+		const { styles } = this.props;
 		const isMulti = Expo.Constants.manifest.extra.multi;
 		return (
 			<View>
@@ -67,6 +69,9 @@ class ContentView extends Component {
 	}
 }
 
-export default connect(state => ({
-	app: state.app
-}))(ContentView);
+export default compose(
+	connect(state => ({
+		app: state.app
+	})),
+	withTheme()
+)(ContentView);

@@ -1,9 +1,10 @@
 import React, { PureComponent } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import _ from "underscore";
-import { styleVars } from "../../styles";
 
-export default class PlaceholderElement extends PureComponent {
+import { withTheme } from "../../themes";
+
+class PlaceholderElement extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -29,6 +30,7 @@ export default class PlaceholderElement extends PureComponent {
 	}
 
 	render() {
+		const { styleVars, componentStyles } = this.props;
 		const shapeStyles = {};
 
 		if (this.props.circle) {
@@ -61,7 +63,7 @@ export default class PlaceholderElement extends PureComponent {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	base: {
 		position: "absolute"
 	},
@@ -71,4 +73,6 @@ const componentStyles = StyleSheet.create({
 	rect: {
 		borderRadius: 3
 	}
-});
+};
+
+export default withTheme(_componentStyles)(PlaceholderElement);

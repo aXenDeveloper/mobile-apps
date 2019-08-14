@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { View, Image, Platform, Text, StyleSheet } from "react-native";
 
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
-const NavigationTabIcon = props => {
+const NavigationTabIcon = ({ styles, ...props }) => {
 	return (
 		<View>
 			<Image style={[styles.tabIcon, { tintColor: props.tintColor }]} source={props.focused || Platform.OS === "android" ? props.active : props.inactive} />
@@ -12,4 +12,4 @@ const NavigationTabIcon = props => {
 	);
 };
 
-export default NavigationTabIcon;
+export default withTheme()(NavigationTabIcon);

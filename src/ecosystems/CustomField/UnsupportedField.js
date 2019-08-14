@@ -2,8 +2,8 @@ import React from "react";
 import { Text } from "react-native";
 
 import Lang from "../../utils/Lang";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 
-const UnsupportedField = props => <Text style={[props.textStyles, styles.lightText]}>{Lang.get("not_available")}</Text>;
+const UnsupportedField = ({ styles, ...props }) => <Text style={[props.textStyles, styles.lightText]}>{Lang.get("not_available")}</Text>;
 
-export default UnsupportedField;
+export default withTheme()(UnsupportedField);

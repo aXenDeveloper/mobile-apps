@@ -1,11 +1,12 @@
-import React from "react";
+import React, { memo } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 
 const AddressField = props => {
+	const { styles } = props;
 	const { city, region, postalCode, country } = props.value;
 
 	if (_.isUndefined(props.value.addressLines) || !props.value.addressLines.length) {
@@ -30,4 +31,4 @@ const AddressField = props => {
 	);
 };
 
-export default AddressField;
+export default withTheme()(memo(AddressField));

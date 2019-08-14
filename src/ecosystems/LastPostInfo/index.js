@@ -3,9 +3,9 @@ import { Text, View, StyleSheet } from "react-native";
 
 import UserPhoto from "../../atoms/UserPhoto";
 import relativeTime from "../../utils/RelativeTime";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
-const LastPostInfo = props => {
+const LastPostInfo = ({ componentStyles, ...props }) => {
 	if (Boolean(props.photo) && Boolean(props.timestamp)) {
 		return (
 			<View style={props.style}>
@@ -18,9 +18,7 @@ const LastPostInfo = props => {
 	return null;
 };
 
-export default LastPostInfo;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	timestamp: {
 		fontSize: 12,
 		color: styleVars.lightText,
@@ -28,3 +26,5 @@ const componentStyles = StyleSheet.create({
 		marginTop: 3
 	}
 });
+
+export default withTheme(_componentStyles)(LastPostInfo);

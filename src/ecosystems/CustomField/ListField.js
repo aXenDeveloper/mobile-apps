@@ -2,8 +2,9 @@ import React from "react";
 import { Text, TouchableOpacity } from "react-native";
 
 import Lang from "../../utils/Lang";
+import { withTheme } from "../../themes";
 
-const ListField = props => (
+const ListField = ({ styles, ...props }) => (
 	<React.Fragment>
 		{Boolean(props.value.length) ? (
 			props.value.map((item, idx) => (
@@ -17,4 +18,4 @@ const ListField = props => (
 	</React.Fragment>
 );
 
-export default ListField;
+export default withTheme()(ListField);

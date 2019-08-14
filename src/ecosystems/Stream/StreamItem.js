@@ -1,16 +1,16 @@
 import React, { memo } from "react";
-import { Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
+import { Text, View } from "react-native";
 
 import Lang from "../../utils/Lang";
 import UserPhoto from "../../atoms/UserPhoto";
-import RichTextContent from "../../ecosystems/RichTextContent";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import { ReactionOverview } from "../../ecosystems/Reaction";
 import relativeTime from "../../utils/RelativeTime";
-import styles from "../../styles";
-import componentStyles from "./styles";
+import _componentStyles from "./styles";
+import { withTheme } from "../../themes";
 
 const StreamItem = props => {
+	const { componentStyles, styles } = props;
 	const hidden = props.data.hiddenStatus !== null;
 
 	return (
@@ -55,4 +55,4 @@ const StreamItem = props => {
 	);
 };
 
-export default memo(StreamItem);
+export default withTheme(_componentStyles)(memo(StreamItem));

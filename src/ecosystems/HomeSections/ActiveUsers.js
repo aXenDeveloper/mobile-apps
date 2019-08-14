@@ -8,7 +8,7 @@ import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import UserPhoto from "../../atoms/UserPhoto";
 import NavigationService from "../../utils/NavigationService";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class ActiveUsers extends Component {
 	constructor(props) {
@@ -52,6 +52,8 @@ class ActiveUsers extends Component {
 	 * @return 	array 	Array of cell components
 	 */
 	getCells() {
+		const { styles, componentStyles } = this.props;
+
 		// Take a slice of up to 14 users to show
 		const usersToShow = this.props.data.core.activeUsers.users.slice(0, 14);
 
@@ -88,6 +90,7 @@ class ActiveUsers extends Component {
 	 * @return 	Component|null
 	 */
 	getMoreBubble() {
+		const { styles, componentStyles } = this.props;
 		const activeUsersData = this.props.data.core.activeUsers;
 
 		if (activeUsersData.count - activeUsersData.users.length > 0) {
@@ -147,6 +150,8 @@ class ActiveUsers extends Component {
 	 * @return 	array|null		Array of Animated.Text components
 	 */
 	getTicker() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.state.tickerNames.length < ActiveUsers.minimumTickerNames) {
 			return null;
 		}
@@ -171,6 +176,8 @@ class ActiveUsers extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.props.loading) {
 			return (
 				<View style={[componentStyles.wrapper, styles.row, { height: 100 }]}>
@@ -211,11 +218,9 @@ class ActiveUsers extends Component {
 	}
 }
 
-export default ActiveUsers;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	wrapper: {
-		backgroundColor: "#fff"
+		backgroundColor: "#fff" // @todo color
 	},
 	andMore: {
 		height: 36,
@@ -230,3 +235,5 @@ const componentStyles = StyleSheet.create({
 		right: 0
 	}
 });
+
+export default withTheme(_componentStyles)(ActiveUsers);

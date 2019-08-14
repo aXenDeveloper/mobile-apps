@@ -3,9 +3,9 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 import Button from "../../atoms/Button";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 
-const Tooltip = ({ isFirstStep, isLastStep, handleNext, handlePrev, handleStop, currentStep }) => (
+const Tooltip = ({ componentStyles, styles, isFirstStep, isLastStep, handleNext, handlePrev, handleStop, currentStep }) => (
 	<View>
 		<View style={componentStyles.tooltipContainer}>
 			<Text testID="stepDescription" style={[styles.text, styles.standardText]}>
@@ -23,9 +23,7 @@ const Tooltip = ({ isFirstStep, isLastStep, handleNext, handlePrev, handleStop, 
 	</View>
 );
 
-export default Tooltip;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	tooltipContainer: {
 		flex: 1
 	},
@@ -42,4 +40,6 @@ const componentStyles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "flex-start"
 	}
-});
+};
+
+export default withTheme(_componentStyles)(Tooltip);

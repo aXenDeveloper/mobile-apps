@@ -10,7 +10,7 @@ import { ReactionOverview } from "../../ecosystems/Reaction";
 import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class OurPicks extends Component {
 	constructor(props) {
@@ -29,6 +29,8 @@ class OurPicks extends Component {
 	 * @return 	Component
 	 */
 	getItemCard(data) {
+		const { styleVars, componentStyles, styles } = this.props;
+
 		if (this.props.loading) {
 			return (
 				<ContentCard
@@ -140,6 +142,7 @@ class OurPicks extends Component {
 	}
 
 	render() {
+		const { styleVars, componentStyles } = this.props;
 		return (
 			<FlatList
 				horizontal
@@ -156,13 +159,11 @@ class OurPicks extends Component {
 	}
 }
 
-export default OurPicks;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	imageContainer: {
 		height: 135,
 		width: "100%",
-		backgroundColor: "#333"
+		backgroundColor: "#333" // @todo color
 	},
 	image: {
 		flex: 1,
@@ -171,4 +172,6 @@ const componentStyles = StyleSheet.create({
 	dataCount: {
 		marginTop: 6
 	}
-});
+};
+
+export default withTheme(_componentStyles)(OurPicks);

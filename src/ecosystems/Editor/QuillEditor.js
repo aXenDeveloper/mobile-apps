@@ -1,6 +1,5 @@
 import React, { Fragment, Component } from "react";
-import { View, TextInput, Alert, Text, KeyboardAvoidingView, TouchableOpacity, Image, StyleSheet, LayoutAnimation } from "react-native";
-import { Asset } from "expo-asset";
+import { View, TextInput, Alert, Text, TouchableOpacity, Image, StyleSheet, LayoutAnimation } from "react-native";
 import { WebView } from "react-native-webview";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
@@ -34,7 +33,7 @@ import {
 import ContentRow from "../../ecosystems/ContentRow";
 import Button from "../../atoms/Button";
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const EDITOR_VIEW = require("../../../web/dist/index.html");
 const MESSAGE_PREFIX = Expo.Constants.manifest.extra.message_prefix;
@@ -453,6 +452,7 @@ class QuillEditor extends Component {
 	 */
 
 	buildCustomStyles() {
+		const { styleVars } = this.props;
 		const style = `
 			.ipsMention {
 				background: ${styleVars.accentColor};
@@ -719,6 +719,7 @@ class QuillEditor extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
 		const placeholder = this.props.placeholder ? `"${this.props.placeholder}"` : `null`;
 		const injectedJavaScript = `
 			if (!window.ReactNativeWebView) {
@@ -798,15 +799,7 @@ class QuillEditor extends Component {
 	}
 }
 
-export default compose(
-	withApollo,
-	connect(state => ({
-		editor: state.editor,
-		user: state.user
-	}))
-)(QuillEditor);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	modal: {
 		backgroundColor: styleVars.greys.medium
 	},
@@ -822,3 +815,12 @@ const editorStyles = StyleSheet.create({
 		borderBottomWidth: 0
 	}
 });
+
+export default compose(
+	withApollo,
+	connect(state => ({
+		editor: state.editor,
+		user: state.user
+	})),
+	withTheme(_componentStyles)
+)(QuillEditor);

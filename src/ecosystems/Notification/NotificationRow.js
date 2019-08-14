@@ -7,9 +7,11 @@ import ContentRow from "../../ecosystems/ContentRow";
 import UserPhoto from "../../atoms/UserPhoto";
 import relativeTime from "../../utils/RelativeTime";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const NotificationRow = props => {
+	const { styles, styleVars, componentStyles } = props;
+
 	if (props.loading) {
 		return (
 			<ContentRow>
@@ -47,9 +49,7 @@ const NotificationRow = props => {
 	);
 };
 
-export default compose(withNavigation)(NotificationRow);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	rowInner: {
 		paddingHorizontal: styleVars.spacing.standard,
 		paddingVertical: styleVars.spacing.standard,
@@ -76,3 +76,8 @@ const componentStyles = StyleSheet.create({
 		marginRight: styleVars.spacing.standard
 	}
 });
+
+export default compose(
+	withNavigation,
+	withTheme(_componentStyles)
+)(NotificationRow);

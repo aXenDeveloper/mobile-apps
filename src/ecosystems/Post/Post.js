@@ -24,7 +24,7 @@ import CommentFlag from "../../atoms/CommentFlag";
 import relativeTime from "../../utils/RelativeTime";
 import getErrorMessage from "../../utils/getErrorMessage";
 import PostFragment from "./PostFragment";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 const PostReactionMutation = gql`
@@ -115,6 +115,8 @@ class Post extends Component {
 	 * @return 	Component
 	 */
 	loadingComponent() {
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<ShadowedArea style={[componentStyles.post, styles.pWide, styles.mbVeryTight]}>
 				<PlaceholderContainer height={40}>
@@ -480,6 +482,7 @@ class Post extends Component {
 	 * @return 	Component
 	 */
 	renderIgnoredPost() {
+		const { styles } = this.props;
 		return <View style={styles.mbVeryTight}>{this.renderIgnoreBar()}</View>;
 	}
 
@@ -489,6 +492,8 @@ class Post extends Component {
 	 * @return 	Component
 	 */
 	renderIgnoreBar() {
+		const { styles } = this.props;
+
 		return (
 			<ShadowedArea style={this.state.ignoreOverride ? styles.lightBackground : null}>
 				<TouchableOpacity style={[styles.flexRow, styles.flexJustifyBetween, styles.pvStandard, styles.phWide]} onPress={this.onPressIgnoredPost}>
@@ -522,6 +527,7 @@ class Post extends Component {
 	 * @return 	Component|null
 	 */
 	renderHiddenMessage() {
+		const { styles, componentStyles } = this.props;
 		const data = this.props.data;
 
 		if (data.hiddenStatus === null) {
@@ -546,6 +552,8 @@ class Post extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.props.loading) {
 			return this.loadingComponent();
 		}
@@ -649,17 +657,7 @@ class Post extends Component {
 	}
 }
 
-export default compose(
-	graphql(PostReactionMutation),
-	withNavigation,
-	connect(state => ({
-		site: state.site
-	}))
-)(Post);
-
-export { Post as TestPost }; // For test runner only
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	post: {
 		//padding: styleVars.spacing.wide,
 		paddingBottom: 0
@@ -679,3 +677,14 @@ const componentStyles = StyleSheet.create({
 		marginTop: 2
 	}
 });
+
+export default compose(
+	graphql(PostReactionMutation),
+	withNavigation,
+	connect(state => ({
+		site: state.site
+	})),
+	withTheme(_componentStyles)
+)(Post);
+
+export { Post as TestPost }; // For test runner only

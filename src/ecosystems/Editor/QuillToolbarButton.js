@@ -1,15 +1,15 @@
-import React, { Component } from "react";
-import { View, TouchableOpacity, StyleSheet, Image } from "react-native";
+import React, { memo } from "react";
+import { TouchableOpacity, Image } from "react-native";
 
-const QuillToolbarButton = props => (
-	<TouchableOpacity style={[buttonStyles.button, props.active ? buttonStyles.activeButton : null]} onPress={props.onPress}>
-		<Image source={props.icon} style={[buttonStyles.image, props.active ? buttonStyles.activeImage : null]} />
+import { withTheme } from "../../themes";
+
+const QuillToolbarButton = ({ componentStyles, ...props }) => (
+	<TouchableOpacity style={[componentStyles.button, props.active ? componentStyles.activeButton : null]} onPress={props.onPress}>
+		<Image source={props.icon} style={[componentStyles.image, props.active ? componentStyles.activeImage : null]} />
 	</TouchableOpacity>
 );
 
-export default QuillToolbarButton;
-
-const buttonStyles = StyleSheet.create({
+const _componentStyles = {
 	button: {
 		width: 34,
 		height: 34,
@@ -30,4 +30,6 @@ const buttonStyles = StyleSheet.create({
 	activeImage: {
 		tintColor: "#000"
 	}
-});
+};
+
+export default withTheme(_componentStyles)(memo(QuillToolbarButton));

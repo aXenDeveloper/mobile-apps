@@ -1,14 +1,15 @@
-import React, { Component } from "react";
-import { Text, View, FlatList, StyleSheet, ActivityIndicator } from "react-native";
+import React from "react";
+import { Text, View } from "react-native";
 
 import Lang from "../../utils/Lang";
 import highlightTerms from "../../utils/highlightTerms";
 import UserPhoto from "../../atoms/UserPhoto";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import relativeTime from "../../utils/RelativeTime";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const SearchResultComment = props => {
+	const { styles, componentStyles } = props;
 	const hidden = props.data.hiddenStatus !== null;
 
 	return (
@@ -41,9 +42,7 @@ const SearchResultComment = props => {
 	);
 };
 
-export default SearchResultComment;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	commentHeader: {
 		marginHorizontal: styleVars.spacing.wide
 	},
@@ -66,3 +65,5 @@ const componentStyles = StyleSheet.create({
 		alignItems: "center"
 	}
 });
+
+export default withTheme(_componentStyles)(SearchResultComment);

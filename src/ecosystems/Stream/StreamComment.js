@@ -1,15 +1,15 @@
 import React, { memo } from "react";
-import { Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
+import { Text, View } from "react-native";
 
 import UserPhoto from "../../atoms/UserPhoto";
-import RichTextContent from "../../ecosystems/RichTextContent";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import { ReactionOverview } from "../../ecosystems/Reaction";
 import relativeTime from "../../utils/RelativeTime";
-import componentStyles from "./styles";
-import styles from "../../styles";
+import _componentStyles from "./styles";
+import { withTheme } from "../../themes";
 
 const StreamComment = props => {
+	const { componentStyles, styles } = props;
 	const hidden = props.data.hiddenStatus !== null;
 
 	return (
@@ -48,4 +48,4 @@ const StreamComment = props => {
 	);
 };
 
-export default memo(StreamComment);
+export default withTheme(_componentStyles)(memo(StreamComment));

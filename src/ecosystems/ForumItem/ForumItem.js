@@ -12,7 +12,7 @@ import ContentRow from "../../ecosystems/ContentRow";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import ForumIcon from "../../atoms/ForumIcon";
 import LastPostInfo from "../../ecosystems/LastPostInfo";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 const MarkForumRead = gql`
@@ -85,6 +85,8 @@ class ForumItem extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles, styleVars } = this.props;
+
 		if (this.props.loading) {
 			return (
 				<ContentRow>
@@ -143,14 +145,7 @@ class ForumItem extends Component {
 	}
 }
 
-export default compose(
-	withNavigation,
-	withApollo
-)(ForumItem);
-
-export { ForumItem as TestForumItem }; // For test runner only
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	forumItem: {
 		paddingHorizontal: styleVars.spacing.wide,
 		paddingVertical: styleVars.spacing.wide,
@@ -171,3 +166,11 @@ const componentStyles = StyleSheet.create({
 		lineHeight: 18
 	}
 });
+
+export default compose(
+	withNavigation,
+	withApollo,
+	withTheme(_componentStyles)
+)(ForumItem);
+
+export { ForumItem as TestForumItem }; // For test runner only

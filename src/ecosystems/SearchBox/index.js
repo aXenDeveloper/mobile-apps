@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { Text, View, TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { Text, View, TextInput, TouchableOpacity, Image } from "react-native";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 class SearchBox extends Component {
@@ -105,6 +105,8 @@ class SearchBox extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<View style={componentStyles.searchWrap}>
 				<View style={[componentStyles.searchBox, this.state.textInputActive ? componentStyles.searchBoxActive : null]}>
@@ -141,9 +143,7 @@ class SearchBox extends Component {
 	}
 }
 
-export default SearchBox;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	searchWrap: {
 		paddingHorizontal: styleVars.spacing.tight,
 		paddingBottom: styleVars.spacing.tight,
@@ -157,7 +157,7 @@ const componentStyles = StyleSheet.create({
 		alignItems: "center"
 	},
 	searchBox: {
-		backgroundColor: "rgba(255,255,255,0.1)",
+		backgroundColor: "rgba(255,255,255,0.1)", // @todo color
 		paddingVertical: styleVars.spacing.tight,
 		paddingHorizontal: styleVars.spacing.tight,
 		borderRadius: 10,
@@ -166,28 +166,30 @@ const componentStyles = StyleSheet.create({
 		alignItems: "center"
 	},
 	searchBoxActive: {
-		backgroundColor: "rgba(0,0,0,0.2)"
+		backgroundColor: "rgba(0,0,0,0.2)" // @todo color
 	},
 	textInput: {
-		color: "#fff",
+		color: "#fff", // @todo color
 		flex: 1
 	},
 	searchIcon: {
 		width: 14,
 		height: 14,
-		tintColor: "rgba(255,255,255,0.6)",
+		tintColor: "rgba(255,255,255,0.6)", // @todo color
 		marginRight: styleVars.spacing.veryTight
 	},
 	cancelLink: {
 		marginLeft: styleVars.spacing.standard
 	},
 	cancelLinkText: {
-		color: "#fff",
+		color: "#fff", // @todo color
 		fontSize: styleVars.fontSizes.content
 	},
 	close: {
 		width: 16,
 		height: 16,
-		tintColor: "rgba(255,255,255,0.6)"
+		tintColor: "rgba(255,255,255,0.6)" // @todo color
 	}
 });
+
+export default withTheme(_componentStyles)(SearchBox);

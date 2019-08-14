@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, ScrollView, Text, TextInput, Animated, TouchableOpacity, Image } from "react-native";
 import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 import { connect } from "react-redux";
+import { compose } from "react-apollo";
 import * as Animatable from "react-native-animatable";
 import _ from "underscore";
 
@@ -24,7 +25,7 @@ import ActionSheet from "react-native-actionsheet";
 import Lang from "../../utils/Lang";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import icons from "../../icons";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const TOOLBAR_HEIGHT = 44;
 
@@ -228,6 +229,7 @@ class QuillToolbar extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
 		const {
 			attachedImages,
 			settings: { allowedFileTypes }
@@ -323,13 +325,9 @@ class QuillToolbar extends Component {
 	}
 }
 
-export default connect(state => ({
-	editor: state.editor
-}))(QuillToolbar);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	toolbarOuter: {
-		backgroundColor: "rgba(255,255,255,0.8)",
+		backgroundColor: "rgba(255,255,255,0.8)", // @todo color
 		borderTopWidth: 1,
 		borderTopColor: styleVars.borderColors.medium
 	},
@@ -349,7 +347,7 @@ const componentStyles = StyleSheet.create({
 		opacity: 0
 	},
 	addImage: {
-		backgroundColor: "#fff",
+		backgroundColor: "#fff", // @todo color
 		borderWidth: 1,
 		borderColor: styleVars.greys.medium,
 		width: 60,
@@ -384,3 +382,10 @@ const componentStyles = StyleSheet.create({
 		tintColor: styleVars.greys.placeholder
 	}
 });
+
+export default compose(
+	connect(state => ({
+		editor: state.editor
+	})),
+	withTheme(_componentStyles)
+)(QuillToolbar);

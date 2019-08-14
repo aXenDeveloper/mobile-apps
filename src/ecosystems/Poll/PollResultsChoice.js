@@ -1,11 +1,9 @@
 import React, { Component } from "react";
-import { Text, Animated, Easing, Image, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Text, Animated, Easing, Image, View } from "react-native";
 import * as Animatable from "react-native-animatable";
 import _ from "underscore";
 
-import Lang from "../../utils/Lang";
-import ShadowedArea from "../../atoms/ShadowedArea";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 class PollResultsChoice extends Component {
@@ -69,6 +67,7 @@ class PollResultsChoice extends Component {
 	 * @return 	object
 	 */
 	percentageTextStyle() {
+		const { styleVars } = this.props;
 		const percentage = this.getPercentage();
 
 		if (percentage < 15) {
@@ -86,6 +85,7 @@ class PollResultsChoice extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
 		const percentage = this.getPercentage();
 		const width = this._animatedWidth.interpolate({
 			inputRange: [0, 1],
@@ -112,9 +112,7 @@ class PollResultsChoice extends Component {
 	}
 }
 
-export default PollResultsChoice;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	pollBar: {
 		height: 22,
 		borderRadius: 4,
@@ -138,3 +136,5 @@ const componentStyles = StyleSheet.create({
 		height: 20
 	}
 });
+
+export default withTheme(_componentStyles)(PollResultsChoice);

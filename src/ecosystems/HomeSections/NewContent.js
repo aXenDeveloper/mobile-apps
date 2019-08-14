@@ -11,7 +11,7 @@ import ContentCard from "../../ecosystems/ContentCard";
 import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class NewContent extends Component {
 	constructor(props) {
@@ -30,6 +30,8 @@ class NewContent extends Component {
 	 * @return 	Component
 	 */
 	getItemCard(data) {
+		const { styleVars, componentStyles, styles } = this.props;
+
 		if (this.props.loading) {
 			return (
 				<ContentCard
@@ -174,6 +176,8 @@ class NewContent extends Component {
 	}
 
 	render() {
+		const { componentStyles, styleVars } = this.props;
+
 		return (
 			<FlatList
 				horizontal
@@ -190,16 +194,16 @@ class NewContent extends Component {
 	}
 }
 
-export default NewContent;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	imageContainer: {
 		height: 135,
 		width: "100%",
-		backgroundColor: "#333"
+		backgroundColor: "#333" // @todo color
 	},
 	image: {
 		flex: 1,
 		width: "100%"
 	}
-});
+};
+
+export default withTheme(_componentStyles)(NewContent);

@@ -1,11 +1,8 @@
 import React, { Component } from "react";
 import { Text, Animated, Easing, Image, View, TouchableWithoutFeedback, StyleSheet } from "react-native";
-import * as Animatable from "react-native-animatable";
 import _ from "underscore";
 
-import Lang from "../../utils/Lang";
-import ShadowedArea from "../../atoms/ShadowedArea";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 class PollVoteChoice extends Component {
@@ -19,6 +16,8 @@ class PollVoteChoice extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<View style={styles.mbStandard}>
 				<TouchableWithoutFeedback onPress={this.checkMe}>
@@ -30,16 +29,14 @@ class PollVoteChoice extends Component {
 								styles.flexAlignCenter,
 								styles.flexJustifyCenter,
 								componentStyles.baseControl,
-								componentStyles[ this.props.type ],
+								componentStyles[this.props.type],
 								this.props.checked ? componentStyles.checked : null,
 								styles.mrStandard
 							]}
 						>
 							{Boolean(this.props.checked) && <Image source={icons.CHECKMARK2} resizeMode="contain" style={componentStyles.tick} />}
 						</View>
-						<Text style={[styles.flexBasisZero, styles.flexGrow, styles.contentText, styles.text, componentStyles.choiceText]}>
-							{this.props.data.title}
-						</Text>
+						<Text style={[styles.flexBasisZero, styles.flexGrow, styles.contentText, styles.text, componentStyles.choiceText]}>{this.props.data.title}</Text>
 					</View>
 				</TouchableWithoutFeedback>
 			</View>
@@ -47,14 +44,12 @@ class PollVoteChoice extends Component {
 	}
 }
 
-export default PollVoteChoice;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	baseControl: {
 		borderWidth: 1,
 		borderColor: styleVars.accentColor,
 		width: 30,
-		height: 30,
+		height: 30
 	},
 	radio: {
 		borderRadius: 30
@@ -71,3 +66,5 @@ const componentStyles = StyleSheet.create({
 		tintColor: styleVars.reverseText
 	}
 });
+
+export default withTheme(_componentStyles)(PollVoteChoice);

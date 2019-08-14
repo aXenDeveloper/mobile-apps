@@ -4,35 +4,27 @@ import Modal from "react-native-modal";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
-class PollModal extends Component {
-	constructor(props) {
-		super(props);
-	}
+const PollModal = ({ styles, componentStyles, ...props }) => (
+	<Modal style={[styles.modal, componentStyles.modal]} swipeDirection="down" onSwipeComplete={props.close} isVisible={props.isVisible}>
+		<View style={[styles.modalInner]}>
+			<View style={styles.modalHeader}>
+				<Text>title</Text>
+			</View>
+			<View style={styles.flex}>
+				<Text>content</Text>
+			</View>
+		</View>
+	</Modal>
+);
 
-	render() {
-		return (
-			<Modal style={[styles.modal, componentStyles.modal]} swipeDirection="down" onSwipeComplete={this.props.close} isVisible={this.props.isVisible}>
-				<View style={[styles.modalInner]}>
-					<View style={styles.modalHeader}>
-						<Text>title</Text>
-					</View>
-					<View style={styles.flex}>
-						<Text>content</Text>
-					</View>
-				</View>
-			</Modal>
-		);
-	}
-}
-
-export default PollModal;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	modal: {
 		marginTop: 80,
 		marginBottom: 80
 	}
-});
+};
+
+export default withTheme(_componentStyles)(PollModal);

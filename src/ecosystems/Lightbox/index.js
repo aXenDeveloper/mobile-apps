@@ -6,10 +6,10 @@ import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import getImageUrl from "../../utils/getImageUrl";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
-export default class Lightbox extends PureComponent {
+class Lightbox extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.close = this.close.bind(this);
@@ -51,6 +51,8 @@ export default class Lightbox extends PureComponent {
 	 * @return 	Component
 	 */
 	render() {
+		const { componentStyles } = this.props;
+
 		return (
 			<Modal style={componentStyles.modal} avoidKeyboard={true} animationIn="fadeIn" isVisible={this.props.isVisible}>
 				<StatusBar hidden showHideTransition="fade" />
@@ -63,7 +65,7 @@ export default class Lightbox extends PureComponent {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	modal: {
 		...StyleSheet.absoluteFillObject,
 		padding: 0,
@@ -79,4 +81,6 @@ const componentStyles = StyleSheet.create({
 		width: 34,
 		height: 34
 	}
-});
+};
+
+export default withTheme(_componentStyles)(Lightbox);

@@ -1,16 +1,15 @@
-import React, { Component } from "react";
-import { Text, View, StyleSheet } from "react-native";
-import { compose } from "react-apollo";
-import { withNavigation } from "react-navigation";
-import PropTypes from "prop-types";
+import React, { memo } from "react";
+import { Text, View } from "react-native";
 
 import UserPhoto from "../../atoms/UserPhoto";
 import ContentRow from "../../ecosystems/ContentRow";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
 
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const MentionRow = props => {
+	const { styleVars, styles, componentStyles } = props;
+
 	if (props.loading) {
 		return (
 			<ContentRow>
@@ -32,9 +31,7 @@ const MentionRow = props => {
 	);
 };
 
-export default MentionRow;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	row: {
 		display: "flex",
 		flexDirection: "row",
@@ -45,3 +42,5 @@ const componentStyles = StyleSheet.create({
 		marginLeft: styleVars.spacing.standard
 	}
 });
+
+export default withTheme(_componentStyles)(memo(MentionRow));

@@ -14,7 +14,8 @@ import relativeTime from "../../utils/RelativeTime";
 import Lightbox from "../Lightbox";
 import Mention from "./Mention";
 import Embed from "./Embed";
-import { styleVars, richTextStyles } from "../../styles";
+import { withTheme } from "../../themes";
+import { richTextStyles } from "../../styles";
 import dom from "../../utils/DOM";
 import NavigationService from "../../utils/NavigationService";
 
@@ -92,6 +93,7 @@ class ContentRenderer extends PureComponent {
 	 * @return 	object
 	 */
 	alterNode(node) {
+		const { styleVars } = this.props;
 		const { name, parent } = node;
 
 		// Remove bottom margin from last p. Behaves like :last-child.
@@ -302,4 +304,7 @@ class ContentRenderer extends PureComponent {
 	}
 }
 
-export default compose(connect())(ContentRenderer);
+export default compose(
+	connect(),
+	withTheme()
+)(ContentRenderer);

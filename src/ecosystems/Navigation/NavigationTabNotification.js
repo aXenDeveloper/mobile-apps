@@ -1,27 +1,31 @@
-import React, { Component } from 'react';
-import { View, Image, Text, StyleSheet } from 'react-native';
+import React, { Component } from "react";
+import { View, Image, Text, StyleSheet } from "react-native";
 import { connect } from "react-redux";
+import { compose } from "react-apollo";
 
 import Badge from "../../atoms/Badge";
 import NavigationTabIcon from "./NavigationTabIcon";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
-const NavigationTabNotification = (props) => {	
+const NavigationTabNotification = ({ componentStyles, ...props }) => {
 	return (
 		<NavigationTabIcon {...props}>
 			{props.user.notificationCount > 0 && <Badge count={props.user.notificationCount} style={componentStyles.notificationBadge} />}
 		</NavigationTabIcon>
 	);
-}
+};
 
-export default connect(state => ({
-	user: state.user,
-}))(NavigationTabNotification);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	notificationBadge: {
-		position: 'absolute',
+		position: "absolute",
 		top: -11,
-		right: -8,
+		right: -8
 	}
-});
+};
+
+export default compose(
+	connect(state => ({
+		user: state.user
+	})),
+	withTheme(_componentStyles)
+)(NavigationTabNotification);

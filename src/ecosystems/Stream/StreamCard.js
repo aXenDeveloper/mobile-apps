@@ -1,8 +1,8 @@
-import React, { Component, PureComponent } from "react";
-import { Button, Image, Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
+import React, { PureComponent } from "react";
+import { Image, View, TouchableHighlight } from "react-native";
 import FadeIn from "react-native-fade-in-image";
 import { withNavigation } from "react-navigation";
-import { graphql, compose, withApollo } from "react-apollo";
+import { compose } from "react-apollo";
 
 import NavigationService from "../../utils/NavigationService";
 import Lang from "../../utils/Lang";
@@ -12,8 +12,8 @@ import StreamComment from "./StreamComment";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
-import componentStyles from "./styles";
-import styles, { styleVars } from "../../styles";
+import _componentStyles from "./styles";
+import { withTheme } from "../../themes";
 
 class StreamCard extends PureComponent {
 	constructor(props) {
@@ -27,6 +27,8 @@ class StreamCard extends PureComponent {
 	 * @return 	Component
 	 */
 	loadingComponent() {
+		const { styles, styleVars } = this.props;
+
 		return (
 			<ShadowedArea style={[styles.post, styles.postWrapper]}>
 				<PlaceholderContainer height={140} style={{ padding: styleVars.spacing.standard }}>
@@ -52,6 +54,8 @@ class StreamCard extends PureComponent {
 	 * @return 	Component|null
 	 */
 	getContentImage() {
+		const { componentStyles } = this.props;
+
 		// No images in this content
 		if (!this.props.data.contentImages || !this.props.data.contentImages.length) {
 			return null;
@@ -85,6 +89,7 @@ class StreamCard extends PureComponent {
 	}
 
 	render() {
+		const { componentStyles } = this.props;
 		if (this.props.loading) {
 			return this.loadingComponent();
 		}
@@ -113,4 +118,7 @@ class StreamCard extends PureComponent {
 	}
 }
 
-export default compose(withNavigation)(StreamCard);
+export default compose(
+	withNavigation,
+	withTheme(_componentStyles)
+)(StreamCard);

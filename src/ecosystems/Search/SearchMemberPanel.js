@@ -1,14 +1,14 @@
 import React, { Component } from "react";
-import { Text, View, FlatList, StyleSheet, ActivityIndicator } from "react-native";
+import { View, FlatList } from "react-native";
 import gql from "graphql-tag";
-import { graphql, compose, withApollo } from "react-apollo";
+import { compose, withApollo } from "react-apollo";
 import { withNavigation } from "react-navigation";
-import PropTypes from "prop-types";
 
 import Lang from "../../utils/Lang";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import ErrorBox from "../../atoms/ErrorBox";
 import MemberRow from "../../ecosystems/MemberRow";
+import { withTheme } from "../../themes";
 
 const SearchQuery = gql`
 	query MemberSearchQuery($term: String) {
@@ -162,9 +162,11 @@ class SearchMemberPanel extends Component {
 	}
 
 	render() {
+		const { styles } = this.props;
+
 		if (this.state.loading || this.state.results === null) {
 			return (
-				<View style={[componentStyles.panel]}>
+				<View style={[styles.flex]}>
 					<PlaceholderRepeater repeat={6}>
 						<MemberRow loading={true} />
 					</PlaceholderRepeater>
@@ -172,14 +174,14 @@ class SearchMemberPanel extends Component {
 			);
 		} else if (this.state.error) {
 			return (
-				<View style={componentStyles.panel}>
+				<View style={styles.flex}>
 					<ErrorBox message={Lang.get("error_searching")} />
 				</View>
 			);
 		}
 
 		return (
-			<View style={componentStyles.panel}>
+			<View style={styles.flex}>
 				<FlatList
 					data={this.state.results}
 					keyExtractor={item => item.id}
@@ -195,19 +197,10 @@ class SearchMemberPanel extends Component {
 
 export default compose(
 	withApollo,
-	withNavigation
+	withNavigation,
+	withTheme()
 )(SearchMemberPanel);
 
 SearchMemberPanel.defaultProps = {
 	showResults: false
 };
-
-const componentStyles = StyleSheet.create({
-	panel: {
-		flex: 1
-	},
-	panelLoading: {
-		alignItems: "center",
-		justifyContent: "center"
-	}
-});

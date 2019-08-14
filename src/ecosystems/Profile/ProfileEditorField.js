@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import { View } from "react-native";
 
 import RichTextContent from "../../ecosystems/RichTextContent";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 
 const ProfileEditorField = props => {
 	if (!props.isActive) {
 		return <View />;
 	}
 
+	const { styles } = props;
 	let value;
 
 	try {
@@ -25,4 +26,4 @@ const ProfileEditorField = props => {
 	);
 };
 
-export default ProfileEditorField;
+export default withTheme()(ProfileEditorField);

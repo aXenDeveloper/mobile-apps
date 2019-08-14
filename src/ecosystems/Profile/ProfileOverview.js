@@ -1,14 +1,9 @@
 import React, { Component } from "react";
-import { View, SectionList, Dimensions } from "react-native";
-import gql from "graphql-tag";
-import { graphql, compose, withApollo } from "react-apollo";
+import { View, SectionList } from "react-native";
 import _ from "underscore";
 
 import SectionHeader from "../../atoms/SectionHeader";
 import ProfileField from "./ProfileField";
-import Lang from "../../utils/Lang";
-import ErrorBox from "../../atoms/ErrorBox";
-import styles from "../../styles";
 
 class ProfileOverview extends Component {
 	constructor(props) {

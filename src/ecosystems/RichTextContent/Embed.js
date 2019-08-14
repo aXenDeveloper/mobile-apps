@@ -12,7 +12,7 @@ import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const ItemFragment = gql`
 	fragment ItemFragment on core_Item {
@@ -125,6 +125,8 @@ class Embed extends Component {
 	 * @return 	Component
 	 */
 	getEmbedContents() {
+		const { componentStyles, styleVars } = this.props;
+
 		// Normalize the data
 		const data = this._getNormalizedData();
 		const imageToUse = getSuitableImage(data.item.contentImages);
@@ -162,6 +164,8 @@ class Embed extends Component {
 	 * @return 	Component
 	 */
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.props.data.loading) {
 			return (
 				<View style={[componentStyles.wrapper, this.props.style, { height: 90 }]}>
@@ -193,18 +197,7 @@ class Embed extends Component {
 	}
 }
 
-export default compose(
-	graphql(EmbedQuery, {
-		options: props => ({
-			variables: {
-				url: props.url
-			}
-		})
-	}),
-	withNavigation
-)(Embed);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	wrapper: {
 		backgroundColor: "#fff",
 		borderRadius: 4,
@@ -277,3 +270,15 @@ const componentStyles = StyleSheet.create({
 		alignSelf: "center"
 	}
 });
+
+export default compose(
+	graphql(EmbedQuery, {
+		options: props => ({
+			variables: {
+				url: props.url
+			}
+		})
+	}),
+	withNavigation,
+	withTheme(_componentStyles)
+)(Embed);

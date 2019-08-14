@@ -2,10 +2,12 @@ import React, { memo } from "react";
 import { Text, Image, View, StyleSheet, TouchableOpacity } from "react-native";
 
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 const BestAnswer = props => {
+	const { componentStyles } = props;
+
 	if (props.setBestAnswer == null) {
 		return (
 			<View style={[componentStyles.wrapper, componentStyles.bestAnswer]}>
@@ -25,9 +27,7 @@ const BestAnswer = props => {
 	);
 };
 
-export default memo(BestAnswer);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	wrapper: {
 		width: 34,
 		height: 34,
@@ -51,3 +51,5 @@ const componentStyles = StyleSheet.create({
 		tintColor: "#fff"
 	}
 });
+
+export default withTheme(_componentStyles)(memo(BestAnswer));

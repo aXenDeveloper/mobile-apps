@@ -9,7 +9,7 @@ import Button from "../../atoms/Button";
 import SectionHeader from "../../atoms/SectionHeader";
 import ToggleRow from "../../atoms/ToggleRow";
 import { isIphoneX } from "../../utils/isIphoneX";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class FollowModal extends Component {
 	constructor(props) {
@@ -81,6 +81,8 @@ class FollowModal extends Component {
 	 * @return 	Component
 	 */
 	getFollowButtons() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.props.followData.isFollowing) {
 			return (
 				<View style={componentStyles.buttonWrap}>
@@ -123,6 +125,8 @@ class FollowModal extends Component {
 	 * @return 	Component
 	 */
 	getChecklist() {
+		const { styles } = this.props;
+
 		if (this.props.followData.followOptions.length <= 1) {
 			return null;
 		}
@@ -201,6 +205,8 @@ class FollowModal extends Component {
 	 * @return 	Component
 	 */
 	renderItem(item) {
+		const { styles } = this.props;
+
 		if (item.item === "followChoices") {
 			return this.getChecklist();
 		} else if (item.item === "followers") {
@@ -215,6 +221,7 @@ class FollowModal extends Component {
 	}
 
 	render() {
+		const { componentStyles, styles } = this.props;
 		return (
 			<Modal style={componentStyles.modal} swipeDirection="down" onSwipeComplete={this.props.close} isVisible={this.props.isVisible}>
 				<View style={componentStyles.modalInner}>
@@ -232,7 +239,7 @@ class FollowModal extends Component {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	modal: {
 		justifyContent: "flex-end",
 		margin: 0,
@@ -275,4 +282,4 @@ const componentStyles = StyleSheet.create({
 	}
 });
 
-export default FollowModal;
+export default withTheme(_componentStyles)(FollowModal);

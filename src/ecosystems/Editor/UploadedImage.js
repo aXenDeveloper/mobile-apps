@@ -6,10 +6,10 @@ import * as Animatable from "react-native-animatable";
 import { UPLOAD_STATUS } from "../../redux/actions/editor";
 import { AnimatedCircularProgress } from "../../ecosystems/CircularProgress";
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
-export class UploadedImage extends PureComponent {
+class UploadedImage extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.actionSheetPress = this.actionSheetPress.bind(this);
@@ -83,6 +83,8 @@ export class UploadedImage extends PureComponent {
 	}
 
 	getStatusOverlay() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.props.status === UPLOAD_STATUS.UPLOADING || this.props.status === UPLOAD_STATUS.DONE) {
 			// If we're uploading (but not at 100%), or already finished, show the upload progress
 			return (
@@ -146,7 +148,7 @@ export class UploadedImage extends PureComponent {
 
 //<ActivityIndicator size='small' color='#fff' />
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	uploadedImageWrapper: {
 		width: 60,
 		height: 60,
@@ -159,16 +161,16 @@ const componentStyles = StyleSheet.create({
 		height: 60
 	},
 	uploadingOverlay: {
-		backgroundColor: "rgba(0,0,0,0.4)",
+		backgroundColor: "rgba(0,0,0,0.4)", // @todo colors
 		...StyleSheet.absoluteFillObject
 	},
 	errorIcon: {
 		width: 24,
 		height: 24,
-		tintColor: "#fff"
+		tintColor: "#fff" // @todo colors
 	},
 	errorText: {
-		color: "#fff",
+		color: "#fff", // @todo colors
 		fontSize: 10,
 		fontWeight: "500",
 		marginTop: 2
@@ -176,6 +178,8 @@ const componentStyles = StyleSheet.create({
 	abortButton: {
 		width: 12,
 		height: 12,
-		tintColor: "#fff"
+		tintColor: "#fff" // @todo colors
 	}
 });
+
+export default withTheme(_componentStyles)(UploadedImage);

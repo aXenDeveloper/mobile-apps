@@ -3,9 +3,9 @@ import { Text, TextInput, View, StyleSheet, TouchableHighlight } from "react-nat
 import Modal from "react-native-modal";
 
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
-export default class TextPrompt extends Component {
+class TextPrompt extends Component {
 	state = {
 		value: ""
 	};
@@ -30,6 +30,8 @@ export default class TextPrompt extends Component {
 	}
 
 	render() {
+		const { componentStyles, styleVars, styles } = this.props;
+
 		return (
 			<Modal
 				style={componentStyles.outerModal}
@@ -58,7 +60,7 @@ export default class TextPrompt extends Component {
 							style={[componentStyles.button, componentStyles.buttonCancel]}
 							onPress={() => this.props.close()}
 						>
-							<Text style={[componentStyles.buttonText, componentStyles.buttonCancelText]}>{Lang.get('cancel')}</Text>
+							<Text style={[componentStyles.buttonText, componentStyles.buttonCancelText]}>{Lang.get("cancel")}</Text>
 						</TouchableHighlight>
 						<TouchableHighlight
 							activeOpacity={styleVars.touchOpacity}
@@ -75,12 +77,12 @@ export default class TextPrompt extends Component {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	outerModal: {
 		flex: 1
 	},
 	modal: {
-		backgroundColor: "rgba(255,255,255,0.9)",
+		backgroundColor: "rgba(255,255,255,0.9)", // @todo color
 		borderRadius: 6
 	},
 	body: {
@@ -91,7 +93,7 @@ const componentStyles = StyleSheet.create({
 	},
 	title: {
 		fontSize: styleVars.fontSizes.large,
-		color: "#000",
+		color: "#000", // @todo color
 		fontWeight: "bold"
 	},
 	message: {
@@ -119,7 +121,7 @@ const componentStyles = StyleSheet.create({
 	},
 	buttonText: {
 		textAlign: "center",
-		color: "#0073ff",
+		color: "#0073ff", // @todo color
 		fontSize: styleVars.fontSizes.large
 	},
 	buttonCancel: {
@@ -130,3 +132,5 @@ const componentStyles = StyleSheet.create({
 		fontWeight: "bold"
 	}
 });
+
+export default withTheme(_componentStyles)(TextPrompt);
