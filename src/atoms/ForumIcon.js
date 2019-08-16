@@ -20,10 +20,10 @@ const _componentStyles = styleVars => ({
 		height: 19
 	},
 	activeIcon: {
-		tintColor: "#2080A7" // @todo color
+		tintColor: styleVars.unread.active
 	},
 	inactiveIcon: {
-		tintColor: "#8F8F8F" // @todo color
+		tintColor: styleVars.unread.inactive
 	}
 });
 

@@ -61,7 +61,7 @@ class NotificationSettingRow extends Component {
 	}
 
 	render() {
-		const { styles, componentStyles } = this.props;
+		const { styles, componentStyles, styleVars } = this.props;
 
 		if (this.props.loading) {
 			return (

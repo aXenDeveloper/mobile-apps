@@ -8,7 +8,7 @@ const SectionHeader = ({ componentStyles, ...props }) => <Text style={componentS
 const _componentStyles = styleVars => ({
 	sectionHeader: {
 		fontSize: 13,
-		color: "#6D6D72", // @todo color
+		color: styleVars.backgroundLightText,
 		backgroundColor: styleVars.appBackground,
 		paddingHorizontal: styleVars.spacing.wide,
 		paddingVertical: styleVars.spacing.standard

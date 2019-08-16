@@ -176,6 +176,8 @@ class SearchContentPanel extends Component {
 	};
 
 	render() {
+		const { styles } = this.props;
+
 		if (this.state.loading && this.state.results == null) {
 			return (
 				<PlaceholderRepeater repeat={6}>

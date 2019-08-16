@@ -16,11 +16,11 @@ class ActionBar extends PureComponent {
 	}
 
 	render() {
-		const { componentStyles } = this.props;
+		const { styles, componentStyles } = this.props;
 
 		return (
 			<View
-				style={[componentStyles.pager, this.props.light ? componentStyles.light : componentStyles.dark, this.props.style]}
+				style={[styles.pTight, componentStyles.pager, this.props.light ? styles.actionBarLight : styles.actionBarDark, this.props.style]}
 				ref={ref => (this._wrapperRef = ref)}
 			>
 				{this.props.children}
@@ -37,14 +37,6 @@ const _componentStyles = styleVars => ({
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "center"
-	},
-	dark: {
-		backgroundColor: "#37454B" // @todo color
-	},
-	light: {
-		backgroundColor: styleVars.greys.light,
-		borderTopWidth: 1,
-		borderTopColor: "rgba(0,0,0,0.1)" // @todo color
 	}
 });
 

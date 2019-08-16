@@ -114,8 +114,8 @@ class NotificationsSettingsScreen extends Component {
 
 		return (
 			<View style={styles.pWide}>
-				<Text style={[styles.lightText, styles.standardText]}>{Lang.get("notification_android_extra")}</Text>
-				<Text style={[styles.lightText, styles.standardText]}>{Lang.get("notification_android_extra_desc")}</Text>
+				<Text style={[styles.backgroundLightText, styles.standardText]}>{Lang.get("notification_android_extra")}</Text>
+				<Text style={[styles.backgroundLightText, styles.standardText]}>{Lang.get("notification_android_extra_desc")}</Text>
 			</View>
 		);
 	}
@@ -138,7 +138,7 @@ class NotificationsSettingsScreen extends Component {
 		return (
 			<View style={[styles.pWide, styles.mtStandard, styles.flexRow, styles.flexAlignStart]}>
 				<Image source={icons.INFO} resizeMode="contain" style={[{ width: 20, height: 20 }, styles.mrStandard, styles.lightImage]} />
-				<Text style={[styles.smallText, styles.lightText, styles.flexBasisZero, styles.flexGrow]}>
+				<Text style={[styles.smallText, styles.backgroundLightText, styles.flexBasisZero, styles.flexGrow]}>
 					{Lang.get("notification_instructions")} {platformInstructions}
 				</Text>
 			</View>

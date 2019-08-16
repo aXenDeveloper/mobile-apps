@@ -10,17 +10,6 @@ import LargeTitle from "../../atoms/LargeTitle";
 import licenseJson from "../../../licenses.json";
 import { withTheme } from "../../themes";
 
-let _LicenseListItem = props => (
-	<ContentRow unread style={[props.styles.pvStandard, props.styles.phWide]} showArrow>
-		<TouchableOpacity onPress={() => props.licenseUrl && NavigationService.navigate(props.licenseUrl, {}, { forceBrowser: true })}>
-			<Text style={props.styles.smallItemTitle}>
-				{props.name} by {props.username}
-			</Text>
-			<Text style={props.styles.lightText}>{props.licenses}</Text>
-		</TouchableOpacity>
-	</ContentRow>
-);
-const LicenseListItem = withTheme(memo(_LicenseListItem));
 const reg = /((https?:\/\/)?(www\.)?github\.com\/)?(@|#!\/)?([A-Za-z0-9_]{1,15})(\/([-a-z]{1,20}))?/i;
 
 class LicensesScreen extends Component {
@@ -35,7 +24,18 @@ class LicensesScreen extends Component {
 	}
 
 	renderItem({ item }) {
-		return <LicenseListItem {...item} />;
+		const { styles } = this.props;
+
+		return (
+			<ContentRow unread style={[styles.pvStandard, styles.phWide]} showArrow>
+				<TouchableOpacity onPress={() => item.licenseUrl && NavigationService.navigate(item.licenseUrl, {}, { forceBrowser: true })}>
+					<Text style={styles.smallItemTitle}>
+						{item.name} by {item.username}
+					</Text>
+					<Text style={styles.lightText}>{item.licenses}</Text>
+				</TouchableOpacity>
+			</ContentRow>
+		);
 	}
 
 	keyExtractor(item) {
@@ -100,6 +100,7 @@ class LicensesScreen extends Component {
 	render() {
 		const { styles } = this.props;
 		const licenseData = this.getLicenseData();
+
 		return (
 			<FlatList
 				ListHeaderComponent={this.getHeaderComponent()}

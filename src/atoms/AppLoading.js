@@ -45,9 +45,9 @@ const AppLoading = props => {
 	);
 };
 
-const _componentStyles = {
+const _componentStyles = styleVars => ({
 	wrapper: {
-		backgroundColor: "#2c76a9" // @todo color
+		backgroundColor: styleVars.accentColor
 	},
 	message: {
 		maxWidth: "75%"
@@ -58,11 +58,11 @@ const _componentStyles = {
 	icon: {
 		width: 60,
 		height: 60,
-		tintColor: "#fff", // @todo color
+		tintColor: styleVars.reverseText,
 		opacity: 0.3
 	},
 	tryAgainText: {
-		color: "rgba(255,255,255,0.5)", // @todo color
+		color: "rgba(255,255,255,0.5)",
 		fontSize: 15
 	},
 	splash: {
@@ -80,6 +80,6 @@ const _componentStyles = {
 		left: "50%",
 		marginLeft: -18
 	}
-};
+});
 
 export default withTheme(_componentStyles)(memo(AppLoading));

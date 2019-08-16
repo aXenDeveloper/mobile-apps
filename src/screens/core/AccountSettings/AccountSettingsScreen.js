@@ -13,6 +13,12 @@ class AccountSettingsScreen extends Component {
 		title: "Account Settings"
 	};
 
+	constructor(props) {
+		super(props);
+		this.renderItem = this.renderItem.bind(this);
+		this.renderSectionHeader = this.renderSectionHeader.bind(this);
+	}
+
 	getAccountSections() {
 		return [
 			/*{
@@ -70,7 +76,6 @@ class AccountSettingsScreen extends Component {
 				sections={this.getAccountSections()}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				SectionSeparatorComponent={this.renderSectionSeparator}
 				stickySectionHeadersEnabled={false}
 			/>
 		);

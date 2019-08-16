@@ -32,7 +32,7 @@ const initialState = {
 		contentView: "first"
 	},
 	toast: [],
-	currentTheme: null,
+	currentTheme: "red",
 	darkMode: false
 };
 

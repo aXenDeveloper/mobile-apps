@@ -151,7 +151,7 @@ class NotificationsSettingsTypeScreen extends Component {
 				{description && (
 					<View style={[styles.pWide, styles.mtStandard, styles.mbWide, styles.flexRow, styles.flexAlignStart]}>
 						<Image source={icons.INFO} resizeMode="contain" style={[{ width: 20, height: 20 }, styles.lightImage, styles.mrStandard]} />
-						<Text style={[styles.smallText, styles.lightText, styles.flexBasisZero, styles.flexGrow]}>{description}</Text>
+						<Text style={[styles.smallText, styles.backgroundLightText, styles.flexBasisZero, styles.flexGrow]}>{description}</Text>
 					</View>
 				)}
 				{_.isNull(push) ? this.getInlineToggle() : this.getInlineChecklist()}

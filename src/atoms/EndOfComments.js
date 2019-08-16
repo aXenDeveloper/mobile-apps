@@ -5,24 +5,20 @@ import PropTypes from "prop-types";
 import { withTheme } from "../themes";
 
 const EndOfComments = props => {
-	const { componentStyles } = props;
+	const { componentStyles, styles } = props;
 	return (
-		<View style={componentStyles.wrapper}>
-			<Text style={componentStyles.text}>{props.label}</Text>
+		<View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.wrapper]}>
+			<Text style={[styles.smallText, componentStyles.text]}>{props.label}</Text>
 		</View>
 	);
 };
 
-const _componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	wrapper: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "center",
 		height: 75
 	},
 	text: {
-		fontSize: 13,
-		color: "rgba(0,0,0,0.3)" // @todo color
+		color: styleVars.backgroundLightText
 	}
 });
 

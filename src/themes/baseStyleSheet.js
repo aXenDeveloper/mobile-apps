@@ -318,24 +318,24 @@ const baseStylesheet = (styleVars, darkMode) => {
 		/* Typography */
 		largeTitle: {
 			fontSize: 26,
-			color: "#141823"
+			color: styleVars.titleColors.darker
 		},
 		contentTitle: {
 			fontSize: styleVars.fontSizes.extraLarge,
 			fontWeight: "600",
-			color: "#07080b",
+			color: styleVars.titleColors.dark,
 			fontFamily: styleVars.fontFamily
 		},
 		itemTitle: {
 			fontSize: styleVars.fontSizes.large,
 			fontWeight: "600",
-			color: "#141823",
+			color: styleVars.titleColors.dark,
 			fontFamily: styleVars.fontFamily
 		},
 		smallItemTitle: {
 			fontSize: styleVars.fontSizes.content,
 			fontWeight: "bold",
-			color: "#141823",
+			color: styleVars.titleColors.dark,
 			fontFamily: styleVars.fontFamily
 		},
 		highlightedText: {
@@ -390,6 +390,9 @@ const baseStylesheet = (styleVars, darkMode) => {
 		negativeText: {
 			color: styleVars.negative
 		},
+		backgroundLightText: {
+			color: styleVars.backgroundLightText
+		},
 
 		/* Border styles */
 		bBorder: { borderBottomWidth: 1 },
@@ -417,6 +420,16 @@ const baseStylesheet = (styleVars, darkMode) => {
 		},
 		veryLightImage: {
 			tintColor: styleVars.veryLightText
+		},
+
+		/* Action bar styles */
+		actionBarDark: {
+			backgroundColor: styleVars.actionBar.darkBackground
+		},
+		actionBarLight: {
+			backgroundColor: styleVars.actionBar.lightBackground,
+			borderTopWidth: 1,
+			borderTopColor: "rgba(0,0,0,0.1)"
 		},
 
 		/* Spacing styles */

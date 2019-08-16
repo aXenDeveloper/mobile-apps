@@ -13,7 +13,7 @@ const UnreadIndicator = ({ styles, componentStyles, ...props }) => {
 
 const _componentStyles = styleVars => ({
 	dot: {
-		color: styleVars.accentColor,
+		color: styleVars.unread.active,
 		fontSize: 20
 	}
 });
