@@ -43,7 +43,7 @@ class PopularContributors extends Component {
 			>
 				<Text style={[styles.contentText, styles.lightText, styles.mediumText, componentStyles.number]}>{idx + 1}</Text>
 				<UserPhoto url={data.user.photo} size={36} style={componentStyles.userPhoto} />
-				<View style={[styles.flexGrow, componentStyles.data, styles.mlStandard]}>
+				<View style={[styles.flexGrow, styles.flexBasisZero, componentStyles.data, styles.mlStandard]}>
 					<Text style={styles.smallItemTitle} numberOfLines={1}>
 						{data.user.name}
 					</Text>
