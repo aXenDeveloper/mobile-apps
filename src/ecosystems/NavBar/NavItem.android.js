@@ -7,7 +7,9 @@ const NavItem = props => (
 	<TouchableOpacity style={componentStyles.navItem} onPress={props.onPress}>
 		<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter, styles.pvStandard, styles.mlWide, styles.mrStandard]}>
 			<Image source={props.icon} resizeMode="contain" style={[styles.mrTight, componentStyles.navItemIcon]} />
-			<Text style={[styles.smallText, componentStyles.navItemText]}>{props.title}</Text>
+			<Text style={[styles.smallText, componentStyles.navItemText]} allowFontScaling={false}>
+				{props.title}
+			</Text>
 		</View>
 	</TouchableOpacity>
 );
