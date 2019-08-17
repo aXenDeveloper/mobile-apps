@@ -295,6 +295,20 @@ class ContentRenderer extends PureComponent {
 		return toReturn;
 	}
 
+	/**
+	 * react-native-render-html has a bug whereby spaces around formatted elements are lost
+	 * This method adds extra spacing before and after formatting tags
+	 *
+	 * @param 	string 		content 	The content to fix
+	 * @return 	string
+	 */
+	fixContentSpacing(content) {
+		content = content.replace(/<[/](strong|em|i|s|u|span)> /g, " </$1>");
+		content = content.replace(/ <(strong|em|i|s|u|span)>/g, "<$1> ");
+
+		return content;
+	}
+
 	render() {
 		return (
 			<React.Fragment>
@@ -308,7 +322,7 @@ class ContentRenderer extends PureComponent {
 					alterData={this.alterData}
 					baseFontStyle={this.props.baseFontStyle || richTextStyles(this.props.dark).defaultTextStyle}
 					ignoredStyles={["font-family", "letter-spacing", "line-height"]}
-					html={this.props.children}
+					html={this.fixContentSpacing(this.props.children)}
 					imagesMaxWidth={this.maxImagesWidth}
 					staticContentMaxWidth={this.maxImagesWidth}
 					onLinkPress={this.props.onLinkPress || this.onLinkPress}
