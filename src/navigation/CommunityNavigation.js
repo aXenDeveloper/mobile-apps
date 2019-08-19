@@ -332,7 +332,8 @@ class AppNavigation extends Component {
 				showLabel: true,
 				inactiveTintColor: styleVars.primaryTabInactive,
 				activeTintColor: styleVars.primaryTabActive,
-				style: styles.primaryTabBar
+				style: styles.primaryTabBar,
+				allowFontScaling: false
 			}
 		});
 	}
