@@ -97,6 +97,11 @@ const TopicViewQuery = gql`
 					canVoteDown
 					vote
 				}
+				forum {
+					__typename
+					id
+					hasUnread
+				}
 				follow {
 					...FollowModalFragment
 				}
@@ -128,6 +133,10 @@ const MarkTopicRead = gql`
 				timeLastRead
 				unreadCommentPosition
 				isUnread
+				forum {
+					id
+					hasUnread
+				}
 			}
 		}
 	}
@@ -836,7 +845,10 @@ class TopicViewScreen extends Component {
 							id: this.props.data.forums.topic.id,
 							timeLastRead: this.props.data.forums.topic.timeLastRead,
 							unreadCommentPosition: this.props.data.forums.topic.unreadCommentPosition,
-							isUnread: false
+							isUnread: false,
+							forum: {
+								...this.props.data.forums.topic.forum
+							}
 						}
 					}
 				}
