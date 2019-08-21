@@ -34,9 +34,9 @@
       "remoteServicesUrl": "https://remoteservices.invisionpower.com/mobile/",
       "max_image_dim": 1000
     },
-    "name": "invision-community",
+    "name": "Invision Community",
     "slug": "invision-community",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "",
     "scheme": "invision-community",
     "ios": {
