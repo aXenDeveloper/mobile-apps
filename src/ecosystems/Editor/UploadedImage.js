@@ -9,7 +9,7 @@ import Lang from "../../utils/Lang";
 import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
 
-export class UploadedImage extends PureComponent {
+export default class UploadedImage extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.actionSheetPress = this.actionSheetPress.bind(this);
