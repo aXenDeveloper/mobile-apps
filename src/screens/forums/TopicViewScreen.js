@@ -853,6 +853,8 @@ class TopicViewScreen extends Component {
 					}
 				}
 			});
+
+			console.log(data);
 		} catch (err) {
 			console.log("Couldn't mark topic as read: " + err);
 		}
