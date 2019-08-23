@@ -256,7 +256,7 @@ class TopicViewScreen extends Component {
 			startingOffset: this.props.data.variables.offset || 0,
 			pollModalVisible: false,
 			followModalVisible: false,
-			currentPosition: 1,
+			currentPosition: 0,
 			loadingUnseenPosts: false,
 			innerHeaderHeight: 200
 		};
