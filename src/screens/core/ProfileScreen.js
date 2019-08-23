@@ -112,7 +112,7 @@ class ProfileScreen extends Component {
 	 * @return 	void
 	 */
 	onPressBack() {
-		this.props.navigation.goBack();
+		this.props.navigation.goBack(null);
 	}
 
 	/**
