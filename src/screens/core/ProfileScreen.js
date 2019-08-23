@@ -287,7 +287,7 @@ class ProfileScreen extends Component {
 			]
 		});
 
-		if (this.props.data.core.member.customFieldGroups.length) {
+		if (this.props.data.core.member.customFieldGroups && this.props.data.core.member.customFieldGroups.length) {
 			this.props.data.core.member.customFieldGroups.forEach(group => {
 				if (!group.fields.length) {
 					return;
@@ -327,7 +327,7 @@ class ProfileScreen extends Component {
 	getAdditionalTabs() {
 		const additionalTabs = {};
 
-		if (this.props.data.core.member.customFieldGroups.length) {
+		if (this.props.data.core.member.customFieldGroups && this.props.data.core.member.customFieldGroups.length) {
 			this.props.data.core.member.customFieldGroups.forEach(group => {
 				if (group.fields.length) {
 					group.fields.forEach(field => {
