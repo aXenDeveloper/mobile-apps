@@ -12,6 +12,7 @@ import ContentRow from "../../ecosystems/ContentRow";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import ForumIcon from "../../atoms/ForumIcon";
 import LastPostInfo from "../../ecosystems/LastPostInfo";
+import formatNumber from "../../utils/formatNumber";
 import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
 
@@ -51,7 +52,7 @@ class ForumItem extends Component {
 			params: {
 				id: this.props.data.id,
 				title: this.props.data.name,
-				subtitle: Lang.pluralize(Lang.get("topics"), this.props.data.topicCount)
+				subtitle: Lang.pluralize(Lang.get("topics"), formatNumber(this.props.data.topicCount))
 			},
 			key: `forum_${this.props.data.id}`
 		});
@@ -130,7 +131,7 @@ class ForumItem extends Component {
 								{this.props.data.name}
 							</Text>
 							<Text testId="postCount" style={[styles.lightText, styles.standardText]}>
-								{Lang.pluralize(Lang.get("posts"), postCount)}
+								{Lang.pluralize(Lang.get("posts"), formatNumber(postCount))}
 							</Text>
 						</View>
 					</View>

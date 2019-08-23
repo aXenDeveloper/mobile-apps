@@ -6,6 +6,7 @@ import { withNavigation } from "react-navigation";
 
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
+import formatNumber from "../../utils/formatNumber";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
 import TopicInfo from "./TopicInfo";
 import QuestionInfo from "./QuestionInfo";
@@ -99,7 +100,7 @@ class TopicRow extends Component {
 						</Text>
 
 						<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText, hidden ? componentStyles.topicMetaTextHidden : null]}>
-							{Lang.pluralize(Lang.get("replies"), this.props.data.replies)}
+							{Lang.pluralize(Lang.get("replies"), formatNumber(this.props.data.replies))}
 						</Text>
 					</View>
 					<View style={[styles.flexRow, componentStyles.userPhotos]}>

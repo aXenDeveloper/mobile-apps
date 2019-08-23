@@ -7,6 +7,7 @@ import ShadowedArea from "../../atoms/ShadowedArea";
 import PostControls from "../../atoms/PostControls";
 import PostControl from "../../atoms/PostControl";
 import relativeTime from "../../utils/RelativeTime";
+import formatNumber from "../../utils/formatNumber";
 import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
 
@@ -65,7 +66,7 @@ class PollPreview extends PureComponent {
 						{Lang.get("poll_prefix")} {this.props.data.title}
 					</Text>
 					<View style={[styles.mtVeryTight, styles.flexRow, styles.flexJustifyCenter]}>
-						<Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.pluralize(Lang.get("votes"), this.props.data.votes)}</Text>
+						<Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.pluralize(Lang.get("votes"), formatNumber(this.props.data.votes))}</Text>
 						{Boolean(this.props.data.hasVoted) && <Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.get("poll_you_voted")}</Text>}
 						{this.getCloseText()}
 					</View>

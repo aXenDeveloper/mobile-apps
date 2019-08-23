@@ -8,6 +8,7 @@ import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import UserPhoto from "../../atoms/UserPhoto";
 import NavigationService from "../../utils/NavigationService";
+import formatNumber from "../../utils/formatNumber";
 import styles, { styleVars } from "../../styles";
 
 class ActiveUsers extends Component {
@@ -93,7 +94,9 @@ class ActiveUsers extends Component {
 		if (activeUsersData.count - activeUsersData.users.length > 0) {
 			return (
 				<View style={[styles.flex, styles.flexJustifyCenter, styles.flexAlignCenter, componentStyles.andMore]}>
-					<Text style={[styles.lightText, styles.smallText]}>+{Lang.pluralize(Lang.get("x_more"), activeUsersData.count - activeUsersData.users.length)}</Text>
+					<Text style={[styles.lightText, styles.smallText]}>
+						+{Lang.pluralize(Lang.get("x_more"), formatNumber(activeUsersData.count - activeUsersData.users.length))}
+					</Text>
 				</View>
 			);
 		}

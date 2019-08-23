@@ -19,6 +19,7 @@ import TwoLineHeader from "../../atoms/TwoLineHeader";
 import { ProfileContent, ProfileOverview, ProfileEditorField, ProfileFollowers, ProfilePlaceholder, ProfileField } from "../../ecosystems/Profile";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 import getImageUrl from "../../utils/getImageUrl";
+import formatNumber from "../../utils/formatNumber";
 import { isIphoneX } from "../../utils/isIphoneX";
 import styles, { styleVars } from "../../styles";
 
@@ -492,18 +493,18 @@ class ProfileScreen extends Component {
 								)}
 								<View style={[styles.mtWide, componentStyles.profileStats]}>
 									<View style={[componentStyles.profileStatSection, componentStyles.profileStatSectionBorder]}>
-										<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.contentCount}</Text>
+										<Text style={componentStyles.profileStatCount}>{formatNumber(this.props.data.core.member.contentCount)}</Text>
 										<Text style={componentStyles.profileStatTitle}>{Lang.get("profile_content_count")}</Text>
 									</View>
 									{Boolean(this.props.site.settings.reputation_show_profile) && (
 										<View style={[componentStyles.profileStatSection, componentStyles.profileStatSectionBorder]}>
-											<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.reputationCount}</Text>
+											<Text style={componentStyles.profileStatCount}>{formatNumber(this.props.data.core.member.reputationCount)}</Text>
 											<Text style={componentStyles.profileStatTitle}>{Lang.get("profile_reputation")}</Text>
 										</View>
 									)}
 									{Boolean(this.props.data.core.member.allowFollow) && (
 										<View style={componentStyles.profileStatSection}>
-											<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.follow.followCount}</Text>
+											<Text style={componentStyles.profileStatCount}>{formatNumber(this.props.data.core.member.follow.followCount)}</Text>
 											<Text style={componentStyles.profileStatTitle}>{Lang.get("profile_followers")}</Text>
 										</View>
 									)}

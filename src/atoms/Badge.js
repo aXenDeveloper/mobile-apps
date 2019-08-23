@@ -2,10 +2,11 @@ import React, { memo } from "react";
 import { View, Image, Text, StyleSheet } from "react-native";
 
 import styles, { styleVars } from "../styles";
+import formatNumber from "../utils/formatNumber";
 
 const Badge = props => (
 	<View style={[componentStyles.notificationBadge, props.style]}>
-		<Text style={componentStyles.notificationBadgeText}>{props.count}</Text>
+		<Text style={componentStyles.notificationBadgeText}>{formatNumber(props.count)}</Text>
 	</View>
 );
 

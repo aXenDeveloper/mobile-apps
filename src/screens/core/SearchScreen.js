@@ -8,6 +8,7 @@ import { graphql, compose, withApollo } from "react-apollo";
 import { ScrollableTab, Tab, TabHeading, Tabs } from "native-base";
 
 import Lang from "../../utils/Lang";
+import formatNumber from "../../utils/formatNumber";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import { PlaceholderElement, PlaceholderContainer, PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SectionHeader from "../../atoms/SectionHeader";
@@ -439,7 +440,7 @@ class SearchScreen extends Component {
 						}}
 					>
 						<Text numberOfLines={1} style={componentStyles.seeAllRowText}>
-							{Lang.get("see_all")} ({section.count})
+							{Lang.get("see_all")} ({formatNumber(section.count)})
 						</Text>
 					</ContentRow>
 				);
@@ -563,6 +564,7 @@ class SearchScreen extends Component {
 						onSubmitEditing={this.onSubmitTextInput}
 						ref={ref => (this._textInput = ref)}
 						value={this.state.searchTerm}
+						clearButtonMode="while-editing"
 					/>
 				</View>
 				{Boolean(this.state.textInputActive || this.state.showingResults) && (

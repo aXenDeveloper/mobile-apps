@@ -6,6 +6,7 @@ import highlightTerms from "../../utils/highlightTerms";
 import UserPhoto from "../../atoms/UserPhoto";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import relativeTime from "../../utils/RelativeTime";
+import formatNumber from "../../utils/formatNumber";
 import styles, { styleVars } from "../../styles";
 
 const SearchResultComment = props => {
@@ -22,7 +23,7 @@ const SearchResultComment = props => {
 					<Text style={[styles.lightText, hidden && styles.moderatedLightText]}>{relativeTime.short(props.data.updated)}</Text>
 				</View>
 				<Text style={[styles.lightText, componentStyles.commentItemMeta, hidden && styles.moderatedLightText]}>
-					{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), props.data.replies)} - `}
+					{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), formatNumber(props.data.replies))} - `}
 					{Lang.get("item_in_container", { item: props.data.articleLang.definiteUC, container: props.data.containerTitle })}
 				</Text>
 			</View>

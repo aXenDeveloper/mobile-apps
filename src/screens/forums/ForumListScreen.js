@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
+import formatNumber from "../../utils/formatNumber";
 import { setForumPassword } from "../../redux/actions/forums";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SectionHeader from "../../atoms/SectionHeader";
@@ -68,7 +69,7 @@ class ForumListScreen extends Component {
 					this.props.navigation.navigate("TopicList", {
 						id: forum.id,
 						title: forum.name,
-						subtitle: Lang.pluralize(Lang.get("topics"), forum.topicCount)
+						subtitle: Lang.pluralize(Lang.get("topics"), formatNumber(forum.topicCount))
 					});
 				};
 			}

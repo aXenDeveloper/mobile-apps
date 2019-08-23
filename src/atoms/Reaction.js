@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Text, View, StyleSheet, Image, TouchableHighlight } from "react-native";
 
 import getImageUrl from "../utils/getImageUrl";
+import formatNumber from "../utils/formatNumber";
 
 export default class Reaction extends Component {
 	constructor(props) {
@@ -27,7 +28,7 @@ export default class Reaction extends Component {
 			<TouchableHighlight onPress={this.props.onPress ? this.onPress : null} key={this.props.id} style={[this.props.style, styles.reactionWrapper]}>
 				<View style={styles.reaction}>
 					<Image source={{ uri: getImageUrl(this.props.image) }} style={styles.reactionImage} resizeMode="cover" />
-					<Text style={styles.reactionCount}>{this.props.count}</Text>
+					<Text style={styles.reactionCount}>{formatNumber(this.props.count)}</Text>
 				</View>
 			</TouchableHighlight>
 		);
