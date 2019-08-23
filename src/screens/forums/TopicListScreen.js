@@ -406,6 +406,7 @@ class TopicListScreen extends Component {
 
 		this.props.navigation.navigate("CreateTopic", {
 			forumID: this.props.navigation.state.params.id,
+			forumName: forumData.name,
 			tagsEnabled,
 			definedTags,
 			requiresApproval: forumData.nodePermissions.itemsRequireApproval

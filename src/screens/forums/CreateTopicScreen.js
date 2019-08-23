@@ -10,6 +10,7 @@ import TagEdit from "../../ecosystems/TagEdit";
 import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
 import { UPLOAD_STATUS } from "../../redux/actions/editor";
 import HeaderButton from "../../atoms/HeaderButton";
+import TwoLineHeader from "../../atoms/TwoLineHeader";
 import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
 import styles from "../../styles";
@@ -44,7 +45,7 @@ class CreateTopicScreen extends Component {
 					<Text style={styles.headerTitle}> {Lang.get("submitting")}...</Text>
 				</React.Fragment>
 			) : (
-				Lang.get("create_topic")
+				<TwoLineHeader title={Lang.get("create_topic")} subtitle={Lang.get("in_container", { container: navigation.getParam("forumName") })} />
 			),
 			headerTintColor: "white",
 			//headerLeft: navigation.getParam("submitting") ? null : <HeaderButton position="left" onPress={navigation.getParam("cancelTopic")} label="Cancel" />,
