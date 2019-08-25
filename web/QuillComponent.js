@@ -163,7 +163,7 @@ class QuillComponent extends Component {
 	 * @return 	object
 	 */
 	formattingState() {
-		this.addDebug(`formatting is ${JSON.stringify(this.state.quill.getFormat(this.state.quill.getSelection()))}`);
+		//this.addDebug(`formatting is ${JSON.stringify(this.state.quill.getFormat(this.state.quill.getSelection()))}`);
 		return this.state.quill.getFormat(this.state.quill.getSelection());
 	}
 
@@ -316,19 +316,22 @@ class QuillComponent extends Component {
 		this.addDebug(`Range index before adding: ${range.index}, length: ${range.length}`);
 		this.addDebug(`About to insert ${data.text} with link ${data.url}`);
 
-		const delta = {
-			ops: [
-				...(range.index > 1 && {
-					retain: range.index || 0
-				}: {}),
-				{
-					insert: data.text,
-					attributes: {
-						link: data.url
-					}
-				}
-			]
-		};
+		const delta = { ops: [] };
+
+		if (range.index > 1) {
+			delta.ops.push({
+				retain: range.index
+			});
+		}
+
+		delta.ops.push({
+			insert: data.text,
+			attributes: {
+				link: data.url
+			}
+		});
+
+		this.addDebug(delta);
 
 		try {
 			this.state.quill.updateContents(delta, "user");

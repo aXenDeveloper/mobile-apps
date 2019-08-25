@@ -369,7 +369,7 @@ class QuillEditor extends Component {
 	}
 
 	DEBUG(messageData) {
-		//(`WEBVIEW DEBUG: ${messageData.debugMessage}`);
+		console.log(`WEBVIEW DEBUG: ${messageData.debugMessage}`);
 	}
 
 	/**
