@@ -463,6 +463,7 @@ class QuillEditor extends Component {
 				padding-top: 2px;
 				padding-bottom: 2px;
 				vertical-align: middle;
+				text-decoration: none;
 			}
 		`;
 

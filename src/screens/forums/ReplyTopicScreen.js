@@ -14,6 +14,7 @@ import UserPhoto from "../../atoms/UserPhoto";
 import HeaderButton from "../../atoms/HeaderButton";
 import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
+import { processToSend } from "../../utils/richText";
 import relativeTime from "../../utils/RelativeTime";
 import styles from "../../styles";
 import icons from "../../icons";
@@ -118,11 +119,14 @@ class ReplyTopicScreen extends Component {
 			submitting: true
 		});
 
+		console.log("Sending reply");
+		console.log(processToSend(this.state.content));
+
 		try {
 			await this.props.mutate({
 				variables: {
 					topicID: this.props.navigation.state.params.topicID,
-					content: this.state.content,
+					content: processToSend(this.state.content),
 					replyingTo: !_.isUndefined(this.props.navigation.state.params.quotedPost) ? this.props.navigation.state.params.quotedPost.id : null
 				},
 				refetchQueries: ["TopicViewQuery", "TopicListQuery"]

@@ -13,6 +13,7 @@ import HeaderButton from "../../atoms/HeaderButton";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
+import { processToSend } from "../../utils/richText";
 import styles from "../../styles";
 import icons from "../../icons";
 
@@ -197,7 +198,7 @@ class CreateTopicScreen extends Component {
 				variables: {
 					forumID: this.props.navigation.state.params.forumID,
 					title: this.state.title,
-					content: this.state.content,
+					content: processToSend(this.state.content),
 					tags: this.state.tags,
 					postKey: this.editorID
 				},

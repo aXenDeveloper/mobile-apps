@@ -367,6 +367,8 @@ class QuillComponent extends Component {
 		);
 		this.state.quill.insertText(this.state.mentionCharPos + 1, " ", Quill.sources.API);
 		this.state.quill.setSelection(this.state.mentionCharPos + 2, Quill.sources.SILENT);
+
+		this.getText();
 	}
 
 	/**
@@ -385,6 +387,8 @@ class QuillComponent extends Component {
 		}
 
 		this.state.quill.insertText(range.index, character, Quill.sources.API);
+
+		this.getText();
 	}
 
 	/**
@@ -507,7 +511,7 @@ class MentionBlot extends Embed {
 
 		node.setAttribute("class", "ipsMention");
 		node.setAttribute("data-mentionid", data.id);
-		node.setAttribute("href", "#");
+		node.setAttribute("href", data.url);
 		node.innerHTML = " @" + data.name + " ";
 
 		return node;
@@ -523,6 +527,6 @@ class MentionBlot extends Embed {
 }
 
 MentionBlot.blotName = "mention";
-MentionBlot.tagName = "span";
+MentionBlot.tagName = "a";
 
 Quill.register(MentionBlot);
