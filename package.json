@@ -20,7 +20,7 @@
 		"android": "expo android",
 		"ios": "expo ios",
 		"test": "jest",
-		"editor": "NODE_ENV=DEV && webpack -p"
+		"editor": "cd web && npm run editor && cd .."
 	},
 	"jest": {
 		"preset": "jest-expo",
