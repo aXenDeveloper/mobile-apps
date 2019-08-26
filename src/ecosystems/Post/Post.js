@@ -345,7 +345,7 @@ class Post extends Component {
 			await this.props.mutate({
 				variables: {
 					postID: this.props.data.id,
-					reactionID: reaction
+					reactionID: parseInt(reaction)
 				},
 				// This is a little difficult to understand, but basically we must return a data structure
 				// in *exactly* the same format that the server will send us. That means we have to manually
@@ -370,6 +370,7 @@ class Post extends Component {
 				}
 			});
 		} catch (err) {
+			console.log(err);
 			// @todo abstract/improve errors
 			const errorMessage = getErrorMessage(err, Post.errors);
 			Alert.alert(Lang.get("error"), Lang.get("error_reacting"), [{ text: Lang.get("ok") }], { cancelable: false });
