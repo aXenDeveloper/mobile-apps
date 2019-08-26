@@ -78,6 +78,7 @@ class ProfileScreen extends Component {
 		this._followTimeout = null;
 		this._nScroll = new Animated.Value(0);
 		this._scroll = new Animated.Value(0);
+		this._isSnapping = false;
 		this._heights = [];
 		this._nScroll.addListener(Animated.event([{ value: this._scroll }], { useNativeDriver: false }));
 
@@ -93,6 +94,7 @@ class ProfileScreen extends Component {
 		this.renderScene = this.renderScene.bind(this);
 		this.renderTabBar = this.renderTabBar.bind(this);
 		this.onPressBack = this.onPressBack.bind(this);
+		this.onScrollEndWrapper = this.onScrollEndWrapper.bind(this);
 
 		this.buildAnimations();
 	}
@@ -237,6 +239,42 @@ class ProfileScreen extends Component {
 			inputRange: [0, SCROLL_HEIGHT / 2, SCROLL_HEIGHT * 0.8],
 			outputRange: [0, 0.1, 1]
 		});
+	}
+
+	/**
+	 * Event handler for the main scrollview scrolling end. Used to handle snapping.
+	 *
+	 * @param 	object  	e 		Event data
+	 * @return 	void
+	 */
+	onScrollEndWrapper(e) {
+		const y = e.nativeEvent.contentOffset.y;
+		const halfway = this.state.fullHeaderHeight / 2;
+
+		if (!this._isSnapping && y > 0) {
+			if (y < halfway) {
+				this.setIsSnapping();
+				this._wrapView.getNode().scrollTo({ y: 0 });
+			} else {
+				if (y > halfway && y < this.state.fullHeaderHeight) {
+					const headerHeight = Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82;
+					const snapTo = this.state.fullHeaderHeight - headerHeight;
+
+					this.setIsSnapping();
+					this._wrapView.getNode().scrollTo({ y: snapTo });
+				}
+			}
+		}
+	}
+
+	/**
+	 * Set snapping state and a timeout to reset it
+	 *
+	 * @return 	void
+	 */
+	setIsSnapping() {
+		this._isSnapping = true;
+		this._snapTimeout = setTimeout(() => (this._isSnapping = false), 300);
 	}
 
 	/**
@@ -441,6 +479,8 @@ class ProfileScreen extends Component {
 				showFollowButton = true;
 			}
 
+			const minHeight = Dimensions.get("window").height - (Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82);
+
 			return (
 				<View style={styles.flex}>
 					<StatusBar barStyle="light-content" translucent />
@@ -456,8 +496,11 @@ class ProfileScreen extends Component {
 					<Animated.ScrollView
 						showsVerticalScrollIndicator={false}
 						scrollEventThrottle={5}
-						style={{ zIndex: 0 }}
+						style={[{ zIndex: 0, minHeight: minHeight }, styles.flex]}
 						onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: this._nScroll } } }], { useNativeDriver: true })}
+						onScrollEndDrag={this.onScrollEndWrapper}
+						onMomentumScrollEnd={this.onScrollEndWrapper}
+						ref={wrapView => (this._wrapView = wrapView)}
 					>
 						<Animated.View
 							onLayout={e => {
