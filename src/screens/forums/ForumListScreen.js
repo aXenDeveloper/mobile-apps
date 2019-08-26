@@ -148,6 +148,7 @@ class ForumListScreen extends Component {
 						renderItem={({ item }) => this.renderItem(item)}
 						renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
 						sections={sectionData}
+						initialNumToRender={15}
 					/>
 					<TextPrompt
 						placeholder={Lang.get("password")}
