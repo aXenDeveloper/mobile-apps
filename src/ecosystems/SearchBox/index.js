@@ -26,6 +26,12 @@ class SearchBox extends Component {
 		this.emptyTextBox = this.emptyTextBox.bind(this);
 	}
 
+	componentDidMount() {
+		if (this._textInput && this.props.onRef) {
+			this.props.onRef(this._textInput);
+		}
+	}
+
 	componentDidUpdate(prevProps) {
 		if (this.props.active !== prevProps.active) {
 			this.setState({

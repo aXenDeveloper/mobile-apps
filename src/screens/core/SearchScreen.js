@@ -15,6 +15,7 @@ import SectionHeader from "../../atoms/SectionHeader";
 import MemberRow from "../../ecosystems/MemberRow";
 import ErrorBox from "../../atoms/ErrorBox";
 import ContentRow from "../../ecosystems/ContentRow";
+import SearchBox from "../../ecosystems/SearchBox";
 import CustomTab from "../../atoms/CustomTab";
 import { SearchContentPanel, SearchMemberPanel, SearchResultFragment, SearchResult } from "../../ecosystems/Search";
 import styles, { styleVars } from "../../styles";
@@ -80,6 +81,10 @@ class SearchScreen extends Component {
 			loadingRecentSearches: true,
 			loadingTrendingSearches: true
 		};
+
+		this.searchEmptyTextBox = this.searchEmptyTextBox.bind(this);
+		this.searchOnCancel = this.searchOnCancel.bind(this);
+		this.onRef = this.onRef.bind(this);
 	}
 
 	/**
@@ -127,21 +132,6 @@ class SearchScreen extends Component {
 	}
 
 	/**
-	 * Handle click on the Cancel link
-	 *
-	 * @return 	void
-	 */
-	goBack = () => {
-		//this.props.navigation.goBack();
-		this._textInput.blur();
-		this.setState({
-			searchTerm: "",
-			textInputActive: false,
-			showingResults: false
-		});
-	};
-
-	/**
 	 * onFocus event handler
 	 *
 	 * @return 	void
@@ -163,6 +153,41 @@ class SearchScreen extends Component {
 			textInputActive: false
 		});
 	};
+
+	/**
+	 * Handler for tapping the X in the search field
+	 *
+	 * @return 	void
+	 */
+	searchEmptyTextBox() {
+		this.setState({
+			textInputActive: this.state.searchFocus,
+			searchTerm: "",
+			showingResults: false
+		});
+	}
+
+	/**
+	 * Handler for cancel event on search box
+	 *
+	 * @return 	void
+	 */
+	searchOnCancel() {
+		this.setState({
+			searchTerm: "",
+			textInputActive: false,
+			showingResults: false
+		});
+	}
+
+	/**
+	 * Receive a reference to the text input in the search box
+	 *
+	 * @return 	void
+	 */
+	onRef(textInput) {
+		this._textInput = textInput;
+	}
 
 	/**
 	 * Event handler for submitting the search field. Sends the overview query.
@@ -545,34 +570,19 @@ class SearchScreen extends Component {
 
 	render() {
 		const searchBox = (
-			<View style={componentStyles.searchWrap}>
-				<View style={[componentStyles.searchBox, this.state.textInputActive ? componentStyles.searchBoxActive : null]}>
-					<Image source={icons.SEARCH} style={componentStyles.searchIcon} resizeMode="contain" />
-					<TextInput
-						autoFocus
-						autoCapitalize="none"
-						autoCorrect={false}
-						style={componentStyles.textInput}
-						placeholderTextColor="rgba(255,255,255,0.6)"
-						placeholder={Lang.get("search_site", {
-							siteName: this.props.site.settings.board_name
-						})}
-						returnKeyType="search"
-						onFocus={this.onFocusTextInput}
-						onBlur={this.onBlurTextInput}
-						onChangeText={searchTerm => this.setState({ searchTerm })}
-						onSubmitEditing={this.onSubmitTextInput}
-						ref={ref => (this._textInput = ref)}
-						value={this.state.searchTerm}
-						clearButtonMode="while-editing"
-					/>
-				</View>
-				{Boolean(this.state.textInputActive || this.state.showingResults) && (
-					<TouchableOpacity style={componentStyles.cancelLink} onPress={this.goBack}>
-						<Text style={componentStyles.cancelLinkText}>{Lang.get("cancel")}</Text>
-					</TouchableOpacity>
-				)}
-			</View>
+			<SearchBox
+				placeholder={Lang.get("search_site", {
+					siteName: this.props.site.settings.board_name
+				})}
+				onChangeText={searchTerm => this.setState({ searchTerm })}
+				value={this.state.searchTerm}
+				onFocus={this.onFocusTextInput}
+				onBlur={this.onBlurTextInput}
+				onCancel={this.searchOnCancel}
+				emptyTextBox={this.searchEmptyTextBox}
+				onSubmitTextInput={this.onSubmitTextInput}
+				onRef={this.onRef}
+			/>
 		);
 
 		let content;
