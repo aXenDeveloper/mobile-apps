@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView, SectionList, StyleSheet, Image, StatusBar, Animated, Platform, Dimensions, Alert } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, Image, StatusBar, Animated, Platform, Dimensions, Alert } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
@@ -16,6 +16,7 @@ import Button from "../../atoms/Button";
 import UserPhoto from "../../atoms/UserPhoto";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
+import Lightbox from "../../ecosystems/Lightbox";
 import { ProfileContent, ProfileOverview, ProfileEditorField, ProfileFollowers, ProfilePlaceholder, ProfileField } from "../../ecosystems/Profile";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 import getImageUrl from "../../utils/getImageUrl";
@@ -85,7 +86,8 @@ class ProfileScreen extends Component {
 		this.state = {
 			fullHeaderHeight: 250,
 			followModalVisible: false,
-			index: 0
+			index: 0,
+			photoLightboxVisible: false
 		};
 
 		this.onFollow = this.onFollow.bind(this);
@@ -95,6 +97,8 @@ class ProfileScreen extends Component {
 		this.renderTabBar = this.renderTabBar.bind(this);
 		this.onPressBack = this.onPressBack.bind(this);
 		this.onScrollEndWrapper = this.onScrollEndWrapper.bind(this);
+		this.closeLightbox = this.closeLightbox.bind(this);
+		this.showPhotoLightbox = this.showPhotoLightbox.bind(this);
 
 		this.buildAnimations();
 	}
@@ -107,6 +111,23 @@ class ProfileScreen extends Component {
 		if (prevState.fullHeaderHeight !== this.state.fullHeaderHeight) {
 			this.buildAnimations();
 		}
+	}
+
+	showPhotoLightbox() {
+		this.setState({
+			photoLightboxVisible: true
+		});
+	}
+
+	/**
+	 * Event handler that sets state to close the lightbox
+	 *
+	 * @return 	void
+	 */
+	closeLightbox() {
+		this.setState({
+			photoLightboxVisible: false
+		});
 	}
 
 	/**
@@ -275,6 +296,14 @@ class ProfileScreen extends Component {
 	setIsSnapping() {
 		this._isSnapping = true;
 		this._snapTimeout = setTimeout(() => (this._isSnapping = false), 300);
+	}
+
+	getLightboxData() {
+		if (this.props.data.core.member.photo) {
+			return { [this.props.data.core.member.photo]: true };
+		}
+
+		return [];
 	}
 
 	/**
@@ -517,7 +546,9 @@ class ProfileScreen extends Component {
 							)}
 							<Animated.View style={[componentStyles.profileHeaderInner, { opacity: this.userOpacity }]}>
 								<Animated.View style={[componentStyles.userInfoWrap, { transform: [{ scale: this.avatarScale }] }]}>
-									<UserPhoto url={this.props.data.core.member.photo} size={80} />
+									<TouchableOpacity onPress={this.showPhotoLightbox} style={{ width: 80, height: 80 }}>
+										<UserPhoto url={this.props.data.core.member.photo} size={80} />
+									</TouchableOpacity>
 									<Text style={componentStyles.usernameText}>{this.props.data.core.member.name}</Text>
 									<Text style={componentStyles.groupText}>{this.props.data.core.member.group.name}</Text>
 								</Animated.View>
@@ -580,6 +611,9 @@ class ProfileScreen extends Component {
 					<View style={[styles.flex, styles.flexJustifyCenter, componentStyles.backButton]}>
 						<HeaderBackButton onPress={this.onPressBack} tintColor="#fff" />
 					</View>
+					{Boolean(this.props.data.core.member.photo) && (
+						<Lightbox animationIn="bounceIn" isVisible={this.state.photoLightboxVisible} data={this.getLightboxData()} close={this.closeLightbox} />
+					)}
 				</View>
 			);
 		}
