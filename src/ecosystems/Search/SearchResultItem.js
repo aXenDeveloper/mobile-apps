@@ -9,7 +9,7 @@ import getSuitableImage from "../../utils/getSuitableImage";
 import formatNumber from "../../utils/formatNumber";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import UserPhoto from "../../atoms/UserPhoto";
-import relativeTime from "../../utils/RelativeTime";
+import Time from "../../atoms/Time";
 import styles, { styleVars } from "../../styles";
 
 const SearchResultItem = props => {
@@ -23,7 +23,7 @@ const SearchResultItem = props => {
 					<UserPhoto size={22} url={props.data.author.photo} />
 					<Text style={[styles.contentText, styles.text, styles.mlTight, hidden && styles.moderatedText]}>{props.data.author.name}</Text>
 				</View>
-				<Text style={[styles.lightText, hidden && styles.moderatedLightText]}>{relativeTime.short(props.data.updated)}</Text>
+				<Time style={[styles.lightText, hidden && styles.moderatedLightText]} timestamp={props.data.updated} />
 			</View>
 			{Boolean(imageToUse) && (
 				<FadeIn style={[componentStyles.imageContainer, styles.mtStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>

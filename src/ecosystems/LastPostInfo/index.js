@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Text, View, StyleSheet } from "react-native";
 
 import UserPhoto from "../../atoms/UserPhoto";
-import relativeTime from "../../utils/RelativeTime";
+import Time from "../../atoms/Time";
 import styles, { styleVars } from "../../styles";
 
 const LastPostInfo = props => {
@@ -10,7 +10,7 @@ const LastPostInfo = props => {
 		return (
 			<View style={props.style}>
 				<UserPhoto url={props.photo} size={props.photoSize} />
-				<Text style={componentStyles.timestamp}>{relativeTime.short(props.timestamp)}</Text>
+				<Time timestamp={props.timestamp} style={componentStyles.timestamp} />
 			</View>
 		);
 	}

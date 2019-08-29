@@ -6,7 +6,6 @@ import Lang from "../../utils/Lang";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import PostControls from "../../atoms/PostControls";
 import PostControl from "../../atoms/PostControl";
-import relativeTime from "../../utils/RelativeTime";
 import formatNumber from "../../utils/formatNumber";
 import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
@@ -27,7 +26,7 @@ class PollPreview extends PureComponent {
 			text = Lang.get("poll_closed");
 		} else if (this.props.data.closeTimestamp) {
 			text = Lang.get("poll_closes_date", {
-				date: relativeTime.long(parseInt(this.props.data.closeTimestamp), true)
+				date: Lang.formatTime(parseInt(this.props.data.closeTimestamp), "long")
 			});
 		}
 

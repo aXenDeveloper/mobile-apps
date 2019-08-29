@@ -5,7 +5,7 @@ import _ from "underscore";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import LargeTitle from "../../atoms/LargeTitle";
 import Lang from "../../utils/Lang";
-import relativeTime from "../../utils/RelativeTime";
+import Time from "../../atoms/Time";
 import UserPhoto from "../../atoms/UserPhoto";
 import NavigationService from "../../utils/NavigationService";
 import formatNumber from "../../utils/formatNumber";
@@ -165,7 +165,7 @@ class ActiveUsers extends Component {
 			return (
 				<Animated.View key={user.user.id} style={[componentStyles.tickerItem, { opacity: opacity }]}>
 					<Text style={[styles.text, styles.smallText]} numberOfLines={1}>
-						<Text style={styles.lightText}>{relativeTime.short(user.timestamp)} &nbsp;</Text>
+						<Time style={[styles.lightText, styles.mrTight]} timestamp={user.timestamp} />
 						<Text>{user.lang}</Text>
 					</Text>
 				</Animated.View>

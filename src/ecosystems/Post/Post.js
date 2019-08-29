@@ -21,7 +21,7 @@ import RichTextContent from "../../ecosystems/RichTextContent";
 import Reaction from "../../atoms/Reaction";
 import ReactionModal from "../../atoms/ReactionModal";
 import CommentFlag from "../../atoms/CommentFlag";
-import relativeTime from "../../utils/RelativeTime";
+import Time from "../../atoms/Time";
 import getErrorMessage from "../../utils/getErrorMessage";
 import PostFragment from "./PostFragment";
 import styles, { styleVars } from "../../styles";
@@ -574,7 +574,7 @@ class Post extends Component {
 											<UserPhoto url={postData.author.photo} online={postData.author.isOnline || null} size={36} />
 											<View style={[styles.flexColumn, styles.flexJustifyCenter, styles.mlStandard]}>
 												<Text style={styles.itemTitle}>{postData.author.name}</Text>
-												<Text style={[styles.standardText, styles.lightText]}>{relativeTime.long(postData.timestamp)}</Text>
+												<Time style={[styles.standardText, styles.lightText]} timestamp={postData.timestamp} format="long" />
 											</View>
 										</View>
 									</TouchableOpacity>

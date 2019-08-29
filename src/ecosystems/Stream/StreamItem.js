@@ -7,7 +7,7 @@ import UserPhoto from "../../atoms/UserPhoto";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import { ReactionOverview } from "../../ecosystems/Reaction";
-import relativeTime from "../../utils/RelativeTime";
+import Time from "../../atoms/Time";
 import styles from "../../styles";
 import componentStyles from "./styles";
 
@@ -22,7 +22,7 @@ const StreamItem = props => {
 						<UserPhoto url={props.data.author.photo} size={20} />
 						<Text style={[componentStyles.streamMetaText, componentStyles.streamMetaAction, hidden && styles.moderatedText]}>{props.metaString}</Text>
 					</View>
-					<Text style={[componentStyles.streamMetaText, styles.lightText, hidden && styles.moderatedLightText]}>{relativeTime.short(props.data.updated)}</Text>
+					<Time style={[componentStyles.streamMetaText, styles.lightText, hidden && styles.moderatedLightText]} timestamp={props.data.updated} />
 				</View>
 				<View style={componentStyles.streamItemInfo}>
 					<View style={[componentStyles.streamItemInfoInner, componentStyles.streamItemInfoInnerWithPhoto]}>

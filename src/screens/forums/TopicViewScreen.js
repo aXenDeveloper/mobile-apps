@@ -9,7 +9,6 @@ import { copilot, walkthroughable, CopilotStep } from "react-native-copilot";
 
 import shortNumber from "short-number";
 import Lang from "../../utils/Lang";
-import relativeTime from "../../utils/RelativeTime";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import getErrorMessage from "../../utils/getErrorMessage";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
@@ -1091,7 +1090,7 @@ class TopicViewScreen extends Component {
 								<View>
 									<Text style={[styles.contentTitle, headerAlignClass, hidden && styles.moderatedTitle]}>{topicData.title}</Text>
 									<Text style={[styles.lightText, styles.standardText, headerAlignClass, styles.mtVeryTight, hidden && styles.moderatedLightText]}>
-										{Lang.get("started_by_x", { name: topicData.author.name })}, {relativeTime.long(topicData.started)}
+										{Lang.get("started_by_x", { name: topicData.author.name })}, {Lang.formatTime(topicData.started, "long")}
 									</Text>
 								</View>
 								{Boolean(topicData.tags.length || topicData.isLocked || topicData.isHot || topicData.isPinned || topicData.isFeatured || hidden) && (

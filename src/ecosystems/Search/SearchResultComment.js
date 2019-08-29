@@ -3,9 +3,9 @@ import { Text, View, FlatList, StyleSheet, ActivityIndicator } from "react-nativ
 
 import Lang from "../../utils/Lang";
 import highlightTerms from "../../utils/highlightTerms";
+import Time from "../../atoms/Time";
 import UserPhoto from "../../atoms/UserPhoto";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
-import relativeTime from "../../utils/RelativeTime";
 import formatNumber from "../../utils/formatNumber";
 import styles, { styleVars } from "../../styles";
 
@@ -20,7 +20,7 @@ const SearchResultComment = props => {
 						<UnreadIndicator show={props.data.unread} />
 						{highlightTerms(props.data.title, props.term, styles.highlightedText)}
 					</Text>
-					<Text style={[styles.lightText, hidden && styles.moderatedLightText]}>{relativeTime.short(props.data.updated)}</Text>
+					<Time style={[styles.lightText, hidden && styles.moderatedLightText]} timestamp={props.data.updated} />
 				</View>
 				<Text style={[styles.lightText, componentStyles.commentItemMeta, hidden && styles.moderatedLightText]}>
 					{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), formatNumber(props.data.replies))} - `}

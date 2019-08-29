@@ -11,7 +11,6 @@ import _ from "underscore";
 import { openModalWebview } from "../../redux/actions/app";
 import getImageUrl from "../../utils/getImageUrl";
 import Lang from "../../utils/Lang";
-import relativeTime from "../../utils/RelativeTime";
 import Lightbox from "../Lightbox";
 import Mention from "./Mention";
 import Embed from "./Embed";
@@ -282,7 +281,7 @@ class ContentRenderer extends PureComponent {
 		if (!_.isUndefined(quoteAttribs["data-ipsquote-username"])) {
 			if (!_.isUndefined(quoteAttribs["data-ipsquote-timestamp"])) {
 				toReturn = Lang.get("editor_quote_line_with_time", {
-					date: relativeTime.long(parseInt(quoteAttribs["data-ipsquote-timestamp"])),
+					date: Lang.formatTime(parseInt(quoteAttribs["data-ipsquote-timestamp"]), "long"),
 					username: quoteAttribs["data-ipsquote-username"]
 				});
 			} else {

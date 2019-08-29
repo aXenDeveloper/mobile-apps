@@ -2,10 +2,8 @@ import React, { PureComponent } from "react";
 import { Text, View, FlatList, TouchableHighlight, StyleSheet } from "react-native";
 
 import NavigationService from "../../utils/NavigationService";
-import Lang from "../../utils/Lang";
 import ContentRow from "../../ecosystems/ContentRow";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
-import relativeTime from "../../utils/RelativeTime";
 import SearchResultItem from "./SearchResultItem";
 import SearchResultComment from "./SearchResultComment";
 import styles, { styleVars } from "../../styles";
