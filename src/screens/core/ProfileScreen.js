@@ -7,6 +7,7 @@ import { HeaderBackButton } from "react-navigation";
 import { TabView, TabBar } from "react-native-tab-view";
 import { Header } from "react-navigation";
 import FadeIn from "react-native-fade-in-image";
+import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import { pushToast } from "../../redux/actions/app";
@@ -509,6 +510,8 @@ class ProfileScreen extends Component {
 			}
 
 			const minHeight = Dimensions.get("window").height - (Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82);
+			const photo = this.props.data.core.member.photo;
+			const photoLightboxHandler = _.isString(photo) && photo.startsWith("data:image") ? null : this.showPhotoLightbox;
 
 			return (
 				<View style={styles.flex}>
@@ -546,7 +549,7 @@ class ProfileScreen extends Component {
 							)}
 							<Animated.View style={[componentStyles.profileHeaderInner, { opacity: this.userOpacity }]}>
 								<Animated.View style={[componentStyles.userInfoWrap, { transform: [{ scale: this.avatarScale }] }]}>
-									<TouchableOpacity onPress={this.showPhotoLightbox} style={{ width: 80, height: 80 }}>
+									<TouchableOpacity onPress={photoLightboxHandler} style={{ width: 80, height: 80 }}>
 										<UserPhoto url={this.props.data.core.member.photo} size={80} />
 									</TouchableOpacity>
 									<Text style={componentStyles.usernameText}>{this.props.data.core.member.name}</Text>
