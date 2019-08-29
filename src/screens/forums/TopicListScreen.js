@@ -7,7 +7,6 @@ import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
-import relativeTime from "../../utils/RelativeTime";
 import getErrorMessage from "../../utils/getErrorMessage";
 import formatNumber from "../../utils/formatNumber";
 import FollowButton from "../../atoms/FollowButton";

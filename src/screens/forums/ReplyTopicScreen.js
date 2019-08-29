@@ -15,7 +15,6 @@ import HeaderButton from "../../atoms/HeaderButton";
 import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
 import { processToSend } from "../../utils/richText";
-import relativeTime from "../../utils/RelativeTime";
 import styles from "../../styles";
 import icons from "../../icons";
 
