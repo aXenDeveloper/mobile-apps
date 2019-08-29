@@ -6,8 +6,8 @@ import Lang from "../utils/Lang";
 
 // Simple component wrapper around Lang.formatTime, but allows us to memoize
 // the time creation
-const Time = ({ timestamp, format = "short", showSuffix = true, relative = true, ...props }) => {
-	return <Text {...props}>{Lang.formatTime(timestamp, format, { showSuffix, relative })}</Text>;
+const Time = ({ timestamp, format = "short", showSuffix = true, ...props }) => {
+	return <Text {...props}>{Lang.formatTime(timestamp, format, showSuffix)}</Text>;
 };
 
 export default memo(Time);

@@ -155,7 +155,7 @@ class Lang {
 	static month = 2592e6;
 	static year = 31536e6;
 
-	formatTime(time, format = "long", { showSuffix = true, relative = true }) {
+	formatTime(time, format = "long", showSuffix = true) {
 		if (!_.isNumber(time) || _.isNaN(time)) {
 			if (!_.isString(time) || time.length !== 10) {
 				throw new Error("Invalid timestamp passed to Lang.formatTime");
