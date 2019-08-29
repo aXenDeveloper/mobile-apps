@@ -682,6 +682,10 @@ export const richTextStyles = dark => ({
 		},
 		a: {
 			textDecorationLine: "none"
+		},
+		pre: {
+			fontSize: 13,
+			paddingHorizontal: 15
 		}
 	},
 	classes: {
@@ -702,6 +706,10 @@ export const richTextStyles = dark => ({
 		ipsQuote_contents: {
 			paddingHorizontal: 15,
 			paddingVertical: 10
+		},
+		ipsCode: {
+			padding: styleVars.spacing.wide,
+			backgroundColor: "#fafafa"
 		}
 	}
 });
