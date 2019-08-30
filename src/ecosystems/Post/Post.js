@@ -188,9 +188,10 @@ class Post extends Component {
 	 * @return 	void
 	 */
 	onPressReaction(reaction) {
+		console.log(reaction);
 		this.setState({
 			whoReactedModalVisible: true,
-			whoReactedReaction: reaction.id,
+			whoReactedReaction: reaction.reactionId,
 			whoReactedCount: reaction.count || 0,
 			whoReactedImage: reaction.image
 		});
@@ -596,6 +597,7 @@ class Post extends Component {
 															style={styles.mlStandard}
 															key={reaction.id}
 															id={reaction.id}
+															reactionId={reaction.reactionId}
 															image={reaction.image}
 															count={reaction.count}
 															onPress={postData.reputation.canViewReps ? this.onPressReaction : null}
@@ -639,7 +641,7 @@ class Post extends Component {
 							query={WhoReactedQuery}
 							variables={{
 								id: postData.id,
-								reactionID: parseInt(this.state.whoReactedReaction)
+								reactionId: parseInt(this.state.whoReactedReaction)
 							}}
 						/>
 						{this.renderCommentFlag()}

@@ -18,6 +18,7 @@ export default class Reaction extends Component {
 	onPress() {
 		this.props.onPress({
 			id: this.props.id,
+			reactionId: this.props.reactionId,
 			count: this.props.count,
 			image: this.props.image
 		});

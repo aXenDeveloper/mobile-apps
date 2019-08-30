@@ -69,6 +69,7 @@ const PostFragment = gql`
 			reactions {
 				__typename
 				id
+				reactionId
 				image
 				name
 				count
