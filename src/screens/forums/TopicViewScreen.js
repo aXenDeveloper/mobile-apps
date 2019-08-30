@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, Image, View, Button, AsyncStorage, StyleSheet, Alert, LayoutAnimation, Animated, Platform, Share } from "react-native";
+import { Text, Image, View, Button, TouchableOpacity, AsyncStorage, StyleSheet, Alert, LayoutAnimation, Animated, Platform, Share } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
@@ -34,6 +34,7 @@ import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import FollowButton from "../../atoms/FollowButton";
 import { Tooltip } from "../../ecosystems/Walkthrough";
 import UserPhoto from "../../atoms/UserPhoto";
+import NavigationService from "../../utils/NavigationService";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 
 import styles, { styleVars } from "../../styles";
@@ -206,7 +207,9 @@ class TopicViewScreen extends Component {
 							componentStyles.authorPhoto
 						]}
 					>
-						<UserPhoto url={params.author.photo} size={60} />
+						<TouchableOpacity onPress={params.onPressAuthor}>
+							<UserPhoto url={params.author.photo} size={60} />
+						</TouchableOpacity>
 					</Animated.View>
 				</React.Fragment>
 			) : null,
@@ -291,6 +294,7 @@ class TopicViewScreen extends Component {
 		this.onScrollEnd = this.onScrollEnd.bind(this);
 		this.setWalkthroughFlag = this.setWalkthroughFlag.bind(this);
 		this.onPressShare = this.onPressShare.bind(this);
+		this.onPressAuthor = this.onPressAuthor.bind(this);
 	}
 
 	/**
@@ -390,6 +394,15 @@ class TopicViewScreen extends Component {
 			inputRange: [0, SCROLL_HEIGHT * 0.8],
 			outputRange: [1, 0.8],
 			extrapolateLeft: "clamp"
+		});
+	}
+
+	onPressAuthor() {
+		const { id, name } = this.props.data.forums.topic.author;
+
+		NavigationService.navigateToScreen("Profile", {
+			id,
+			name
 		});
 	}
 
@@ -585,7 +598,8 @@ class TopicViewScreen extends Component {
 		this.props.navigation.setParams({
 			author: this.props.data.forums.topic.author,
 			title: this.props.data.forums.topic.title,
-			ready: true
+			ready: true,
+			onPressAuthor: this.onPressAuthor
 		});
 
 		// If follow controls are available, show them
@@ -1089,7 +1103,10 @@ class TopicViewScreen extends Component {
 							<View style={[styles.flexGrow, styles.flexBasisZero, styles.flexAlignSelfCenter, topicData.isQuestion ? styles.prWide : styles.phWide]}>
 								<View>
 									<Text style={[styles.contentTitle, headerAlignClass, hidden && styles.moderatedTitle]}>{topicData.title}</Text>
-									<Text style={[styles.lightText, styles.standardText, headerAlignClass, styles.mtVeryTight, hidden && styles.moderatedLightText]}>
+									<Text
+										onPress={this.onPressAuthor}
+										style={[styles.lightText, styles.standardText, headerAlignClass, styles.mtVeryTight, hidden && styles.moderatedLightText]}
+									>
 										{Lang.get("started_by_x", { name: topicData.author.name })}, {Lang.formatTime(topicData.started, "long")}
 									</Text>
 								</View>
