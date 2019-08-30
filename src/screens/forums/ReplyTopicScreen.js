@@ -9,6 +9,7 @@ import _ from "underscore";
 import getErrorMessage from "../../utils/getErrorMessage";
 import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
 import { PostFragment } from "../../ecosystems/Post";
+import TwoLineHeader from "../../atoms/TwoLineHeader";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import UserPhoto from "../../atoms/UserPhoto";
 import HeaderButton from "../../atoms/HeaderButton";
@@ -38,7 +39,7 @@ class ReplyTopicScreen extends Component {
 					<Text style={styles.headerTitle}> {Lang.get("submitting")}...</Text>
 				</React.Fragment>
 			) : (
-				Lang.get("reply_screen")
+				<TwoLineHeader title={Lang.get("reply_screen")} subtitle={navigation.getParam("topicTitle")} />
 			),
 			headerTintColor: "white",
 			//headerLeft: navigation.getParam("submitting") ? null : <HeaderButton position="left" label="Cancel" onPress={navigation.getParam("cancelReply")} />,

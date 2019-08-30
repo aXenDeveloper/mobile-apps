@@ -1612,7 +1612,8 @@ class TopicViewScreen extends Component {
 	 */
 	addReply() {
 		this.props.navigation.navigate("ReplyTopic", {
-			topicID: this.props.data.forums.topic.id
+			topicID: this.props.data.forums.topic.id,
+			topicTitle: this.props.data.forums.topic.title
 		});
 	}
 
