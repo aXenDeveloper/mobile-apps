@@ -115,6 +115,10 @@ class QuillToolbar extends Component {
 				this._wrapper.transitionTo({ height: 75 });
 				this._imageToolbar.transitionTo({ opacity: 1 });
 				this._toolbar.transitionTo({ opacity: 0 });
+
+				if (!Object.keys(this.props.editor.attachedImages).length) {
+					this.openImageActionSheet();
+				}
 			}
 		);
 	}
