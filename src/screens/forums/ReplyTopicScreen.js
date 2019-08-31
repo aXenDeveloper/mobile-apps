@@ -20,9 +20,9 @@ import styles from "../../styles";
 import icons from "../../icons";
 
 const ReplyTopicMutation = gql`
-	mutation ReplyTopicMutation($topicID: ID!, $content: String!, $replyingTo: ID) {
+	mutation ReplyTopicMutation($topicID: ID!, $content: String!, $replyingTo: ID, $postKey: String!) {
 		mutateForums {
-			replyTopic(topicID: $topicID, content: $content, replyingTo: $replyingTo) {
+			replyTopic(topicID: $topicID, content: $content, replyingTo: $replyingTo, postKey: $postKey) {
 				...PostFragment
 			}
 		}
@@ -121,13 +121,15 @@ class ReplyTopicScreen extends Component {
 
 		console.log("Sending reply");
 		console.log(processToSend(this.state.content));
+		console.log(this.editorID);
 
 		try {
 			await this.props.mutate({
 				variables: {
 					topicID: this.props.navigation.state.params.topicID,
 					content: processToSend(this.state.content),
-					replyingTo: !_.isUndefined(this.props.navigation.state.params.quotedPost) ? this.props.navigation.state.params.quotedPost.id : null
+					replyingTo: !_.isUndefined(this.props.navigation.state.params.quotedPost) ? this.props.navigation.state.params.quotedPost.id : null,
+					postKey: this.editorID
 				},
 				refetchQueries: ["TopicViewQuery", "TopicListQuery"]
 			});
