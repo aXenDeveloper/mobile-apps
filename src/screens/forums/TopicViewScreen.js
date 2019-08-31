@@ -652,7 +652,10 @@ class TopicViewScreen extends Component {
 
 		// Update our offset tracker, but only if we haven't done it before, otherwise
 		// we'll replace our offset with the initial offset every time the component updates
-		if (prevProps.data.variables.offsetPosition !== "LAST" && this.props.data.variables.offsetPosition === "LAST" && this._initialOffsetDone) {
+		if (
+			(prevProps.data.variables.offsetPosition !== "LAST" && this.props.data.variables.offsetPosition === "LAST") ||
+			(!prevProps.navigation.state.params.showLastComment && this.props.navigation.state.params.showLastComment)
+		) {
 			this._initialOffsetDone = false;
 		}
 
@@ -675,7 +678,10 @@ class TopicViewScreen extends Component {
 					currentPosition: this.props.data.forums.topic.unreadCommentPosition + 1 // See CURRENTPOSITION NOTE above this block
 				});
 				this._initialOffsetDone = true;
-			} else if (this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0) {
+			} else if (
+				this.props.navigation.state.params.showLastComment ||
+				(this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0)
+			) {
 				this._initialOffsetDone = true;
 				// If we're showing the last post, the offset will be the total post count plus our adjustment
 				this.setState({
