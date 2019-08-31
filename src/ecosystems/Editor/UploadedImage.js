@@ -17,6 +17,10 @@ export default class UploadedImage extends PureComponent {
 
 		this._uploadOverlay = null;
 		this._uploadProgress = null;
+		// If our status is already done when mounted, it means we've reshown the
+		// image toolbar. In that case, note the state here so we can skip showing
+		// the upload overlay.
+		this._doneAtMount = this.props.status == UPLOAD_STATUS.DONE;
 
 		this.state = {
 			destructiveButtonIndex: this.props.status === UPLOAD_STATUS.DONE ? 1 : -1,
@@ -131,7 +135,7 @@ export default class UploadedImage extends PureComponent {
 		return (
 			<TouchableOpacity style={[styles.mrStandard, componentStyles.uploadedImageWrapper]} onPress={this.onPressImage}>
 				<Image source={{ uri: this.props.image }} resizeMode="cover" style={componentStyles.uploadedImage} />
-				{this.getStatusOverlay()}
+				{!this._doneAtMount && this.getStatusOverlay()}
 				<ActionSheet
 					ref={o => (this._actionSheet = o)}
 					options={this.state.actionSheetOptions}
