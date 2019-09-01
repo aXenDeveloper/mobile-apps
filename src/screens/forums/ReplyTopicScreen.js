@@ -119,10 +119,6 @@ class ReplyTopicScreen extends Component {
 			submitting: true
 		});
 
-		console.log("Sending reply");
-		console.log(processToSend(this.state.content));
-		console.log(this.editorID);
-
 		try {
 			await this.props.mutate({
 				variables: {
@@ -201,7 +197,7 @@ class ReplyTopicScreen extends Component {
 
 		return (
 			<React.Fragment>
-				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1, backgroundColor: "#fff" }}>
+				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1, backgroundColor: "#fff" }} keyboardShouldPersistTaps="handled">
 					{quotedPostComponent}
 					<KeyboardAvoidingView style={{ flex: 1 }} enabled>
 						<QuillEditor
