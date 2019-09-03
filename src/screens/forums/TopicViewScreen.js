@@ -264,7 +264,7 @@ class TopicViewScreen extends Component {
 		};
 
 		this._viewabilityConfig = {
-			minimumViewTime: 600,
+			//minimumViewTime: 600,
 			//viewAreaCoveragePercentThreshold: 10
 			itemVisiblePercentThreshold: 25
 		};
@@ -686,7 +686,8 @@ class TopicViewScreen extends Component {
 				// If we're showing the last post, the offset will be the total post count plus our adjustment
 				this.setState({
 					reachedEnd: true,
-					startingOffset: this.props.data.forums.topic.postCount + this.props.data.variables.offsetAdjust
+					startingOffset: Math.max(this.props.data.forums.topic.postCount + this.props.data.variables.offsetAdjust, 0),
+					currentPosition: Math.max(this.props.data.forums.topic.postCount + this.props.data.variables.offsetAdjust, 0) + 1
 				});
 				this.scrollToEnd();
 			}
