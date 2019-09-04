@@ -302,7 +302,9 @@ class StreamViewScreen extends Component {
 						<Image source={require("../../../resources/close_circle.png")} resizeMode="contain" style={styles.modalClose} />
 					</TouchableOpacity>
 				</View>
-				<CheckList data={data} onPress={this.switchStream} />
+				<ScrollView style={styles.flex}>
+					<CheckList data={data} onPress={this.switchStream} />
+				</ScrollView>
 			</View>
 		);
 	}
