@@ -168,41 +168,6 @@ class QuillComponent extends Component {
 	}
 
 	/**
-	 * Return the current mention state, if any
-	 *
-	 * @return 	object|null
-	 */
-	mentionState() {
-		const maxLength = 20;
-		const range = this.state.quill.getSelection();
-		const cursorPos = range.index;
-		const startPos = Math.max(0, cursorPos - maxLength);
-		const beforeCursorPos = this.state.quill.getText(startPos, cursorPos - startPos);
-		const mentionCharPos = beforeCursorPos.lastIndexOf("@");
-
-		if (mentionCharPos !== -1) {
-			if (!(mentionCharPos === 0 || !!beforeCursorPos[mentionCharPos - 1].match(/\s/g))) {
-				return null;
-			}
-
-			const mentionText = beforeCursorPos.substring(mentionCharPos + 1);
-
-			if (mentionText.length) {
-				this.setState({
-					mentionCharPos,
-					mentionRange: range.index
-				});
-
-				return {
-					text: mentionText
-				};
-			}
-		}
-
-		return null;
-	}
-
-	/**
 	 * Our main postMessage event handler. Receives messages from the main app,
 	 * and handles them as necessary.
 	 *
@@ -357,9 +322,12 @@ class QuillComponent extends Component {
 	 * @return 	void
 	 */
 	insertMention(data) {
+		const prevMentionCharPos = this.state.mentionCharPos;
+
+		this.addDebug(`Inserting mention at pos ${this.state.mentionCharPos}, range is ${this.state.mentionRange}`);
 		this.state.quill.deleteText(this.state.mentionCharPos, this.state.mentionRange - this.state.mentionCharPos, Quill.sources.API);
 		this.state.quill.insertEmbed(
-			this.state.mentionCharPos,
+			prevMentionCharPos,
 			"mention",
 			{
 				id: data.id,
@@ -368,10 +336,46 @@ class QuillComponent extends Component {
 			},
 			Quill.sources.API
 		);
-		this.state.quill.insertText(this.state.mentionCharPos + 1, " ", Quill.sources.API);
-		this.state.quill.setSelection(this.state.mentionCharPos + 2, Quill.sources.SILENT);
+		this.state.quill.insertText(prevMentionCharPos + 1, " ", Quill.sources.API);
+		this.state.quill.setSelection(prevMentionCharPos + 2, Quill.sources.SILENT);
 
 		this.getText();
+	}
+
+	/**
+	 * Return the current mention state, if any
+	 *
+	 * @return 	object|null
+	 */
+	mentionState() {
+		const maxLength = 20;
+		const range = this.state.quill.getSelection();
+		const cursorPos = range.index;
+		const startPos = Math.max(0, cursorPos - maxLength);
+		const beforeCursorPos = this.state.quill.getText(startPos, cursorPos - startPos);
+		const mentionCharIndex = beforeCursorPos.lastIndexOf("@");
+
+		if (mentionCharIndex !== -1) {
+			if (!(mentionCharIndex === 0 || !!beforeCursorPos[mentionCharIndex - 1].match(/\s/g))) {
+				return null;
+			}
+
+			const mentionCharPos = cursorPos - beforeCursorPos.length + mentionCharIndex;
+			const mentionText = beforeCursorPos.substring(mentionCharIndex + 1);
+
+			if (mentionText.length) {
+				this.setState({
+					mentionCharPos,
+					mentionRange: range.index
+				});
+
+				return {
+					text: mentionText
+				};
+			}
+		}
+
+		return null;
 	}
 
 	/**
