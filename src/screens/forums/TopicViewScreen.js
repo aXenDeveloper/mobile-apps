@@ -857,6 +857,7 @@ class TopicViewScreen extends Component {
 				variables: {
 					id: this.props.data.forums.topic.id
 				},
+				refetchQueries: ["ForumQuery"],
 				optimisticResponse: {
 					mutateForums: {
 						__typename: "mutate_Forums",
