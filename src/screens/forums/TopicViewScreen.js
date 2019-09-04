@@ -1793,6 +1793,7 @@ export default compose(
 
 			return {
 				notifyOnNetworkStatusChange: true,
+				fetchPolicy: "network-only",
 				variables: {
 					id: props.navigation.state.params.id,
 					limit: Expo.Constants.manifest.extra.per_page,
