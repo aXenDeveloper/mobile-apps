@@ -129,14 +129,14 @@ class Lang {
 		try {
 			let langKey;
 
-			if (isComment) {
+			if (isReview) {
+				langKey = "activity_reviewed";
+			} else if (isComment) {
 				if (firstCommentRequired) {
 					langKey = "activity_replied";
 				} else {
 					langKey = "activity_commented";
 				}
-			} else if (isReview) {
-				langKey = "activity_reviewed";
 			} else {
 				langKey = "activity_posted_item";
 			}
