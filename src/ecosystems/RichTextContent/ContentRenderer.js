@@ -106,6 +106,7 @@ class ContentRenderer extends PureComponent {
 		// Remove width attribute from iframes, so that contentMaxWidth works
 		if (name === "iframe") {
 			delete node.attribs.width;
+			delete node.attribs.height;
 			return node;
 		}
 
