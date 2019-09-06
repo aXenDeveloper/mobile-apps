@@ -115,7 +115,6 @@ class ForumItem extends Component {
 			</TouchableHighlight>
 		];
 
-		const postCount = parseInt(this.props.data.postCount) + parseInt(this.props.data.topicCount);
 		const lastPostInfo = {
 			photo: this.props.data.lastPostAuthor ? this.props.data.lastPostAuthor.photo : null,
 			date: this.props.data.lastPostDate
@@ -132,7 +131,7 @@ class ForumItem extends Component {
 							</Text>
 							{!this.props.data.isRedirectForum && (
 								<Text testId="postCount" style={[styles.lightText, styles.standardText]}>
-									{Lang.pluralize(Lang.get("posts"), formatNumber(postCount))}
+									{Lang.pluralize(Lang.get("posts"), formatNumber(this.props.data.topicCount))}
 								</Text>
 							)}
 						</View>
