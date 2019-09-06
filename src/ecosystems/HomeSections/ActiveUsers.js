@@ -166,7 +166,10 @@ class ActiveUsers extends Component {
 				<Animated.View key={user.user.id} style={[componentStyles.tickerItem, { opacity: opacity }]}>
 					<Text style={[styles.text, styles.smallText]} numberOfLines={1}>
 						<Time style={[styles.lightText, styles.mrTight]} timestamp={user.timestamp} />
-						<Text>{user.lang}</Text>
+						<Text>
+							{`  `}
+							{user.lang}
+						</Text>
 					</Text>
 				</Animated.View>
 			);
