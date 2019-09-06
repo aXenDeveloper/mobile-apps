@@ -650,10 +650,12 @@ class TopicViewScreen extends Component {
 			}
 		}
 
+		const variableProps = this.props.data.variables;
+
 		// Update our offset tracker, but only if we haven't done it before, otherwise
 		// we'll replace our offset with the initial offset every time the component updates
 		if (
-			(prevProps.data.variables.offsetPosition !== "LAST" && this.props.data.variables.offsetPosition === "LAST") ||
+			(prevProps.data.variables.offsetPosition !== "LAST" && variableProps.offsetPosition === "LAST") ||
 			(!prevProps.navigation.state.params.showLastComment && this.props.navigation.state.params.showLastComment)
 		) {
 			this._initialOffsetDone = false;
@@ -664,30 +666,29 @@ class TopicViewScreen extends Component {
 		// don't consider the first post as a 'comment'. However, for our app's purposes, we want to consider
 		// it when calculating our position in the topic.
 		if (!this._initialOffsetDone && !this.props.data.loading && !this.props.data.error) {
-			if (this.props.data.variables.offsetPosition == "ID" && this.props.data.forums.topic.findCommentPosition) {
+			const topicData = this.props.data.forums.topic;
+
+			if (variableProps.offsetPosition == "ID" && topicData.findCommentPosition) {
 				// If we're starting at a specific post, then set the offset to that post's position
 				this.setState({
-					startingOffset: this.props.data.forums.topic.findCommentPosition,
-					currentPosition: this.props.data.forums.topic.findCommentPosition + 1 // See CURRENTPOSITION NOTE above this block
+					startingOffset: topicData.findCommentPosition,
+					currentPosition: Math.min(topicData.postCount, topicData.findCommentPosition + 1) // See CURRENTPOSITION NOTE above this block
 				});
 				this._initialOffsetDone = true;
-			} else if (this.props.data.variables.offsetPosition == "UNREAD" && this.props.data.forums.topic.unreadCommentPosition) {
+			} else if (variableProps.offsetPosition == "UNREAD" && topicData.unreadCommentPosition) {
 				// If we're showing by unread, then the offset will be the last unread post position
 				this.setState({
-					startingOffset: this.props.data.forums.topic.unreadCommentPosition,
-					currentPosition: this.props.data.forums.topic.unreadCommentPosition + 1 // See CURRENTPOSITION NOTE above this block
+					startingOffset: topicData.unreadCommentPosition,
+					currentPosition: Math.min(topicData.postCount, topicData.unreadCommentPosition + 1) // See CURRENTPOSITION NOTE above this block
 				});
 				this._initialOffsetDone = true;
-			} else if (
-				this.props.navigation.state.params.showLastComment ||
-				(this.props.data.variables.offsetPosition == "LAST" && this.props.data.variables.offsetAdjust !== 0)
-			) {
+			} else if (this.props.navigation.state.params.showLastComment || (variableProps.offsetPosition == "LAST" && variableProps.offsetAdjust !== 0)) {
 				this._initialOffsetDone = true;
 				// If we're showing the last post, the offset will be the total post count plus our adjustment
 				this.setState({
 					reachedEnd: true,
-					startingOffset: Math.max(this.props.data.forums.topic.postCount + this.props.data.variables.offsetAdjust, 0),
-					currentPosition: Math.max(this.props.data.forums.topic.postCount + this.props.data.variables.offsetAdjust, 0) + 1
+					startingOffset: Math.max(topicData.postCount + variableProps.offsetAdjust, 0),
+					currentPosition: Math.min(topicData.postCount, Math.max(topicData.postCount + variableProps.offsetAdjust, 0) + 1)
 				});
 				this.scrollToEnd();
 			}
@@ -1685,7 +1686,7 @@ class TopicViewScreen extends Component {
 
 		// After all that, set our state which will update the Pager bar
 		this.setState({
-			currentPosition: realIndex
+			currentPosition: Math.min(this.props.data.forums.topic.postCount, realIndex)
 		});
 	}
 
