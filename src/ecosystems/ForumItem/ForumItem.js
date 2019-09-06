@@ -5,6 +5,7 @@ import { graphql, compose, withApollo } from "react-apollo";
 import gql from "graphql-tag";
 import { connect } from "react-redux";
 import { withNavigation } from "react-navigation";
+import _ from "underscore";
 
 import ForumItemFragment from "./ForumItemFragment";
 import Lang from "../../utils/Lang";
@@ -72,6 +73,7 @@ class ForumItem extends Component {
 							__typename: "mutate_Forums",
 							markForumRead: {
 								...this.props.data,
+								subforums: _.isArray(this.props.data.subforums) ? this.props.data.subforums.slice() : null,
 								hasUnread: false
 							}
 						}
