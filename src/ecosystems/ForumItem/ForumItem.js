@@ -125,14 +125,16 @@ class ForumItem extends Component {
 			<Swipeable rightButtons={rightButtons} onRef={ref => (this._swipeable = ref)}>
 				<ContentRow style={componentStyles.forumItem} onPress={this.props.onPress || this.onPress}>
 					<View style={componentStyles.iconAndInfo}>
-						<ForumIcon style={componentStyles.forumIcon} unread={this.props.data.hasUnread} />
+						<ForumIcon style={componentStyles.forumIcon} unread={this.props.data.hasUnread} type={this.props.data.isRedirectForum ? "redirect" : "normal"} />
 						<View style={componentStyles.forumInfo}>
 							<Text style={[styles.itemTitle, componentStyles.forumTitle]} numberOfLines={1}>
 								{this.props.data.name}
 							</Text>
-							<Text testId="postCount" style={[styles.lightText, styles.standardText]}>
-								{Lang.pluralize(Lang.get("posts"), formatNumber(postCount))}
-							</Text>
+							{!this.props.data.isRedirectForum && (
+								<Text testId="postCount" style={[styles.lightText, styles.standardText]}>
+									{Lang.pluralize(Lang.get("posts"), formatNumber(postCount))}
+								</Text>
+							)}
 						</View>
 					</View>
 					{!Boolean(this.props.data.isRedirectForum) && (
