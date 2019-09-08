@@ -120,8 +120,6 @@ export const bootSite = apiInfo => {
 				variables: {}
 			});
 
-			console.log(data);
-
 			if (auth.isAuthenticated && data.core.me.group.groupType !== "GUEST") {
 				dispatch(userLoaded({ ...data.core.me }));
 			} else {
