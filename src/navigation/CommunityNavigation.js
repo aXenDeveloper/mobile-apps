@@ -8,8 +8,7 @@ import {
 	NavigationActions
 } from "react-navigation";
 import { BottomTabBar } from "react-navigation-tabs";
-import { View } from "react-native";
-import Image from "react-native-remote-svg";
+import { View, Platform } from "react-native";
 import { connect } from "react-redux";
 import * as WebBrowser from "expo";
 import { LinearGradient } from "expo-linear-gradient";
@@ -48,7 +47,7 @@ import NavigationService from "../utils/NavigationService";
 import { resetModalWebview } from "../redux/actions/app";
 import { NavigationTabIcon, NavigationTabNotification } from "../ecosystems/Navigation";
 import CustomHeader from "../ecosystems/CustomHeader";
-import getImageUrl from "../utils/getImageUrl";
+import UserPhoto from "../atoms/UserPhoto";
 import styles, { styleVars, tabStyles } from "../styles";
 import { navigationIcons } from "../icons";
 import Lang from "../utils/Lang";
@@ -345,11 +344,7 @@ class AppNavigation extends Component {
 	 */
 	_getUserPhoto(focused, tintColor) {
 		if (this.props.auth.isAuthenticated && this.props.user.photo) {
-			return (
-				<View style={{ borderRadius: 24, overflow: "hidden" }}>
-					<Image style={[styles.tabIcon, styles.userTabIcon]} source={{ uri: getImageUrl(unescape(this.props.user.photo)) }} />
-				</View>
-			);
+			return <UserPhoto url={this.props.user.photo} size={Platform.OS === "ios" ? 25 : 18} />;
 		} else {
 			return <NavigationTabIcon focused={focused} tintColor={tintColor} active={navigationIcons.LOGIN_ACTIVE} inactive={navigationIcons.LOGIN} />;
 		}

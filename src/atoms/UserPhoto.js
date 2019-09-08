@@ -1,11 +1,10 @@
 import React, { memo } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import _ from "underscore";
-import Image from "react-native-remote-svg";
 import FadeIn from "react-native-fade-in-image";
 
 import getImageUrl from "../utils/getImageUrl";
-import { styleVars } from "../styles";
+import styles, { styleVars } from "../styles";
 
 const UserPhoto = props => {
 	const size = props.size || 40;
@@ -20,18 +19,45 @@ const UserPhoto = props => {
 		overflow: "hidden"
 	};
 
+	let photo;
+
+	if (props.url.startsWith("{") && props.url.endsWith("}")) {
+		// JSON letter photo
+		let backgroundColor;
+		let letter;
+		const fontSize = Math.max(14, Math.round(size * 0.66));
+
+		try {
+			const data = JSON.parse(props.url);
+			backgroundColor = `#${data.color}`;
+			letter = data.letter;
+		} catch (err) {
+			console.log(err);
+			backgroundColor = styleVars.accentColor;
+			letter = "?";
+		}
+
+		photo = (
+			<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.letterPhoto, { backgroundColor }, photoSize]}>
+				<Text style={[componentStyles.letter, { fontSize }]}>{letter}</Text>
+			</View>
+		);
+	} else {
+		photo = (
+			<FadeIn>
+				<Image
+					source={{ uri: getImageUrl(unescape(props.url)) }}
+					style={[photoSize, componentStyles.photo, !_.isUndefined(props.anon) && props.anon ? componentStyles.anonymous : null]}
+					resizeMode="cover"
+					testId="userPhoto"
+				/>
+			</FadeIn>
+		);
+	}
+
 	return (
 		<View style={props.style || null}>
-			<View style={wrap}>
-				<FadeIn>
-					<Image
-						source={{ uri: getImageUrl(unescape(props.url)) }}
-						style={[photoSize, componentStyles.photo, !_.isUndefined(props.anon) && props.anon ? componentStyles.anonymous : null]}
-						resizeMode="cover"
-						testId="userPhoto"
-					/>
-				</FadeIn>
-			</View>
+			<View style={wrap}>{photo}</View>
 			{_.isBoolean(props.online) && (
 				<View
 					testId="onlineIndicator"
@@ -66,5 +92,12 @@ const componentStyles = StyleSheet.create({
 		borderWidth: 2,
 		borderStyle: "solid",
 		borderColor: "#fff"
+	},
+	letterPhoto: {
+		backgroundColor: "#333"
+	},
+	letter: {
+		color: "#fff",
+		textAlign: "center"
 	}
 });
