@@ -1,50 +1,56 @@
 {
-	"expo": {
-		"sdkVersion": "34.0.0",
-		"orientation": "portrait",
-		"privacy": "unlisted",
-		"hooks": {
-			"postPublish": [
-				{
-					"file": "sentry-expo/upload-sourcemaps",
-					"config": {
-						"organization": "ips-inc-s7",
-						"project": "invision-community-app",
-						"authToken": "bd04333c3cee47919b0b963b90c18706b7f7bdd5f7df4f93b422ef0a91f68943"
-					}
-				}
-			]
-		},
-		"assetBundlePatterns": ["web/dist/index.html", "resources/splash.png"],
-		"platforms": ["android", "ios"],
-		"extra": {
-			"multi": false,
-			"oauth_client_id": "e79f36dc890d5c6b01fa0dc25e52ad0e",
-			"api_url": "https://invisioncommunity.com/",
-			"refresh_token_advance": 300000,
-			"notification_timeout": 10000,
-			"message_prefix": "__IPS__",
-			"per_page": 10,
-			"remoteServicesUrl": "https://remoteservices.invisionpower.com/mobile/",
-			"max_image_dim": 1000
-		},
-		"name": "Invision Community",
-		"slug": "invision-community",
-		"version": "0.1.7",
-		"description": "",
-		"scheme": "invision-community",
-		"ios": {
-			"bundleIdentifier": "com.invisioncommunity.app"
-		},
-		"android": {
-			"googleServicesFile": "./google-services.json",
-			"package": "com.invisioncommunity.app"
-		},
-		"splash": {
-			"image": "./resources/splash.png",
-			"resizeMode": "cover"
-		},
-		"icon": "./resources/icon.png",
-		"primaryColor": "#3370AA"
-	}
+  "expo": {
+    "sdkVersion": "34.0.0",
+    "orientation": "portrait",
+    "privacy": "unlisted",
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "ips-inc-s7",
+            "project": "invision-community-app",
+            "authToken": "bd04333c3cee47919b0b963b90c18706b7f7bdd5f7df4f93b422ef0a91f68943"
+          }
+        }
+      ]
+    },
+    "assetBundlePatterns": [
+      "web/dist/index.html",
+      "resources/splash.png"
+    ],
+    "platforms": [
+      "android",
+      "ios"
+    ],
+    "extra": {
+      "multi": false,
+      "oauth_client_id": "e79f36dc890d5c6b01fa0dc25e52ad0e",
+      "api_url": "https://invisioncommunity.com/",
+      "refresh_token_advance": 300000,
+      "notification_timeout": 10000,
+      "message_prefix": "__IPS__",
+      "per_page": 10,
+      "remoteServicesUrl": "https://remoteservices.invisionpower.com/mobile/",
+      "max_image_dim": 1000
+    },
+    "name": "Invision Community",
+    "slug": "invision-community",
+    "version": "0.1.8",
+    "description": "",
+    "scheme": "invision-community",
+    "ios": {
+      "bundleIdentifier": "com.invisioncommunity.app"
+    },
+    "android": {
+      "googleServicesFile": "./google-services.json",
+      "package": "com.invisioncommunity.app"
+    },
+    "splash": {
+      "image": "./resources/splash.png",
+      "resizeMode": "cover"
+    },
+    "icon": "./resources/icon.png",
+    "primaryColor": "#3370AA"
+  }
 }
