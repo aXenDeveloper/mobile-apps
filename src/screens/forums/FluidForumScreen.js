@@ -24,6 +24,7 @@ const FluidForumQuery = gql`
 					plain(truncateLength: 100)
 				}
 				forum {
+					id
 					name
 					featureColor
 				}

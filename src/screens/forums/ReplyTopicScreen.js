@@ -9,6 +9,7 @@ import _ from "underscore";
 import getErrorMessage from "../../utils/getErrorMessage";
 import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
 import { PostFragment } from "../../ecosystems/Post";
+import TwoLineHeader from "../../atoms/TwoLineHeader";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import UserPhoto from "../../atoms/UserPhoto";
 import HeaderButton from "../../atoms/HeaderButton";
@@ -16,12 +17,13 @@ import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
 import relativeTime from "../../utils/RelativeTime";
 import { withTheme, currentStyleSheet } from "../../themes";
+import { processToSend } from "../../utils/richText";
 import icons from "../../icons";
 
 const ReplyTopicMutation = gql`
-	mutation ReplyTopicMutation($topicID: ID!, $content: String!, $replyingTo: ID) {
+	mutation ReplyTopicMutation($topicID: ID!, $content: String!, $replyingTo: ID, $postKey: String!) {
 		mutateForums {
-			replyTopic(topicID: $topicID, content: $content, replyingTo: $replyingTo) {
+			replyTopic(topicID: $topicID, content: $content, replyingTo: $replyingTo, postKey: $postKey) {
 				...PostFragment
 			}
 		}
@@ -38,7 +40,7 @@ class ReplyTopicScreen extends Component {
 					<Text style={currentStyleSheet.headerTitle}> {Lang.get("submitting")}...</Text>
 				</React.Fragment>
 			) : (
-				Lang.get("reply_screen")
+				<TwoLineHeader title={Lang.get("reply_screen")} subtitle={navigation.getParam("topicTitle")} />
 			),
 			headerTintColor: "white",
 			//headerLeft: navigation.getParam("submitting") ? null : <HeaderButton position="left" label="Cancel" onPress={navigation.getParam("cancelReply")} />,
@@ -122,8 +124,9 @@ class ReplyTopicScreen extends Component {
 			await this.props.mutate({
 				variables: {
 					topicID: this.props.navigation.state.params.topicID,
-					content: this.state.content,
-					replyingTo: !_.isUndefined(this.props.navigation.state.params.quotedPost) ? this.props.navigation.state.params.quotedPost.id : null
+					content: processToSend(this.state.content),
+					replyingTo: !_.isUndefined(this.props.navigation.state.params.quotedPost) ? this.props.navigation.state.params.quotedPost.id : null,
+					postKey: this.editorID
 				},
 				refetchQueries: ["TopicViewQuery", "TopicListQuery"]
 			});
@@ -197,7 +200,7 @@ class ReplyTopicScreen extends Component {
 
 		return (
 			<React.Fragment>
-				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1, backgroundColor: "#fff" }}>
+				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1, backgroundColor: "#fff" }} keyboardShouldPersistTaps="handled">
 					{quotedPostComponent}
 					<KeyboardAvoidingView style={{ flex: 1 }} enabled>
 						<QuillEditor

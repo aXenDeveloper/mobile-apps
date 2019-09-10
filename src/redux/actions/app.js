@@ -216,6 +216,7 @@ const BootQuery = gql`
 				}
 			}
 			settings {
+				version
 				base_url
 				site_online
 				site_offline_message

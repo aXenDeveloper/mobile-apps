@@ -7,6 +7,10 @@ import Sentry from "sentry-expo";
 import { Asset } from "expo-asset";
 import { AppLoading } from "expo";
 
+if (!__DEV__) {
+	console.log = () => {};
+}
+
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
 import AppRoot from "./src/screens/ips/AppRoot";

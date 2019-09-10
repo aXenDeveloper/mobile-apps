@@ -2,15 +2,17 @@ import React, { memo } from "react";
 import { StyleSheet, Image } from "react-native";
 
 import { withTheme } from "../themes";
+import icons from "../icons";
 
-//@todo image refs
 const ForumIcon = props => {
 	const { styles, componentStyles } = props;
 
-	if (props.unread) {
-		return <Image style={[props.style, componentStyles.forumIcon, componentStyles.activeIcon]} source={require("../../resources/forum_unread.png")} />;
+	if (props.type == "redirect") {
+		return <Image style={[props.style, componentStyles.forumIcon, componentStyles.inactiveIcon]} source={icons.FORUM_REDIRECT} />;
+	} else if (props.unread) {
+		return <Image style={[props.style, componentStyles.forumIcon, componentStyles.activeIcon]} source={icons.FORUM_UNREAD} />;
 	} else {
-		return <Image style={[props.style, componentStyles.forumIcon, componentStyles.inactiveIcon]} source={require("../../resources/forum_read.png")} />;
+		return <Image style={[props.style, componentStyles.forumIcon, componentStyles.inactiveIcon]} source={icons.FORUM_READ} />;
 	}
 };
 

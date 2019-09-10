@@ -5,7 +5,7 @@ import { withNavigation } from "react-navigation";
 
 import ContentRow from "../../ecosystems/ContentRow";
 import UserPhoto from "../../atoms/UserPhoto";
-import relativeTime from "../../utils/RelativeTime";
+import Time from "../../atoms/Time";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import { withTheme } from "../../themes";
 
@@ -36,7 +36,7 @@ const NotificationRow = props => {
 						<Text style={[styles.smallItemTitle, componentStyles.title, props.data.readDate == null ? styles.title : styles.titleRead]}>
 							{props.data.title}
 						</Text>
-						<Text style={[styles.smallText, styles.lightText]}>{relativeTime.short(props.data.updatedDate)}</Text>
+						<Time style={[styles.smallText, styles.lightText]} timestamp={props.data.updatedDate} />
 					</View>
 					{Boolean(props.data.content) && (
 						<Text style={[styles.smallText, styles.lightText]} numberOfLines={2}>

@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { Text, View, StyleSheet, Image, Dimensions, TouchableOpacity } from "react-native";
 import HTML from "react-native-render-html";
-import { iframe, a, img } from "react-native-render-html/src/HTMLRenderers";
+import { iframe, a, img, pre } from "react-native-render-html/src/HTMLRenderers";
 import { TEXT_TAGS } from "react-native-render-html/src/HTMLUtils";
 import { compose } from "react-apollo";
 import { withNavigation } from "react-navigation";
@@ -11,7 +11,6 @@ import _ from "underscore";
 import { openModalWebview } from "../../redux/actions/app";
 import getImageUrl from "../../utils/getImageUrl";
 import Lang from "../../utils/Lang";
-import relativeTime from "../../utils/RelativeTime";
 import Lightbox from "../Lightbox";
 import Mention from "./Mention";
 import Embed from "./Embed";
@@ -109,6 +108,7 @@ class ContentRenderer extends PureComponent {
 		// Remove width attribute from iframes, so that contentMaxWidth works
 		if (name === "iframe") {
 			delete node.attribs.width;
+			delete node.attribs.height;
 			return node;
 		}
 
@@ -230,6 +230,12 @@ class ContentRenderer extends PureComponent {
 				}
 
 				return img(htmlAttribs, children, convertedCSSStyles, passProps);
+			},
+			__custom__pre: {
+				renderer: (htmlAttribs, children, convertedCSSStyles, passProps) => {
+					return <View style={passProps.classesStyles.ipsCode}>{children}</View>;
+				},
+				wrapper: "View"
 			}
 		};
 	}
@@ -284,7 +290,7 @@ class ContentRenderer extends PureComponent {
 		if (!_.isUndefined(quoteAttribs["data-ipsquote-username"])) {
 			if (!_.isUndefined(quoteAttribs["data-ipsquote-timestamp"])) {
 				toReturn = Lang.get("editor_quote_line_with_time", {
-					date: relativeTime.long(parseInt(quoteAttribs["data-ipsquote-timestamp"])),
+					date: Lang.formatTime(parseInt(quoteAttribs["data-ipsquote-timestamp"]), "long"),
 					username: quoteAttribs["data-ipsquote-username"]
 				});
 			} else {
@@ -295,6 +301,27 @@ class ContentRenderer extends PureComponent {
 		}
 
 		return toReturn;
+	}
+
+	/**
+	 * react-native-render-html has a bug whereby spaces around formatted elements are lost
+	 * This method adds extra spacing before and after formatting tags
+	 *
+	 * @param 	string 		content 	The content to fix
+	 * @return 	string
+	 */
+	fixContentSpacing(content) {
+		content = content.replace(/<[/](strong|em|i|s|u|span)> /g, " </$1>");
+		content = content.replace(/ <(strong|em|i|s|u|span)>/g, "<$1> ");
+
+		// Code blocks have codemirror <span> tags littered throughout
+		// Clean those up by removing them
+		content = content.replace(/<pre (.+?)>([\s\S]+?)<\/pre>/gi, (str, p1, p2) => {
+			const innerContent = p2.replace(/(<([^>]+)>)/gi, "").trim();
+			return `<__custom__pre><pre ${p1}>${innerContent}</pre></__custom_pre>`;
+		});
+
+		return content;
 	}
 
 	render() {
@@ -310,7 +337,7 @@ class ContentRenderer extends PureComponent {
 					alterData={this.alterData}
 					baseFontStyle={this.props.baseFontStyle || richTextStyles(this.props.dark).defaultTextStyle}
 					ignoredStyles={["font-family", "letter-spacing", "line-height"]}
-					html={this.props.children}
+					html={this.fixContentSpacing(this.props.children)}
 					imagesMaxWidth={this.maxImagesWidth}
 					staticContentMaxWidth={this.maxImagesWidth}
 					onLinkPress={this.props.onLinkPress || this.onLinkPress}

@@ -7,8 +7,8 @@ import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
-import relativeTime from "../../utils/RelativeTime";
 import getErrorMessage from "../../utils/getErrorMessage";
+import formatNumber from "../../utils/formatNumber";
 import FollowButton from "../../atoms/FollowButton";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import ErrorBox from "../../atoms/ErrorBox";
@@ -164,7 +164,7 @@ class TopicListScreen extends Component {
 			if (!prevProps.navigation.state.params.title || !prevProps.navigation.state.params.subtitle) {
 				this.props.navigation.setParams({
 					title: this.props.data.forums.forum.name,
-					subtitle: Lang.pluralize(Lang.get("topics"), this.props.data.forums.forum.topicCount)
+					subtitle: Lang.pluralize(Lang.get("topics"), formatNumber(this.props.data.forums.forum.topicCount))
 				});
 			}
 
@@ -406,6 +406,7 @@ class TopicListScreen extends Component {
 
 		this.props.navigation.navigate("CreateTopic", {
 			forumID: this.props.navigation.state.params.id,
+			forumName: forumData.name,
 			tagsEnabled,
 			definedTags,
 			requiresApproval: forumData.nodePermissions.itemsRequireApproval

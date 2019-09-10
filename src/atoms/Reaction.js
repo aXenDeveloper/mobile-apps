@@ -3,6 +3,7 @@ import { Text, View, Image, TouchableHighlight } from "react-native";
 
 import getImageUrl from "../utils/getImageUrl";
 import { withTheme } from "../themes";
+import formatNumber from "../utils/formatNumber";
 
 class Reaction extends Component {
 	constructor(props) {
@@ -18,6 +19,7 @@ class Reaction extends Component {
 	onPress() {
 		this.props.onPress({
 			id: this.props.id,
+			reactionId: this.props.reactionId,
 			count: this.props.count,
 			image: this.props.image
 		});

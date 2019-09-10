@@ -2,15 +2,15 @@ import React, { Component } from "react";
 import { Text, View, StyleSheet } from "react-native";
 
 import UserPhoto from "../../atoms/UserPhoto";
-import relativeTime from "../../utils/RelativeTime";
 import { withTheme } from "../../themes";
+import Time from "../../atoms/Time";
 
 const LastPostInfo = ({ componentStyles, ...props }) => {
 	if (Boolean(props.photo) && Boolean(props.timestamp)) {
 		return (
 			<View style={props.style}>
 				<UserPhoto url={props.photo} size={props.photoSize} />
-				<Text style={componentStyles.timestamp}>{relativeTime.short(props.timestamp)}</Text>
+				<Time timestamp={props.timestamp} style={componentStyles.timestamp} />
 			</View>
 		);
 	}

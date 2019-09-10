@@ -29,9 +29,9 @@ class WhoReactedModal extends Component {
 
 	componentDidUpdate(prevProps, prevState) {
 		if (this.props.visible) {
-			if (!prevProps.visible && this.state.results === null) {
+			if (!prevProps.visible && this.state.results === null && !this.state.loading) {
 				this.fetchData();
-			} else if (prevProps.variables.reactionID !== this.props.variables.reactionID) {
+			} else if (prevProps.variables.reactionId !== this.props.variables.reactionId && !this.state.loading) {
 				this.setState(
 					{
 						results: null,
@@ -59,7 +59,8 @@ class WhoReactedModal extends Component {
 					...this.props.variables,
 					offset: this.state.offset,
 					limit: LIMIT
-				}
+				},
+				fetchPolicy: "no-cache"
 			});
 
 			this.setState({
@@ -135,7 +136,13 @@ class WhoReactedModal extends Component {
 		}*/
 
 		return (
-			<Modal style={styles.modalAlignBottom} swipeDirection="down" onSwipeComplete={this.props.close} isVisible={this.props.visible}>
+			<Modal
+				style={styles.modalAlignBottom}
+				swipeDirection="down"
+				onSwipeComplete={this.props.close}
+				onBackdropPress={this.props.close}
+				isVisible={this.props.visible}
+			>
 				<View style={styles.modalInner}>
 					<View style={styles.modalHandle} />
 					<View style={styles.modalHeader}>

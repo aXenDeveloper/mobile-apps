@@ -5,10 +5,11 @@ import _ from "underscore";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import LargeTitle from "../../atoms/LargeTitle";
 import Lang from "../../utils/Lang";
-import relativeTime from "../../utils/RelativeTime";
+import Time from "../../atoms/Time";
 import UserPhoto from "../../atoms/UserPhoto";
 import NavigationService from "../../utils/NavigationService";
 import { withTheme } from "../../themes";
+import formatNumber from "../../utils/formatNumber";
 
 class ActiveUsers extends Component {
 	constructor(props) {
@@ -96,7 +97,9 @@ class ActiveUsers extends Component {
 		if (activeUsersData.count - activeUsersData.users.length > 0) {
 			return (
 				<View style={[styles.flex, styles.flexJustifyCenter, styles.flexAlignCenter, componentStyles.andMore]}>
-					<Text style={[styles.lightText, styles.smallText]}>+{Lang.pluralize(Lang.get("x_more"), activeUsersData.count - activeUsersData.users.length)}</Text>
+					<Text style={[styles.lightText, styles.smallText]}>
+						+{Lang.pluralize(Lang.get("x_more"), formatNumber(activeUsersData.count - activeUsersData.users.length))}
+					</Text>
 				</View>
 			);
 		}
@@ -167,8 +170,11 @@ class ActiveUsers extends Component {
 			return (
 				<Animated.View key={user.user.id} style={[componentStyles.tickerItem, { opacity: opacity }]}>
 					<Text style={[styles.text, styles.smallText]} numberOfLines={1}>
-						<Text style={styles.lightText}>{relativeTime.short(user.timestamp)} &nbsp;</Text>
-						<Text>{user.lang}</Text>
+						<Time style={[styles.lightText, styles.mrTight]} timestamp={user.timestamp} />
+						<Text>
+							{`  `}
+							{user.lang}
+						</Text>
 					</Text>
 				</Animated.View>
 			);

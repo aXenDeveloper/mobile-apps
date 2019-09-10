@@ -6,6 +6,7 @@ const ForumItemFragment = gql`
 		name
 		topicCount
 		postCount
+		hasUnread
 		subforums {
 			id
 			name

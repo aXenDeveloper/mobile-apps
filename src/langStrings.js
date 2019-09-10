@@ -112,6 +112,25 @@ export default [
 	"started_by_x",
 
 	//------------------------------------
+	// Time stuff
+	"seconds",
+	"minutes",
+	"hours",
+	"days",
+	"weeks",
+	"months",
+	"years",
+	"seconds_short",
+	"minutes_short",
+	"hours_short",
+	"days_short",
+	"weeks_short",
+	"months_short",
+	"years_short",
+	"time_future",
+	"time_past",
+
+	//------------------------------------
 	// Editor
 	"link_url",
 	"link_text",

@@ -6,6 +6,9 @@ import { connect } from "react-redux";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
+
+import formatNumber from "../../utils/formatNumber";
+import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import Button from "../../atoms/Button";
@@ -42,7 +45,12 @@ const PollVoteMutation = gql`
 
 class PollScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
-		headerTitle: <TwoLineHeader title={navigation.state.params.data.title} subtitle={Lang.pluralize(Lang.get("votes"), navigation.state.params.data.votes)} />
+		headerTitle: (
+			<TwoLineHeader
+				title={navigation.state.params.data.title}
+				subtitle={Lang.pluralize(Lang.get("votes"), formatNumber(navigation.state.params.data.votes))}
+			/>
+		)
 	});
 
 	constructor(props) {

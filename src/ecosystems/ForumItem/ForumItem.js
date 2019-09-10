@@ -5,6 +5,7 @@ import { graphql, compose, withApollo } from "react-apollo";
 import gql from "graphql-tag";
 import { connect } from "react-redux";
 import { withNavigation } from "react-navigation";
+import _ from "underscore";
 
 import ForumItemFragment from "./ForumItemFragment";
 import Lang from "../../utils/Lang";
@@ -13,6 +14,7 @@ import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Place
 import ForumIcon from "../../atoms/ForumIcon";
 import LastPostInfo from "../../ecosystems/LastPostInfo";
 import { withTheme } from "../../themes";
+import formatNumber from "../../utils/formatNumber";
 import icons from "../../icons";
 
 const MarkForumRead = gql`
@@ -51,7 +53,7 @@ class ForumItem extends Component {
 			params: {
 				id: this.props.data.id,
 				title: this.props.data.name,
-				subtitle: Lang.pluralize(Lang.get("topics"), this.props.data.topicCount)
+				subtitle: Lang.pluralize(Lang.get("topics"), formatNumber(this.props.data.topicCount))
 			},
 			key: `forum_${this.props.data.id}`
 		});
@@ -71,6 +73,7 @@ class ForumItem extends Component {
 							__typename: "mutate_Forums",
 							markForumRead: {
 								...this.props.data,
+								subforums: _.isArray(this.props.data.subforums) ? this.props.data.subforums.slice() : null,
 								hasUnread: false
 							}
 						}
@@ -116,7 +119,6 @@ class ForumItem extends Component {
 			</TouchableHighlight>
 		];
 
-		const postCount = parseInt(this.props.data.postCount) + parseInt(this.props.data.topicCount);
 		const lastPostInfo = {
 			photo: this.props.data.lastPostAuthor ? this.props.data.lastPostAuthor.photo : null,
 			date: this.props.data.lastPostDate
@@ -126,14 +128,16 @@ class ForumItem extends Component {
 			<Swipeable rightButtons={rightButtons} onRef={ref => (this._swipeable = ref)}>
 				<ContentRow style={componentStyles.forumItem} onPress={this.props.onPress || this.onPress}>
 					<View style={componentStyles.iconAndInfo}>
-						<ForumIcon style={componentStyles.forumIcon} unread={this.props.data.hasUnread} />
+						<ForumIcon style={componentStyles.forumIcon} unread={this.props.data.hasUnread} type={this.props.data.isRedirectForum ? "redirect" : "normal"} />
 						<View style={componentStyles.forumInfo}>
 							<Text style={[styles.itemTitle, componentStyles.forumTitle]} numberOfLines={1}>
 								{this.props.data.name}
 							</Text>
-							<Text testId="postCount" style={[styles.lightText, styles.standardText]}>
-								{Lang.pluralize(Lang.get("posts"), postCount)}
-							</Text>
+							{!this.props.data.isRedirectForum && (
+								<Text testId="postCount" style={[styles.lightText, styles.standardText]}>
+									{Lang.pluralize(Lang.get("posts"), formatNumber(this.props.data.topicCount))}
+								</Text>
+							)}
 						</View>
 					</View>
 					{!Boolean(this.props.data.isRedirectForum) && (

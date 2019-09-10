@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView, TextInput, Image, LayoutAnimation, Alert } from "react-native";
+import { Text, View, ScrollView, StyleSheet, Keyboard, TextInput, KeyboardAvoidingView, Image, LayoutAnimation, Alert } from "react-native";
 import { connect } from "react-redux";
 import _ from "underscore";
 import { compose, withApollo } from "react-apollo";
@@ -302,6 +302,10 @@ class ReportContentScreen extends Component {
 						returnKeyType="done"
 						editable={!this.state.submitting}
 						onChangeText={this.onChangeInfoText}
+						blurOnSubmit={true}
+						onSubmitEditing={() => {
+							Keyboard.dismiss();
+						}}
 					/>
 				</ContentRow>
 			</React.Fragment>

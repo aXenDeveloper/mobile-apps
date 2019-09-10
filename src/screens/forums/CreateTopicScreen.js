@@ -10,10 +10,12 @@ import TagEdit from "../../ecosystems/TagEdit";
 import { QuillEditor, QuillToolbar } from "../../ecosystems/Editor";
 import { UPLOAD_STATUS } from "../../redux/actions/editor";
 import HeaderButton from "../../atoms/HeaderButton";
+import TwoLineHeader from "../../atoms/TwoLineHeader";
 import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
 //import styles from "../../styles";
 import { withTheme, currentStyleSheet } from "../../themes";
+import { processToSend } from "../../utils/richText";
 import icons from "../../icons";
 
 const CreateTopicMutation = gql`
@@ -45,7 +47,7 @@ class CreateTopicScreen extends Component {
 					<Text style={currentStyleSheet.headerTitle}> {Lang.get("submitting")}...</Text>
 				</React.Fragment>
 			) : (
-				Lang.get("create_topic")
+				<TwoLineHeader title={Lang.get("create_topic")} subtitle={Lang.get("in_container", { container: navigation.getParam("forumName") })} />
 			),
 			headerTintColor: "white",
 			//headerLeft: navigation.getParam("submitting") ? null : <HeaderButton position="left" onPress={navigation.getParam("cancelTopic")} label="Cancel" />,
@@ -197,7 +199,7 @@ class CreateTopicScreen extends Component {
 				variables: {
 					forumID: this.props.navigation.state.params.forumID,
 					title: this.state.title,
-					content: this.state.content,
+					content: processToSend(this.state.content),
 					tags: this.state.tags,
 					postKey: this.editorID
 				},

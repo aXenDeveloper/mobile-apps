@@ -163,43 +163,8 @@ class QuillComponent extends Component {
 	 * @return 	object
 	 */
 	formattingState() {
-		this.addDebug(`formatting is ${JSON.stringify(this.state.quill.getFormat(this.state.quill.getSelection()))}`);
+		//this.addDebug(`formatting is ${JSON.stringify(this.state.quill.getFormat(this.state.quill.getSelection()))}`);
 		return this.state.quill.getFormat(this.state.quill.getSelection());
-	}
-
-	/**
-	 * Return the current mention state, if any
-	 *
-	 * @return 	object|null
-	 */
-	mentionState() {
-		const maxLength = 20;
-		const range = this.state.quill.getSelection();
-		const cursorPos = range.index;
-		const startPos = Math.max(0, cursorPos - maxLength);
-		const beforeCursorPos = this.state.quill.getText(startPos, cursorPos - startPos);
-		const mentionCharPos = beforeCursorPos.lastIndexOf("@");
-
-		if (mentionCharPos !== -1) {
-			if (!(mentionCharPos === 0 || !!beforeCursorPos[mentionCharPos - 1].match(/\s/g))) {
-				return null;
-			}
-
-			const mentionText = beforeCursorPos.substring(mentionCharPos + 1);
-
-			if (mentionText.length) {
-				this.setState({
-					mentionCharPos,
-					mentionRange: range.index
-				});
-
-				return {
-					text: mentionText
-				};
-			}
-		}
-
-		return null;
 	}
 
 	/**
@@ -316,19 +281,22 @@ class QuillComponent extends Component {
 		this.addDebug(`Range index before adding: ${range.index}, length: ${range.length}`);
 		this.addDebug(`About to insert ${data.text} with link ${data.url}`);
 
-		const delta = {
-			ops: [
-				...(range.index > 1 && {
-					retain: range.index || 0
-				}: {}),
-				{
-					insert: data.text,
-					attributes: {
-						link: data.url
-					}
-				}
-			]
-		};
+		const delta = { ops: [] };
+
+		if (range.index > 1) {
+			delta.ops.push({
+				retain: range.index
+			});
+		}
+
+		delta.ops.push({
+			insert: data.text,
+			attributes: {
+				link: data.url
+			}
+		});
+
+		this.addDebug(delta);
 
 		try {
 			this.state.quill.updateContents(delta, "user");
@@ -354,9 +322,12 @@ class QuillComponent extends Component {
 	 * @return 	void
 	 */
 	insertMention(data) {
+		const prevMentionCharPos = this.state.mentionCharPos;
+
+		this.addDebug(`Inserting mention at pos ${this.state.mentionCharPos}, range is ${this.state.mentionRange}`);
 		this.state.quill.deleteText(this.state.mentionCharPos, this.state.mentionRange - this.state.mentionCharPos, Quill.sources.API);
 		this.state.quill.insertEmbed(
-			this.state.mentionCharPos,
+			prevMentionCharPos,
 			"mention",
 			{
 				id: data.id,
@@ -365,8 +336,46 @@ class QuillComponent extends Component {
 			},
 			Quill.sources.API
 		);
-		this.state.quill.insertText(this.state.mentionCharPos + 1, " ", Quill.sources.API);
-		this.state.quill.setSelection(this.state.mentionCharPos + 2, Quill.sources.SILENT);
+		this.state.quill.insertText(prevMentionCharPos + 1, " ", Quill.sources.API);
+		this.state.quill.setSelection(prevMentionCharPos + 2, Quill.sources.SILENT);
+
+		this.getText();
+	}
+
+	/**
+	 * Return the current mention state, if any
+	 *
+	 * @return 	object|null
+	 */
+	mentionState() {
+		const maxLength = 20;
+		const range = this.state.quill.getSelection();
+		const cursorPos = range.index;
+		const startPos = Math.max(0, cursorPos - maxLength);
+		const beforeCursorPos = this.state.quill.getText(startPos, cursorPos - startPos);
+		const mentionCharIndex = beforeCursorPos.lastIndexOf("@");
+
+		if (mentionCharIndex !== -1) {
+			if (!(mentionCharIndex === 0 || !!beforeCursorPos[mentionCharIndex - 1].match(/\s/g))) {
+				return null;
+			}
+
+			const mentionCharPos = cursorPos - beforeCursorPos.length + mentionCharIndex;
+			const mentionText = beforeCursorPos.substring(mentionCharIndex + 1);
+
+			if (mentionText.length) {
+				this.setState({
+					mentionCharPos,
+					mentionRange: range.index
+				});
+
+				return {
+					text: mentionText
+				};
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -385,6 +394,8 @@ class QuillComponent extends Component {
 		}
 
 		this.state.quill.insertText(range.index, character, Quill.sources.API);
+
+		this.getText();
 	}
 
 	/**
@@ -507,7 +518,7 @@ class MentionBlot extends Embed {
 
 		node.setAttribute("class", "ipsMention");
 		node.setAttribute("data-mentionid", data.id);
-		node.setAttribute("href", "#");
+		node.setAttribute("href", data.url);
 		node.innerHTML = " @" + data.name + " ";
 
 		return node;
@@ -523,6 +534,6 @@ class MentionBlot extends Embed {
 }
 
 MentionBlot.blotName = "mention";
-MentionBlot.tagName = "span";
+MentionBlot.tagName = "a";
 
 Quill.register(MentionBlot);

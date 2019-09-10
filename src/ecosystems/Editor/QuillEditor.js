@@ -243,7 +243,7 @@ class QuillEditor extends Component {
 	 */
 	async fetchMentions(searchTerm) {
 		try {
-			console.log(`Fetching mentions for ${searchTerm}`);
+			//console.log(`Fetching mentions for ${searchTerm}`);
 			this.props.dispatch(loadingMentions());
 
 			let mentions = [];
@@ -261,7 +261,7 @@ class QuillEditor extends Component {
 				});
 			}
 
-			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+			//LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 			this.props.dispatch(updateMentionResults(mentions));
 		} catch (err) {
 			console.log(err);
@@ -463,6 +463,7 @@ class QuillEditor extends Component {
 				padding-top: 2px;
 				padding-bottom: 2px;
 				vertical-align: middle;
+				text-decoration: none;
 			}
 		`;
 

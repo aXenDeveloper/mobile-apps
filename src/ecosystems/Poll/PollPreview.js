@@ -6,8 +6,8 @@ import Lang from "../../utils/Lang";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import PostControls from "../../atoms/PostControls";
 import PostControl from "../../atoms/PostControl";
-import relativeTime from "../../utils/RelativeTime";
 import { withTheme } from "../../themes";
+import formatNumber from "../../utils/formatNumber";
 import icons from "../../icons";
 
 class PollPreview extends PureComponent {
@@ -28,7 +28,7 @@ class PollPreview extends PureComponent {
 			text = Lang.get("poll_closed");
 		} else if (this.props.data.closeTimestamp) {
 			text = Lang.get("poll_closes_date", {
-				date: relativeTime.long(parseInt(this.props.data.closeTimestamp), true)
+				date: Lang.formatTime(parseInt(this.props.data.closeTimestamp), "long")
 			});
 		}
 
@@ -68,7 +68,7 @@ class PollPreview extends PureComponent {
 						{Lang.get("poll_prefix")} {this.props.data.title}
 					</Text>
 					<View style={[styles.mtVeryTight, styles.flexRow, styles.flexJustifyCenter]}>
-						<Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.pluralize(Lang.get("votes"), this.props.data.votes)}</Text>
+						<Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.pluralize(Lang.get("votes"), formatNumber(this.props.data.votes))}</Text>
 						{Boolean(this.props.data.hasVoted) && <Text style={[styles.lightText, styles.smallText, styles.mhTight]}>{Lang.get("poll_you_voted")}</Text>}
 						{this.getCloseText()}
 					</View>

@@ -2,12 +2,13 @@ import React, { memo } from "react";
 import { Text, View } from "react-native";
 
 import Lang from "../../utils/Lang";
+import formatNumber from "../../utils/formatNumber";
 import UserPhoto from "../../atoms/UserPhoto";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import { ReactionOverview } from "../../ecosystems/Reaction";
-import relativeTime from "../../utils/RelativeTime";
 import _componentStyles from "./styles";
 import { withTheme } from "../../themes";
+import Time from "../../atoms/Time";
 
 const StreamItem = props => {
 	const { componentStyles, styles } = props;
@@ -16,22 +17,30 @@ const StreamItem = props => {
 	return (
 		<React.Fragment>
 			<View style={componentStyles.streamHeader}>
-				<View style={[componentStyles.streamMeta, styles.mbStandard]}>
+				<View style={[componentStyles.streamMeta, props.data.title !== null || Boolean(props.data.containerTitle) ? styles.mbStandard : null]}>
 					<View style={componentStyles.streamMetaInner}>
 						<UserPhoto url={props.data.author.photo} size={20} />
 						<Text style={[componentStyles.streamMetaText, componentStyles.streamMetaAction, hidden && styles.moderatedText]}>{props.metaString}</Text>
 					</View>
-					<Text style={[componentStyles.streamMetaText, styles.lightText, hidden && styles.moderatedLightText]}>{relativeTime.short(props.data.updated)}</Text>
+					<Time style={[componentStyles.streamMetaText, styles.lightText, hidden && styles.moderatedLightText]} timestamp={props.data.updated} />
 				</View>
-				<View style={componentStyles.streamItemInfo}>
-					<View style={[componentStyles.streamItemInfoInner, componentStyles.streamItemInfoInnerWithPhoto]}>
-						<Text style={[styles.itemTitle, hidden && styles.moderatedTitle]}>
-							<UnreadIndicator show={props.data.unread} />
-							{props.data.title}
-						</Text>
-						<Text style={[componentStyles.streamItemContainer, hidden && styles.moderatedLightText]}>In {props.data.containerTitle}</Text>
+				{(props.data.title !== null || Boolean(props.data.containerTitle)) && (
+					<View style={componentStyles.streamItemInfo}>
+						<View style={[componentStyles.streamItemInfoInner, componentStyles.streamItemInfoInnerWithPhoto]}>
+							{props.data.title !== null && (
+								<Text style={[styles.itemTitle, hidden && styles.moderatedTitle]}>
+									<UnreadIndicator show={props.data.unread} />
+									{props.data.title}
+								</Text>
+							)}
+							{Boolean(props.data.containerTitle) && (
+								<Text style={[componentStyles.streamItemContainer, hidden && styles.moderatedLightText]}>
+									{Lang.get("in_container", { container: props.data.containerTitle })}
+								</Text>
+							)}
+						</View>
 					</View>
-				</View>
+				)}
 			</View>
 			{props.image || null}
 			<View style={componentStyles.streamContent}>
@@ -45,7 +54,7 @@ const StreamItem = props => {
 						{Boolean(props.data.reactions.length) && <ReactionOverview small style={componentStyles.reactionOverview} reactions={props.data.reactions} />}
 						{props.data.replies !== null && (
 							<Text style={[styles.lightText, hidden && styles.moderatedLightText]} numberOfLines={1}>
-								{`${Lang.pluralize(Lang.get("replies"), props.data.replies)}`}
+								{`${Lang.pluralize(Lang.get("replies"), formatNumber(props.data.replies))}`}
 							</Text>
 						)}
 					</View>

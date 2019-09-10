@@ -21,7 +21,7 @@ import RichTextContent from "../../ecosystems/RichTextContent";
 import Reaction from "../../atoms/Reaction";
 import ReactionModal from "../../atoms/ReactionModal";
 import CommentFlag from "../../atoms/CommentFlag";
-import relativeTime from "../../utils/RelativeTime";
+import Time from "../../atoms/Time";
 import getErrorMessage from "../../utils/getErrorMessage";
 import PostFragment from "./PostFragment";
 import { withTheme } from "../../themes";
@@ -190,9 +190,10 @@ class Post extends Component {
 	 * @return 	void
 	 */
 	onPressReaction(reaction) {
+		console.log(reaction);
 		this.setState({
 			whoReactedModalVisible: true,
-			whoReactedReaction: reaction.id,
+			whoReactedReaction: reaction.reactionId,
 			whoReactedCount: reaction.count || 0,
 			whoReactedImage: reaction.image
 		});
@@ -347,7 +348,7 @@ class Post extends Component {
 			await this.props.mutate({
 				variables: {
 					postID: this.props.data.id,
-					reactionID: reaction
+					reactionID: parseInt(reaction)
 				},
 				// This is a little difficult to understand, but basically we must return a data structure
 				// in *exactly* the same format that the server will send us. That means we have to manually
@@ -372,6 +373,7 @@ class Post extends Component {
 				}
 			});
 		} catch (err) {
+			console.log(err);
 			// @todo abstract/improve errors
 			const errorMessage = getErrorMessage(err, Post.errors);
 			Alert.alert(Lang.get("error"), Lang.get("error_reacting"), [{ text: Lang.get("ok") }], { cancelable: false });
@@ -581,7 +583,7 @@ class Post extends Component {
 											<UserPhoto url={postData.author.photo} online={postData.author.isOnline || null} size={36} />
 											<View style={[styles.flexColumn, styles.flexJustifyCenter, styles.mlStandard]}>
 												<Text style={styles.itemTitle}>{postData.author.name}</Text>
-												<Text style={[styles.standardText, styles.lightText]}>{relativeTime.long(postData.timestamp)}</Text>
+												<Time style={[styles.standardText, styles.lightText]} timestamp={postData.timestamp} format="long" />
 											</View>
 										</View>
 									</TouchableOpacity>
@@ -603,6 +605,7 @@ class Post extends Component {
 															style={styles.mlStandard}
 															key={reaction.id}
 															id={reaction.id}
+															reactionId={reaction.reactionId}
 															image={reaction.image}
 															count={reaction.count}
 															onPress={postData.reputation.canViewReps ? this.onPressReaction : null}
@@ -646,7 +649,7 @@ class Post extends Component {
 							query={WhoReactedQuery}
 							variables={{
 								id: postData.id,
-								reactionID: parseInt(this.state.whoReactedReaction)
+								reactionId: parseInt(this.state.whoReactedReaction)
 							}}
 						/>
 						{this.renderCommentFlag()}

@@ -9,7 +9,6 @@ import _ from "underscore";
 import NavigationService from "../../utils/NavigationService";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import Lang from "../../utils/Lang";
-import relativeTime from "../../utils/RelativeTime";
 import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
 import { withTheme } from "../../themes";

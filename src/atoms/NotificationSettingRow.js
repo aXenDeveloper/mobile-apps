@@ -76,7 +76,7 @@ class NotificationSettingRow extends Component {
 			<ContentRow showArrow style={[styles.flexRow, styles.flexAlignCenter, styles.phWide, styles.pvStandard]} onPress={this.onPressRow}>
 				<View style={styles.flex}>
 					<Text style={[styles.itemTitle, styles.mbVeryTight]} numberOfLines={1}>
-						{this.props.data.lang}
+						{_.unescape(this.props.data.lang)}
 					</Text>
 					<Text style={[styles.smallText, styles.text]}>{this.buildTypeString()}</Text>
 				</View>

@@ -90,7 +90,7 @@ class NewContent extends Component {
 				style={{
 					width: this.props.cardWidth,
 					marginLeft: styleVars.spacing.wide,
-					height: imageToUse ? 315 : 160
+					height: imageToUse ? 337 : 160
 				}}
 				key={data.indexID}
 				onPress={this.getPressHandler(data.indexID, data)}
@@ -153,6 +153,11 @@ class NewContent extends Component {
 					pair.push(items[x]);
 					break;
 				}
+			}
+
+			// Don't let one straggler card show on the end
+			if (pair.length !== 2) {
+				continue;
 			}
 
 			// And add our card pair to the main list

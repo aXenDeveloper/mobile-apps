@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Image, StatusBar, Animated, Platform, Dimensions, Alert } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, Image, StatusBar, Animated, Platform, Dimensions, Alert } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
 import { HeaderBackButton } from "react-navigation";
 import { TabView, TabBar } from "react-native-tab-view";
 import FadeIn from "react-native-fade-in-image";
+import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import { pushToast } from "../../redux/actions/app";
@@ -15,9 +16,11 @@ import Button from "../../atoms/Button";
 import UserPhoto from "../../atoms/UserPhoto";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
+import Lightbox from "../../ecosystems/Lightbox";
 import { ProfileContent, ProfileOverview, ProfileEditorField, ProfileFollowers, ProfilePlaceholder, ProfileField } from "../../ecosystems/Profile";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 import getImageUrl from "../../utils/getImageUrl";
+import formatNumber from "../../utils/formatNumber";
 import { isIphoneX } from "../../utils/isIphoneX";
 import { withTheme } from "../../themes";
 
@@ -76,13 +79,15 @@ class ProfileScreen extends Component {
 		this._followTimeout = null;
 		this._nScroll = new Animated.Value(0);
 		this._scroll = new Animated.Value(0);
+		this._isSnapping = false;
 		this._heights = [];
 		this._nScroll.addListener(Animated.event([{ value: this._scroll }], { useNativeDriver: false }));
 
 		this.state = {
 			fullHeaderHeight: 250,
 			followModalVisible: false,
-			index: 0
+			index: 0,
+			photoLightboxVisible: false
 		};
 
 		this.onFollow = this.onFollow.bind(this);
@@ -91,6 +96,9 @@ class ProfileScreen extends Component {
 		this.renderScene = this.renderScene.bind(this);
 		this.renderTabBar = this.renderTabBar.bind(this);
 		this.onPressBack = this.onPressBack.bind(this);
+		this.onScrollEndWrapper = this.onScrollEndWrapper.bind(this);
+		this.closeLightbox = this.closeLightbox.bind(this);
+		this.showPhotoLightbox = this.showPhotoLightbox.bind(this);
 
 		this.buildAnimations();
 	}
@@ -105,13 +113,30 @@ class ProfileScreen extends Component {
 		}
 	}
 
+	showPhotoLightbox() {
+		this.setState({
+			photoLightboxVisible: true
+		});
+	}
+
+	/**
+	 * Event handler that sets state to close the lightbox
+	 *
+	 * @return 	void
+	 */
+	closeLightbox() {
+		this.setState({
+			photoLightboxVisible: false
+		});
+	}
+
 	/**
 	 * Event handler for floating back button
 	 *
 	 * @return 	void
 	 */
 	onPressBack() {
-		this.props.navigation.goBack();
+		this.props.navigation.goBack(null);
 	}
 
 	/**
@@ -238,6 +263,50 @@ class ProfileScreen extends Component {
 	}
 
 	/**
+	 * Event handler for the main scrollview scrolling end. Used to handle snapping.
+	 *
+	 * @param 	object  	e 		Event data
+	 * @return 	void
+	 */
+	onScrollEndWrapper(e) {
+		const y = e.nativeEvent.contentOffset.y;
+		const halfway = this.state.fullHeaderHeight / 2;
+
+		if (!this._isSnapping && y > 0) {
+			if (y < halfway) {
+				this.setIsSnapping();
+				this._wrapView.getNode().scrollTo({ y: 0 });
+			} else {
+				if (y > halfway && y < this.state.fullHeaderHeight) {
+					const headerHeight = Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82;
+					const snapTo = this.state.fullHeaderHeight - headerHeight;
+
+					this.setIsSnapping();
+					this._wrapView.getNode().scrollTo({ y: snapTo });
+				}
+			}
+		}
+	}
+
+	/**
+	 * Set snapping state and a timeout to reset it
+	 *
+	 * @return 	void
+	 */
+	setIsSnapping() {
+		this._isSnapping = true;
+		this._snapTimeout = setTimeout(() => (this._isSnapping = false), 300);
+	}
+
+	getLightboxData() {
+		if (this.props.data.core.member.photo) {
+			return { [this.props.data.core.member.photo]: true };
+		}
+
+		return [];
+	}
+
+	/**
 	 * Toggles between showing/hiding the follow modal
 	 *
 	 * @return 	void
@@ -286,7 +355,7 @@ class ProfileScreen extends Component {
 			]
 		});
 
-		if (this.props.data.core.member.customFieldGroups.length) {
+		if (this.props.data.core.member.customFieldGroups && this.props.data.core.member.customFieldGroups.length) {
 			this.props.data.core.member.customFieldGroups.forEach(group => {
 				if (!group.fields.length) {
 					return;
@@ -326,7 +395,7 @@ class ProfileScreen extends Component {
 	getAdditionalTabs() {
 		const additionalTabs = {};
 
-		if (this.props.data.core.member.customFieldGroups.length) {
+		if (this.props.data.core.member.customFieldGroups && this.props.data.core.member.customFieldGroups.length) {
 			this.props.data.core.member.customFieldGroups.forEach(group => {
 				if (group.fields.length) {
 					group.fields.forEach(field => {
@@ -442,6 +511,10 @@ class ProfileScreen extends Component {
 				showFollowButton = true;
 			}
 
+			const minHeight = Dimensions.get("window").height - (Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82);
+			const photo = this.props.data.core.member.photo;
+			const photoLightboxHandler = _.isString(photo) && photo.startsWith("data:image") ? null : this.showPhotoLightbox;
+
 			return (
 				<View style={styles.flex}>
 					<StatusBar barStyle="light-content" translucent />
@@ -457,8 +530,11 @@ class ProfileScreen extends Component {
 					<Animated.ScrollView
 						showsVerticalScrollIndicator={false}
 						scrollEventThrottle={5}
-						style={{ zIndex: 0 }}
+						style={[{ zIndex: 0, minHeight: minHeight }, styles.flex]}
 						onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: this._nScroll } } }], { useNativeDriver: true })}
+						onScrollEndDrag={this.onScrollEndWrapper}
+						onMomentumScrollEnd={this.onScrollEndWrapper}
+						ref={wrapView => (this._wrapView = wrapView)}
 					>
 						<Animated.View
 							onLayout={e => {
@@ -475,7 +551,9 @@ class ProfileScreen extends Component {
 							)}
 							<Animated.View style={[componentStyles.profileHeaderInner, { opacity: this.userOpacity }]}>
 								<Animated.View style={[componentStyles.userInfoWrap, { transform: [{ scale: this.avatarScale }] }]}>
-									<UserPhoto url={this.props.data.core.member.photo} size={80} />
+									<TouchableOpacity onPress={photoLightboxHandler} style={{ width: 80, height: 80 }}>
+										<UserPhoto url={this.props.data.core.member.photo} size={80} />
+									</TouchableOpacity>
 									<Text style={componentStyles.usernameText}>{this.props.data.core.member.name}</Text>
 									<Text style={componentStyles.groupText}>{this.props.data.core.member.group.name}</Text>
 								</Animated.View>
@@ -494,18 +572,18 @@ class ProfileScreen extends Component {
 								)}
 								<View style={[styles.mtWide, componentStyles.profileStats]}>
 									<View style={[componentStyles.profileStatSection, componentStyles.profileStatSectionBorder]}>
-										<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.contentCount}</Text>
+										<Text style={componentStyles.profileStatCount}>{formatNumber(this.props.data.core.member.contentCount)}</Text>
 										<Text style={componentStyles.profileStatTitle}>{Lang.get("profile_content_count")}</Text>
 									</View>
 									{Boolean(this.props.site.settings.reputation_show_profile) && (
 										<View style={[componentStyles.profileStatSection, componentStyles.profileStatSectionBorder]}>
-											<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.reputationCount}</Text>
+											<Text style={componentStyles.profileStatCount}>{formatNumber(this.props.data.core.member.reputationCount)}</Text>
 											<Text style={componentStyles.profileStatTitle}>{Lang.get("profile_reputation")}</Text>
 										</View>
 									)}
 									{Boolean(this.props.data.core.member.allowFollow) && (
 										<View style={componentStyles.profileStatSection}>
-											<Text style={componentStyles.profileStatCount}>{this.props.data.core.member.follow.followCount}</Text>
+											<Text style={componentStyles.profileStatCount}>{formatNumber(this.props.data.core.member.follow.followCount)}</Text>
 											<Text style={componentStyles.profileStatTitle}>{Lang.get("profile_followers")}</Text>
 										</View>
 									)}
@@ -538,6 +616,9 @@ class ProfileScreen extends Component {
 					<View style={[styles.flex, styles.flexJustifyCenter, componentStyles.backButton]}>
 						<HeaderBackButton onPress={this.onPressBack} tintColor="#fff" />
 					</View>
+					{Boolean(this.props.data.core.member.photo) && (
+						<Lightbox animationIn="bounceIn" isVisible={this.state.photoLightboxVisible} data={this.getLightboxData()} close={this.closeLightbox} />
+					)}
 				</View>
 			);
 		}

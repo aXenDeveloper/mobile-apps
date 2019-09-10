@@ -3,10 +3,11 @@ import { Text, View } from "react-native";
 
 import Lang from "../../utils/Lang";
 import highlightTerms from "../../utils/highlightTerms";
+import Time from "../../atoms/Time";
 import UserPhoto from "../../atoms/UserPhoto";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
-import relativeTime from "../../utils/RelativeTime";
 import { withTheme } from "../../themes";
+import formatNumber from "../../utils/formatNumber";
 
 const SearchResultComment = props => {
 	const { styles, componentStyles } = props;
@@ -20,10 +21,10 @@ const SearchResultComment = props => {
 						<UnreadIndicator show={props.data.unread} />
 						{highlightTerms(props.data.title, props.term, styles.highlightedText)}
 					</Text>
-					<Text style={[styles.lightText, hidden && styles.moderatedLightText]}>{relativeTime.short(props.data.updated)}</Text>
+					<Time style={[styles.lightText, hidden && styles.moderatedLightText]} timestamp={props.data.updated} />
 				</View>
 				<Text style={[styles.lightText, componentStyles.commentItemMeta, hidden && styles.moderatedLightText]}>
-					{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), props.data.replies)} - `}
+					{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), formatNumber(props.data.replies))} - `}
 					{Lang.get("item_in_container", { item: props.data.articleLang.definiteUC, container: props.data.containerTitle })}
 				</Text>
 			</View>

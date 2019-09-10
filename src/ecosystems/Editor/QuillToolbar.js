@@ -48,27 +48,19 @@ class QuillToolbar extends Component {
 		this.openImageActionSheet = this.openImageActionSheet.bind(this);
 		this.toggleFormatting = this.toggleFormatting.bind(this);
 		this.showImageToolbar = this.showImageToolbar.bind(this);
+		this.showMentionToolbar = this.showMentionToolbar.bind(this);
 		this.hideImageToolbar = this.hideImageToolbar.bind(this);
 		this.insertMention = this.insertMention.bind(this);
 		this.closeMentionBar = this.closeMentionBar.bind(this);
 		this.actionSheetPress = this.actionSheetPress.bind(this);
 	}
 
-	async componentDidUpdate(prevProps, prevState) {
+	componentDidUpdate(prevProps, prevState) {
 		// Check if we need to show the mention bar
 		if (!prevProps.editor.mentions.active && this.props.editor.mentions.active) {
-			this.setState(
-				{
-					showMentionToolbar: true,
-					showImageToolbar: false,
-					overrideMentionBar: false
-				},
-				() => {
-					this._wrapper.transitionTo({ height: 130 });
-					this._toolbar.transitionTo({ opacity: 0 });
-					this._mentionToolbar.transitionTo({ opacity: 1 });
-				}
-			);
+			// Doing this immediately caused significant lag on the animation
+			// Putting it in a timeout to do once the event loop has finished seems to improve it
+			setTimeout(() => this.showMentionToolbar(), 1);
 		}
 
 		// Check if we need to hide the mention bar
@@ -78,7 +70,7 @@ class QuillToolbar extends Component {
 		) {
 			this._wrapper.transitionTo({ height: TOOLBAR_HEIGHT });
 			this._toolbar.transitionTo({ opacity: 1 });
-			await this._mentionToolbar.transitionTo({ opacity: 0 });
+			this._mentionToolbar.transitionTo({ opacity: 0 });
 
 			this.setState({
 				showMentionToolbar: false,
@@ -123,6 +115,25 @@ class QuillToolbar extends Component {
 			() => {
 				this._wrapper.transitionTo({ height: 75 });
 				this._imageToolbar.transitionTo({ opacity: 1 });
+				this._toolbar.transitionTo({ opacity: 0 });
+
+				if (!Object.keys(this.props.editor.attachedImages).length) {
+					this.openImageActionSheet();
+				}
+			}
+		);
+	}
+
+	showMentionToolbar() {
+		this.setState(
+			{
+				showMentionToolbar: true,
+				showImageToolbar: false,
+				overrideMentionBar: false
+			},
+			() => {
+				this._wrapper.transitionTo({ height: 130 });
+				this._mentionToolbar.transitionTo({ opacity: 1 });
 				this._toolbar.transitionTo({ opacity: 0 });
 			}
 		);
@@ -244,7 +255,11 @@ class QuillToolbar extends Component {
 				<View style={componentStyles.toolbarOuter}>
 					<Animatable.View style={[componentStyles.toolbarInner]} ref={ref => (this._wrapper = ref)}>
 						{Boolean(this.state.showToolbar) && (
-							<Animatable.View style={[styles.flexRow, styles.flexAlignCenter, componentStyles.toolbarIcons]} ref={ref => (this._toolbar = ref)}>
+							<Animatable.View
+								style={[styles.flexRow, styles.flexAlignCenter, componentStyles.toolbarIcons]}
+								useNativeDriver
+								ref={ref => (this._toolbar = ref)}
+							>
 								{allowImageUploads && <QuillToolbarButton icon={icons.IMAGE} onPress={this.showImageToolbar} />}
 								<QuillToolbarButton active={this.props.editor.linkModalActive} icon={icons.LINK} onPress={this.openLinkModal} />
 								<QuillToolbarButton active={this.props.editor.mentionModalActive} icon={icons.MENTION} onPress={this.insertMention} />

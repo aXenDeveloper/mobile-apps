@@ -412,7 +412,7 @@ export const swapToken = tokenInfo => {
 
 			allAuthData[apiUrl] = authData;
 
-			client.resetStore();
+			client.clearStore();
 			await SecureStore.setItemAsync(`authStore`, JSON.stringify(allAuthData));
 
 			console.log("SWAP_TOKEN: swapping done.");
@@ -587,7 +587,7 @@ export const logOut = (requireReauth = true) => {
 		}
 
 		console.log("LOGOUT: Resetting store...");
-		client.resetStore();
+		client.clearStore();
 		console.log("LOGOUT: Store reset.");
 
 		await SecureStore.setItemAsync(`authStore`, JSON.stringify(allAuthData));
@@ -606,13 +606,14 @@ const getNewClient = connectData => {
 
 	const accessToken = connectData.accessToken;
 	const apiKey = connectData.apiKey;
+	const thisInstance = _.uniqueId();
 
-	console.log(`CLIENT: When getting client instance, accessToken is ${accessToken}`);
+	console.log(`CLIENT (${thisInstance}): When getting client instance, accessToken is ${accessToken}`);
 
 	// Apollo config & setup
 	const authLink = new ApolloLink((operation, next) => {
 		operation.setContext(context => {
-			//console.log(`CLIENT: Making ${accessToken ? "AUTHENTICATED" : "unauthenticated"} request`);
+			console.log(`CLIENT (${thisInstance}): Making ${accessToken ? "AUTHENTICATED" : "unauthenticated"} request`);
 			return {
 				...context,
 				credentials: "same-origin",
@@ -634,7 +635,7 @@ const getNewClient = connectData => {
 				const error = graphQLErrors[i];
 
 				if (errorsToUnauth.indexOf(error.message) !== -1) {
-					console.log(`CLIENT ERROR: Got error: ${error.message} (${!_.isUndefined(error.path) ? error.path.join(" -> ") : "no path"})`);
+					console.log(`CLIENT ERROR (${thisInstance}): Got error: ${error.message} (${!_.isUndefined(error.path) ? error.path.join(" -> ") : "no path"})`);
 
 					const store = configureStore();
 					store.dispatch(removeAuth());
@@ -649,7 +650,7 @@ const getNewClient = connectData => {
 				console.log("[Network error]:");
 				console.log(parsedError);
 			} catch (err) {
-				console.log(`[Network error]: ${networkError}`);
+				console.log(`[Network error] (${thisInstance}): ${networkError}`);
 			}
 		}
 	});
