@@ -244,7 +244,6 @@ class HomeScreen extends Component {
 								</React.Fragment>
 							);
 						})}
-						{this.state.token && <Text style={[styles.smallText, styles.lightText, styles.phWide, styles.pvStandard]}>{this.state.token}</Text>}
 					</ScrollView>
 				</React.Fragment>
 			);
