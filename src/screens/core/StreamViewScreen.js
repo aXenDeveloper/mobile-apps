@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, Image, StyleSheet, SectionList, TouchableOpacity } from "react-native";
+import { Text, View, Image, StyleSheet, ScrollView, SectionList, TouchableOpacity } from "react-native";
 import gql from "graphql-tag";
 import { compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";

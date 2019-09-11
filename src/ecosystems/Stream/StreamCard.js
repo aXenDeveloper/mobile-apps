@@ -54,7 +54,7 @@ class StreamCard extends PureComponent {
 	 * @return 	Component|null
 	 */
 	getContentImage() {
-		const { componentStyles } = this.props;
+		const { componentStyles, styleVars } = this.props;
 
 		// No images in this content
 		if (!this.props.data.contentImages || !this.props.data.contentImages.length) {

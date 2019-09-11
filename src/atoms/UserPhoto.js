@@ -8,7 +8,7 @@ import { withTheme } from "../themes";
 
 const UserPhoto = props => {
 	const size = props.size || 40;
-	const { styleVars, componentStyles } = props;
+	const { styleVars, componentStyles, styles } = props;
 	const photoSize = {
 		width: size,
 		height: size

@@ -15,7 +15,6 @@ import UserPhoto from "../../atoms/UserPhoto";
 import HeaderButton from "../../atoms/HeaderButton";
 import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
-import relativeTime from "../../utils/RelativeTime";
 import { withTheme, currentStyleSheet } from "../../themes";
 import { processToSend } from "../../utils/richText";
 import icons from "../../icons";
