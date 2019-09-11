@@ -35,7 +35,7 @@ const buildStyleVars = (theme = null, darkMode = false) => {
 	}
 
 	// Merge the default style variables
-	currentStyleVars = deepmerge(baseStyleVars.base(), themeStyleVars, {
+	currentStyleVars = deepmerge(baseStyleVars.base(), baseStyleVars[mode](), themeStyleVars, {
 		arrayMerge: overwriteMerge
 	});
 
