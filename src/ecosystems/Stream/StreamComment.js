@@ -19,7 +19,9 @@ const StreamComment = props => {
 				<View style={componentStyles.streamMeta}>
 					<View style={componentStyles.streamMetaInner}>
 						<UserPhoto url={props.data.author.photo} size={20} />
-						<Text style={[componentStyles.streamMetaText, componentStyles.streamMetaAction, hidden && styles.moderatedText]}>{props.metaString}</Text>
+						<Text style={[styles.text, componentStyles.streamMetaText, componentStyles.streamMetaAction, hidden && styles.moderatedText]}>
+							{props.metaString}
+						</Text>
 					</View>
 					<Time style={[componentStyles.streamMetaText, styles.lightText, hidden && styles.moderatedLightText]} timestamp={props.data.updated} />
 				</View>
@@ -43,7 +45,7 @@ const StreamComment = props => {
 					</View>
 				)}
 				<View style={componentStyles.snippetWrapper}>
-					<Text style={[componentStyles.snippetText, hidden && styles.moderatedText]} numberOfLines={2}>
+					<Text style={[styles.text, componentStyles.snippetText, hidden && styles.moderatedText]} numberOfLines={2}>
 						{props.data.content}
 					</Text>
 				</View>

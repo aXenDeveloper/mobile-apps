@@ -28,7 +28,7 @@ const ContentRow = props => {
 	);
 };
 
-const _componentStyles = {
+const _componentStyles = styleVars => ({
 	outerContentRow: {
 		marginBottom: 1
 	},
@@ -39,8 +39,9 @@ const _componentStyles = {
 	},
 	arrow: {
 		width: 18,
-		height: 18
+		height: 18,
+		tintColor: styleVars.rowArrow
 	}
-};
+});
 
 export default withTheme(_componentStyles)(ContentRow);

@@ -125,7 +125,7 @@ const _componentStyles = styleVars => ({
 		paddingVertical: 10
 	},
 	topicStatusesLoading: {
-		backgroundColor: "#FAFAFA",
+		backgroundColor: "rgba(0,0,0,0.15)",
 		height: 32,
 		paddingHorizontal: 15,
 		paddingVertical: 8
@@ -190,7 +190,7 @@ const _componentStyles = styleVars => ({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		backgroundColor: styleVars.greys.light,
+		backgroundColor: "rgba(0,0,0,0.15)",
 		height: 32,
 		paddingHorizontal: 15
 	},

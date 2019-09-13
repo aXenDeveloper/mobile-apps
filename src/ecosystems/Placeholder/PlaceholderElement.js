@@ -52,7 +52,7 @@ class PlaceholderElement extends PureComponent {
 		// Animated background
 		const backgroundColor = this.state.backgroundColor.interpolate({
 			inputRange: [0, 1],
-			outputRange: this.props.from ? [this.props.from, this.props.to] : styleVars.placeholderColors
+			outputRange: this.props.from ? [this.props.from, this.props.to] : [styleVars.placeholderColors.from, styleVars.placeholderColors.to]
 		});
 
 		return (

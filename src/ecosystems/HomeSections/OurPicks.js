@@ -46,7 +46,7 @@ class OurPicks extends Component {
 		const imageToUse = getImageUrl(getSuitableImage(data.images || null));
 		const cardPieces = {
 			image: imageToUse ? (
-				<FadeIn style={[componentStyles.imageContainer, styles.mbStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[1] }}>
+				<FadeIn style={[componentStyles.imageContainer, styles.mbStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors.from }}>
 					<Image style={componentStyles.image} source={{ uri: imageToUse }} resizeMode="cover" />
 				</FadeIn>
 			) : (

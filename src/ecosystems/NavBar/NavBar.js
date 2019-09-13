@@ -69,9 +69,9 @@ class NavBar extends PureComponent {
 
 const _componentStyles = styleVars => ({
 	navigator: {
-		backgroundColor: "#fff", // @todo color
+		backgroundColor: styleVars.navBar.background,
 		borderBottomWidth: 1,
-		borderBottomColor: "rgba(0,0,0,0.1)", // @todo color
+		borderBottomColor: "rgba(0,0,0,0.1)",
 		...Platform.select({
 			ios: {
 				height: 64,

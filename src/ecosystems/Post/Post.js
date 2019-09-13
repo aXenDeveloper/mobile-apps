@@ -589,7 +589,7 @@ class Post extends Component {
 									</TouchableOpacity>
 									{Boolean(postData.commentPermissions.canShare || postData.commentPermissions.canReportOrRevoke) && (
 										<TouchableOpacity style={styles.flexAlignSelfStart} onPress={this.onPressPostDots}>
-											<Image style={componentStyles.postMenu} resizeMode="contain" source={icons.DOTS} />
+											<Image style={[styles.lightImage, componentStyles.postMenu]} resizeMode="contain" source={icons.DOTS} />
 										</TouchableOpacity>
 									)}
 								</View>

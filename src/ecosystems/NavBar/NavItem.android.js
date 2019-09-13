@@ -17,14 +17,14 @@ const NavItem = ({ componentStyles, styles, ...props }) => (
 const _componentStyles = styleVars => ({
 	navItem: {},
 	navItemText: {
-		color: styleVars.tabActive,
+		color: styleVars.navBar.itemText,
 		textTransform: "uppercase",
 		fontWeight: "500"
 	},
 	navItemIcon: {
 		width: 16,
 		height: 16,
-		tintColor: styleVars.tabActive
+		tintColor: styleVars.navBar.itemText
 	}
 });
 

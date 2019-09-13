@@ -225,9 +225,6 @@ class ActiveUsers extends Component {
 }
 
 const _componentStyles = styleVars => ({
-	wrapper: {
-		backgroundColor: "#fff" // @todo color
-	},
 	andMore: {
 		height: 36,
 		borderRadius: 36

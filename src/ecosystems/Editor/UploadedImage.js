@@ -133,7 +133,8 @@ class UploadedImage extends PureComponent {
 	}
 
 	render() {
-		// @todo language
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<TouchableOpacity style={[styles.mrStandard, componentStyles.uploadedImageWrapper]} onPress={this.onPressImage}>
 				<Image source={{ uri: this.props.image }} resizeMode="cover" style={componentStyles.uploadedImage} />

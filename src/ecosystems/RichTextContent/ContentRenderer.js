@@ -143,7 +143,7 @@ class ContentRenderer extends PureComponent {
 		if (parent && parent.attribs.class === "ipsQuote_citation") {
 			node.attribs = {
 				...(node.attribs || {}),
-				style: styleVars.citationTextStyle
+				style: styleVars.richText.citationTextStyle
 			};
 			return node;
 		}
@@ -325,17 +325,63 @@ class ContentRenderer extends PureComponent {
 	}
 
 	render() {
+		const { styleVars } = this.props;
+
+		const richTextStyles = {
+			defaultTextStyle: {
+				color: styleVars.text,
+				fontSize: styleVars.fontSizes.content,
+				lineHeight: 21
+			},
+			tagStyles: {
+				p: {
+					marginBottom: 15
+				},
+				a: {
+					textDecorationLine: "none"
+				},
+				pre: {
+					fontSize: 13,
+					paddingHorizontal: 15
+				}
+			},
+			classes: {
+				ipsQuote: {
+					backgroundColor: styleVars.richText.quoteBackground,
+					borderWidth: 1,
+					borderStyle: "solid",
+					borderColor: styleVars.richText.quoteBorder,
+					borderLeftWidth: 1,
+					borderLeftColor: styleVars.richText.quoteLeftBorder,
+					marginBottom: 15
+				},
+				ipsQuote_citation: {
+					backgroundColor: styleVars.richText.quoteCitation,
+					paddingVertical: 7,
+					paddingHorizontal: 15
+				},
+				ipsQuote_contents: {
+					paddingHorizontal: 15,
+					paddingVertical: 10
+				},
+				ipsCode: {
+					padding: styleVars.spacing.wide,
+					backgroundColor: styleVars.richText.codeBackground
+				}
+			}
+		};
+
 		return (
 			<React.Fragment>
 				<HTML
 					renderers={this._renderers}
 					containerStyle={this.props.style || {}}
-					tagsStyles={richTextStyles(this.props.dark).tagStyles}
-					classesStyles={richTextStyles(this.props.dark).classes}
+					tagsStyles={richTextStyles.tagStyles}
+					classesStyles={richTextStyles.classes}
 					alterChildren={this.alterChildren}
 					alterNode={this.alterNode}
 					alterData={this.alterData}
-					baseFontStyle={this.props.baseFontStyle || richTextStyles(this.props.dark).defaultTextStyle}
+					baseFontStyle={this.props.baseFontStyle || richTextStyles.defaultTextStyle}
 					ignoredStyles={["font-family", "letter-spacing", "line-height"]}
 					html={this.fixContentSpacing(this.props.children)}
 					imagesMaxWidth={this.maxImagesWidth}

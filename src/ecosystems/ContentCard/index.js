@@ -42,7 +42,7 @@ const ContentCard = props => {
 const _componentStyles = styleVars => ({
 	contentCard: {
 		borderRadius: Platform.OS === "ios" ? 5 : 2,
-		backgroundColor: "#fff",
+		backgroundColor: styleVars.contentBackground,
 		shadowColor: "rgba(0,0,0,0.05)", // @todo color
 		shadowOffset: {
 			width: 0,

@@ -112,9 +112,6 @@ class PopularContributors extends Component {
 }
 
 const _componentStyles = styleVars => ({
-	wrapper: {
-		backgroundColor: "#fff"
-	},
 	number: {
 		width: 20
 	},

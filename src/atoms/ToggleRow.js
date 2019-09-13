@@ -11,7 +11,7 @@ const ToggleRow = ({ styles, componentStyles, styleVars, ...props }) => (
 			{Boolean(props.subText) && <Text style={componentStyles.metaText}>{props.subText}</Text>}
 		</View>
 		<Switch
-			trackColor={{ true: styleVars.toggleTint }}
+			trackColor={styleVars.toggle}
 			value={props.value}
 			disabled={!_.isUndefined(props.enabled) ? !props.enabled : false}
 			style={styles.mlStandard}

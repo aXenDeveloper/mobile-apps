@@ -328,33 +328,33 @@ class UserScreen extends Component {
 		const { styles, componentStyles } = this.props;
 
 		return (
-			<View style={componentStyles.container}>
+			<View style={[styles.flex, styles.listBackground]}>
 				<StatusBar barStyle="light-content" translucent />
-				<SafeAreaView style={componentStyles.innerContainer}>
+				<SafeAreaView style={[styles.flex, styles.flexAlignStretch]}>
 					<View style={componentStyles.profileHeader}>
 						{this.state.userData.coverPhoto.image ? (
 							<Image
 								source={{
 									uri: getImageUrl(this.state.userData.coverPhoto.image)
 								}}
-								style={componentStyles.coverPhoto}
+								style={[styles.absoluteFill, componentStyles.coverPhoto]}
 								resizeMode="cover"
 							/>
 						) : null}
 					</View>
-					<View style={componentStyles.mainArea}>
+					<View style={[styles.flex, styles.flexAlignStart, styles.phVeryWide, componentStyles.mainArea]}>
 						<UserPhoto url={this.state.userData.photo} size={60} />
 						<TouchableOpacity onPress={() => this.goToProfile()}>
-							<Text style={componentStyles.username}>{this.state.userData.name}</Text>
-							<Text style={componentStyles.meta}>{Lang.get("your_profile")}</Text>
+							<Text style={[styles.contentTitle, styles.mtWide]}>{this.state.userData.name}</Text>
+							<Text style={[styles.lightText, styles.contentText]}>{Lang.get("your_profile")}</Text>
 						</TouchableOpacity>
 
-						<FlatList style={componentStyles.profileMenu} data={this.getMenuOptions()} renderItem={({ item }) => <MenuItem data={item} />} />
+						<FlatList style={[styles.mtVeryWide]} data={this.getMenuOptions()} renderItem={({ item }) => <MenuItem data={item} />} />
 					</View>
-					<View style={componentStyles.footer}>
+					<View style={[styles.flexRow, styles.flexAlignCenter, styles.phVeryWide, styles.pvWide]}>
 						<Image source={icons.INFO_SOLID} resizeMode="contain" style={componentStyles.infoIcon} />
 						<TouchableOpacity onPress={this.onPressLegal}>
-							<Text style={[styles.veryLightText, componentStyles.footerText]}>{Lang.get("legal_notices")}</Text>
+							<Text style={[styles.veryLightText, styles.mlVeryTight]}>{Lang.get("legal_notices")}</Text>
 						</TouchableOpacity>
 					</View>
 					<ActionSheet ref={o => (this._actionSheet = o)} cancelButtonIndex={0} options={this.getActionSheetOptions()} onPress={this.actionSheetPress} />
@@ -399,57 +399,16 @@ class UserScreen extends Component {
 }
 
 const _componentStyles = styleVars => ({
-	container: {
-		backgroundColor: "#fff", // @todo color
-		display: "flex",
-		flex: 1
-	},
-	innerContainer: {
-		display: "flex",
-		flex: 1,
-		alignItems: "stretch"
-	},
 	profileHeader: {
 		height: 90,
 		marginTop: -20
 	},
 	coverPhoto: {
-		position: "absolute",
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
 		height: 90,
 		backgroundColor: "#f0f0f0" // @todo color
 	},
 	mainArea: {
-		display: "flex",
-		alignItems: "flex-start",
-		flex: 1,
-		paddingHorizontal: styleVars.spacing.veryWide,
 		marginTop: -20
-	},
-	username: {
-		fontSize: 20,
-		fontWeight: "bold",
-		marginTop: 10
-	},
-	meta: {
-		fontSize: 15,
-		color: styleVars.lightText
-	},
-	profileMenu: {
-		marginTop: 20
-	},
-	footer: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
-		paddingHorizontal: styleVars.spacing.veryWide,
-		paddingVertical: styleVars.spacing.wide
-	},
-	footerText: {
-		marginLeft: styleVars.spacing.veryTight
 	},
 	infoIcon: {
 		width: 17,

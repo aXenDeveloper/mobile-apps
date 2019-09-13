@@ -53,13 +53,13 @@ class NewContent extends Component {
 			header: (
 				<React.Fragment>
 					<UserPhoto url={data.author.photo} size={30} />
-					<Text style={[styles.smallText, styles.mlTight]} numberOfLines={1}>
+					<Text style={[styles.text, styles.smallText, styles.mlTight]} numberOfLines={1}>
 						{Lang.buildActionString(data.isComment, data.isReview, data.firstCommentRequired, data.author.name, data.articleLang)}
 					</Text>
 				</React.Fragment>
 			),
 			image: imageToUse ? (
-				<FadeIn style={[componentStyles.imageContainer, styles.mbStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
+				<FadeIn style={[componentStyles.imageContainer, styles.mbStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors.from }}>
 					<Image style={componentStyles.image} source={{ uri: imageToUse }} resizeMode="cover" />
 				</FadeIn>
 			) : null,

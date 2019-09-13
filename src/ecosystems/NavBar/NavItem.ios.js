@@ -16,16 +16,17 @@ const NavItem = ({ styles, componentStyles, ...props }) => (
 
 const _componentStyles = styleVars => ({
 	navItem: {
-		borderRadius: 30
+		borderRadius: 30,
+		backgroundColor: styleVars.navBar.itemBackground
 	},
 	navItemText: {
-		color: styleVars.tabActive,
+		color: styleVars.navBar.itemText,
 		marginTop: -1
 	},
 	navItemIcon: {
 		width: 14,
 		height: 14,
-		tintColor: styleVars.tabActive
+		tintColor: styleVars.navBar.itemText
 	}
 });
 

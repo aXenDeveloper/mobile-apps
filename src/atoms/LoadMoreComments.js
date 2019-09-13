@@ -21,11 +21,14 @@ const LoadMoreComments = ({ label = Lang.get("load_earlier_comments"), styles, c
 
 const _componentStyles = styleVars => ({
 	button: {
-		backgroundColor: "#fff", // @todo color
+		backgroundColor: styleVars.loadMore.background,
 		borderRadius: 4
 	},
+	buttonText: {
+		color: styleVars.loadMore.text
+	},
 	loadingText: {
-		color: "rgba(0,0,0,0.3)" // @todo color
+		opacity: 0.4
 	}
 });
 

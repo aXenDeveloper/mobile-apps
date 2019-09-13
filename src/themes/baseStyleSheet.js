@@ -16,12 +16,12 @@ const baseStylesheet = (styleVars, darkMode) => {
 			backgroundColor: "#252D31"
 		},
 		headerTitle: {
-			color: "white",
+			color: styleVars.headerText,
 			fontSize: 17,
 			backgroundColor: "transparent"
 		},
 		headerIcon: {
-			tintColor: "white"
+			tintColor: styleVars.headerText
 		},
 		headerBack: {
 			color: "white"
@@ -34,7 +34,7 @@ const baseStylesheet = (styleVars, darkMode) => {
 			opacity: 0.9
 		},
 		primaryTabBar: {
-			backgroundColor: "#fff",
+			backgroundColor: styleVars.primaryTabBackground,
 			height: isIphoneX() ? 55 : 58,
 			paddingBottom: styleVars.spacing.tight,
 			paddingTop: styleVars.spacing.tight
@@ -63,22 +63,24 @@ const baseStylesheet = (styleVars, darkMode) => {
 		},
 
 		field: {
-			backgroundColor: "#fff",
+			backgroundColor: styleVars.formField.background,
 			paddingVertical: 15,
 			paddingHorizontal: 15,
 			borderBottomWidth: 1,
-			borderBottomColor: "#e5e5e5"
+			borderBottomColor: styleVars.formField.border
 		},
 		fieldText: {
-			fontSize: 16
+			fontSize: 16,
+			color: styleVars.formField.text
 		},
 		fieldTextPlaceholder: {
-			color: "#C7C7CD"
+			color: styleVars.formField.placeholderText
 		},
 		textInput: {
-			backgroundColor: "#fff",
+			backgroundColor: styleVars.formField.background,
+			color: styleVars.formField.text,
 			borderWidth: 1,
-			borderColor: "#d0d0d0",
+			borderColor: styleVars.formField.border,
 			borderRadius: 3,
 			paddingHorizontal: 7,
 			paddingVertical: 7,
@@ -147,10 +149,10 @@ const baseStylesheet = (styleVars, darkMode) => {
 
 		/* Rows */
 		listBackground: {
-			backgroundColor: "#fff"
+			backgroundColor: styleVars.contentBackground
 		},
 		row: {
-			backgroundColor: "#fff"
+			backgroundColor: styleVars.contentBackground
 		},
 		rowSeparator: {
 			borderBottomWidth: 1,
@@ -175,7 +177,7 @@ const baseStylesheet = (styleVars, darkMode) => {
 			padding: 0
 		},
 		modalInner: {
-			backgroundColor: "#fff",
+			backgroundColor: styleVars.modal.background,
 			borderRadius: 6,
 			paddingBottom: isIphoneX() ? 40 : 0
 		},
@@ -211,7 +213,7 @@ const baseStylesheet = (styleVars, darkMode) => {
 		modalTitle: {
 			textAlign: "center",
 			fontWeight: "500",
-			color: "#000",
+			color: styleVars.modal.titleColor,
 			fontSize: styleVars.fontSizes.large,
 			marginHorizontal: styleVars.spacing.wide
 		},
@@ -224,7 +226,7 @@ const baseStylesheet = (styleVars, darkMode) => {
 			width: 40,
 			height: 5,
 			borderRadius: 5,
-			backgroundColor: "#e0e0e0",
+			backgroundColor: styleVars.modal.handleColor,
 			position: "absolute",
 			top: -10,
 			left: "50%",
@@ -236,7 +238,7 @@ const baseStylesheet = (styleVars, darkMode) => {
 			position: "absolute",
 			top: -20,
 			right: styleVars.spacing.standard,
-			tintColor: styleVars.lightText
+			tintColor: styleVars.modal.closeColor
 		},
 
 		/* Toast */
@@ -272,10 +274,10 @@ const baseStylesheet = (styleVars, darkMode) => {
 
 		/* General purpose styles */
 		unreadBackground: {
-			backgroundColor: "#ffffff"
+			backgroundColor: styleVars.contentBackground
 		},
 		readBackground: {
-			backgroundColor: "#ffffff" //'#f5f5f7'
+			backgroundColor: styleVars.contentBackground
 		},
 		lightBackground: {
 			backgroundColor: styleVars.greys.light
@@ -299,10 +301,10 @@ const baseStylesheet = (styleVars, darkMode) => {
 			color: "#585858"
 		},
 		title: {
-			color: "#000"
+			color: styleVars.titleColors.darker
 		},
 		titleRead: {
-			color: "#585858"
+			color: styleVars.titleColors.dark
 		},
 		hidden: {
 			display: "none"

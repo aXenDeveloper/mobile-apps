@@ -25,7 +25,7 @@ class ShadowedArea extends PureComponent {
 
 const _componentStyles = styleVars => ({
 	shadowedArea: {
-		backgroundColor: "#fff", // @todo color
+		backgroundColor: styleVars.contentBackground,
 		borderBottomWidth: 1,
 		borderBottomColor: styleVars.borderColors.medium
 	}

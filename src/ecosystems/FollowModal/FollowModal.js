@@ -30,7 +30,7 @@ class FollowModal extends Component {
 	}
 
 	getFollowers() {
-		const { followData } = this.props;
+		const { styles, componentStyles, followData } = this.props;
 
 		if (!followData.followers.length && followData.anonFollowCount === 0) {
 			return null;
@@ -247,7 +247,7 @@ class FollowModal extends Component {
 						renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
 						keyExtractor={item => item}
 					/>
-					<View style={componentStyles.modalBody}>{this.getFollowButtons()}</View>
+					<View style={[styles.lightBackground, componentStyles.modalBody]}>{this.getFollowButtons()}</View>
 				</View>
 			</Modal>
 		);
@@ -259,20 +259,6 @@ const _componentStyles = styleVars => ({
 		justifyContent: "flex-end",
 		margin: 0,
 		padding: 0
-	},
-	modalInner: {
-		backgroundColor: "#fff",
-		borderRadius: 6
-	},
-	followerWrap: {
-		backgroundColor: "#f5f5f5",
-		padding: styleVars.spacing.wide,
-		borderBottomWidth: 1,
-		borderBottomColor: styleVars.borderColors.medium
-	},
-	followerTitle: {
-		fontSize: styleVars.fontSizes.small,
-		color: styleVars.lightText
 	},
 	followerCountWrap: {
 		minWidth: 100
@@ -291,7 +277,6 @@ const _componentStyles = styleVars => ({
 		fontSize: 13
 	},
 	modalBody: {
-		backgroundColor: "#f5f5f5",
 		padding: styleVars.spacing.wide,
 		...(isIphoneX() ? { paddingBottom: styleVars.spacing.extraWide + styleVars.spacing.standard } : {})
 	},

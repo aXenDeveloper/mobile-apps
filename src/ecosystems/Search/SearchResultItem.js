@@ -27,7 +27,7 @@ const SearchResultItem = props => {
 				<Time style={[styles.lightText, hidden && styles.moderatedLightText]} timestamp={props.data.updated} />
 			</View>
 			{Boolean(imageToUse) && (
-				<FadeIn style={[componentStyles.imageContainer, styles.mtStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
+				<FadeIn style={[componentStyles.imageContainer, styles.mtStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors.from }}>
 					<Image style={componentStyles.image} source={{ uri: getImageUrl(imageToUse) }} resizeMode="cover" />
 				</FadeIn>
 			)}

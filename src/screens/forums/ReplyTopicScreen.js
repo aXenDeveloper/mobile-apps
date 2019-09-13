@@ -199,7 +199,7 @@ class ReplyTopicScreen extends Component {
 
 		return (
 			<React.Fragment>
-				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1, backgroundColor: "#fff" }} keyboardShouldPersistTaps="handled">
+				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
 					{quotedPostComponent}
 					<KeyboardAvoidingView style={{ flex: 1 }} enabled>
 						<QuillEditor

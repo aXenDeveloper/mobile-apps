@@ -68,7 +68,7 @@ class StreamCard extends PureComponent {
 		}
 
 		return (
-			<FadeIn style={componentStyles.imageContainer} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
+			<FadeIn style={componentStyles.imageContainer} placeholderStyle={{ backgroundColor: styleVars.placeholderColors.from }}>
 				<Image style={componentStyles.image} source={{ uri: getImageUrl(imageToUse) }} resizeMode="cover" />
 			</FadeIn>
 		);

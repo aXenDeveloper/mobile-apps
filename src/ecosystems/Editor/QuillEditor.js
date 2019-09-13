@@ -453,8 +453,15 @@ class QuillEditor extends Component {
 
 	buildCustomStyles() {
 		const { styleVars } = this.props;
-		const style = `
-			.ipsMention {
+		const style = [
+			`body {
+				background: ${styleVars.formField.background} !important;
+				color: ${styleVars.formField.text} !important;
+			}`,
+			`.ql-editor.ql-blank:before {
+				color: ${styleVars.formField.placeholderText} !important;
+			}`,
+			`.ipsMention {
 				background: ${styleVars.accentColor};
 				color: ${styleVars.reverseText};
 				font-size: 14px;
@@ -464,8 +471,8 @@ class QuillEditor extends Component {
 				padding-bottom: 2px;
 				vertical-align: middle;
 				text-decoration: none;
-			}
-		`;
+			}`
+		];
 
 		return style;
 	}
@@ -720,7 +727,7 @@ class QuillEditor extends Component {
 	}
 
 	render() {
-		const { styles, componentStyles } = this.props;
+		const { styles, styleVars, componentStyles } = this.props;
 		const placeholder = this.props.placeholder ? `"${this.props.placeholder}"` : `null`;
 		const injectedJavaScript = `
 			if (!window.ReactNativeWebView) {
@@ -733,7 +740,7 @@ class QuillEditor extends Component {
 		`;
 
 		return (
-			<View style={{ flex: 1, backgroundColor: "#fff" }}>
+			<View style={{ flex: 1, backgroundColor: styleVars.formField.background }}>
 				<Modal style={styles.flex} avoidKeyboard={true} animationIn="fadeInUp" isVisible={this.state.linkModal.visible} onBackdropPress={this.closeLinkModal}>
 					<View style={[styles.modal, componentStyles.modal]}>
 						<View style={[styles.modalInner, componentStyles.modalInner]}>
@@ -754,6 +761,7 @@ class QuillEditor extends Component {
 									}
 									value={this.state.linkModal.url}
 									placeholder={Lang.get("link_url")}
+									placeholderTextColor={styleVars.formField.placeholderText}
 									style={[styles.textInput, styles.pStandard]}
 									ref={urlInput => (this.urlInput = urlInput)}
 									textContentType="URL"
@@ -768,6 +776,7 @@ class QuillEditor extends Component {
 									}
 									value={this.state.linkModal.text}
 									placeholder={Lang.get("link_text")}
+									placeholderTextColor={styleVars.formField.placeholderText}
 									style={[styles.textInput, styles.pStandard]}
 								/>
 								<Button filled type="primary" size="medium" title={Lang.get("insert")} style={styles.mtWide} onPress={this.insertLink} />
@@ -775,7 +784,7 @@ class QuillEditor extends Component {
 						</View>
 					</View>
 				</Modal>
-				<View ref={measurer => (this.measurer = measurer)} style={{ height: 1, backgroundColor: "#fff" }} />
+				<View ref={measurer => (this.measurer = measurer)} style={{ height: 1, backgroundColor: styleVars.formField.background }} />
 				{!this.state.loading && (
 					<React.Fragment>
 						<WebView
@@ -786,7 +795,7 @@ class QuillEditor extends Component {
 							javaScriptEnabled={true}
 							injectedJavaScript={injectedJavaScript}
 							mixedContentMode="always"
-							style={[editorStyles.editor, this.inlineStyles]}
+							style={[editorStyles.editor, this.inlineStyles, { backgroundColor: "transparent" }]}
 							hideAccessory={true}
 							hideKeyboardAccessoryView={true}
 							keyboardDisplayRequiresUserAction={false}

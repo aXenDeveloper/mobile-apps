@@ -248,7 +248,7 @@ class CreateTopicScreen extends Component {
 	 */
 	render() {
 		const settings = this.props.site.settings;
-		const { styles } = this.props;
+		const { styles, styleVars } = this.props;
 
 		return (
 			<React.Fragment>
@@ -256,6 +256,7 @@ class CreateTopicScreen extends Component {
 					<TextInput
 						style={[styles.field, styles.fieldText]}
 						placeholder={Lang.get("topic_title")}
+						placeholderTextColor={styleVars.formField.placeholderText}
 						editable={!this.state.submitting}
 						onChangeText={text => this.setState({ title: text })}
 					/>

@@ -140,7 +140,7 @@ class Embed extends Component {
 		return (
 			<React.Fragment>
 				{Boolean(imageToUse) && (
-					<FadeIn style={componentStyles.imageContainer} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
+					<FadeIn style={componentStyles.imageContainer} placeholderStyle={{ backgroundColor: styleVars.placeholderColors.from }}>
 						<Image style={componentStyles.image} source={{ uri: getImageUrl(imageToUse) }} resizeMode="cover" />
 					</FadeIn>
 				)}

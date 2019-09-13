@@ -20,7 +20,9 @@ const StreamItem = props => {
 				<View style={[componentStyles.streamMeta, props.data.title !== null || Boolean(props.data.containerTitle) ? styles.mbStandard : null]}>
 					<View style={componentStyles.streamMetaInner}>
 						<UserPhoto url={props.data.author.photo} size={20} />
-						<Text style={[componentStyles.streamMetaText, componentStyles.streamMetaAction, hidden && styles.moderatedText]}>{props.metaString}</Text>
+						<Text style={[styles.text, componentStyles.streamMetaText, componentStyles.streamMetaAction, hidden && styles.moderatedText]}>
+							{props.metaString}
+						</Text>
 					</View>
 					<Time style={[componentStyles.streamMetaText, styles.lightText, hidden && styles.moderatedLightText]} timestamp={props.data.updated} />
 				</View>
@@ -45,7 +47,7 @@ const StreamItem = props => {
 			{props.image || null}
 			<View style={componentStyles.streamContent}>
 				{Boolean(props.data.content) && (
-					<Text style={[componentStyles.snippetText, hidden && styles.moderatedText]} numberOfLines={3}>
+					<Text style={[styles.text, componentStyles.snippetText, hidden && styles.moderatedText]} numberOfLines={3}>
 						{props.data.content}
 					</Text>
 				)}

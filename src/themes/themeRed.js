@@ -6,7 +6,7 @@ const themeRed = {
 		accentColor: "#e53935",
 		altAccentColor: "#afb42b",
 		primaryBrand: ["#e53935", "#e53935"],
-		appBackground: "#faf7f8",
+		appBackground: "#f7f7f7",
 		tabActive: "#4b3737",
 		tabInactive: "#7e6e6e",
 		primaryTabActive: Platform.OS === "ios" ? "#4b3737" : "#bb3b38",
@@ -18,7 +18,7 @@ const themeRed = {
 		// Text styling
 		veryLightText: "#ab9b9b",
 		backgroundText: "",
-		backgroundLightText: "#8f7b7b",
+		backgroundLightText: "#6d6464",
 		titleColors: {
 			dark: "#2b1919",
 			darker: "#1b0d0d"

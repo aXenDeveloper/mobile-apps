@@ -16,7 +16,7 @@ const AddButton = props => {
 	);
 };
 
-const _componentStyles = {
+const _componentStyles = styleVars => ({
 	button: {
 		display: "flex",
 		flexDirection: "row",
@@ -25,13 +25,14 @@ const _componentStyles = {
 	},
 	icon: {
 		width: 16,
-		height: 16
+		height: 16,
+		tintColor: styleVars.actionBar.darkText
 	},
 	text: {
-		color: "#fff", // @todo color
+		color: styleVars.actionBar.darkText,
 		fontSize: 15,
 		marginLeft: 6
 	}
-};
+});
 
 export default withTheme(_componentStyles)(memo(AddButton));

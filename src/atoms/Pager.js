@@ -215,7 +215,7 @@ const _componentStyles = styleVars => ({
 		top: 0,
 		bottom: 0,
 		left: 0,
-		backgroundColor: styleVars.greys.darker
+		backgroundColor: styleVars.pagerBar
 	},
 	trackerText: {
 		fontWeight: "500",
