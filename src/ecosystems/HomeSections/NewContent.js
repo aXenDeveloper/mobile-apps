@@ -199,16 +199,16 @@ class NewContent extends Component {
 	}
 }
 
-const _componentStyles = {
+const _componentStyles = styleVars => ({
 	imageContainer: {
 		height: 135,
 		width: "100%",
-		backgroundColor: "#333" // @todo color
+		backgroundColor: styleVars.placeholderColors.background
 	},
 	image: {
 		flex: 1,
 		width: "100%"
 	}
-};
+});
 
 export default withTheme(_componentStyles)(NewContent);

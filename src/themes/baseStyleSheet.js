@@ -137,6 +137,9 @@ const baseStylesheet = (styleVars, darkMode) => {
 		flexGrow: {
 			flexGrow: 1
 		},
+		flexGrowZero: {
+			flexGrow: 0
+		},
 		flexBasisZero: {
 			flexBasis: 0
 		},
@@ -204,7 +207,7 @@ const baseStylesheet = (styleVars, darkMode) => {
 		},
 		modalHeaderLinkText: {
 			fontSize: styleVars.fontSizes.large,
-			color: styleVars.accentColor
+			color: styleVars.modal.headerLinkText
 		},
 		modalHeaderLinkTextDisabled: {
 			color: styleVars.lightText,
@@ -263,10 +266,11 @@ const baseStylesheet = (styleVars, darkMode) => {
 
 		/* Tab bars */
 		tabBar: {
-			backgroundColor: "#fff"
+			backgroundColor: styleVars.tabBar.background,
+			borderBottomWidth: 0
 		},
 		tabBarIndicator: {
-			backgroundColor: styleVars.accentColor
+			backgroundColor: styleVars.tabBar.active
 		},
 		tabBarLabelStyle: {
 			fontWeight: "500"
@@ -417,6 +421,9 @@ const baseStylesheet = (styleVars, darkMode) => {
 			width: 20,
 			height: 20
 		},
+		normalImage: {
+			tintColor: styleVars.text
+		},
 		lightImage: {
 			tintColor: styleVars.lightText
 		},
@@ -537,7 +544,7 @@ const baseStylesheet = (styleVars, darkMode) => {
 	const platformStyles = {
 		ios: {
 			primaryTabBar: {
-				borderTopColor: "rgba(0,0,0,0.1)" // @todo color
+				borderTopColor: "rgba(0,0,0,0.1)"
 			},
 			tabIcon: {
 				width: 25,

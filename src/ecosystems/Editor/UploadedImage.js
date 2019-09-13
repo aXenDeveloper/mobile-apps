@@ -166,16 +166,16 @@ const _componentStyles = styleVars => ({
 		height: 60
 	},
 	uploadingOverlay: {
-		backgroundColor: "rgba(0,0,0,0.4)", // @todo colors
+		backgroundColor: "rgba(0,0,0,0.4)",
 		...StyleSheet.absoluteFillObject
 	},
 	errorIcon: {
 		width: 24,
 		height: 24,
-		tintColor: "#fff" // @todo colors
+		tintColor: "#fff"
 	},
 	errorText: {
-		color: "#fff", // @todo colors
+		color: "#fff",
 		fontSize: 10,
 		fontWeight: "500",
 		marginTop: 2
@@ -183,7 +183,7 @@ const _componentStyles = styleVars => ({
 	abortButton: {
 		width: 12,
 		height: 12,
-		tintColor: "#fff" // @todo colors
+		tintColor: "#fff"
 	}
 });
 

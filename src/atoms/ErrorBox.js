@@ -47,7 +47,7 @@ const _componentStyles = styleVars => ({
 	},
 	refresh: {
 		borderWidth: 1,
-		borderColor: "rgba(51,51,51,0.4)", // @todo color
+		borderColor: "rgba(51,51,51,0.4)",
 		borderRadius: 3,
 		paddingVertical: styleVars.spacing.tight,
 		paddingHorizontal: styleVars.spacing.wide,

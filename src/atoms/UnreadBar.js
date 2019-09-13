@@ -18,13 +18,13 @@ const _componentStyles = styleVars => ({
 		marginTop: 20,
 		height: 1,
 		borderRadius: 5,
-		backgroundColor: "#9da5ad" // @todo color
+		backgroundColor: styleVars.lightText
 	},
 	text: {
 		fontSize: 10,
 		fontWeight: "500",
 		backgroundColor: styleVars.appBackground,
-		color: "#9da5ad", // @todo color
+		color: styleVars.lightText,
 		textAlign: "center",
 		position: "absolute",
 		paddingRight: 9,

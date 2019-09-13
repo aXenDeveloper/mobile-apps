@@ -342,7 +342,7 @@ class QuillToolbar extends Component {
 
 const _componentStyles = styleVars => ({
 	toolbarOuter: {
-		backgroundColor: "rgba(255,255,255,0.8)", // @todo color
+		backgroundColor: styleVars.accessoryToolbar.background,
 		borderTopWidth: 1,
 		borderTopColor: styleVars.borderColors.medium
 	},
@@ -362,9 +362,9 @@ const _componentStyles = styleVars => ({
 		opacity: 0
 	},
 	addImage: {
-		backgroundColor: "#fff", // @todo color
+		backgroundColor: styleVars.accessoryToolbar.background,
 		borderWidth: 1,
-		borderColor: styleVars.greys.medium,
+		borderColor: styleVars.accessoryToolbar.border,
 		width: 60,
 		height: 60,
 		borderRadius: 6
@@ -372,16 +372,16 @@ const _componentStyles = styleVars => ({
 	addImageIcon: {
 		width: 20,
 		height: 20,
-		tintColor: styleVars.greys.placeholder
+		tintColor: styleVars.accessoryToolbar.text
 	},
 	closeImageToolbarInner: {
 		borderLeftWidth: 1,
-		borderLeftColor: styleVars.greys.medium
+		borderLeftColor: styleVars.accessoryToolbar.border
 	},
 	closeIcon: {
 		width: 20,
 		height: 20,
-		tintColor: styleVars.greys.placeholder
+		tintColor: styleVars.accessoryToolbar.text
 	},
 	mentionContainer: {
 		marginRight: 36
@@ -394,7 +394,7 @@ const _componentStyles = styleVars => ({
 	closeMentionBarIcon: {
 		width: 20,
 		height: 20,
-		tintColor: styleVars.greys.placeholder
+		tintColor: styleVars.accessoryToolbar.text
 	}
 });
 

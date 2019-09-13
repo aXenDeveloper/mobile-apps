@@ -321,10 +321,10 @@ const _componentStyles = styleVars => ({
 	headerIcon: {
 		width: 60,
 		height: 60,
-		tintColor: "#fff" // @todo color
+		tintColor: styleVars.headerText
 	},
 	categoryName: {
-		color: "#fff" // @todo color
+		color: styleVars.headerText
 	},
 	emptyImage: {
 		width: "100%",

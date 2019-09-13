@@ -43,7 +43,7 @@ const _componentStyles = styleVars => ({
 	contentCard: {
 		borderRadius: Platform.OS === "ios" ? 5 : 2,
 		backgroundColor: styleVars.contentBackground,
-		shadowColor: "rgba(0,0,0,0.05)", // @todo color
+		shadowColor: "rgba(0,0,0,0.05)",
 		shadowOffset: {
 			width: 0,
 			height: 5

@@ -9,7 +9,7 @@ const QuillToolbarButton = ({ componentStyles, ...props }) => (
 	</TouchableOpacity>
 );
 
-const _componentStyles = {
+const _componentStyles = styleVars => ({
 	button: {
 		width: 34,
 		height: 34,
@@ -20,16 +20,16 @@ const _componentStyles = {
 		borderRadius: 34
 	},
 	activeButton: {
-		backgroundColor: "#f5f5f7"
+		backgroundColor: styleVars.accessoryToolbar.activeButtonBackground
 	},
 	image: {
-		tintColor: "#8e8e93",
+		tintColor: styleVars.accessoryToolbar.inactiveButtonText,
 		width: 20,
 		height: 20
 	},
 	activeImage: {
-		tintColor: "#000"
+		tintColor: styleVars.accessoryToolbar.activeButtonText
 	}
-};
+});
 
 export default withTheme(_componentStyles)(memo(QuillToolbarButton));

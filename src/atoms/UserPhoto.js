@@ -73,9 +73,9 @@ const UserPhoto = props => {
 	);
 };
 
-const _componentStyles = {
+const _componentStyles = styleVars => ({
 	photo: {
-		backgroundColor: "#f0f0f0" // @todo color
+		backgroundColor: styleVars.placeholderColors.background
 	},
 	anonymous: {
 		opacity: 0.3
@@ -89,15 +89,15 @@ const _componentStyles = {
 		borderRadius: 12,
 		borderWidth: 2,
 		borderStyle: "solid",
-		borderColor: "#fff" // @todo color
+		borderColor: styleVars.contentBackground
 	},
 	letterPhoto: {
-		backgroundColor: "#333"
+		backgroundColor: styleVars.placeholderColors.background
 	},
 	letter: {
 		color: "#fff",
 		textAlign: "center"
 	}
-};
+});
 
 export default withTheme(_componentStyles)(memo(UserPhoto));

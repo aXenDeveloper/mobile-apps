@@ -16,7 +16,7 @@ const ProfileField = props => {
 	}
 
 	return (
-		<View style={[styles.row, styles.phWide, styles.pvStandard, styles.flex, styles.flexJustifySpaceBetween, componentStyles.fieldRowWrap, props.style]}>
+		<View style={[styles.row, styles.phWide, styles.pvStandard, styles.flex, styles.flexJustifySpaceBetween, componentStyles.listItemWrap, props.style]}>
 			<Text style={[styles.itemTitle, componentStyles.listTitle]} numberOfLines={1}>
 				{props.title}
 			</Text>
@@ -28,7 +28,7 @@ const ProfileField = props => {
 const _componentStyles = styleVars => ({
 	listItemWrap: {
 		borderBottomWidth: 1,
-		borderBottomColor: styleVars.borderColors.medium,
+		borderBottomColor: styleVars.borderColors.light,
 		minHeight: 60
 	},
 	listTitle: {

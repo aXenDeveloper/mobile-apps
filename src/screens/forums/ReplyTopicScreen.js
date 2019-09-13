@@ -13,6 +13,7 @@ import TwoLineHeader from "../../atoms/TwoLineHeader";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import UserPhoto from "../../atoms/UserPhoto";
 import HeaderButton from "../../atoms/HeaderButton";
+import ShadowedArea from "../../atoms/ShadowedArea";
 import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
 import { withTheme, currentStyleSheet } from "../../themes";
@@ -179,7 +180,7 @@ class ReplyTopicScreen extends Component {
 	}
 
 	render() {
-		const { componentStyles } = this.props;
+		const { styles, componentStyles } = this.props;
 
 		// If we're quoting an existing post, build that now
 		let quotedPostComponent = null;
@@ -187,13 +188,13 @@ class ReplyTopicScreen extends Component {
 			const quotedPost = this.props.navigation.state.params.quotedPost;
 
 			quotedPostComponent = (
-				<View style={componentStyles.postInfo}>
+				<ShadowedArea style={[styles.pStandard, styles.flexRow, styles.flexAlignStart]}>
 					<UserPhoto url={quotedPost.author.photo} size={36} />
-					<View style={componentStyles.postContent}>
-						<Text style={componentStyles.quotingTitle}>{Lang.get("quoting_x", { name: quotedPost.author.name })}</Text>
+					<View style={[styles.flex, styles.flexJustifyCenter, styles.mlStandard]}>
+						<Text style={[styles.smallItemTitle, styles.mbVeryTight]}>{Lang.get("quoting_x", { name: quotedPost.author.name })}</Text>
 						<RichTextContent removeQuotes>{quotedPost.content.original}</RichTextContent>
 					</View>
-				</View>
+				</ShadowedArea>
 			);
 		}
 
@@ -241,28 +242,7 @@ class ReplyTopicScreen extends Component {
 	}
 }
 
-const _componentStyles = {
-	postInfo: {
-		flexDirection: "row",
-		alignItems: "flex-start",
-		padding: 12,
-		backgroundColor: "#fafafa", // @todo color
-		borderBottomWidth: 1,
-		borderBottomColor: "rgba(0,0,0,0.05)" // @todo color
-	},
-	postContent: {
-		flex: 1,
-		flexDirection: "column",
-		justifyContent: "center",
-		marginLeft: 9
-	},
-	quotingTitle: {
-		fontSize: 15,
-		fontWeight: "600",
-		color: "#171717", // @todo color
-		marginBottom: 3
-	}
-};
+const _componentStyles = styleVars => ({});
 
 export default compose(
 	graphql(ReplyTopicMutation),

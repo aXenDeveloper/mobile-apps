@@ -348,11 +348,11 @@ class SearchScreen extends Component {
 			text = Lang.get("no_trending_searches");
 		}
 
-		const { styles, componentStyles } = this.props;
+		const { styles } = this.props;
 
 		return (
-			<ContentRow style={componentStyles.leftAlign}>
-				<Text numberOfLines={1} style={[componentStyles.leftAlignText, styles.veryLightText]}>
+			<ContentRow style={[styles.pvStandard, styles.phWide, styles.flexRow, styles.flexAlignCenter, styles.flexJustifyBetween]}>
+				<Text numberOfLines={1} style={[styles.contentText, styles.veryLightText]}>
 					{text}
 				</Text>
 			</ContentRow>
@@ -385,13 +385,16 @@ class SearchScreen extends Component {
 	 * @return 	Component
 	 */
 	renderShortcutItem(item) {
-		const { componentStyles } = this.props;
+		const { styles } = this.props;
 		return (
-			<ContentRow style={componentStyles.leftAlign} onPress={() => this.recentSearchClick(item)}>
-				<Text numberOfLines={1} style={componentStyles.leftAlignText}>
+			<ContentRow
+				style={[styles.pvStandard, styles.phWide, styles.flexRow, styles.flexAlignCenter, styles.flexJustifyBetween]}
+				onPress={() => this.recentSearchClick(item)}
+			>
+				<Text numberOfLines={1} style={[styles.text, styles.contentText]}>
 					{item}
 				</Text>
-				<Image source={icons.SEARCH} style={componentStyles.leftAlignIcon} resizeMode="contain" />
+				<Image source={icons.SEARCH} style={[styles.normalImage, styles.tinyImage]} resizeMode="contain" />
 			</ContentRow>
 		);
 	}
@@ -457,17 +460,17 @@ class SearchScreen extends Component {
 	 * @return 	Component|null
 	 */
 	renderOverviewSectionFooter(section) {
-		const { componentStyles } = this.props;
+		const { styles, componentStyles } = this.props;
 		if (section.data.length) {
 			if (section.count > section.data.length) {
 				return (
 					<ContentRow
-						style={componentStyles.seeAllRow}
+						style={[styles.pvStandard, styles.phWide]}
 						onPress={() => {
 							this.onChangeTab({ i: _.find(this.state.searchSections, s => s.key == section.key)["index"] });
 						}}
 					>
-						<Text numberOfLines={1} style={componentStyles.seeAllRowText}>
+						<Text numberOfLines={1} style={[styles.centerText, styles.mediumText, styles.contentText, styles.text]}>
 							{Lang.get("see_all")} ({formatNumber(section.count)})
 						</Text>
 					</ContentRow>
@@ -503,7 +506,7 @@ class SearchScreen extends Component {
 	 * @return 	Component
 	 */
 	getResultsViews() {
-		const { componentStyles, styleVars } = this.props;
+		const { styles, componentStyles, styleVars } = this.props;
 		let currentTab = null;
 
 		if (this.state.currentTab) {
@@ -516,6 +519,7 @@ class SearchScreen extends Component {
 					renderTabBar={props => (
 						<ScrollableTab
 							{...props}
+							style={styles.tabBar}
 							renderTab={(name, page, active, onPress, onLayout) => (
 								<CustomTab key={`${name}_${page}`} name={name} page={page} active={active} onPress={onPress} onLayout={onLayout} />
 							)}
@@ -623,7 +627,7 @@ const _componentStyles = styleVars => ({
 		alignItems: "center"
 	},
 	searchBox: {
-		backgroundColor: "rgba(255,255,255,0.1)", // @todo color
+		backgroundColor: "rgba(255,255,255,0.1)",
 		paddingVertical: styleVars.spacing.tight,
 		paddingHorizontal: styleVars.spacing.tight,
 		borderRadius: 5,
@@ -632,7 +636,7 @@ const _componentStyles = styleVars => ({
 		alignItems: "center"
 	},
 	searchBoxActive: {
-		backgroundColor: "rgba(0,0,0,0.2)" // @todo color
+		backgroundColor: "rgba(0,0,0,0.2)"
 	},
 	textInput: {
 		color: "#fff",
@@ -641,14 +645,14 @@ const _componentStyles = styleVars => ({
 	searchIcon: {
 		width: 14,
 		height: 14,
-		tintColor: "rgba(255,255,255,0.6)", // @todo color
+		tintColor: "rgba(255,255,255,0.6)",
 		marginRight: styleVars.spacing.veryTight
 	},
 	cancelLink: {
 		marginLeft: styleVars.spacing.standard
 	},
 	cancelLinkText: {
-		color: "#fff", // @todo color
+		color: styleVars.headerText,
 		fontSize: styleVars.fontSizes.content
 	},
 	tabBarText: {
@@ -663,41 +667,10 @@ const _componentStyles = styleVars => ({
 		flex: 1,
 		backgroundColor: styleVars.appBackground
 	},
-	tabNoContent: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center"
-	},
-	leftAlign: {
-		paddingVertical: styleVars.spacing.standard,
-		paddingHorizontal: styleVars.spacing.wide,
-		flex: 1,
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center"
-	},
-	leftAlignText: {
-		fontSize: styleVars.fontSizes.content
-	},
-	leftAlignIcon: {
-		tintColor: "rgba(0,0,0,0.6)", // @todo color
-		width: 15,
-		height: 15
-	},
-	seeAllRow: {
-		paddingVertical: styleVars.spacing.standard,
-		paddingHorizontal: styleVars.spacing.wide
-	},
-	seeAllRowText: {
-		textAlign: "center",
-		color: styleVars.primaryButton.accentColor,
-		fontSize: styleVars.fontSizes.content,
-		fontWeight: "500"
-	},
 	loadingTabBar: {
-		backgroundColor: "#fff", // @todo color
+		backgroundColor: styleVars.tabBar.background,
 		borderBottomWidth: 1,
-		borderBottomColor: "#cccccc"
+		borderBottomColor: styleVars.tabBar.border
 	}
 });
 

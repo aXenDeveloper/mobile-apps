@@ -290,7 +290,7 @@ class TagEdit extends Component {
 										resizeMode="contain"
 										style={[componentStyles.tagIcon, checked ? componentStyles.tagIconActive : null]}
 									/>
-									<Text style={[styles.mlTight, styles.contentText]}>{tag}</Text>
+									<Text style={[styles.mlTight, styles.text, styles.contentText]}>{tag}</Text>
 								</View>
 							}
 							onPress={this.getPredefinedTagOnPress(tag)}
@@ -365,7 +365,7 @@ class TagEdit extends Component {
 					<View key={tag} style={[styles.row, styles.flexRow, styles.flexAlignCenter, styles.flexJustifyBetween, styles.pWide]}>
 						<View style={[styles.flexRow, styles.flexAlignStart]}>
 							<Image source={icons.TAG} resizeMode="contain" style={[componentStyles.tagIcon, componentStyles.tagIconActive]} />
-							<Text style={[styles.mlTight, styles.contentText, styles.flexGrow]}>{tag}</Text>
+							<Text style={[styles.mlTight, styles.text, styles.contentText, styles.flexGrow]}>{tag}</Text>
 							<TouchableOpacity onPress={this.getRemoveTagOnPress(tag)} hitSlop={{ top: 20, right: 20, bottom: 20, left: 20 }}>
 								<Image source={icons.CROSS} resizeMode="contain" style={[componentStyles.tagIcon, componentStyles.tagIconActive]} />
 							</TouchableOpacity>
@@ -417,7 +417,7 @@ class TagEdit extends Component {
 	}
 
 	render() {
-		const { styles, componentStyles } = this.props;
+		const { styles, styleVars, componentStyles } = this.props;
 
 		return (
 			<View style={[styles.field, styles.pvStandard, styles.prWide, componentStyles.outerWrap]}>
@@ -462,10 +462,11 @@ class TagEdit extends Component {
 									>
 										<TextInput
 											ref={ref => (this._tagInput = ref)}
-											style={[styles.flexGrow, styles.contentText]}
+											style={[styles.fieldText, styles.flexGrow, styles.contentText]}
 											onChangeText={text => this.onChangeText(text)}
 											value={this.state.searchText}
 											placeholder={Lang.get("enter_tag")}
+											placeholderTextColor={styleVars.formField.placeholderText}
 											autoCorrect={false}
 											autoCapitalize="none"
 											spellCheck={false}
@@ -485,7 +486,7 @@ class TagEdit extends Component {
 								</View>
 							)}
 						</View>
-						<View style={[styles.flex, componentStyles.mainBody]}>
+						<View style={[styles.flex]}>
 							{this.props.freeChoice ? this.openTaggingComponent() : this.closedTaggingComponent()}
 							{this.props.minTags || this.props.maxTags ? this.getTagRequirements() : null}
 						</View>
@@ -501,15 +502,12 @@ const _componentStyles = styleVars => ({
 		//width: "100%"
 	},
 	plus: {
-		tintColor: "#3370AA", // @todo color
+		tintColor: styleVars.accentColor,
 		width: 20,
 		height: 20
 	},
 	plusWrap: {
 		width: 20
-	},
-	mainBody: {
-		backgroundColor: "#fff" // @todo color
 	},
 	modalInner: {
 		height: "80%"
@@ -520,11 +518,11 @@ const _componentStyles = styleVars => ({
 		tintColor: styleVars.lightText
 	},
 	tagIconActive: {
-		tintColor: styleVars.checkmarkColor
+		tintColor: styleVars.accentColor
 	},
 	tagRequirements: {
 		borderTopWidth: 1,
-		borderTopColor: styleVars.greys.darker
+		borderTopColor: styleVars.borderColors.light
 	},
 	searchBarWrap: {
 		width: "100%",
@@ -534,12 +532,6 @@ const _componentStyles = styleVars => ({
 	searchInput: {
 		backgroundColor: transparentize(0.2, styleVars.greys.darker),
 		borderRadius: 3
-	},
-	searchBar: {},
-	searchBarIcon: {
-		width: 14,
-		height: 14,
-		tintColor: "rgba(0,0,0,0.6)" // @todo color
 	}
 });
 

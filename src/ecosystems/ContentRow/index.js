@@ -35,7 +35,7 @@ const _componentStyles = styleVars => ({
 	outerContentRowWithSpace: {
 		marginBottom: 4,
 		borderBottomWidth: 1,
-		borderBottomColor: "rgba(0,0,0,0.05)" // @todo color
+		borderBottomColor: "rgba(0,0,0,0.05)"
 	},
 	arrow: {
 		width: 18,

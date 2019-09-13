@@ -11,7 +11,7 @@ const StreamHeader = ({ componentStyles, ...props }) => (
 	</View>
 );
 
-const _componentStyles = {
+const _componentStyles = styleVars => ({
 	container: {
 		display: "flex",
 		alignItems: "flex-start",
@@ -20,7 +20,7 @@ const _componentStyles = {
 		marginBottom: 15
 	},
 	header: {
-		backgroundColor: "#000", // @todo color
+		backgroundColor: styleVars.streamHeader.background,
 		height: 28,
 		borderRadius: 30,
 		paddingHorizontal: 15,
@@ -28,9 +28,9 @@ const _componentStyles = {
 		justifyContent: "center"
 	},
 	text: {
-		color: "#fff", // @todo color
+		color: styleVars.streamHeader.text,
 		fontSize: 13
 	}
-};
+});
 
 export default withTheme(_componentStyles)(memo(StreamHeader));

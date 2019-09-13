@@ -159,11 +159,11 @@ class OurPicks extends Component {
 	}
 }
 
-const _componentStyles = {
+const _componentStyles = styleVars => ({
 	imageContainer: {
 		height: 135,
 		width: "100%",
-		backgroundColor: "#333" // @todo color
+		backgroundColor: styleVars.placeholderColors.from
 	},
 	image: {
 		flex: 1,
@@ -172,6 +172,6 @@ const _componentStyles = {
 	dataCount: {
 		marginTop: 6
 	}
-};
+});
 
 export default withTheme(_componentStyles)(OurPicks);

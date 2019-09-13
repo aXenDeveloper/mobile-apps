@@ -65,8 +65,11 @@ const _componentStyles = styleVars => ({
 		})
 	},
 	selected: {
-		backgroundColor: "#f5f5f5", // @todo color
+		backgroundColor: styleVars.postControl.selectedBackground,
 		borderRadius: 2
+	},
+	selectedText: {
+		color: styleVars.postControl.selectedText
 	},
 	image: {
 		...Platform.select({
@@ -95,9 +98,6 @@ const _componentStyles = styleVars => ({
 				letterSpacing: 0.5
 			}
 		})
-	},
-	selectedText: {
-		color: "#000" // @todo color
 	}
 });
 

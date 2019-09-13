@@ -163,7 +163,7 @@ const _componentStyles = styleVars => ({
 		alignItems: "center"
 	},
 	searchBox: {
-		backgroundColor: "rgba(255,255,255,0.1)", // @todo color
+		backgroundColor: "rgba(255,255,255,0.1)",
 		paddingVertical: styleVars.spacing.tight,
 		paddingHorizontal: styleVars.spacing.tight,
 		borderRadius: 10,
@@ -172,29 +172,29 @@ const _componentStyles = styleVars => ({
 		alignItems: "center"
 	},
 	searchBoxActive: {
-		backgroundColor: "rgba(0,0,0,0.2)" // @todo color
+		backgroundColor: "rgba(0,0,0,0.2)"
 	},
 	textInput: {
-		color: "#fff", // @todo color
+		color: "#fff",
 		flex: 1
 	},
 	searchIcon: {
 		width: 14,
 		height: 14,
-		tintColor: "rgba(255,255,255,0.6)", // @todo color
+		tintColor: "rgba(255,255,255,0.6)",
 		marginRight: styleVars.spacing.veryTight
 	},
 	cancelLink: {
 		marginLeft: styleVars.spacing.standard
 	},
 	cancelLinkText: {
-		color: "#fff", // @todo color
+		color: styleVars.headerText,
 		fontSize: styleVars.fontSizes.content
 	},
 	close: {
 		width: 16,
 		height: 16,
-		tintColor: "rgba(255,255,255,0.6)" // @todo color
+		tintColor: "rgba(255,255,255,0.6)"
 	}
 });
 

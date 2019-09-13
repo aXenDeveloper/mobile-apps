@@ -14,10 +14,10 @@ const DummyTextInput = props => {
 
 const _componentStyles = styleVars => ({
 	textbox: {
-		backgroundColor: "#fff", // @todo color
+		backgroundColor: "#fff",
 		height: 38,
 		borderWidth: 1,
-		borderColor: "rgba(0,0,0,0.075)", // @todo color
+		borderColor: "rgba(0,0,0,0.075)",
 		borderRadius: 20,
 		width: "100%"
 	},

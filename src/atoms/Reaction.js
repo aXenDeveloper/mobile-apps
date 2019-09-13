@@ -26,30 +26,25 @@ class Reaction extends Component {
 	}
 
 	render() {
-		const { componentStyles } = this.props;
+		const { styles, componentStyles } = this.props;
 		return (
 			<TouchableHighlight onPress={this.props.onPress ? this.onPress : null} key={this.props.id} style={[this.props.style, componentStyles.reactionWrapper]}>
-				<View style={componentStyles.reaction}>
+				<View style={[styles.pVeryTight, styles.flexRow, styles.flexGrowZero, styles.flexJustifyCenter, componentStyles.reaction]}>
 					<Image source={{ uri: getImageUrl(this.props.image) }} style={componentStyles.reactionImage} resizeMode="cover" />
-					<Text style={componentStyles.reactionCount}>{this.props.count}</Text>
+					<Text style={[styles.smallText, styles.mediumText, styles.phVeryTight, componentStyles.reactionCount]}>{this.props.count}</Text>
 				</View>
 			</TouchableHighlight>
 		);
 	}
 }
 
-const _componentStyles = {
+const _componentStyles = styleVars => ({
 	reactionWrapper: {
 		borderRadius: 4
 	},
 	reaction: {
-		backgroundColor: "#F0F0F0", // @todo color
-		padding: 5,
+		backgroundColor: styleVars.postControl.selectedBackground,
 		borderRadius: 4,
-		flexGrow: 0,
-		display: "flex",
-		flexDirection: "row",
-		justifyContent: "center",
 		height: 26
 	},
 	reactionImage: {
@@ -57,12 +52,8 @@ const _componentStyles = {
 		height: 16
 	},
 	reactionCount: {
-		color: "#000", // @todo color
-		fontSize: 12,
-		fontWeight: "bold",
-		paddingLeft: 5,
-		paddingRight: 5
+		color: styleVars.postControl.selectedText
 	}
-};
+});
 
 export default withTheme(_componentStyles)(Reaction);

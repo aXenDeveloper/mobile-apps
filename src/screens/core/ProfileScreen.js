@@ -422,14 +422,13 @@ class ProfileScreen extends Component {
 			<Animated.View style={{ transform: [{ translateY: this.tabY }], zIndex: 1 }}>
 				<TabBar
 					{...props}
-					indicatorStyle={{ backgroundColor: "white" }}
 					scrollEnabled
 					bounces
 					tabStyle={{ minWidth: 50 }}
 					style={styles.tabBar}
 					indicatorStyle={styles.tabBarIndicator}
-					activeColor={styleVars.accentColor}
-					inactiveColor={styleVars.text}
+					activeColor={styleVars.tabBar.active}
+					inactiveColor={styleVars.tabBar.inactive}
 					getLabelText={({ route }) => route.title}
 					labelStyle={styles.tabBarLabelStyle}
 				/>
@@ -658,11 +657,11 @@ const _componentStyles = styleVars => ({
 		zIndex: 100
 	},
 	profileHeader: {
-		backgroundColor: "#333" // @todo color
+		backgroundColor: styleVars.placeholderColors.background
 	},
 	profileHeaderInner: {
 		paddingTop: isIphoneX() ? 50 : 40,
-		backgroundColor: "rgba(49,68,83,0.4)", // @todo color
+		backgroundColor: styleVars.profileOverlay,
 		display: "flex",
 		flexDirection: "column",
 		justifyContent: "center",
@@ -673,21 +672,21 @@ const _componentStyles = styleVars => ({
 		alignItems: "center"
 	},
 	usernameText: {
-		color: "#fff", // @todo color
+		color: "#fff",
 		fontSize: 22,
 		fontWeight: "bold",
 		marginTop: 7,
-		textShadowColor: "rgba(0,0,0,0.8)", // @todo color
+		textShadowColor: "rgba(0,0,0,0.8)",
 		textShadowOffset: { width: 1, height: 1 }
 	},
 	groupText: {
-		color: "#fff", // @todo color
+		color: "#fff",
 		fontSize: 15,
-		textShadowColor: "rgba(0,0,0,0.8)", // @todo color
+		textShadowColor: "rgba(0,0,0,0.8)",
 		textShadowOffset: { width: 1, height: 1 }
 	},
 	profileStats: {
-		backgroundColor: "rgba(20,20,20,0.8)", // @todo color
+		backgroundColor: "rgba(20,20,20,0.8)",
 		paddingTop: styleVars.spacing.standard,
 		paddingBottom: styleVars.spacing.standard,
 		display: "flex",
@@ -698,16 +697,16 @@ const _componentStyles = styleVars => ({
 	},
 	profileStatSectionBorder: {
 		borderRightWidth: 1,
-		borderRightColor: "rgba(255,255,255,0.1)" // @todo color
+		borderRightColor: "rgba(255,255,255,0.1)"
 	},
 	profileStatCount: {
-		color: "#fff", // @todo color
+		color: "#fff",
 		textAlign: "center",
 		fontSize: 17,
 		fontWeight: "500"
 	},
 	profileStatTitle: {
-		color: "#8F8F8F", // @todo color
+		color: "#8F8F8F",
 		fontSize: 11,
 		textAlign: "center"
 	},
@@ -720,10 +719,6 @@ const _componentStyles = styleVars => ({
 		width: "100%",
 		maxWidth: 130,
 		marginHorizontal: styleVars.spacing.tight
-	},
-	editorField: {
-		backgroundColor: "#fff", // @todo color
-		padding: styleVars.spacing.wide
 	}
 });
 

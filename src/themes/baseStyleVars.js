@@ -17,6 +17,9 @@ const greyScale = val => {
 	return scale[val] || scale[100];
 };
 
+const accentColorLight = "#3370AA";
+const accentColorDark = "#5d95ca";
+
 const baseStyleVars = {
 	base: () => ({
 		// Color scales
@@ -67,15 +70,15 @@ const baseStyleVars = {
 		primaryTabActive: Platform.OS === "ios" ? greyScale(800) : "#3370AA",
 		primaryTabInactive: greyScale(600),
 
-		accentColor: "#3370AA",
+		accentColor: accentColorLight,
 		altAccentColor: "#009BA2",
-		primaryBrand: ["#3370AA", "#009BA2"],
+		primaryBrand: [accentColorLight, "#009BA2"],
 		appBackground: greyScale(300),
 		tabActive: "#37454B",
 		tabInactive: "#6e797e",
 
 		unread: {
-			active: "#3370AA",
+			active: accentColorLight,
 			inactive: greyScale(500)
 		},
 
@@ -99,7 +102,7 @@ const baseStyleVars = {
 
 		// Button styling
 		primaryButton: {
-			mainColor: "#3370AA",
+			mainColor: accentColorLight,
 			inverseColor: "#fff"
 		},
 		lightButton: {
@@ -162,7 +165,8 @@ const baseStyleVars = {
 			background: greyScale(100),
 			titleColor: greyScale(1000),
 			closeColor: greyScale(600),
-			handleColor: greyScale(200)
+			handleColor: greyScale(200),
+			headerLinkText: accentColorLight
 		},
 
 		loadMore: {
@@ -173,7 +177,8 @@ const baseStyleVars = {
 		popularColor: "#F58D23",
 		placeholderColors: {
 			from: greyScale(300),
-			to: greyScale(200)
+			to: greyScale(200),
+			background: greyScale(700)
 		},
 		touchColor: "rgba(0,0,0,0.05)",
 		touchOpacity: 0.7,
@@ -185,29 +190,52 @@ const baseStyleVars = {
 			medium: greyScale(400),
 			light: greyScale(300)
 		},
-		checkmarkColor: "#3370AA",
+		checkmarkColor: accentColorLight,
 		searchHighlight: "#fff4d4",
 		searchHighlightText: "#000",
 		badgeBackground: "#e52418",
 		badgeText: "#fff",
 		rowArrow: greyScale(700),
 		pagerBar: greyScale(400),
+		postControl: {
+			selectedBackground: greyScale(300),
+			selectedText: greyScale(900)
+		},
+		streamHeader: {
+			background: greyScale(1000),
+			text: greyScale(100)
+		},
 		greys: {
 			light: greyScale(200),
 			medium: greyScale(300),
 			darker: greyScale(400),
 			placeholder: "#7E8387"
 		},
+		profileOverlay: "rgba(49,68,83,0.4)",
+		toast: {
+			background: greyScale(900),
+			text: greyScale(100)
+		},
+		accessoryToolbar: {
+			background: "rgba(255,255,255,0.8)",
+			border: greyScale(400),
+			text: greyScale(800),
+			activeButtonBackground: greyScale(300),
+			activeButtonText: greyScale(1000),
+			inactiveButtonText: greyScale(700)
+		},
 
 		// Deprecated
 		toggleTint: "#1888a7",
 		toggleTintInverse: "#a8dae8",
 		tabBar: {
-			active: "#3370AA",
+			background: greyScale(100),
+			border: greyScale(300),
+			active: accentColorLight,
 			inactive: "#657686",
 			underline: {
 				height: 2,
-				backgroundColor: "#3370AA"
+				backgroundColor: accentColorLight
 			}
 		}
 	}),
@@ -215,14 +243,15 @@ const baseStyleVars = {
 	darkMode: () => ({
 		// Footer stuff
 		primaryTabBackground: greyScale(900),
-		primaryTabActive: Platform.OS === "ios" ? greyScale(100) : "#3370AA",
+		primaryTabActive: Platform.OS === "ios" ? greyScale(100) : accentColorDark,
 		primaryTabInactive: greyScale(500),
 
 		appBackground: greyScale(900),
 		contentBackground: greyScale(800),
-		accentColor: "#5d95ca",
+		accentColor: accentColorDark,
 		text: greyScale(400),
 		lightText: greyScale(500),
+		veryLightText: greyScale(600),
 		titleColors: {
 			dark: greyScale(200),
 			darker: greyScale(100)
@@ -230,7 +259,8 @@ const baseStyleVars = {
 
 		placeholderColors: {
 			from: greyScale(700),
-			to: greyScale(800)
+			to: greyScale(800),
+			background: greyScale(900)
 		},
 
 		greys: {
@@ -247,7 +277,7 @@ const baseStyleVars = {
 		},
 
 		unread: {
-			active: "#5d95ca",
+			active: accentColorDark,
 			inactive: greyScale(600)
 		},
 
@@ -305,15 +335,38 @@ const baseStyleVars = {
 			background: greyScale(800),
 			titleColor: greyScale(100),
 			closeColor: greyScale(300),
-			handleColor: greyScale(600)
+			handleColor: greyScale(600),
+			headerLinkText: greyScale(100)
 		},
 
 		rowArrow: greyScale(600),
 		pagerBar: greyScale(700),
-
+		postControl: {
+			selectedBackground: greyScale(700),
+			selectedText: greyScale(200)
+		},
+		streamHeader: {
+			background: greyScale(100),
+			text: greyScale(900)
+		},
 		loadMore: {
 			background: greyScale(800),
 			text: greyScale(100)
+		},
+		toast: {
+			background: greyScale(100),
+			text: greyScale(900)
+		},
+
+		tabBar: {
+			background: greyScale(800),
+			border: greyScale(900),
+			active: greyScale(100),
+			inactive: greyScale(600),
+			underline: {
+				height: 2,
+				backgroundColor: greyScale(100)
+			}
 		}
 	})
 };

@@ -31,12 +31,12 @@ const ProfilePlaceholder = ({ componentStyles }) => (
 	</PlaceholderContainer>
 );
 
-const _componentStyles = {
+const _componentStyles = styleVars => ({
 	loadingTabBar: {
-		backgroundColor: "#fff", // @todo color
+		backgroundColor: styleVars.tabBar.background,
 		borderBottomWidth: 1,
-		borderBottomColor: "#cccccc" // @todo color
+		borderBottomColor: styleVars.tabBar.border
 	}
-};
+});
 
 export default withTheme(_componentStyles)(ProfilePlaceholder);

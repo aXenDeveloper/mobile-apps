@@ -405,7 +405,7 @@ const _componentStyles = styleVars => ({
 	},
 	coverPhoto: {
 		height: 90,
-		backgroundColor: "#f0f0f0" // @todo color
+		backgroundColor: styleVars.placeholderColors.background
 	},
 	mainArea: {
 		marginTop: -20
