@@ -17,7 +17,8 @@ import {
 	clearCurrentNotification,
 	loadCommunities,
 	setContentView,
-	shiftToast
+	shiftToast,
+	setDarkModeState
 } from "../../redux/actions/app";
 import { refreshToken } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
@@ -79,6 +80,21 @@ class AppRoot extends Component {
 
 		// Set the content view setting to the default setting
 		this.props.dispatch(setContentView());
+
+		// Dark mode
+		try {
+			const darkMode = await AsyncStorage.getItem("@darkMode");
+
+			if (darkMode !== null) {
+				this.props.dispatch(
+					setDarkModeState({
+						enableDarkMode: true
+					})
+				);
+			}
+		} catch (err) {
+			// No dark mode value
+		}
 	}
 
 	async handleNotification(notification) {

@@ -59,8 +59,23 @@ export const setTheme = data => ({
 });
 
 export const TOGGLE_DARK_MODE = "TOGGLE_DARK_MODE";
-export const toggleDarkMode = data => ({
-	type: TOGGLE_DARK_MODE,
+export const toggleDarkMode = state => {
+	return async (dispatch, getState) => {
+		if (state) {
+			await AsyncStorage.setItem("@darkMode", JSON.stringify(true));
+		}
+
+		dispatch(
+			setDarkModeState({
+				enableDarkMode: state
+			})
+		);
+	};
+};
+
+export const SET_DARK_MODE_STATE = "SET_DARK_MODE_STATE";
+export const setDarkModeState = data => ({
+	type: SET_DARK_MODE_STATE,
 	payload: {
 		...data
 	}

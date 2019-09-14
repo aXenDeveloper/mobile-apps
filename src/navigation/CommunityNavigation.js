@@ -57,19 +57,13 @@ class AppNavigation extends Component {
 	constructor(props) {
 		super(props);
 
-		this._CommunityStack = this._getMainStack();
-		this._StreamStack = this._getMainStack({}, "StreamView");
-		this._NotificationStack = this._getMainStack({}, "NotificationsStack");
-		this._SearchStack = this._getMainStack({}, "SearchStack");
-		this._LoginRegisterStack = this._getLoginRegisterStack();
-
 		this.state = {
 			MasterNavigation: this._getMasterNavigation()
 		};
 	}
 
 	_getMainStack(options, initialRoute) {
-		const { styles } = this.props;
+		const { styles, styleVars } = this.props;
 		return createStackNavigator(
 			{
 				HomeScreen: {
@@ -106,7 +100,9 @@ class AppNavigation extends Component {
 			},
 			{
 				initialRouteName: initialRoute || "HomeScreen",
-				cardStyle: styles.stackCardStyle,
+				cardStyle: {
+					backgroundColor: styleVars.appBackground
+				},
 				defaultNavigationOptions: Object.assign(
 					{
 						header: props => {
@@ -125,7 +121,7 @@ class AppNavigation extends Component {
 	}
 
 	_getSettingsStack(options) {
-		const { styles } = this.props;
+		const { styles, styleVars } = this.props;
 
 		return createStackNavigator(
 			{
@@ -133,7 +129,9 @@ class AppNavigation extends Component {
 			},
 			{
 				initialRouteName: "AccountSettingsScreen",
-				cardStyle: styles.stackCardStyle,
+				cardStyle: {
+					backgroundColor: styleVars.appBackground
+				},
 				defaultNavigationOptions: Object.assign(
 					{
 						title: Lang.get("account_settings"),
@@ -146,7 +144,7 @@ class AppNavigation extends Component {
 	}
 
 	_getLoginRegisterStack() {
-		const { styles } = this.props;
+		const { styles, styleVars } = this.props;
 
 		return createStackNavigator(
 			{
@@ -156,7 +154,9 @@ class AppNavigation extends Component {
 			},
 			{
 				initialRouteName: "LoginScreen",
-				cardStyle: styles.stackCardStyle,
+				cardStyle: {
+					backgroundColor: styleVars.appBackground
+				},
 				defaultNavigationOptions: {
 					header: props => {
 						return <CustomHeader {...props} />;
@@ -177,7 +177,9 @@ class AppNavigation extends Component {
 	 * @return StackNavigator
 	 */
 	_getMasterNavigation() {
-		const { styles } = this.props;
+		const { styles, styleVars } = this.props;
+
+		console.log("transparent");
 
 		const masterStack = createStackNavigator(
 			{
@@ -202,7 +204,7 @@ class AppNavigation extends Component {
 					}
 				},
 				LoginModal: {
-					screen: this._LoginRegisterStack,
+					screen: this._getLoginRegisterStack(),
 					navigationOptions: {
 						header: null,
 						headerMode: "none"
@@ -217,7 +219,9 @@ class AppNavigation extends Component {
 			},
 			{
 				mode: "modal",
-				cardStyle: styles.stackCardStyle,
+				cardStyle: {
+					backgroundColor: styleVars.appBackground
+				},
 				defaultNavigationOptions: {
 					header: props => {
 						return <CustomHeader {...props} />;
@@ -261,21 +265,21 @@ class AppNavigation extends Component {
 		const { styles, styleVars } = this.props;
 
 		const Home = {
-			screen: this._CommunityStack,
+			screen: this._getMainStack(),
 			navigationOptions: {
 				tabBarLabel: Lang.get("tab_home"),
 				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.HOME_ACTIVE} inactive={navigationIcons.HOME} />
 			}
 		};
 		const Search = {
-			screen: this._SearchStack,
+			screen: this._getMainStack({}, "SearchStack"),
 			navigationOptions: {
 				tabBarLabel: Lang.get("tab_search"),
 				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.SEARCH_ACTIVE} inactive={navigationIcons.SEARCH} />
 			}
 		};
 		const Streams = {
-			screen: this._StreamStack,
+			screen: this._getMainStack({}, "StreamView"),
 			navigationOptions: {
 				tabBarLabel: Lang.get("tab_streams"),
 				header: props => {
@@ -285,7 +289,7 @@ class AppNavigation extends Component {
 			}
 		};
 		const Notifications = {
-			screen: this._NotificationStack,
+			screen: this._getMainStack({}, "NotificationsStack"),
 			navigationOptions: navigation => ({
 				tabBarLabel: Lang.get("tab_notifications"),
 				tabBarIcon: props => <NavigationTabNotification {...props} active={navigationIcons.NOTIFICATIONS_ACTIVE} inactive={navigationIcons.NOTIFICATIONS} />
@@ -303,7 +307,7 @@ class AppNavigation extends Component {
 			})
 		};
 		const Login = {
-			screen: this._LoginRegisterStack,
+			screen: this._getLoginRegisterStack(),
 			navigationOptions: navigation => ({
 				tabBarLabel: Lang.get("tab_signin"),
 				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.LOGIN_ACTIVE} inactive={navigationIcons.LOGIN} />,
@@ -369,7 +373,7 @@ class AppNavigation extends Component {
 	 * We use this to show appropriate tabs to guests vs. members
 	 */
 	componentDidUpdate(prevProps) {
-		if (this.props.auth.isAuthenticated !== prevProps.auth.isAuthenticated) {
+		if (this.props.auth.isAuthenticated !== prevProps.auth.isAuthenticated || prevProps.app.darkMode !== this.props.app.darkMode) {
 			console.log("NAVIGATION: Building new nav");
 			this.setState({
 				MasterNavigation: this._getMasterNavigation()
@@ -394,11 +398,11 @@ class AppNavigation extends Component {
 }
 
 export default compose(
+	withTheme(),
 	connect(state => ({
 		app: state.app,
 		user: state.user,
 		auth: state.auth,
 		site: state.site
-	})),
-	withTheme()
+	}))
 )(AppNavigation);

@@ -39,7 +39,9 @@ class MultiCommunityNavigation extends Component {
 							}
 						},
 						{
-							cardStyle: styles.stackCardStyle,
+							cardStyle: {
+								backgroundColor: styleVars.appBackground
+							},
 							defaultNavigationOptions: {
 								header: props => {
 									return <CustomHeader {...props} />;
@@ -71,7 +73,9 @@ class MultiCommunityNavigation extends Component {
 							}
 						},
 						{
-							cardStyle: styles.stackCardStyle,
+							cardStyle: {
+								backgroundColor: styleVars.appBackground
+							},
 							defaultNavigationOptions: {
 								header: props => {
 									return <CustomHeader {...props} />;
@@ -100,7 +104,9 @@ class MultiCommunityNavigation extends Component {
 							}
 						},
 						{
-							cardStyle: styles.stackCardStyle,
+							cardStyle: {
+								backgroundColor: styleVars.appBackground
+							},
 							defaultNavigationOptions: {
 								header: props => {
 									return <CustomHeader {...props} />;

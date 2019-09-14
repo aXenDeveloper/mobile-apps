@@ -249,8 +249,9 @@ const baseStyleVars = {
 		appBackground: greyScale(900),
 		contentBackground: greyScale(800),
 		accentColor: accentColorDark,
+		checkmarkColor: accentColorDark,
 		text: greyScale(400),
-		lightText: greyScale(500),
+		lightText: greyScale(600),
 		veryLightText: greyScale(600),
 		titleColors: {
 			dark: greyScale(200),

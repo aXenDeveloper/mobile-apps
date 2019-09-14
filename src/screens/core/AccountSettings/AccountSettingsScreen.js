@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { Text, View, FlatList, ScrollView, SectionList } from "react-native";
-import gql from "graphql-tag";
-import { graphql } from "react-apollo";
+import { compose } from "react-apollo";
+import { connect } from "react-redux";
 
 import SectionHeader from "../../../atoms/SectionHeader";
 import SettingRow from "../../../atoms/SettingRow";
+import ToggleRow from "../../../atoms/ToggleRow";
 import { ContentView } from "../../../ecosystems/AppSettings";
+import { toggleDarkMode } from "../../../redux/actions/app";
 import { withTheme } from "../../../themes";
 
 class AccountSettingsScreen extends Component {
@@ -17,36 +19,38 @@ class AccountSettingsScreen extends Component {
 		super(props);
 		this.renderItem = this.renderItem.bind(this);
 		this.renderSectionHeader = this.renderSectionHeader.bind(this);
+		this.toggleDarkMode = this.toggleDarkMode.bind(this);
+
+		this.state = {
+			settingDarkMode: null
+		};
+	}
+
+	toggleDarkMode() {
+		this.setState({
+			settingDarkMode: !this.props.app.darkMode
+		});
+
+		this.props.dispatch(toggleDarkMode(!this.props.app.darkMode));
 	}
 
 	getAccountSections() {
 		return [
-			/*{
-				title: "General",
-				data: [
-					{
-						key: "display_name",
-						title: "Display Name",
-						value: 'Rikki'
-					},
-					{
-						key: "email_address",
-						title: "Email Address",
-						value: 'rtissier@invisionpower.com'
-					},
-					{
-						key: "password",
-						title: "Password",
-						value: '******'
-					}
-				]
-			},*/
 			{
 				title: "Content View Behavior",
 				first: true,
 				data: [
 					{
 						key: "content_order"
+					}
+				]
+			},
+			{
+				title: "Display Settings",
+				first: true,
+				data: [
+					{
+						key: "dark_mode"
 					}
 				]
 			}
@@ -56,6 +60,8 @@ class AccountSettingsScreen extends Component {
 	renderItem({ item, index, section }) {
 		if (item.key == "content_order") {
 			return <ContentView />;
+		} else if (item.key == "dark_mode") {
+			return <ToggleRow title="Dark Mode" value={this.props.app.darkMode || this.state.settingDarkMode} onToggle={this.toggleDarkMode} />;
 		}
 
 		return <SettingRow data={item} />;
@@ -82,4 +88,9 @@ class AccountSettingsScreen extends Component {
 	}
 }
 
-export default withTheme()(AccountSettingsScreen);
+export default compose(
+	connect(state => ({
+		app: state.app
+	})),
+	withTheme()
+)(AccountSettingsScreen);

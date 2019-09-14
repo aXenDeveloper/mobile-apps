@@ -59,7 +59,7 @@ class ContentView extends Component {
 				<View style={styles.rowsWrap}>
 					<CheckList type="radio" data={this.getViewOptions()} onPress={this.onPress} />
 				</View>
-				<View style={[styles.mtTight, styles.phWide]}>
+				<View style={[styles.mtTight, styles.mbExtraWide, styles.phWide]}>
 					<Text style={[styles.smallText, styles.lightText]}>
 						{isMulti ? "Determines where you are taken when tapping into content. Applies only to this device." : Lang.get("content_view_desc")}
 					</Text>

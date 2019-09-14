@@ -33,7 +33,7 @@ const initialState = {
 	},
 	toast: [],
 	currentTheme: "default",
-	darkMode: true
+	darkMode: false
 };
 
 export default function app(state = initialState, { type, payload }) {
@@ -87,7 +87,7 @@ export default function app(state = initialState, { type, payload }) {
 				...state,
 				currentTheme: payload.theme
 			};
-		case actions.TOGGLE_DARK_MODE:
+		case actions.SET_DARK_MODE_STATE:
 			return {
 				...state,
 				darkMode: payload.enableDarkMode
