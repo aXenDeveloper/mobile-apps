@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { Text, View, TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { Text, View, TextInput, TouchableOpacity, Image } from "react-native";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 class SearchBox extends Component {
@@ -111,6 +111,8 @@ class SearchBox extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<View style={componentStyles.searchWrap}>
 				<View style={[componentStyles.searchBox, this.state.textInputActive ? componentStyles.searchBoxActive : null]}>
@@ -147,9 +149,7 @@ class SearchBox extends Component {
 	}
 }
 
-export default SearchBox;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	searchWrap: {
 		paddingHorizontal: styleVars.spacing.tight,
 		paddingBottom: styleVars.spacing.tight,
@@ -188,7 +188,7 @@ const componentStyles = StyleSheet.create({
 		marginLeft: styleVars.spacing.standard
 	},
 	cancelLinkText: {
-		color: "#fff",
+		color: styleVars.headerText,
 		fontSize: styleVars.fontSizes.content
 	},
 	close: {
@@ -197,3 +197,5 @@ const componentStyles = StyleSheet.create({
 		tintColor: "rgba(255,255,255,0.6)"
 	}
 });
+
+export default withTheme(_componentStyles)(SearchBox);

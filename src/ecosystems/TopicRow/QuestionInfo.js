@@ -2,23 +2,21 @@ import React, { Component } from "react";
 import { Text, Image, View, StyleSheet, TouchableHighlight } from "react-native";
 
 import Lang from "../../utils/Lang";
-import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
-import TopicIcon from "../../atoms/TopicIcon";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import LockedIcon from "../../atoms/LockedIcon";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
-const QuestionInfo = props => (
-	<View style={[props.styles.topicRowInner, componentStyles.questionRowInner]}>
-		<View style={props.styles.topicInfo}>
-			<View style={props.styles.topicTitle}>
-				{Boolean(props.data.isLocked) && <LockedIcon style={props.styles.lockedIcon} />}
-				<Text style={[props.styles.topicTitleText, props.showAsUnread ? styles.title : styles.titleRead]} numberOfLines={1}>
+const QuestionInfo = ({ styles, componentStyles, rowStyles, ...props }) => (
+	<View style={[rowStyles.topicRowInner, componentStyles.questionRowInner]}>
+		<View style={rowStyles.topicInfo}>
+			<View style={rowStyles.topicTitle}>
+				{Boolean(props.data.isLocked) && <LockedIcon style={rowStyles.lockedIcon} />}
+				<Text style={[rowStyles.topicTitleText, props.showAsUnread ? styles.title : styles.titleRead]} numberOfLines={1}>
 					<UnreadIndicator show={props.data.unread} />
 					{props.data.title}
 				</Text>
 			</View>
-			<Text style={[props.styles.topicSnippet, props.showAsUnread ? styles.text : styles.textRead]} numberOfLines={1}>
+			<Text style={[rowStyles.topicSnippet, props.showAsUnread ? styles.text : styles.textRead]} numberOfLines={1}>
 				{props.data.snippet}
 			</Text>
 		</View>
@@ -29,9 +27,7 @@ const QuestionInfo = props => (
 	</View>
 );
 
-export default QuestionInfo;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	questionRowInner: {
 		paddingRight: 0
 	},
@@ -45,3 +41,5 @@ const componentStyles = StyleSheet.create({
 		fontWeight: "300"
 	}
 });
+
+export default withTheme(_componentStyles)(QuestionInfo);

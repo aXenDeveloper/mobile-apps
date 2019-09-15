@@ -13,8 +13,9 @@ import HeaderButton from "../../atoms/HeaderButton";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
+//import styles from "../../styles";
+import { withTheme, currentStyleSheet } from "../../themes";
 import { processToSend } from "../../utils/richText";
-import styles from "../../styles";
 import icons from "../../icons";
 
 const CreateTopicMutation = gql`
@@ -43,7 +44,7 @@ class CreateTopicScreen extends Component {
 			headerTitle: navigation.getParam("submitting") ? (
 				<React.Fragment>
 					<ActivityIndicator size="small" color="#fff" />
-					<Text style={styles.headerTitle}> {Lang.get("submitting")}...</Text>
+					<Text style={currentStyleSheet.headerTitle}> {Lang.get("submitting")}...</Text>
 				</React.Fragment>
 			) : (
 				<TwoLineHeader title={Lang.get("create_topic")} subtitle={Lang.get("in_container", { container: navigation.getParam("forumName") })} />
@@ -247,13 +248,15 @@ class CreateTopicScreen extends Component {
 	 */
 	render() {
 		const settings = this.props.site.settings;
-		// @todo language
+		const { styles, styleVars } = this.props;
+
 		return (
 			<React.Fragment>
 				<KeyboardAvoidingView style={styles.flex} enabled behavior="padding">
 					<TextInput
 						style={[styles.field, styles.fieldText]}
 						placeholder={Lang.get("topic_title")}
+						placeholderTextColor={styleVars.formField.placeholderText}
 						editable={!this.state.submitting}
 						onChangeText={text => this.setState({ title: text })}
 					/>
@@ -290,5 +293,6 @@ export default compose(
 		site: state.site,
 		user: state.user,
 		attachedImages: state.editor.attachedImages
-	}))
+	})),
+	withTheme()
 )(CreateTopicScreen);

@@ -244,15 +244,17 @@ class QuillComponent extends Component {
 	 * @return 	void
 	 */
 	insertStyles(data) {
-		this.addDebug("added styles: " + JSON.stringify(data));
+		this.addDebug("added styles: " + JSON.stringify(data.style));
 
 		const sheet = this.getCustomStylesheet();
 
 		if (_.isArray(data.style)) {
 			for (let i = 0; i < data.style.length; i++) {
-				sheet.insertRule(data.style[i], 1);
+				this.addDebug(`insert rule: ${data.style[i]}`);
+				sheet.insertRule(data.style[i]);
 			}
 		} else {
+			this.addDebug(`insert rule: ${data.style}`);
 			sheet.insertRule(data.style);
 		}
 	}

@@ -1,9 +1,6 @@
 import React, { memo } from "react";
-import { Image, View, StyleSheet, TouchableOpacity } from "react-native";
 
-import NavigationService from "../utils/NavigationService";
 import HeaderButton from "./HeaderButton";
-import styles, { styleVars } from "../styles";
 import icons from "../icons";
 import { switchAppView } from "../redux/actions/app";
 import configureStore from "../redux/configureStore";

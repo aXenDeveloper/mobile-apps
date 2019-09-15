@@ -1,15 +1,17 @@
-import React, { Component } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 
-const QuillToolbarSeparator = props => <View style={sepStyles.sep} />;
+import { withTheme } from "../../themes";
 
-export default QuillToolbarSeparator;
+const QuillToolbarSeparator = ({ componentStyles, ...props }) => <View style={componentStyles.sep} />;
 
-const sepStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	sep: {
 		width: 6,
 		height: 24,
 		borderRightWidth: 1,
-		borderRightColor: "#c7c7c7"
+		borderRightColor: styleVars.accessoryToolbar.border
 	}
 });
+
+export default withTheme(_componentStyles)(QuillToolbarSeparator);

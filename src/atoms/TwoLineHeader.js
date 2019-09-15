@@ -2,9 +2,9 @@ import React, { memo } from "react";
 import { Text, View, StyleSheet } from "react-native";
 
 import { PlaceholderElement, PlaceholderContainer } from "../ecosystems/Placeholder";
-import styles from "../styles";
+import { withTheme } from "../themes";
 
-const TwoLineHeader = props => {
+const TwoLineHeader = ({ styles, ...props }) => {
 	if (props.loading) {
 		return (
 			<PlaceholderContainer style={{ flex: 1 }}>
@@ -24,4 +24,4 @@ const TwoLineHeader = props => {
 	}
 };
 
-export default memo(TwoLineHeader);
+export default withTheme()(memo(TwoLineHeader));

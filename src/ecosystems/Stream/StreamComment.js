@@ -1,16 +1,16 @@
 import React, { memo } from "react";
-import { Text, View, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
+import { Text, View } from "react-native";
 
 import UserPhoto from "../../atoms/UserPhoto";
-import RichTextContent from "../../ecosystems/RichTextContent";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import { ReactionOverview } from "../../ecosystems/Reaction";
+import _componentStyles from "./styles";
+import { withTheme } from "../../themes";
 import Time from "../../atoms/Time";
 import Lang from "../../utils/Lang";
-import componentStyles from "./styles";
-import styles from "../../styles";
 
 const StreamComment = props => {
+	const { componentStyles, styles } = props;
 	const hidden = props.data.hiddenStatus !== null;
 
 	return (
@@ -19,7 +19,9 @@ const StreamComment = props => {
 				<View style={componentStyles.streamMeta}>
 					<View style={componentStyles.streamMetaInner}>
 						<UserPhoto url={props.data.author.photo} size={20} />
-						<Text style={[componentStyles.streamMetaText, componentStyles.streamMetaAction, hidden && styles.moderatedText]}>{props.metaString}</Text>
+						<Text style={[styles.text, componentStyles.streamMetaText, componentStyles.streamMetaAction, hidden && styles.moderatedText]}>
+							{props.metaString}
+						</Text>
 					</View>
 					<Time style={[componentStyles.streamMetaText, styles.lightText, hidden && styles.moderatedLightText]} timestamp={props.data.updated} />
 				</View>
@@ -43,7 +45,7 @@ const StreamComment = props => {
 					</View>
 				)}
 				<View style={componentStyles.snippetWrapper}>
-					<Text style={[componentStyles.snippetText, hidden && styles.moderatedText]} numberOfLines={2}>
+					<Text style={[styles.text, componentStyles.snippetText, hidden && styles.moderatedText]} numberOfLines={2}>
 						{props.data.content}
 					</Text>
 				</View>
@@ -57,4 +59,4 @@ const StreamComment = props => {
 	);
 };
 
-export default memo(StreamComment);
+export default withTheme(_componentStyles)(memo(StreamComment));

@@ -6,8 +6,8 @@ import Lang from "../../utils/Lang";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import PostControls from "../../atoms/PostControls";
 import PostControl from "../../atoms/PostControl";
+import { withTheme } from "../../themes";
 import formatNumber from "../../utils/formatNumber";
-import styles, { styleVars } from "../../styles";
 import icons from "../../icons";
 
 class PollPreview extends PureComponent {
@@ -16,6 +16,8 @@ class PollPreview extends PureComponent {
 	}
 
 	getCloseText() {
+		const { styles } = this.props;
+
 		if (!this.props.data.closeTimestamp && !this.props.data.isClosed) {
 			return null;
 		}
@@ -50,6 +52,7 @@ class PollPreview extends PureComponent {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
 		let content;
 
 		if (!this.props.data.canVote && !this.props.data.canViewResults && !this.props.data.hasVoted) {
@@ -85,12 +88,12 @@ class PollPreview extends PureComponent {
 	}
 }
 
-export default PollPreview;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	icon: {
 		width: 36,
 		height: 36,
 		tintColor: styleVars.accentColor
 	}
 });
+
+export default withTheme(_componentStyles)(PollPreview);

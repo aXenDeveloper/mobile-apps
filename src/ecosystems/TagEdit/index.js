@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { Text, ScrollView, FlatList, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, TouchableHighlight, Image, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
-import { graphql, compose, withApollo } from "react-apollo";
-import { connect } from "react-redux";
 import _ from "underscore";
 import { transparentize } from "polished";
 import Fuse from "fuse.js";
@@ -11,7 +9,7 @@ import Lang from "../../utils/Lang";
 import Button from "../../atoms/Button";
 import Tag from "../../atoms/Tag";
 import CheckListRow from "../../atoms/CheckListRow";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 class TagEdit extends Component {
@@ -88,6 +86,8 @@ class TagEdit extends Component {
 	 * @return 	Component|null
 	 */
 	getTagRequirements() {
+		const { styles, componentStyles } = this.props;
+
 		if (!this.props.minTags && !this.props.maxTags && !this.props.minTagLen && !this.props.maxTagLen) {
 			return null;
 		}
@@ -273,6 +273,8 @@ class TagEdit extends Component {
 	 * @return 	Component
 	 */
 	closedTaggingComponent() {
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<ScrollView style={styles.flex} keyboardShouldPersistTaps="always">
 				{this.props.definedTags.map(tag => {
@@ -288,7 +290,7 @@ class TagEdit extends Component {
 										resizeMode="contain"
 										style={[componentStyles.tagIcon, checked ? componentStyles.tagIconActive : null]}
 									/>
-									<Text style={[styles.mlTight, styles.contentText]}>{tag}</Text>
+									<Text style={[styles.mlTight, styles.text, styles.contentText]}>{tag}</Text>
 								</View>
 							}
 							onPress={this.getPredefinedTagOnPress(tag)}
@@ -300,6 +302,8 @@ class TagEdit extends Component {
 	}
 
 	renderSuggestion(tag) {
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<TouchableHighlight onPress={this.getSuggestionOnPressHandler(tag)}>
 				<View style={[styles.row, styles.flexRow, styles.flexAlignCenter, styles.flexJustifyBetween, styles.pWide]}>
@@ -328,6 +332,7 @@ class TagEdit extends Component {
 	 * @return 	Component
 	 */
 	openTaggingComponent() {
+		const { styles, componentStyles } = this.props;
 		let content;
 
 		if (this.state.searchText.length > 0 && this.props.definedTags.length) {
@@ -360,7 +365,7 @@ class TagEdit extends Component {
 					<View key={tag} style={[styles.row, styles.flexRow, styles.flexAlignCenter, styles.flexJustifyBetween, styles.pWide]}>
 						<View style={[styles.flexRow, styles.flexAlignStart]}>
 							<Image source={icons.TAG} resizeMode="contain" style={[componentStyles.tagIcon, componentStyles.tagIconActive]} />
-							<Text style={[styles.mlTight, styles.contentText, styles.flexGrow]}>{tag}</Text>
+							<Text style={[styles.mlTight, styles.text, styles.contentText, styles.flexGrow]}>{tag}</Text>
 							<TouchableOpacity onPress={this.getRemoveTagOnPress(tag)} hitSlop={{ top: 20, right: 20, bottom: 20, left: 20 }}>
 								<Image source={icons.CROSS} resizeMode="contain" style={[componentStyles.tagIcon, componentStyles.tagIconActive]} />
 							</TouchableOpacity>
@@ -378,6 +383,8 @@ class TagEdit extends Component {
 	 * @return 	Component
 	 */
 	getTagField() {
+		const { styles, componentStyles } = this.props;
+
 		let placeholder = [Lang.get("tags")];
 		// @todo language
 		if (this.props.minTags && this.props.maxTags) {
@@ -410,6 +417,8 @@ class TagEdit extends Component {
 	}
 
 	render() {
+		const { styles, styleVars, componentStyles } = this.props;
+
 		return (
 			<View style={[styles.field, styles.pvStandard, styles.prWide, componentStyles.outerWrap]}>
 				<View style={[componentStyles.innerWrap, styles.flexRow, styles.flexAlignCenter, styles.flexJustifyBetween]}>
@@ -453,10 +462,11 @@ class TagEdit extends Component {
 									>
 										<TextInput
 											ref={ref => (this._tagInput = ref)}
-											style={[styles.flexGrow, styles.contentText]}
+											style={[styles.fieldText, styles.flexGrow, styles.contentText]}
 											onChangeText={text => this.onChangeText(text)}
 											value={this.state.searchText}
 											placeholder={Lang.get("enter_tag")}
+											placeholderTextColor={styleVars.formField.placeholderText}
 											autoCorrect={false}
 											autoCapitalize="none"
 											spellCheck={false}
@@ -476,7 +486,7 @@ class TagEdit extends Component {
 								</View>
 							)}
 						</View>
-						<View style={[styles.flex, componentStyles.mainBody]}>
+						<View style={[styles.flex]}>
 							{this.props.freeChoice ? this.openTaggingComponent() : this.closedTaggingComponent()}
 							{this.props.minTags || this.props.maxTags ? this.getTagRequirements() : null}
 						</View>
@@ -487,22 +497,17 @@ class TagEdit extends Component {
 	}
 }
 
-export default TagEdit;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	innerWrap: {
 		//width: "100%"
 	},
 	plus: {
-		tintColor: "#3370AA",
+		tintColor: styleVars.accentColor,
 		width: 20,
 		height: 20
 	},
 	plusWrap: {
 		width: 20
-	},
-	mainBody: {
-		backgroundColor: "#fff"
 	},
 	modalInner: {
 		height: "80%"
@@ -513,11 +518,11 @@ const componentStyles = StyleSheet.create({
 		tintColor: styleVars.lightText
 	},
 	tagIconActive: {
-		tintColor: styleVars.checkmarkColor
+		tintColor: styleVars.accentColor
 	},
 	tagRequirements: {
 		borderTopWidth: 1,
-		borderTopColor: styleVars.greys.darker
+		borderTopColor: styleVars.borderColors.light
 	},
 	searchBarWrap: {
 		width: "100%",
@@ -527,11 +532,7 @@ const componentStyles = StyleSheet.create({
 	searchInput: {
 		backgroundColor: transparentize(0.2, styleVars.greys.darker),
 		borderRadius: 3
-	},
-	searchBar: {},
-	searchBarIcon: {
-		width: 14,
-		height: 14,
-		tintColor: "rgba(0,0,0,0.6)"
 	}
 });
+
+export default withTheme(_componentStyles)(TagEdit);

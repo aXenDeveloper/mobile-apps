@@ -5,7 +5,6 @@ import { graphql, compose, withApollo } from "react-apollo";
 import { connect } from "react-redux";
 import { HeaderBackButton } from "react-navigation";
 import { TabView, TabBar } from "react-native-tab-view";
-import { Header } from "react-navigation";
 import FadeIn from "react-native-fade-in-image";
 import _ from "underscore";
 
@@ -23,7 +22,7 @@ import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } fr
 import getImageUrl from "../../utils/getImageUrl";
 import formatNumber from "../../utils/formatNumber";
 import { isIphoneX } from "../../utils/isIphoneX";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const ProfileQuery = gql`
 	query ProfileQuery($member: ID!) {
@@ -418,18 +417,18 @@ class ProfileScreen extends Component {
 	 * @return 	Component
 	 */
 	renderTabBar(props) {
+		const { styles, styleVars } = this.props;
 		return (
-			<Animated.View style={{ transform: [{ translateY: this.tabY }], backgroundColor: "red", zIndex: 1 }}>
+			<Animated.View style={{ transform: [{ translateY: this.tabY }], zIndex: 1 }}>
 				<TabBar
 					{...props}
-					indicatorStyle={{ backgroundColor: "white" }}
 					scrollEnabled
 					bounces
 					tabStyle={{ minWidth: 50 }}
 					style={styles.tabBar}
 					indicatorStyle={styles.tabBarIndicator}
-					activeColor={styleVars.accentColor}
-					inactiveColor={styleVars.text}
+					activeColor={styleVars.tabBar.active}
+					inactiveColor={styleVars.tabBar.inactive}
 					getLabelText={({ route }) => route.title}
 					labelStyle={styles.tabBarLabelStyle}
 				/>
@@ -492,6 +491,8 @@ class ProfileScreen extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.props.data.loading && this.props.data.networkStatus !== 3 && this.props.data.networkStatus !== 4) {
 			return <ProfilePlaceholder />;
 		} else if (this.props.data.error) {
@@ -623,7 +624,7 @@ class ProfileScreen extends Component {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	customHeader: {
 		...Platform.select({
 			android: {
@@ -656,11 +657,11 @@ const componentStyles = StyleSheet.create({
 		zIndex: 100
 	},
 	profileHeader: {
-		backgroundColor: "#333"
+		backgroundColor: styleVars.placeholderColors.background
 	},
 	profileHeaderInner: {
 		paddingTop: isIphoneX() ? 50 : 40,
-		backgroundColor: "rgba(49,68,83,0.4)",
+		backgroundColor: styleVars.profileOverlay,
 		display: "flex",
 		flexDirection: "column",
 		justifyContent: "center",
@@ -718,10 +719,6 @@ const componentStyles = StyleSheet.create({
 		width: "100%",
 		maxWidth: 130,
 		marginHorizontal: styleVars.spacing.tight
-	},
-	editorField: {
-		backgroundColor: "#fff",
-		padding: styleVars.spacing.wide
 	}
 });
 
@@ -738,5 +735,6 @@ export default compose(
 		user: state.user,
 		site: state.site
 	})),
-	withApollo
+	withApollo,
+	withTheme(_componentStyles)
 )(ProfileScreen);

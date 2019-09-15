@@ -1,43 +1,43 @@
-import React, { PureComponent } from 'react';
-import { Text, View, Button, StyleSheet, TouchableHighlight } from 'react-native';
+import React, { PureComponent } from "react";
+import { View } from "react-native";
 
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
+//import styles, { styleVars } from "../styles";
 
-export default class ActionBar extends PureComponent {
+class ActionBar extends PureComponent {
 	constructor(props) {
 		super(props);
 	}
 
 	componentDidMount() {
-		if( this.props.onRef && this._wrapperRef ){
-			this.props.onRef( this._wrapperRef );
+		if (this.props.onRef && this._wrapperRef) {
+			this.props.onRef(this._wrapperRef);
 		}
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		return (
-			<View style={[ componentStyles.pager, this.props.light ? componentStyles.light : componentStyles.dark, this.props.style ]} ref={ref => this._wrapperRef = ref}>
+			<View
+				style={[styles.pTight, componentStyles.pager, this.props.light ? styles.actionBarLight : styles.actionBarDark, this.props.style]}
+				ref={ref => (this._wrapperRef = ref)}
+			>
 				{this.props.children}
 			</View>
 		);
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	pager: {
 		height: 45,
 		minHeight: 45,
 		padding: 7,
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center'
-	},
-	dark: {
-		backgroundColor: '#37454B',
-	},
-	light: {
-		backgroundColor: styleVars.greys.light,
-		borderTopWidth: 1,
-		borderTopColor: 'rgba(0,0,0,0.1)'
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center"
 	}
 });
+
+export default withTheme(_componentStyles)(ActionBar);

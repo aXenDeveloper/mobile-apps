@@ -1,17 +1,13 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, SectionList } from "react-native";
+import { Text, View, SectionList } from "react-native";
+import { compose } from "react-apollo";
 import { connect } from "react-redux";
 import _ from "underscore";
-import { LinearGradient } from "expo-linear-gradient";
-import { Header } from "react-navigation";
-import FadeIn from "react-native-fade-in-image";
 
-import { loadCommunityCategory, setActiveCommunity, toggleSavedCommunity } from "../../redux/actions/app";
 import SectionHeader from "../../atoms/SectionHeader";
 import SettingRow from "../../atoms/SettingRow";
 import { ContentView } from "../../ecosystems/AppSettings";
-import icons, { illustrations } from "../../icons";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class MultiSettingsScreen extends Component {
 	static navigationOptions = ({ navigation }) => ({
@@ -72,6 +68,7 @@ class MultiSettingsScreen extends Component {
 	 * @return array
 	 */
 	renderSectionHeader({ section }) {
+		const { styles } = this.props;
 		return (
 			<View style={!section.first ? styles.mtExtraWide : null}>
 				<SectionHeader title={section.title} />
@@ -92,8 +89,9 @@ class MultiSettingsScreen extends Component {
 	}
 }
 
-export default connect(state => ({
-	app: state.app
-}))(MultiSettingsScreen);
-
-const componentStyles = StyleSheet.create({});
+export default compose(
+	connect(state => ({
+		app: state.app
+	})),
+	withTheme()
+)(MultiSettingsScreen);

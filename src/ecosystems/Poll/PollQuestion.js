@@ -1,13 +1,12 @@
 import React, { Component } from "react";
-import { Text, Image, View, TouchableHighlight, StyleSheet } from "react-native";
+import { Text, View } from "react-native";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import PollResultsChoice from "./PollResultsChoice";
 import PollVoteChoice from "./PollVoteChoice";
-import styles, { styleVars } from "../../styles";
-import icons from "../../icons";
+import { withTheme } from "../../themes";
 
 class PollQuestion extends Component {
 	constructor(props) {
@@ -44,6 +43,7 @@ class PollQuestion extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
 		let questionContent;
 
 		if (!this.props.showResult) {
@@ -78,11 +78,11 @@ class PollQuestion extends Component {
 	}
 }
 
-export default PollQuestion;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	questionHeader: {
 		borderBottomWidth: 1,
 		borderBottomColor: styleVars.borderColors.medium
 	}
 });
+
+export default withTheme(_componentStyles)(PollQuestion);

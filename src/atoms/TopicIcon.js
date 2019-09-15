@@ -1,19 +1,31 @@
 import React, { memo } from "react";
 import { StyleSheet, Image } from "react-native";
 
+import { withTheme } from "../themes";
+
 // @todo image refs
 // @todo styles
-const TopicIcon = props => {
+const TopicIcon = ({ componentStyles, ...props }) => {
 	if (props.unread) {
-		return <Image style={[props.style, styles.topicIcon, styles.activeIcon]} resizeMode="contain" source={require("../../resources/topic_unread.png")} />;
+		return (
+			<Image
+				style={[props.style, componentStyles.topicIcon, componentStyles.activeIcon]}
+				resizeMode="contain"
+				source={require("../../resources/topic_unread.png")}
+			/>
+		);
 	} else {
-		return <Image style={[props.style, styles.topicIcon, styles.inactiveIcon]} resizeMode="contain" source={require("../../resources/topic_read.png")} />;
+		return (
+			<Image
+				style={[props.style, componentStyles.topicIcon, componentStyles.inactiveIcon]}
+				resizeMode="contain"
+				source={require("../../resources/topic_read.png")}
+			/>
+		);
 	}
 };
 
-export default memo(TopicIcon);
-
-const styles = StyleSheet.create({
+const _componentStyles = {
 	topicIcon: {
 		width: 11,
 		height: 11
@@ -24,4 +36,6 @@ const styles = StyleSheet.create({
 	inactiveIcon: {
 		tintColor: "#8F8F8F"
 	}
-});
+};
+
+export default withTheme(_componentStyles)(memo(TopicIcon));

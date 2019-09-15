@@ -31,7 +31,9 @@ const initialState = {
 	settings: {
 		contentView: "first"
 	},
-	toast: []
+	toast: [],
+	currentTheme: "default",
+	darkMode: false
 };
 
 export default function app(state = initialState, { type, payload }) {
@@ -76,6 +78,19 @@ export default function app(state = initialState, { type, payload }) {
 					error: payload.error || true,
 					isNetworkError: payload.isNetworkError
 				}
+			};
+
+		// --------------------------------------------------------------
+		// Theme actions
+		case actions.SET_THEME:
+			return {
+				...state,
+				currentTheme: payload.theme
+			};
+		case actions.SET_DARK_MODE_STATE:
+			return {
+				...state,
+				darkMode: payload.enableDarkMode
 			};
 
 		// --------------------------------------------------------------

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, ScrollView, Text, TextInput, Animated, TouchableOpacity, Image } from "react-native";
 import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 import { connect } from "react-redux";
+import { compose } from "react-apollo";
 import * as Animatable from "react-native-animatable";
 import _ from "underscore";
 
@@ -24,7 +25,7 @@ import ActionSheet from "react-native-actionsheet";
 import Lang from "../../utils/Lang";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import icons from "../../icons";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const TOOLBAR_HEIGHT = 44;
 
@@ -239,6 +240,7 @@ class QuillToolbar extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
 		const {
 			attachedImages,
 			settings: { allowedFileTypes }
@@ -338,13 +340,9 @@ class QuillToolbar extends Component {
 	}
 }
 
-export default connect(state => ({
-	editor: state.editor
-}))(QuillToolbar);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	toolbarOuter: {
-		backgroundColor: "rgba(255,255,255,0.8)",
+		backgroundColor: styleVars.accessoryToolbar.background,
 		borderTopWidth: 1,
 		borderTopColor: styleVars.borderColors.medium
 	},
@@ -364,9 +362,9 @@ const componentStyles = StyleSheet.create({
 		opacity: 0
 	},
 	addImage: {
-		backgroundColor: "#fff",
+		backgroundColor: styleVars.accessoryToolbar.background,
 		borderWidth: 1,
-		borderColor: styleVars.greys.medium,
+		borderColor: styleVars.accessoryToolbar.border,
 		width: 60,
 		height: 60,
 		borderRadius: 6
@@ -374,16 +372,16 @@ const componentStyles = StyleSheet.create({
 	addImageIcon: {
 		width: 20,
 		height: 20,
-		tintColor: styleVars.greys.placeholder
+		tintColor: styleVars.accessoryToolbar.text
 	},
 	closeImageToolbarInner: {
 		borderLeftWidth: 1,
-		borderLeftColor: styleVars.greys.medium
+		borderLeftColor: styleVars.accessoryToolbar.border
 	},
 	closeIcon: {
 		width: 20,
 		height: 20,
-		tintColor: styleVars.greys.placeholder
+		tintColor: styleVars.accessoryToolbar.text
 	},
 	mentionContainer: {
 		marginRight: 36
@@ -396,6 +394,13 @@ const componentStyles = StyleSheet.create({
 	closeMentionBarIcon: {
 		width: 20,
 		height: 20,
-		tintColor: styleVars.greys.placeholder
+		tintColor: styleVars.accessoryToolbar.text
 	}
 });
+
+export default compose(
+	connect(state => ({
+		editor: state.editor
+	})),
+	withTheme(_componentStyles)
+)(QuillToolbar);

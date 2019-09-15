@@ -6,9 +6,9 @@ import NavItem from "./NavItem";
 import NavigationService from "../../utils/NavigationService";
 import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import icons from "../../icons";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
-export class NavBar extends PureComponent {
+class NavBar extends PureComponent {
 	constructor(props) {
 		super(props);
 		this._menuHandlers = {};
@@ -57,6 +57,8 @@ export class NavBar extends PureComponent {
 	}
 
 	render() {
+		const { componentStyles } = this.props;
+
 		return (
 			<View style={componentStyles.navigator}>
 				<FlatList renderItem={this.renderNavItem} data={this.props.items} keyExtractor={item => item.key} horizontal showsHorizontalScrollIndicator={false} />
@@ -65,9 +67,9 @@ export class NavBar extends PureComponent {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	navigator: {
-		backgroundColor: "#fff",
+		backgroundColor: styleVars.navBar.background,
 		borderBottomWidth: 1,
 		borderBottomColor: "rgba(0,0,0,0.1)",
 		...Platform.select({
@@ -83,3 +85,5 @@ const componentStyles = StyleSheet.create({
 		})
 	}
 });
+
+export default withTheme(_componentStyles)(NavBar);

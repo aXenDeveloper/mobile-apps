@@ -6,9 +6,9 @@ import ShadowedArea from "../../atoms/ShadowedArea";
 import Button from "../../atoms/Button";
 import ViewMeasure from "../../atoms/ViewMeasure";
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
-export default class LoginRegisterPrompt extends PureComponent {
+class LoginRegisterPrompt extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -122,6 +122,8 @@ export default class LoginRegisterPrompt extends PureComponent {
 	 * @return 	Component
 	 */
 	render() {
+		const { componentStyles, styles } = this.props;
+
 		const height = this._animatedValue.interpolate({
 			inputRange: [0, 1],
 			outputRange: [0, this._origHeight]
@@ -181,7 +183,7 @@ export default class LoginRegisterPrompt extends PureComponent {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	wrapper: {},
 	outerWrapper: {
 		overflow: "hidden"
@@ -228,3 +230,5 @@ const componentStyles = StyleSheet.create({
 		flexGrow: 1
 	}
 });
+
+export default withTheme(_componentStyles)(LoginRegisterPrompt);

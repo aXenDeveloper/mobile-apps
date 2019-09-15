@@ -1,26 +1,16 @@
 import React, { Component } from "react";
-import { Text, View, SectionList, StyleSheet, Alert, Image, TouchableOpacity } from "react-native";
+import { Text, View, SectionList, Alert, Image, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
+import { compose } from "react-apollo";
 import ActionSheet from "react-native-actionsheet";
 import _ from "underscore";
 
-import {
-	setActiveCommunity,
-	switchAppView,
-	setCommunities,
-	loadCommunities,
-	toggleFavoriteCommunity,
-	toggleSavedCommunity,
-	_devStoreCommunities
-} from "../../redux/actions/app";
+import { setActiveCommunity, loadCommunities, toggleFavoriteCommunity, toggleSavedCommunity, _devStoreCommunities } from "../../redux/actions/app";
 import { CommunityBox } from "../../ecosystems/MultiCommunity";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
-import Button from "../../atoms/Button";
 import ErrorBox from "../../atoms/ErrorBox";
 import LargeTitle from "../../atoms/LargeTitle";
-import HeaderButton from "../../atoms/HeaderButton";
-import NavigationService from "../../utils/NavigationService";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons, { illustrations } from "../../icons";
 
 class MyCommunitiesScreen extends Component {
@@ -137,6 +127,7 @@ class MyCommunitiesScreen extends Component {
 	 * @return 	Component
 	 */
 	renderCommunity(item) {
+		const { styles, componentStyles } = this.props;
 		const { id, logo, url: apiUrl, client_id: apiKey, name, description, isFavorite } = item;
 		const actionSheetOptions = [isFavorite ? "Unset favorite" : "Set as favorite", "Remove from my list", "Cancel"];
 		const actionSheetDestructiveIndex = 1;
@@ -280,6 +271,7 @@ class MyCommunitiesScreen extends Component {
 	 * @return 	Component|null
 	 */
 	renderListFooter() {
+		const { styles } = this.props;
 		if (this.state.hasMissingCommunities) {
 			return (
 				<View style={[styles.flexRow, styles.mhWide, styles.mtStandard]}>
@@ -315,6 +307,7 @@ class MyCommunitiesScreen extends Component {
 	 * @return 	Component
 	 */
 	renderEmptyList() {
+		const { styles, componentStyles } = this.props;
 		return (
 			<View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter]}>
 				<Image source={illustrations.COMMUNITY} resizeMode="contain" style={componentStyles.emptyImage} />
@@ -328,6 +321,7 @@ class MyCommunitiesScreen extends Component {
 	}
 
 	render() {
+		const { styles } = this.props;
 		if (this.props.app.communities.loading) {
 			return (
 				<View style={styles.mtWide}>
@@ -360,11 +354,7 @@ class MyCommunitiesScreen extends Component {
 	}
 }
 
-export default connect(state => ({
-	app: state.app
-}))(MyCommunitiesScreen);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	dots: {
 		width: 20,
 		height: 20
@@ -375,3 +365,10 @@ const componentStyles = StyleSheet.create({
 		marginTop: styleVars.spacing.extraWide * 2
 	}
 });
+
+export default compose(
+	connect(state => ({
+		app: state.app
+	})),
+	withTheme(_componentStyles)
+)(MyCommunitiesScreen);

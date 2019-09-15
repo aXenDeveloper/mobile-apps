@@ -9,7 +9,7 @@ import MemberRow from "../../ecosystems/MemberRow";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import getImageUrl from "../../utils/getImageUrl";
 import ErrorBox from "../../atoms/ErrorBox";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const LIMIT = 25;
 
@@ -98,6 +98,7 @@ class WhoReactedModal extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
 		let content;
 
 		if (this.state.loading) {
@@ -160,9 +161,7 @@ class WhoReactedModal extends Component {
 	}
 }
 
-export default compose(withApollo)(WhoReactedModal);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	titleBar: {
 		display: "flex",
 		flexDirection: "row",
@@ -178,3 +177,8 @@ const componentStyles = StyleSheet.create({
 		height: 22
 	}
 });
+
+export default compose(
+	withApollo,
+	withTheme(_componentStyles)
+)(WhoReactedModal);

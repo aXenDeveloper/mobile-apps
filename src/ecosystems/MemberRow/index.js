@@ -7,8 +7,7 @@ import PropTypes from "prop-types";
 import UserPhoto from "../../atoms/UserPhoto";
 import ContentRow from "../../ecosystems/ContentRow";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
-
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class MemberRow extends PureComponent {
 	constructor(props) {
@@ -33,6 +32,8 @@ class MemberRow extends PureComponent {
 	}
 
 	render() {
+		const { componentStyles, styleVars, styles } = this.props;
+
 		if (this.props.loading) {
 			return (
 				<ContentRow>
@@ -57,9 +58,7 @@ class MemberRow extends PureComponent {
 	}
 }
 
-export default compose(withNavigation)(MemberRow);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	row: {
 		display: "flex",
 		flexDirection: "row",
@@ -70,6 +69,11 @@ const componentStyles = StyleSheet.create({
 		marginLeft: styleVars.spacing.standard
 	}
 });
+
+export default compose(
+	withNavigation,
+	withTheme(_componentStyles)
+)(MemberRow);
 
 MemberRow.defaultProps = {
 	loading: false

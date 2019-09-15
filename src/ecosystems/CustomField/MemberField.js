@@ -3,9 +3,9 @@ import { Text, View, TouchableOpacity } from "react-native";
 
 import NavigationService from "../../utils/NavigationService";
 import UserPhoto from "../../atoms/UserPhoto";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 
-const MemberField = props => (
+const MemberField = ({ styles, ...props }) => (
 	<React.Fragment>
 		{Boolean(props.value.length) ? (
 			props.value.map(member => (
@@ -26,4 +26,4 @@ const MemberField = props => (
 	</React.Fragment>
 );
 
-export default MemberField;
+export default withTheme()(MemberField);

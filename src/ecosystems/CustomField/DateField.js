@@ -1,11 +1,11 @@
-import React from "react";
+import React, { memo } from "react";
 import { Text } from "react-native";
 import moment from "moment";
 
 import Lang from "../../utils/Lang";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 
-const DateField = props => {
+const DateField = ({ styles, ...props }) => {
 	if (props.value.length !== 10) {
 		return <Text style={[props.textStyles, styles.lightText]}>{Lang.get("no_date")}</Text>;
 	}
@@ -17,4 +17,4 @@ const DateField = props => {
 	return <Text style={props.textStyles}>{date}</Text>;
 };
 
-export default DateField;
+export default withTheme()(memo(DateField));

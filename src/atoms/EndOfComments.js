@@ -2,28 +2,27 @@ import React, { memo } from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import PropTypes from "prop-types";
 
-import { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-const EndOfComments = props => (
-	<View style={componentStyles.wrapper}>
-		<Text style={componentStyles.text}>{props.label}</Text>
-	</View>
-);
+const EndOfComments = props => {
+	const { componentStyles, styles } = props;
+	return (
+		<View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.wrapper]}>
+			<Text style={[styles.smallText, componentStyles.text]}>{props.label}</Text>
+		</View>
+	);
+};
 
-export default memo(EndOfComments);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	wrapper: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "center",
 		height: 75
 	},
 	text: {
-		fontSize: 13,
-		color: "rgba(0,0,0,0.3)"
+		color: styleVars.backgroundLightText
 	}
 });
+
+export default withTheme(_componentStyles)(memo(EndOfComments));
 
 EndOfComments.defaultProps = {
 	label: "You're up to date!"

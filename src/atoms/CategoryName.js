@@ -1,9 +1,10 @@
 import React, { memo } from "react";
-import { View, Image, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
 
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
 const CategoryName = props => {
+	const { styles, componentStyles } = props;
 	const colorIndicator = props.color ? { backgroundColor: props.color } : null;
 
 	return (
@@ -16,14 +17,13 @@ const CategoryName = props => {
 	);
 };
 
-export default memo(CategoryName);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	colorIndicator: {
 		width: 9,
 		height: 9,
 		borderRadius: 2,
 		backgroundColor: styleVars.accentColor
-	},
-	categoryTitle: {}
+	}
 });
+
+export default withTheme(_componentStyles)(memo(CategoryName));

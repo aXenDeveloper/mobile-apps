@@ -12,7 +12,7 @@ import ListField from "./ListField";
 import BooleanField from "./BooleanField";
 import DateField from "./DateField";
 import UnsupportedField from "./UnsupportedField";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const getComponentType = type => {
 	switch (type) {
@@ -49,7 +49,7 @@ const getComponentType = type => {
 	}
 };
 
-const CustomField = props => {
+const CustomField = ({ styles, ...props }) => {
 	const ComponentToRender = getComponentType(props.type);
 
 	return (
@@ -59,4 +59,4 @@ const CustomField = props => {
 	);
 };
 
-export default CustomField;
+export default withTheme()(CustomField);

@@ -1,14 +1,14 @@
 import React, { Component } from "react";
-import { Text, View, Image, Switch, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View } from "react-native";
 import _ from "underscore";
 
-import { PlaceholderContainer, PlaceholderElement } from "../ecosystems/Placeholder";
+import { PlaceholderElement } from "../ecosystems/Placeholder";
 import NavigationService from "../utils/NavigationService";
 import ContentRow from "../ecosystems/ContentRow";
 import Lang from "../utils/Lang";
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-export default class NotificationSettingRow extends Component {
+class NotificationSettingRow extends Component {
 	constructor(props) {
 		super(props);
 
@@ -61,6 +61,8 @@ export default class NotificationSettingRow extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles, styleVars } = this.props;
+
 		if (this.props.loading) {
 			return (
 				<ContentRow style={[styles.row, { height: 40 }, componentStyles.menuItemWrap]}>
@@ -83,7 +85,7 @@ export default class NotificationSettingRow extends Component {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	icon: {
 		width: 24,
 		height: 24,
@@ -106,3 +108,5 @@ const componentStyles = StyleSheet.create({
 		marginLeft: styleVars.spacing.standard
 	}
 });
+
+export default withTheme(_componentStyles)(NotificationSettingRow);

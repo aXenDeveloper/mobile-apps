@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Text, View, FlatList, ScrollView } from "react-native";
+import { Text, View } from "react-native";
+import { compose } from "react-apollo";
 import { connect } from "react-redux";
 
 import Lang from "../../utils/Lang";
 import { setContentView } from "../../redux/actions/app";
 import CheckList from "../../ecosystems/CheckList";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 
 class ContentView extends Component {
 	constructor(props) {
@@ -51,13 +52,14 @@ class ContentView extends Component {
 	}
 
 	render() {
+		const { styles } = this.props;
 		const isMulti = Expo.Constants.manifest.extra.multi;
 		return (
 			<View>
 				<View style={styles.rowsWrap}>
 					<CheckList type="radio" data={this.getViewOptions()} onPress={this.onPress} />
 				</View>
-				<View style={[styles.mtTight, styles.phWide]}>
+				<View style={[styles.mtTight, styles.mbExtraWide, styles.phWide]}>
 					<Text style={[styles.smallText, styles.lightText]}>
 						{isMulti ? "Determines where you are taken when tapping into content. Applies only to this device." : Lang.get("content_view_desc")}
 					</Text>
@@ -67,6 +69,9 @@ class ContentView extends Component {
 	}
 }
 
-export default connect(state => ({
-	app: state.app
-}))(ContentView);
+export default compose(
+	connect(state => ({
+		app: state.app
+	})),
+	withTheme()
+)(ContentView);

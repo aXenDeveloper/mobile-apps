@@ -1,10 +1,11 @@
-import React from "react";
+import React, { memo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 import Lang from "../../utils/Lang";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 
 const ColorField = props => {
+	const { styles, componentStyles } = props;
 	const backgroundColor = !props.value.startsWith("#") ? `#${props.value}` : props.value;
 
 	if (props.value.trim() === "" || props.value === "#") {
@@ -19,12 +20,12 @@ const ColorField = props => {
 	);
 };
 
-export default ColorField;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	colorSwatch: {
 		width: 16,
 		height: 16,
 		borderRadius: 3
 	}
-});
+};
+
+export default withTheme(_componentStyles)(memo(ColorField));

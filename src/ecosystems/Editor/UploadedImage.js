@@ -6,10 +6,10 @@ import * as Animatable from "react-native-animatable";
 import { UPLOAD_STATUS } from "../../redux/actions/editor";
 import { AnimatedCircularProgress } from "../../ecosystems/CircularProgress";
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
-export default class UploadedImage extends PureComponent {
+class UploadedImage extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.actionSheetPress = this.actionSheetPress.bind(this);
@@ -87,6 +87,8 @@ export default class UploadedImage extends PureComponent {
 	}
 
 	getStatusOverlay() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.props.status === UPLOAD_STATUS.UPLOADING || this.props.status === UPLOAD_STATUS.DONE) {
 			// If we're uploading (but not at 100%), or already finished, show the upload progress
 			return (
@@ -131,7 +133,8 @@ export default class UploadedImage extends PureComponent {
 	}
 
 	render() {
-		// @todo language
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<TouchableOpacity style={[styles.mrStandard, componentStyles.uploadedImageWrapper]} onPress={this.onPressImage}>
 				<Image source={{ uri: this.props.image }} resizeMode="cover" style={componentStyles.uploadedImage} />
@@ -150,7 +153,7 @@ export default class UploadedImage extends PureComponent {
 
 //<ActivityIndicator size='small' color='#fff' />
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	uploadedImageWrapper: {
 		width: 60,
 		height: 60,
@@ -183,3 +186,5 @@ const componentStyles = StyleSheet.create({
 		tintColor: "#fff"
 	}
 });
+
+export default withTheme(_componentStyles)(UploadedImage);

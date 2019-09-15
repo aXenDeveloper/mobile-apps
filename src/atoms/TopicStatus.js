@@ -2,10 +2,10 @@ import React, { memo } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 
 import Lang from "../utils/Lang";
-import { styleVars } from "../styles";
+import { withTheme } from "../themes";
 import icons from "../icons";
 
-const TopicStatus = props => {
+const TopicStatus = ({ styles, componentStyles, ...props }) => {
 	const statuses = {
 		pinned: {
 			text: Lang.get("status_pinned"),
@@ -49,9 +49,7 @@ const TopicStatus = props => {
 	);
 };
 
-export default memo(TopicStatus);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	wrapper: {
 		display: "flex",
 		flexDirection: "row",
@@ -115,3 +113,5 @@ const componentStyles = StyleSheet.create({
 		tintColor: styleVars.lightText
 	}
 });
+
+export default withTheme(_componentStyles)(memo(TopicStatus));

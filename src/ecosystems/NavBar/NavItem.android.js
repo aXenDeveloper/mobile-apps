@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { View, TouchableOpacity, StyleSheet, Image, Text } from "react-native";
+import React, { memo } from "react";
+import { View, TouchableOpacity, Image, Text } from "react-native";
 
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
-const NavItem = props => (
+const NavItem = ({ componentStyles, styles, ...props }) => (
 	<TouchableOpacity style={componentStyles.navItem} onPress={props.onPress}>
 		<View style={[styles.flexRow, styles.flexAlignCenter, styles.flexJustifyCenter, styles.pvStandard, styles.mlWide, styles.mrStandard]}>
 			<Image source={props.icon} resizeMode="contain" style={[styles.mrTight, componentStyles.navItemIcon]} />
@@ -14,19 +14,18 @@ const NavItem = props => (
 	</TouchableOpacity>
 );
 
-export default NavItem;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	navItem: {},
 	navItemText: {
-		color: styleVars.tabActive,
+		color: styleVars.navBar.itemText,
 		textTransform: "uppercase",
 		fontWeight: "500"
 	},
 	navItemIcon: {
 		width: 16,
 		height: 16,
-		tintColor: styleVars.tabActive
-		//marginTop: -1
+		tintColor: styleVars.navBar.itemText
 	}
 });
+
+export default withTheme(_componentStyles)(NavItem);

@@ -1,12 +1,13 @@
-import React, { Component } from "react";
-import { Text, View, StatusBar, SafeAreaView, TouchableHighlight, Button, StyleSheet, Platform } from "react-native";
+import React, { memo } from "react";
+import { StatusBar, Platform } from "react-native";
 import { Header } from "react-navigation";
 import { LinearGradient } from "expo-linear-gradient";
 
+import { withTheme } from "../../themes";
 import { isIphoneX } from "../../utils/isIphoneX";
-import { styleVars } from "../../styles";
 
 const CustomHeader = props => {
+	const { styleVars, componentStyles } = props;
 	let content;
 
 	if (props.content) {
@@ -22,17 +23,17 @@ const CustomHeader = props => {
 			colors={props.transparent ? ["rgba(0,0,0,0)", "rgba(0,0,0,0)"] : styleVars.primaryBrand}
 			style={componentStyles.headerWrap}
 		>
-			<StatusBar barStyle="light-content" translucent />
+			<StatusBar barStyle={styleVars.statusBarStyle} translucent />
 			{content}
 		</LinearGradient>
 	);
 };
 
-export default CustomHeader;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	headerWrap: {
 		height: Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82,
 		overflow: "visible"
 	}
-});
+};
+
+export default withTheme(_componentStyles)(memo(CustomHeader));

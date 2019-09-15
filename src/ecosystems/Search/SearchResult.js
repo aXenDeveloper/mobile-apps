@@ -1,12 +1,11 @@
 import React, { PureComponent } from "react";
-import { Text, View, FlatList, TouchableHighlight, StyleSheet } from "react-native";
 
 import NavigationService from "../../utils/NavigationService";
 import ContentRow from "../../ecosystems/ContentRow";
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import SearchResultItem from "./SearchResultItem";
 import SearchResultComment from "./SearchResultComment";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class SearchResult extends PureComponent {
 	constructor(props) {
@@ -22,6 +21,8 @@ class SearchResult extends PureComponent {
 	}
 
 	render() {
+		const { styles, styleVars } = this.props;
+
 		if (this.props.loading) {
 			return (
 				<ContentRow style={styles.pvWide}>
@@ -50,4 +51,4 @@ class SearchResult extends PureComponent {
 	}
 }
 
-export default SearchResult;
+export default withTheme()(SearchResult);

@@ -10,6 +10,7 @@ import {
 import { BottomTabBar } from "react-navigation-tabs";
 import { View, Platform } from "react-native";
 import { connect } from "react-redux";
+import { compose } from "react-apollo";
 import * as WebBrowser from "expo";
 import { LinearGradient } from "expo-linear-gradient";
 import "react-native-gesture-handler";
@@ -47,8 +48,8 @@ import NavigationService from "../utils/NavigationService";
 import { resetModalWebview } from "../redux/actions/app";
 import { NavigationTabIcon, NavigationTabNotification } from "../ecosystems/Navigation";
 import CustomHeader from "../ecosystems/CustomHeader";
+import { withTheme } from "../themes";
 import UserPhoto from "../atoms/UserPhoto";
-import styles, { styleVars, tabStyles } from "../styles";
 import { navigationIcons } from "../icons";
 import Lang from "../utils/Lang";
 
@@ -56,18 +57,13 @@ class AppNavigation extends Component {
 	constructor(props) {
 		super(props);
 
-		this._CommunityStack = this._getMainStack();
-		this._StreamStack = this._getMainStack({}, "StreamView");
-		this._NotificationStack = this._getMainStack({}, "NotificationsStack");
-		this._SearchStack = this._getMainStack({}, "SearchStack");
-		this._LoginRegisterStack = this._getLoginRegisterStack();
-
 		this.state = {
 			MasterNavigation: this._getMasterNavigation()
 		};
 	}
 
 	_getMainStack(options, initialRoute) {
+		const { styles, styleVars } = this.props;
 		return createStackNavigator(
 			{
 				HomeScreen: {
@@ -104,7 +100,9 @@ class AppNavigation extends Component {
 			},
 			{
 				initialRouteName: initialRoute || "HomeScreen",
-				cardStyle: styles.stackCardStyle,
+				cardStyle: {
+					backgroundColor: styleVars.appBackground
+				},
 				defaultNavigationOptions: Object.assign(
 					{
 						header: props => {
@@ -123,13 +121,17 @@ class AppNavigation extends Component {
 	}
 
 	_getSettingsStack(options) {
+		const { styles, styleVars } = this.props;
+
 		return createStackNavigator(
 			{
 				AccountSettingsScreen: { screen: AccountSettingsScreen }
 			},
 			{
 				initialRouteName: "AccountSettingsScreen",
-				cardStyle: styles.stackCardStyle,
+				cardStyle: {
+					backgroundColor: styleVars.appBackground
+				},
 				defaultNavigationOptions: Object.assign(
 					{
 						title: Lang.get("account_settings"),
@@ -142,6 +144,8 @@ class AppNavigation extends Component {
 	}
 
 	_getLoginRegisterStack() {
+		const { styles, styleVars } = this.props;
+
 		return createStackNavigator(
 			{
 				LoginScreen: { screen: LoginScreen },
@@ -150,7 +154,9 @@ class AppNavigation extends Component {
 			},
 			{
 				initialRouteName: "LoginScreen",
-				cardStyle: styles.stackCardStyle,
+				cardStyle: {
+					backgroundColor: styleVars.appBackground
+				},
 				defaultNavigationOptions: {
 					header: props => {
 						return <CustomHeader {...props} />;
@@ -171,6 +177,10 @@ class AppNavigation extends Component {
 	 * @return StackNavigator
 	 */
 	_getMasterNavigation() {
+		const { styles, styleVars } = this.props;
+
+		console.log("transparent");
+
 		const masterStack = createStackNavigator(
 			{
 				Root: {
@@ -194,7 +204,7 @@ class AppNavigation extends Component {
 					}
 				},
 				LoginModal: {
-					screen: this._LoginRegisterStack,
+					screen: this._getLoginRegisterStack(),
 					navigationOptions: {
 						header: null,
 						headerMode: "none"
@@ -209,7 +219,9 @@ class AppNavigation extends Component {
 			},
 			{
 				mode: "modal",
-				cardStyle: styles.stackCardStyle,
+				cardStyle: {
+					backgroundColor: styleVars.appBackground
+				},
 				defaultNavigationOptions: {
 					header: props => {
 						return <CustomHeader {...props} />;
@@ -250,22 +262,24 @@ class AppNavigation extends Component {
 	 * @return TabNavigator
 	 */
 	_getPrimaryTabBar() {
+		const { styles, styleVars } = this.props;
+
 		const Home = {
-			screen: this._CommunityStack,
+			screen: this._getMainStack(),
 			navigationOptions: {
 				tabBarLabel: Lang.get("tab_home"),
 				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.HOME_ACTIVE} inactive={navigationIcons.HOME} />
 			}
 		};
 		const Search = {
-			screen: this._SearchStack,
+			screen: this._getMainStack({}, "SearchStack"),
 			navigationOptions: {
 				tabBarLabel: Lang.get("tab_search"),
 				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.SEARCH_ACTIVE} inactive={navigationIcons.SEARCH} />
 			}
 		};
 		const Streams = {
-			screen: this._StreamStack,
+			screen: this._getMainStack({}, "StreamView"),
 			navigationOptions: {
 				tabBarLabel: Lang.get("tab_streams"),
 				header: props => {
@@ -275,7 +289,7 @@ class AppNavigation extends Component {
 			}
 		};
 		const Notifications = {
-			screen: this._NotificationStack,
+			screen: this._getMainStack({}, "NotificationsStack"),
 			navigationOptions: navigation => ({
 				tabBarLabel: Lang.get("tab_notifications"),
 				tabBarIcon: props => <NavigationTabNotification {...props} active={navigationIcons.NOTIFICATIONS_ACTIVE} inactive={navigationIcons.NOTIFICATIONS} />
@@ -293,7 +307,7 @@ class AppNavigation extends Component {
 			})
 		};
 		const Login = {
-			screen: this._LoginRegisterStack,
+			screen: this._getLoginRegisterStack(),
 			navigationOptions: navigation => ({
 				tabBarLabel: Lang.get("tab_signin"),
 				tabBarIcon: props => <NavigationTabIcon {...props} active={navigationIcons.LOGIN_ACTIVE} inactive={navigationIcons.LOGIN} />,
@@ -343,6 +357,8 @@ class AppNavigation extends Component {
 	 * @return object|file resource
 	 */
 	_getUserPhoto(focused, tintColor) {
+		const { styles } = this.props;
+
 		if (this.props.auth.isAuthenticated && this.props.user.photo) {
 			return <UserPhoto url={this.props.user.photo} size={Platform.OS === "ios" ? 25 : 18} />;
 		} else {
@@ -357,7 +373,7 @@ class AppNavigation extends Component {
 	 * We use this to show appropriate tabs to guests vs. members
 	 */
 	componentDidUpdate(prevProps) {
-		if (this.props.auth.isAuthenticated !== prevProps.auth.isAuthenticated) {
+		if (this.props.auth.isAuthenticated !== prevProps.auth.isAuthenticated || prevProps.app.darkMode !== this.props.app.darkMode) {
 			console.log("NAVIGATION: Building new nav");
 			this.setState({
 				MasterNavigation: this._getMasterNavigation()
@@ -381,9 +397,12 @@ class AppNavigation extends Component {
 	}
 }
 
-export default connect(state => ({
-	app: state.app,
-	user: state.user,
-	auth: state.auth,
-	site: state.site
-}))(AppNavigation);
+export default compose(
+	withTheme(),
+	connect(state => ({
+		app: state.app,
+		user: state.user,
+		auth: state.auth,
+		site: state.site
+	}))
+)(AppNavigation);

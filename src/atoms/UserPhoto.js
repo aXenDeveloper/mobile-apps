@@ -4,11 +4,11 @@ import _ from "underscore";
 import FadeIn from "react-native-fade-in-image";
 
 import getImageUrl from "../utils/getImageUrl";
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
 const UserPhoto = props => {
 	const size = props.size || 40;
-
+	const { styleVars, componentStyles, styles } = props;
 	const photoSize = {
 		width: size,
 		height: size
@@ -73,11 +73,9 @@ const UserPhoto = props => {
 	);
 };
 
-export default memo(UserPhoto);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	photo: {
-		backgroundColor: "#f0f0f0"
+		backgroundColor: styleVars.placeholderColors.background
 	},
 	anonymous: {
 		opacity: 0.3
@@ -91,13 +89,15 @@ const componentStyles = StyleSheet.create({
 		borderRadius: 12,
 		borderWidth: 2,
 		borderStyle: "solid",
-		borderColor: "#fff"
+		borderColor: styleVars.contentBackground
 	},
 	letterPhoto: {
-		backgroundColor: "#333"
+		backgroundColor: styleVars.placeholderColors.background
 	},
 	letter: {
 		color: "#fff",
 		textAlign: "center"
 	}
 });
+
+export default withTheme(_componentStyles)(memo(UserPhoto));

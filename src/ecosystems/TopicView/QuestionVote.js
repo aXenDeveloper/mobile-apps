@@ -2,10 +2,11 @@ import React, { memo } from "react";
 import { Text, Image, View, StyleSheet, TouchableOpacity } from "react-native";
 
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 const QuestionVote = props => {
+	const { componentStyles, styles } = props;
 	const voteUpIcon = props.hasVotedUp ? icons.VOTE_UP_SOLID : icons.VOTE_UP;
 	const voteDownIcon = props.hasVotedDown && props.downvoteEnabled ? icons.VOTE_DOWN_SOLID : icons.VOTE_DOWN;
 
@@ -38,9 +39,7 @@ const QuestionVote = props => {
 	);
 };
 
-export default memo(QuestionVote);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	wrapper: {
 		width: 70
 	},
@@ -56,3 +55,5 @@ const componentStyles = StyleSheet.create({
 		opacity: 0.1
 	}
 });
+
+export default withTheme(_componentStyles)(memo(QuestionVote));

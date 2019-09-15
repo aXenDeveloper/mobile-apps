@@ -1,7 +1,4 @@
-import { StyleSheet } from "react-native";
-import styles, { styleVars } from "../../styles";
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	streamHeader: {
 		flex: 1,
 		flexDirection: "column",
@@ -155,4 +152,4 @@ const componentStyles = StyleSheet.create({
 	}
 });
 
-export default componentStyles;
+export default _componentStyles;

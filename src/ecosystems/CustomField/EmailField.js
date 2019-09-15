@@ -3,8 +3,9 @@ import { Text, TouchableOpacity, Linking } from "react-native";
 import isEmail from "validator/lib/isEmail";
 
 import Lang from "../../utils/Lang";
+import { withTheme } from "../../themes";
 
-const EmailField = props => {
+const EmailField = ({ styles, ...props }) => {
 	if (props.value.trim() === "") {
 		return <Text style={[props.textStyles, styles.lightText]}>{Lang.get("no_email")}</Text>;
 	}
@@ -16,4 +17,4 @@ const EmailField = props => {
 	);
 };
 
-export default EmailField;
+export default withTheme()(EmailField);

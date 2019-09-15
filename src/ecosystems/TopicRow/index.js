@@ -13,7 +13,7 @@ import QuestionInfo from "./QuestionInfo";
 import TopicStatus from "../../atoms/TopicStatus";
 import UserPhoto from "../../atoms/UserPhoto";
 import ContentRow from "../../ecosystems/ContentRow";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class TopicRow extends Component {
 	constructor(props) {
@@ -27,6 +27,8 @@ class TopicRow extends Component {
 	 * @return 	Component
 	 */
 	loadingComponent() {
+		const { componentStyles } = this.props;
+
 		return (
 			<ContentRow withSpace>
 				<PlaceholderContainer height={48} style={componentStyles.topicRowLoading}>
@@ -57,6 +59,8 @@ class TopicRow extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.props.loading) {
 			return this.loadingComponent();
 		}
@@ -68,7 +72,7 @@ class TopicRow extends Component {
 
 		return (
 			<ContentRow withSpace hidden={hidden} unread={showAsUnread} onPress={this.props.onPress || this.onPress}>
-				<InfoComponent data={this.props.data} showCategory={this.props.showCategory} showAsUnread={showAsUnread} styles={componentStyles} />
+				<InfoComponent data={this.props.data} showCategory={this.props.showCategory} showAsUnread={showAsUnread} rowStyles={componentStyles} />
 				<View style={[componentStyles.topicStatusesWrap, hidden ? componentStyles.topicStatusesWrapHidden : null]}>
 					<View style={componentStyles.topicMeta}>
 						{Boolean(this.props.data.hiddenStatus === "DELETED") && (
@@ -113,14 +117,7 @@ class TopicRow extends Component {
 	}
 }
 
-export default compose(
-	withNavigation,
-	connect(state => ({
-		auth: state.auth
-	}))
-)(TopicRow);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	// Loading styles
 	topicRowLoading: {
 		paddingLeft: 15,
@@ -128,7 +125,7 @@ const componentStyles = StyleSheet.create({
 		paddingVertical: 10
 	},
 	topicStatusesLoading: {
-		backgroundColor: "#FAFAFA",
+		backgroundColor: "rgba(0,0,0,0.15)",
 		height: 32,
 		paddingHorizontal: 15,
 		paddingVertical: 8
@@ -193,7 +190,7 @@ const componentStyles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		backgroundColor: styleVars.greys.light,
+		backgroundColor: "rgba(0,0,0,0.15)",
 		height: 32,
 		paddingHorizontal: 15
 	},
@@ -242,3 +239,11 @@ const componentStyles = StyleSheet.create({
 		marginLeft: -8
 	}
 });
+
+export default compose(
+	withNavigation,
+	connect(state => ({
+		auth: state.auth
+	})),
+	withTheme(_componentStyles)
+)(TopicRow);

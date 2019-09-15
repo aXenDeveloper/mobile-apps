@@ -2,10 +2,11 @@ import React from "react";
 import { Text, Image, StyleSheet, View } from "react-native";
 import _ from "underscore";
 
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 const RatingField = props => {
+	const { styles, componentStyles } = props;
 	const rating = Math.round(parseInt(props.value.value) * 2) / 2;
 	const stars = _.range(1, props.value.max + 1);
 
@@ -24,12 +25,12 @@ const RatingField = props => {
 	);
 };
 
-export default RatingField;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	star: {
 		width: 20,
 		height: 20,
 		tintColor: styleVars.accentColor
 	}
 });
+
+export default withTheme(_componentStyles)(RatingField);

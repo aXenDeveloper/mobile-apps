@@ -13,10 +13,11 @@ import TwoLineHeader from "../../atoms/TwoLineHeader";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import UserPhoto from "../../atoms/UserPhoto";
 import HeaderButton from "../../atoms/HeaderButton";
+import ShadowedArea from "../../atoms/ShadowedArea";
 import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
+import { withTheme, currentStyleSheet } from "../../themes";
 import { processToSend } from "../../utils/richText";
-import styles from "../../styles";
 import icons from "../../icons";
 
 const ReplyTopicMutation = gql`
@@ -36,7 +37,7 @@ class ReplyTopicScreen extends Component {
 			headerTitle: navigation.getParam("submitting") ? (
 				<React.Fragment>
 					<ActivityIndicator size="small" color="#fff" />
-					<Text style={styles.headerTitle}> {Lang.get("submitting")}...</Text>
+					<Text style={currentStyleSheet.headerTitle}> {Lang.get("submitting")}...</Text>
 				</React.Fragment>
 			) : (
 				<TwoLineHeader title={Lang.get("reply_screen")} subtitle={navigation.getParam("topicTitle")} />
@@ -179,25 +180,27 @@ class ReplyTopicScreen extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		// If we're quoting an existing post, build that now
 		let quotedPostComponent = null;
 		if (this.props.navigation.state.params.quotedPost) {
 			const quotedPost = this.props.navigation.state.params.quotedPost;
 
 			quotedPostComponent = (
-				<View style={componentStyles.postInfo}>
+				<ShadowedArea style={[styles.pStandard, styles.flexRow, styles.flexAlignStart]}>
 					<UserPhoto url={quotedPost.author.photo} size={36} />
-					<View style={componentStyles.postContent}>
-						<Text style={componentStyles.quotingTitle}>{Lang.get("quoting_x", { name: quotedPost.author.name })}</Text>
+					<View style={[styles.flex, styles.flexJustifyCenter, styles.mlStandard]}>
+						<Text style={[styles.smallItemTitle, styles.mbVeryTight]}>{Lang.get("quoting_x", { name: quotedPost.author.name })}</Text>
 						<RichTextContent removeQuotes>{quotedPost.content.original}</RichTextContent>
 					</View>
-				</View>
+				</ShadowedArea>
 			);
 		}
 
 		return (
 			<React.Fragment>
-				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1, backgroundColor: "#fff" }} keyboardShouldPersistTaps="handled">
+				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
 					{quotedPostComponent}
 					<KeyboardAvoidingView style={{ flex: 1 }} enabled>
 						<QuillEditor
@@ -239,32 +242,12 @@ class ReplyTopicScreen extends Component {
 	}
 }
 
+const _componentStyles = styleVars => ({});
+
 export default compose(
 	graphql(ReplyTopicMutation),
 	connect(state => ({
 		attachedImages: state.editor.attachedImages
-	}))
+	})),
+	withTheme(_componentStyles)
 )(ReplyTopicScreen);
-
-const componentStyles = StyleSheet.create({
-	postInfo: {
-		flexDirection: "row",
-		alignItems: "flex-start",
-		padding: 12,
-		backgroundColor: "#fafafa",
-		borderBottomWidth: 1,
-		borderBottomColor: "rgba(0,0,0,0.05)"
-	},
-	postContent: {
-		flex: 1,
-		flexDirection: "column",
-		justifyContent: "center",
-		marginLeft: 9
-	},
-	quotingTitle: {
-		fontSize: 15,
-		fontWeight: "600",
-		color: "#171717",
-		marginBottom: 3
-	}
-});

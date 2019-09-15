@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import { Image, Text, View, StyleSheet, AsyncStorage } from "react-native";
 import * as Permissions from "expo-permissions";
-import { Notifications } from "expo";
+import { compose } from "react-apollo";
 import Modal from "react-native-modal";
 import { connect } from "react-redux";
 
 import Button from "../../atoms/Button";
 import Lang from "../../utils/Lang";
 import { illustrations } from "../../icons";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class PromptModal extends Component {
 	constructor(props) {
@@ -69,6 +69,8 @@ class PromptModal extends Component {
 	 * @return 	Component
 	 */
 	getPromptComponents() {
+		const { styles } = this.props;
+
 		if (Expo.Constants.manifest.extra.multi) {
 			return (
 				<React.Fragment>
@@ -97,6 +99,8 @@ class PromptModal extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<Modal animationIn="fadeIn" isVisible={this.props.isVisible}>
 				<View style={[styles.modal, styles.flexShrink, styles.pvExtraWide, componentStyles.modal]}>
@@ -114,17 +118,20 @@ class PromptModal extends Component {
 	}
 }
 
-const componentStyles = StyleSheet.create({
+const _componentStyles = {
 	modal: {
-		backgroundColor: "#fff",
+		backgroundColor: "#fff", // @todo color
 		minHeight: 200
 	},
 	image: {
 		width: 100,
 		height: 100
 	}
-});
+};
 
-export default connect(state => ({
-	site: state.site
-}))(PromptModal);
+export default compose(
+	connect(state => ({
+		site: state.site
+	})),
+	withTheme(_componentStyles)
+)(PromptModal);

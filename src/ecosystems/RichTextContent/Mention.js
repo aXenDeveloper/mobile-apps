@@ -5,7 +5,7 @@ import { withNavigation } from "react-navigation";
 import _ from "underscore";
 
 import NavigationService from "../../utils/NavigationService";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 const onPress = (id, name) => {
 	NavigationService.navigateToScreen("Profile", {
@@ -14,7 +14,7 @@ const onPress = (id, name) => {
 	});
 };
 
-const Mention = props => (
+const Mention = ({ componentStyles, styles, ...props }) => (
 	<Text style={props.baseFontStyle}>
 		<Text> </Text>
 		<Text
@@ -28,9 +28,7 @@ const Mention = props => (
 	</Text>
 );
 
-export default memo(Mention);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	mentionWrapper: {
 		backgroundColor: styleVars.accentColor,
 		borderRadius: 3,
@@ -42,3 +40,5 @@ const componentStyles = StyleSheet.create({
 		textAlignVertical: "center"
 	}
 });
+
+export default withTheme(_componentStyles)(memo(Mention));

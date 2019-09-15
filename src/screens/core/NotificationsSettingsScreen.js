@@ -11,7 +11,7 @@ import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import NotificationSettingRow from "../../atoms/NotificationSettingRow";
 import SectionHeader from "../../atoms/SectionHeader";
 import ErrorBox from "../../atoms/ErrorBox";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 import icons from "../../icons";
 
 /* Main query, passed as a HOC */
@@ -110,10 +110,12 @@ class NotificationsSettingsScreen extends Component {
 			return;
 		}
 
+		const { styles } = this.props;
+
 		return (
 			<View style={styles.pWide}>
-				<Text style={[styles.lightText, styles.standardText]}>{Lang.get("notification_android_extra")}</Text>
-				<Text style={[styles.lightText, styles.standardText]}>{Lang.get("notification_android_extra_desc")}</Text>
+				<Text style={[styles.backgroundLightText, styles.standardText]}>{Lang.get("notification_android_extra")}</Text>
+				<Text style={[styles.backgroundLightText, styles.standardText]}>{Lang.get("notification_android_extra_desc")}</Text>
 			</View>
 		);
 	}
@@ -131,10 +133,12 @@ class NotificationsSettingsScreen extends Component {
 			platformInstructions = Lang.get("notification_instructions_android");
 		}
 
+		const { styles } = this.props;
+
 		return (
 			<View style={[styles.pWide, styles.mtStandard, styles.flexRow, styles.flexAlignStart]}>
 				<Image source={icons.INFO} resizeMode="contain" style={[{ width: 20, height: 20 }, styles.mrStandard, styles.lightImage]} />
-				<Text style={[styles.smallText, styles.lightText, styles.flexBasisZero, styles.flexGrow]}>
+				<Text style={[styles.smallText, styles.backgroundLightText, styles.flexBasisZero, styles.flexGrow]}>
 					{Lang.get("notification_instructions")} {platformInstructions}
 				</Text>
 			</View>
@@ -173,5 +177,6 @@ export default compose(
 		user: state.user
 	})),
 	withApollo,
-	graphql(NotificationQuery)
+	graphql(NotificationQuery),
+	withTheme()
 )(NotificationsSettingsScreen);

@@ -3,24 +3,25 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { readableColor } from "polished";
 
 import Lang from "../utils/Lang";
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-const ErrorBox = props => (
-	<View style={[componentStyles.wrapper, props.transparent ? componentStyles.transparent : null, props.style]}>
-		{props.showIcon !== false && <Image source={require("../../resources/error.png")} style={componentStyles.icon} />}
-		<Text style={componentStyles.message}>{props.message ? props.message : Lang.get("error_loading")}</Text>
-		{Boolean(props.refresh) && (
-			<TouchableOpacity onPress={props.refresh} style={componentStyles.refresh}>
-				<Text style={componentStyles.refreshText}>{Lang.get("try_again")}</Text>
-			</TouchableOpacity>
-		)}
-		{Boolean(props.errorCode) && <Text style={componentStyles.errorCode}>Code {props.errorCode}</Text>}
-	</View>
-);
+const ErrorBox = props => {
+	const { componentStyles } = props;
+	return (
+		<View style={[componentStyles.wrapper, props.transparent ? componentStyles.transparent : null, props.style]}>
+			{props.showIcon !== false && <Image source={require("../../resources/error.png")} style={componentStyles.icon} />}
+			<Text style={componentStyles.message}>{props.message ? props.message : Lang.get("error_loading")}</Text>
+			{Boolean(props.refresh) && (
+				<TouchableOpacity onPress={props.refresh} style={componentStyles.refresh}>
+					<Text style={componentStyles.refreshText}>{Lang.get("try_again")}</Text>
+				</TouchableOpacity>
+			)}
+			{Boolean(props.errorCode) && <Text style={componentStyles.errorCode}>Code {props.errorCode}</Text>}
+		</View>
+	);
+};
 
-export default memo(ErrorBox);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	wrapper: {
 		backgroundColor: styleVars.appBackground,
 		padding: styleVars.spacing.wide,
@@ -65,3 +66,5 @@ const componentStyles = StyleSheet.create({
 		marginTop: styleVars.spacing.standard
 	}
 });
+
+export default withTheme(_componentStyles)(memo(ErrorBox));

@@ -155,9 +155,6 @@ const baseStyles = StyleSheet.create({
 		height: 24,
 		marginBottom: styleVars.spacing.veryTight
 	},
-	stackCardStyle: {
-		backgroundColor: styleVars.appBackground
-	},
 
 	field: {
 		backgroundColor: "#fff",

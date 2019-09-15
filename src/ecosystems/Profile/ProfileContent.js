@@ -1,15 +1,14 @@
 import React, { Component } from "react";
-import { Text, View, Dimensions, ScrollView, FlatList } from "react-native";
+import { View, FlatList } from "react-native";
 import gql from "graphql-tag";
-import { graphql, compose, withApollo } from "react-apollo";
+import { compose, withApollo } from "react-apollo";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import { StreamCard, StreamCardFragment } from "../../ecosystems/Stream";
-import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
+import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import ErrorBox from "../../atoms/ErrorBox";
 import EndOfComments from "../../atoms/EndOfComments";
-import styles from "../../styles";
 
 const MemberContentQuery = gql`
 	query MemberContentQuery($id: ID!, $offset: Int, $limit: Int) {
@@ -148,7 +147,7 @@ class ProfileContent extends Component {
 			return this.getPlaceholder();
 		} else if (this.state.error) {
 			return (
-				<View style={componentStyles.panel}>
+				<View>
 					<ErrorBox message={Lang.get("error_searching")} />
 				</View>
 			);

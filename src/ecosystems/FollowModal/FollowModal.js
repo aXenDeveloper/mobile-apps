@@ -11,7 +11,7 @@ import SectionHeader from "../../atoms/SectionHeader";
 import ToggleRow from "../../atoms/ToggleRow";
 import UserPhotoList from "../../atoms/UserPhotoList";
 import { isIphoneX } from "../../utils/isIphoneX";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class FollowModal extends Component {
 	constructor(props) {
@@ -30,7 +30,7 @@ class FollowModal extends Component {
 	}
 
 	getFollowers() {
-		const { followData } = this.props;
+		const { styles, componentStyles, followData } = this.props;
 
 		if (!followData.followers.length && followData.anonFollowCount === 0) {
 			return null;
@@ -83,6 +83,8 @@ class FollowModal extends Component {
 	 * @return 	Component
 	 */
 	getFollowButtons() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.props.followData.isFollowing) {
 			return (
 				<View style={componentStyles.buttonWrap}>
@@ -125,6 +127,8 @@ class FollowModal extends Component {
 	 * @return 	Component
 	 */
 	getChecklist() {
+		const { styles } = this.props;
+
 		if (this.props.followData.followOptions.length <= 1) {
 			return null;
 		}
@@ -203,6 +207,8 @@ class FollowModal extends Component {
 	 * @return 	Component
 	 */
 	renderItem(item) {
+		const { styles } = this.props;
+
 		if (item.item === "followChoices") {
 			return this.getChecklist();
 		} else if (item.item === "followers") {
@@ -217,6 +223,7 @@ class FollowModal extends Component {
 	}
 
 	render() {
+		const { componentStyles, styles } = this.props;
 		return (
 			<Modal
 				style={styles.modalAlignBottom}
@@ -240,23 +247,18 @@ class FollowModal extends Component {
 						renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
 						keyExtractor={item => item}
 					/>
-					<View style={componentStyles.modalBody}>{this.getFollowButtons()}</View>
+					<View style={[styles.lightBackground, componentStyles.modalBody]}>{this.getFollowButtons()}</View>
 				</View>
 			</Modal>
 		);
 	}
 }
 
-const componentStyles = StyleSheet.create({
-	followerWrap: {
-		backgroundColor: "#f5f5f5",
-		padding: styleVars.spacing.wide,
-		borderBottomWidth: 1,
-		borderBottomColor: styleVars.borderColors.medium
-	},
-	followerTitle: {
-		fontSize: styleVars.fontSizes.small,
-		color: styleVars.lightText
+const _componentStyles = styleVars => ({
+	modal: {
+		justifyContent: "flex-end",
+		margin: 0,
+		padding: 0
 	},
 	followerCountWrap: {
 		minWidth: 100
@@ -275,7 +277,6 @@ const componentStyles = StyleSheet.create({
 		fontSize: 13
 	},
 	modalBody: {
-		backgroundColor: "#f5f5f5",
 		padding: styleVars.spacing.wide,
 		...(isIphoneX() ? { paddingBottom: styleVars.spacing.extraWide + styleVars.spacing.standard } : {})
 	},
@@ -284,4 +285,4 @@ const componentStyles = StyleSheet.create({
 	}
 });
 
-export default FollowModal;
+export default withTheme(_componentStyles)(FollowModal);

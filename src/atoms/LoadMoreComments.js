@@ -1,12 +1,11 @@
 import React, { memo } from "react";
-import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
-import PropTypes from "prop-types";
+import { Text, TouchableOpacity } from "react-native";
 
 import ViewMeasure from "./ViewMeasure";
 import Lang from "../utils/Lang";
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-const LoadMoreComments = ({ label = Lang.get("load_earlier_comments"), ...props }) => (
+const LoadMoreComments = ({ label = Lang.get("load_earlier_comments"), styles, componentStyles, ...props }) => (
 	<ViewMeasure
 		style={[styles.flexRow, styles.flexAlignCenter, styles.mhStandard, styles.mtStandard, styles.mbTight]}
 		onLayout={props.onLayout}
@@ -20,14 +19,17 @@ const LoadMoreComments = ({ label = Lang.get("load_earlier_comments"), ...props 
 	</ViewMeasure>
 );
 
-export default memo(LoadMoreComments);
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	button: {
-		backgroundColor: "#fff",
+		backgroundColor: styleVars.loadMore.background,
 		borderRadius: 4
 	},
+	buttonText: {
+		color: styleVars.loadMore.text
+	},
 	loadingText: {
-		color: "rgba(0,0,0,0.3)"
+		opacity: 0.4
 	}
 });
+
+export default withTheme(_componentStyles)(memo(LoadMoreComments));

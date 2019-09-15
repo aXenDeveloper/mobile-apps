@@ -1,18 +1,18 @@
 import React, { memo } from "react";
-import { Text, StyleSheet } from "react-native";
+import { Text } from "react-native";
 
-import { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-const SectionHeader = props => <Text style={styles.sectionHeader}>{props.title.toUpperCase()}</Text>;
+const SectionHeader = ({ componentStyles, ...props }) => <Text style={componentStyles.sectionHeader}>{props.title.toUpperCase()}</Text>;
 
-export default memo(SectionHeader);
-
-const styles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	sectionHeader: {
 		fontSize: 13,
-		color: "#6D6D72", // @todo style
+		color: styleVars.backgroundLightText,
 		backgroundColor: styleVars.appBackground,
 		paddingHorizontal: styleVars.spacing.wide,
 		paddingVertical: styleVars.spacing.standard
 	}
 });
+
+export default withTheme(_componentStyles)(memo(SectionHeader));

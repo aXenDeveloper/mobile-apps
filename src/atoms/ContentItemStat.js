@@ -1,13 +1,16 @@
 import React, { memo } from "react";
-import { Text, Image, View, StyleSheet } from "react-native";
+import { Text, View } from "react-native";
 
-import styles, { styleVars } from "../styles";
+import { withTheme } from "../themes";
 
-const ContentItemStat = props => (
-	<View style={[styles.phStandard, styles.flexBasisZero, styles.flexGrow, props.style]}>
-		<Text style={[styles.largeText, styles.mediumText, styles.centerText]}>{props.value}</Text>
-		<Text style={[styles.tinyText, styles.lightText, styles.centerText]}>{props.name}</Text>
-	</View>
-);
+const ContentItemStat = props => {
+	const { styles } = props;
+	return (
+		<View style={[styles.phStandard, styles.flexBasisZero, styles.flexGrow, props.style]}>
+			<Text style={[styles.largeText, styles.mediumText, styles.centerText]}>{props.value}</Text>
+			<Text style={[styles.tinyText, styles.lightText, styles.centerText]}>{props.name}</Text>
+		</View>
+	);
+};
 
-export default memo(ContentItemStat);
+export default withTheme()(memo(ContentItemStat));

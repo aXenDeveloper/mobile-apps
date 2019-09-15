@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Image, TouchableHighlight } from "react-native";
+import { Text, View, Image, TouchableHighlight } from "react-native";
 
 import getImageUrl from "../utils/getImageUrl";
+import { withTheme } from "../themes";
 import formatNumber from "../utils/formatNumber";
 
-export default class Reaction extends Component {
+class Reaction extends Component {
 	constructor(props) {
 		super(props);
 		this.onPress = this.onPress.bind(this);
@@ -25,29 +26,25 @@ export default class Reaction extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
 		return (
-			<TouchableHighlight onPress={this.props.onPress ? this.onPress : null} key={this.props.id} style={[this.props.style, styles.reactionWrapper]}>
-				<View style={styles.reaction}>
-					<Image source={{ uri: getImageUrl(this.props.image) }} style={styles.reactionImage} resizeMode="cover" />
-					<Text style={styles.reactionCount}>{formatNumber(this.props.count)}</Text>
+			<TouchableHighlight onPress={this.props.onPress ? this.onPress : null} key={this.props.id} style={[this.props.style, componentStyles.reactionWrapper]}>
+				<View style={[styles.pVeryTight, styles.flexRow, styles.flexGrowZero, styles.flexJustifyCenter, componentStyles.reaction]}>
+					<Image source={{ uri: getImageUrl(this.props.image) }} style={componentStyles.reactionImage} resizeMode="cover" />
+					<Text style={[styles.smallText, styles.mediumText, styles.phVeryTight, componentStyles.reactionCount]}>{this.props.count}</Text>
 				</View>
 			</TouchableHighlight>
 		);
 	}
 }
 
-const styles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	reactionWrapper: {
 		borderRadius: 4
 	},
 	reaction: {
-		backgroundColor: "#F0F0F0",
-		padding: 5,
+		backgroundColor: styleVars.postControl.selectedBackground,
 		borderRadius: 4,
-		flexGrow: 0,
-		display: "flex",
-		flexDirection: "row",
-		justifyContent: "center",
 		height: 26
 	},
 	reactionImage: {
@@ -55,10 +52,8 @@ const styles = StyleSheet.create({
 		height: 16
 	},
 	reactionCount: {
-		color: "#000",
-		fontSize: 12,
-		fontWeight: "bold",
-		paddingLeft: 5,
-		paddingRight: 5
+		color: styleVars.postControl.selectedText
 	}
 });
+
+export default withTheme(_componentStyles)(Reaction);

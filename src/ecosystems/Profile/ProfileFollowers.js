@@ -1,13 +1,12 @@
 import React, { Component } from "react";
-import { Text, View, Dimensions, ScrollView, FlatList, StyleSheet, Image, StatusBar, Animated, Platform } from "react-native";
+import { Text, View, FlatList } from "react-native";
 import gql from "graphql-tag";
-import { graphql, compose, withApollo } from "react-apollo";
+import { graphql, compose } from "react-apollo";
 
 import Lang from "../../utils/Lang";
 import MemberRow from "../../ecosystems/MemberRow";
-import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
+import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import ErrorBox from "../../atoms/ErrorBox";
-import styles from "../../styles";
 
 const ProfileFollowersQuery = gql`
 	query ProfileFollowersQuery($member: ID!, $offset: Int, $limit: Int) {

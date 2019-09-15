@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 
-import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
+import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import { isIphoneX } from "../../utils/isIphoneX";
+import { withTheme } from "../../themes";
 
 /**
  * If we're on an iPhone with a notch, then we add 10pt extra space, so this method
@@ -10,7 +11,7 @@ import { isIphoneX } from "../../utils/isIphoneX";
  */
 const notchCalc = val => (isIphoneX() ? val + 10 : val);
 
-const ProfilePlaceholder = () => (
+const ProfilePlaceholder = ({ componentStyles }) => (
 	<PlaceholderContainer style={{ flex: 1 }}>
 		<PlaceholderContainer height={notchCalc(250)}>
 			<PlaceholderElement width="100%" height={notchCalc(250)} from="#333" to="#444" top={0} left={0} />
@@ -30,12 +31,12 @@ const ProfilePlaceholder = () => (
 	</PlaceholderContainer>
 );
 
-export default ProfilePlaceholder;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	loadingTabBar: {
-		backgroundColor: "#fff",
+		backgroundColor: styleVars.tabBar.background,
 		borderBottomWidth: 1,
-		borderBottomColor: "#cccccc"
+		borderBottomColor: styleVars.tabBar.border
 	}
 });
+
+export default withTheme(_componentStyles)(ProfilePlaceholder);

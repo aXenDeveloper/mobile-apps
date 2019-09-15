@@ -8,7 +8,7 @@ import ContentRow from "../../ecosystems/ContentRow";
 import { PlaceholderRepeater, PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
 import Lang from "../../utils/Lang";
 import icons from "../../icons";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class PopularContributors extends Component {
 	constructor(props) {
@@ -35,6 +35,8 @@ class PopularContributors extends Component {
 	 * @return 	Component
 	 */
 	getRow(data, idx) {
+		const { styles, componentStyles } = this.props;
+
 		return (
 			<ContentRow
 				style={[styles.flexRow, styles.flexAlignCenter, styles.phWide, styles.pvTight]}
@@ -77,6 +79,8 @@ class PopularContributors extends Component {
 	}
 
 	render() {
+		const { styles, componentStyles } = this.props;
+
 		if (this.props.loading) {
 			return (
 				<View style={[styles.row, styles.pvTight, styles.mbWide, componentStyles.wrapper]}>
@@ -107,12 +111,7 @@ class PopularContributors extends Component {
 	}
 }
 
-export default PopularContributors;
-
-const componentStyles = StyleSheet.create({
-	wrapper: {
-		backgroundColor: "#fff"
-	},
+const _componentStyles = styleVars => ({
 	number: {
 		width: 20
 	},
@@ -140,3 +139,5 @@ const componentStyles = StyleSheet.create({
 		tintColor: styleVars.negative
 	}
 });
+
+export default withTheme(_componentStyles)(PopularContributors);

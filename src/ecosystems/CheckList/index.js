@@ -3,9 +3,10 @@ import { Text, View, FlatList, LayoutAnimation } from "react-native";
 import _ from "underscore";
 
 import CheckListRow from "../../atoms/CheckListRow";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
 
 const CheckList = props => {
+	const { styles } = props;
 	const handlers = {};
 	const getHandler = (item, onPress) => {
 		if (_.isUndefined(handlers[item.key])) {
@@ -31,4 +32,4 @@ const CheckList = props => {
 	);
 };
 
-export default CheckList;
+export default withTheme()(CheckList);

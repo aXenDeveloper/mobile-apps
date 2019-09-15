@@ -11,7 +11,7 @@ import ContentCard from "../../ecosystems/ContentCard";
 import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
 import Lang from "../../utils/Lang";
-import styles, { styleVars } from "../../styles";
+import { withTheme } from "../../themes";
 
 class NewContent extends Component {
 	constructor(props) {
@@ -30,6 +30,8 @@ class NewContent extends Component {
 	 * @return 	Component
 	 */
 	getItemCard(data) {
+		const { styleVars, componentStyles, styles } = this.props;
+
 		if (this.props.loading) {
 			return (
 				<ContentCard
@@ -51,13 +53,13 @@ class NewContent extends Component {
 			header: (
 				<React.Fragment>
 					<UserPhoto url={data.author.photo} size={30} />
-					<Text style={[styles.smallText, styles.mlTight]} numberOfLines={1}>
+					<Text style={[styles.text, styles.smallText, styles.mlTight]} numberOfLines={1}>
 						{Lang.buildActionString(data.isComment, data.isReview, data.firstCommentRequired, data.author.name, data.articleLang)}
 					</Text>
 				</React.Fragment>
 			),
 			image: imageToUse ? (
-				<FadeIn style={[componentStyles.imageContainer, styles.mbStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors[0] }}>
+				<FadeIn style={[componentStyles.imageContainer, styles.mbStandard]} placeholderStyle={{ backgroundColor: styleVars.placeholderColors.from }}>
 					<Image style={componentStyles.image} source={{ uri: imageToUse }} resizeMode="cover" />
 				</FadeIn>
 			) : null,
@@ -179,6 +181,8 @@ class NewContent extends Component {
 	}
 
 	render() {
+		const { componentStyles, styleVars } = this.props;
+
 		return (
 			<FlatList
 				horizontal
@@ -195,16 +199,16 @@ class NewContent extends Component {
 	}
 }
 
-export default NewContent;
-
-const componentStyles = StyleSheet.create({
+const _componentStyles = styleVars => ({
 	imageContainer: {
 		height: 135,
 		width: "100%",
-		backgroundColor: "#333"
+		backgroundColor: styleVars.placeholderColors.background
 	},
 	image: {
 		flex: 1,
 		width: "100%"
 	}
 });
+
+export default withTheme(_componentStyles)(NewContent);

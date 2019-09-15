@@ -27,7 +27,6 @@ import { bootSite } from "../../redux/actions/app";
 import { refreshToken } from "../../redux/actions/auth";
 import CommunityNavigation from "../../navigation/CommunityNavigation";
 import ToFormData from "../../utils/ToFormData";
-import { styleVars } from "../../styles";
 import icons from "../../icons";
 
 const NOTIFICATION_TIMEOUT = Expo.Constants.manifest.extra.notification_timeout || 30000;
@@ -58,7 +57,8 @@ class CommunityRoot extends Component {
 		super(props);
 
 		this.state = {
-			bypassOfflineMessage: false
+			bypassOfflineMessage: false,
+			togglingDarkMode: false
 		};
 		this._notificationTimeout = null;
 
@@ -104,6 +104,18 @@ class CommunityRoot extends Component {
 
 		if (prevProps.redirect !== this.props.redirect && this.props.redirect !== null) {
 			this.handleRedirectProp();
+		}
+
+		if (prevProps.app.darkMode !== this.props.app.darkMode) {
+			this.setState({
+				togglingDarkMode: this.props.app.darkMode ? "off" : "on"
+			});
+
+			setTimeout(() => {
+				this.setState({
+					togglingDarkMode: false
+				});
+			}, 10);
 		}
 	}
 
@@ -346,6 +358,8 @@ class CommunityRoot extends Component {
 			}
 		} else if (this.props.auth.swapToken.loading) {
 			appContent = <AppLoading loading message={`Logging you in...`} />;
+		} else if (this.state.togglingDarkMode !== false) {
+			appContent = <AppLoading loading message={`Turning ${this.state.togglingDarkMode} the lights...`} />;
 		} else {
 			appContent = <CommunityNavigation />;
 		}
@@ -353,15 +367,6 @@ class CommunityRoot extends Component {
 		return <ApolloProvider client={this.props.auth.client}>{appContent}</ApolloProvider>;
 	}
 }
-
-const styles = StyleSheet.create({
-	wrapper: {
-		backgroundColor: "#333",
-		flex: 1,
-		alignItems: "center",
-		justifyContent: "center"
-	}
-});
 
 export default connect(state => ({
 	app: state.app,

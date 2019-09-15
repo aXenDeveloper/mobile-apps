@@ -13,7 +13,8 @@ import SectionHeader from "../../atoms/SectionHeader";
 import ContentRow from "../../ecosystems/ContentRow";
 import ToggleRow from "../../atoms/ToggleRow";
 import CheckList from "../../ecosystems/CheckList";
-import styles from "../../styles";
+import { withTheme } from "../../themes";
+//import styles from "../../styles";
 import icons from "../../icons";
 
 const NotificationSettingMutation = gql`
@@ -143,13 +144,14 @@ class NotificationsSettingsTypeScreen extends Component {
 
 	render() {
 		const { email, inline, push, description } = this.props.navigation.state.params;
+		const { styles } = this.props;
 
 		return (
 			<View style={styles.flex}>
 				{description && (
 					<View style={[styles.pWide, styles.mtStandard, styles.mbWide, styles.flexRow, styles.flexAlignStart]}>
 						<Image source={icons.INFO} resizeMode="contain" style={[{ width: 20, height: 20 }, styles.lightImage, styles.mrStandard]} />
-						<Text style={[styles.smallText, styles.lightText, styles.flexBasisZero, styles.flexGrow]}>{description}</Text>
+						<Text style={[styles.smallText, styles.backgroundLightText, styles.flexBasisZero, styles.flexGrow]}>{description}</Text>
 					</View>
 				)}
 				{_.isNull(push) ? this.getInlineToggle() : this.getInlineChecklist()}
@@ -172,5 +174,6 @@ export default compose(
 	connect(state => ({
 		user: state.user
 	})),
-	withApollo
+	withApollo,
+	withTheme()
 )(NotificationsSettingsTypeScreen);

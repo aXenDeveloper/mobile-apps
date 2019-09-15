@@ -3,24 +3,11 @@ import { Text, View, StyleSheet, Image, TouchableHighlight } from "react-native"
 import ShadowedArea from "../../atoms/ShadowedArea";
 
 import icons from "../../icons";
-import styles from "../../styles";
-
-const componentStyles = StyleSheet.create({
-	outerContentRow: {
-		marginBottom: 1
-	},
-	outerContentRowWithSpace: {
-		marginBottom: 4,
-		borderBottomWidth: 1,
-		borderBottomColor: "rgba(0,0,0,0.05)"
-	},
-	arrow: {
-		width: 18,
-		height: 18
-	}
-});
+import { withTheme } from "../../themes";
 
 const ContentRow = props => {
+	const { styles, componentStyles } = props;
+
 	let rowClass = styles.unreadBackground;
 
 	if (props.hidden) {
@@ -41,4 +28,20 @@ const ContentRow = props => {
 	);
 };
 
-export default ContentRow;
+const _componentStyles = styleVars => ({
+	outerContentRow: {
+		marginBottom: 1
+	},
+	outerContentRowWithSpace: {
+		marginBottom: 4,
+		borderBottomWidth: 1,
+		borderBottomColor: "rgba(0,0,0,0.05)"
+	},
+	arrow: {
+		width: 18,
+		height: 18,
+		tintColor: styleVars.rowArrow
+	}
+});
+
+export default withTheme(_componentStyles)(ContentRow);

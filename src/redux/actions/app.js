@@ -50,6 +50,37 @@ export const shiftToast = data => ({
 	type: SHIFT_TOAST
 });
 
+export const SET_THEME = "SET_THEME";
+export const setTheme = data => ({
+	type: SET_THEME,
+	payload: {
+		...data
+	}
+});
+
+export const TOGGLE_DARK_MODE = "TOGGLE_DARK_MODE";
+export const toggleDarkMode = state => {
+	return async (dispatch, getState) => {
+		if (state) {
+			await AsyncStorage.setItem("@darkMode", JSON.stringify(true));
+		}
+
+		dispatch(
+			setDarkModeState({
+				enableDarkMode: state
+			})
+		);
+	};
+};
+
+export const SET_DARK_MODE_STATE = "SET_DARK_MODE_STATE";
+export const setDarkModeState = data => ({
+	type: SET_DARK_MODE_STATE,
+	payload: {
+		...data
+	}
+});
+
 // =================================================================
 
 export const RECEIVE_NOTIFICATION = "RECEIVE_NOTIFICATION";
