@@ -190,7 +190,7 @@ const _componentStyles = styleVars => ({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		backgroundColor: "rgba(0,0,0,0.15)",
+		backgroundColor: styleVars.contentRowTint,
 		height: 32,
 		paddingHorizontal: 15
 	},

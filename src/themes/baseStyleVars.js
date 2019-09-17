@@ -83,6 +83,7 @@ const baseStyleVars = {
 		},
 
 		contentBackground: greyScale(100),
+		contentRowTint: "rgba(0,0,0,0.03)",
 
 		// Text styling
 		text: greyScale(800),
@@ -246,8 +247,11 @@ const baseStyleVars = {
 		primaryTabActive: Platform.OS === "ios" ? greyScale(100) : accentColorDark,
 		primaryTabInactive: greyScale(500),
 
+		primaryBrand: ["#1E486F", "#026D72"],
 		appBackground: greyScale(900),
 		contentBackground: greyScale(800),
+		contentRowTint: "rgba(0,0,0,0.15)",
+
 		accentColor: accentColorDark,
 		checkmarkColor: accentColorDark,
 		text: greyScale(400),
