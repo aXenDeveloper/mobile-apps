@@ -125,7 +125,7 @@ const _componentStyles = styleVars => ({
 		paddingVertical: 10
 	},
 	topicStatusesLoading: {
-		backgroundColor: "rgba(0,0,0,0.15)",
+		backgroundColor: styleVars.contentRowTint,
 		height: 32,
 		paddingHorizontal: 15,
 		paddingVertical: 8

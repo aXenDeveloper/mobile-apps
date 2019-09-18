@@ -1,68 +1,63 @@
 import { Platform } from "react-native";
 
+import baseStyleVars from "./baseStyleVars";
+
+const greyScale = val => {
+	const scale = {
+		100: "#ffffff",
+		200: "#fcfcfc",
+		300: "#f7f7f7",
+		400: "#f0f0f0",
+		500: "#e0e0e0",
+		600: "#969696",
+		700: "#696969",
+		800: "#3b3b3b",
+		900: "#2b2b2b",
+		1000: "#0a0a0a"
+	};
+
+	return scale[val] || scale[100];
+};
+
+const accentColorLight = "#C53030";
+const accentColorDark = "#E53E3E";
+
 const themeRed = {
-	base: () => ({
-		// Overall UI
-		accentColor: "#e53935",
-		altAccentColor: "#afb42b",
-		primaryBrand: ["#e53935", "#e53935"],
-		appBackground: "#f7f7f7",
-		tabActive: "#4b3737",
-		tabInactive: "#7e6e6e",
-		primaryTabActive: Platform.OS === "ios" ? "#4b3737" : "#bb3b38",
-		primaryTabInactive: "#7e6e6e",
-		unread: {
-			active: "#e53935"
-		},
+	base: () => {
+		const _baseStyleVars = baseStyleVars.base(greyScale, accentColorLight);
+		const theme = {
+			..._baseStyleVars,
+			primaryBrand: [accentColorLight, accentColorLight],
+			toggle: {
+				..._baseStyleVars.toggle,
+				true: "#258bd2"
+			},
+			greys: {
+				..._baseStyleVars.greys,
+				placeholder: "#878787"
+			}
+		};
 
-		// Text styling
-		veryLightText: "#ab9b9b",
-		backgroundText: "",
-		backgroundLightText: "#6d6464",
-		titleColors: {
-			dark: "#2b1919",
-			darker: "#1b0d0d"
-		},
-
-		// Button styling
-		primaryButton: {
-			mainColor: "#2b2525",
-			inverseColor: "#fff"
-		},
-		lightButton: {
-			mainColor: "#f3ecec",
-			inverseColor: "#2f2626"
-		},
-		darkButton: {
-			mainColor: "#3c1d1d",
-			inverseColor: "#fff"
-		},
-		warningButton: {
-			mainColor: "#cc1e3a",
-			inverseColor: "#fff"
-		},
-
-		greys: {
-			light: "#fafafa",
-			medium: "#f5f2f2",
-			darker: "#e0dbda",
-			placeholder: "#877f7e"
-		},
-		borderColors: {
-			dark: "#dbcfce",
-			medium: "#ebe2e1",
-			light: "#f5f5f5"
-		},
-
-		checkmarkColor: "#e53935",
-
-		actionBar: {
-			darkBackground: "#312a2a",
-			lightBackground: "#fafafa"
-		}
-	}),
+		return theme;
+	},
 	lightMode: () => ({}),
-	darkMode: () => ({})
+	darkMode: () => {
+		const _baseStyleVars = baseStyleVars.darkMode(greyScale, accentColorDark);
+		const theme = {
+			..._baseStyleVars,
+			primaryBrand: ["#9B2C2C", "#9B2C2C"],
+			toggle: {
+				..._baseStyleVars.toggle,
+				true: "#258bd2"
+			},
+			greys: {
+				..._baseStyleVars.greys,
+				placeholder: "#878787"
+			}
+		};
+
+		return theme;
+	}
 };
 
 export default themeRed;

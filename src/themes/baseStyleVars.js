@@ -1,6 +1,7 @@
 import { Platform } from "react-native";
+import { transparentize } from "polished";
 
-const greyScale = val => {
+const _greyScale = val => {
 	const scale = {
 		100: "#ffffff",
 		200: "#F7FAFC",
@@ -21,7 +22,7 @@ const accentColorLight = "#3370AA";
 const accentColorDark = "#5d95ca";
 
 const baseStyleVars = {
-	base: () => ({
+	base: (greyScale = _greyScale, accentColor = accentColorLight) => ({
 		// Color scales
 		greyScale: {
 			100: greyScale(100),
@@ -70,20 +71,20 @@ const baseStyleVars = {
 		primaryTabActive: Platform.OS === "ios" ? greyScale(800) : "#3370AA",
 		primaryTabInactive: greyScale(600),
 
-		accentColor: accentColorLight,
+		accentColor: accentColor,
 		altAccentColor: "#009BA2",
-		primaryBrand: [accentColorLight, "#009BA2"],
+		primaryBrand: [accentColor, "#009BA2"],
 		appBackground: greyScale(300),
 		tabActive: "#37454B",
 		tabInactive: "#6e797e",
 
 		unread: {
-			active: accentColorLight,
+			active: accentColor,
 			inactive: greyScale(500)
 		},
 
 		contentBackground: greyScale(100),
-		contentRowTint: "rgba(0,0,0,0.03)",
+		contentRowTint: transparentize(0.5, greyScale(200)),
 
 		// Text styling
 		text: greyScale(800),
@@ -103,7 +104,7 @@ const baseStyleVars = {
 
 		// Button styling
 		primaryButton: {
-			mainColor: accentColorLight,
+			mainColor: accentColor,
 			inverseColor: "#fff"
 		},
 		lightButton: {
@@ -167,7 +168,7 @@ const baseStyleVars = {
 			titleColor: greyScale(1000),
 			closeColor: greyScale(600),
 			handleColor: greyScale(200),
-			headerLinkText: accentColorLight
+			headerLinkText: accentColor
 		},
 
 		loadMore: {
@@ -191,7 +192,7 @@ const baseStyleVars = {
 			medium: greyScale(400),
 			light: greyScale(300)
 		},
-		checkmarkColor: accentColorLight,
+		checkmarkColor: accentColor,
 		searchHighlight: "#fff4d4",
 		searchHighlightText: "#000",
 		badgeBackground: "#e52418",
@@ -232,19 +233,19 @@ const baseStyleVars = {
 		tabBar: {
 			background: greyScale(100),
 			border: greyScale(300),
-			active: accentColorLight,
+			active: accentColor,
 			inactive: "#657686",
 			underline: {
 				height: 2,
-				backgroundColor: accentColorLight
+				backgroundColor: accentColor
 			}
 		}
 	}),
 	lightMode: () => ({}),
-	darkMode: () => ({
+	darkMode: (greyScale = _greyScale, accentColor = accentColorDark) => ({
 		// Footer stuff
 		primaryTabBackground: greyScale(900),
-		primaryTabActive: Platform.OS === "ios" ? greyScale(100) : accentColorDark,
+		primaryTabActive: Platform.OS === "ios" ? greyScale(100) : accentColor,
 		primaryTabInactive: greyScale(500),
 
 		primaryBrand: ["#1E486F", "#026D72"],
@@ -252,8 +253,8 @@ const baseStyleVars = {
 		contentBackground: greyScale(800),
 		contentRowTint: "rgba(0,0,0,0.15)",
 
-		accentColor: accentColorDark,
-		checkmarkColor: accentColorDark,
+		accentColor: accentColor,
+		checkmarkColor: accentColor,
 		text: greyScale(400),
 		lightText: greyScale(600),
 		veryLightText: greyScale(600),
@@ -282,7 +283,7 @@ const baseStyleVars = {
 		},
 
 		unread: {
-			active: accentColorDark,
+			active: accentColor,
 			inactive: greyScale(600)
 		},
 
