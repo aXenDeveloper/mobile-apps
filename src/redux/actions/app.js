@@ -63,6 +63,8 @@ export const toggleDarkMode = state => {
 	return async (dispatch, getState) => {
 		if (state) {
 			await AsyncStorage.setItem("@darkMode", JSON.stringify(true));
+		} else {
+			await AsyncStorage.removeItem("@darkMode");
 		}
 
 		dispatch(
