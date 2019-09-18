@@ -233,7 +233,7 @@ class ContentRenderer extends PureComponent {
 			},
 			__custom__pre: {
 				renderer: (htmlAttribs, children, convertedCSSStyles, passProps) => {
-					return <View style={passProps.classesStyles.ipsCode}>{children}</View>;
+					return <View style={passProps.classesStyles.ipsCode}>{pre(htmlAttribs, children, convertedCSSStyles, passProps)}</View>;
 				},
 				wrapper: "View"
 			}
@@ -318,7 +318,7 @@ class ContentRenderer extends PureComponent {
 		// Clean those up by removing them
 		content = content.replace(/<pre (.+?)>([\s\S]+?)<\/pre>/gi, (str, p1, p2) => {
 			const innerContent = p2.replace(/(<([^>]+)>)/gi, "").trim();
-			return `<__custom__pre><pre ${p1}>${innerContent}</pre></__custom_pre>`;
+			return `<__custom__pre>${innerContent}</__custom__pre>`;
 		});
 
 		return content;
@@ -366,7 +366,8 @@ class ContentRenderer extends PureComponent {
 				},
 				ipsCode: {
 					padding: styleVars.spacing.wide,
-					backgroundColor: styleVars.richText.codeBackground
+					backgroundColor: styleVars.richText.codeBackground,
+					marginBottom: styleVars.spacing.standard
 				}
 			}
 		};
