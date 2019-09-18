@@ -83,6 +83,7 @@ const TopicViewQuery = gql`
 				itemPermissions {
 					__typename
 					canShare
+					commentInformation
 					canComment
 					canCommentIfSignedIn
 					canMarkAsRead
@@ -100,6 +101,9 @@ const TopicViewQuery = gql`
 					__typename
 					id
 					hasUnread
+					nodePermissions {
+						canCreate
+					}
 				}
 				follow {
 					...FollowModalFragment
@@ -314,6 +318,7 @@ class TopicViewScreen extends Component {
 		this.setWalkthroughFlag = this.setWalkthroughFlag.bind(this);
 		this.onPressShare = this.onPressShare.bind(this);
 		this.onPressAuthor = this.onPressAuthor.bind(this);
+		this.showNoReplyMessage = this.showNoReplyMessage.bind(this);
 	}
 
 	/**
@@ -1670,6 +1675,39 @@ class TopicViewScreen extends Component {
 	}
 
 	/**
+	 * Return the placeholder text for the reply box, contextulaized to permissions
+	 *
+	 * @return 	string
+	 */
+	getReplyPlaceholder() {
+		const topicData = this.props.data.forums.topic;
+		const { commentInformation } = topicData.itemPermissions;
+
+		if (commentInformation === null) {
+			return Lang.get("write_reply");
+		}
+
+		return Lang.get(`topic_${commentInformation}`);
+	}
+
+	/**
+	 * Shows an alert indicating the reason why replying isn't available
+	 *
+	 * @return 	void
+	 */
+	showNoReplyMessage() {
+		const topicData = this.props.data.forums.topic;
+		const { canComment, commentInformation } = topicData.itemPermissions;
+
+		// If we can comment or there's no message to show, leave
+		if (canComment || commentInformation == null) {
+			return;
+		}
+
+		Alert.alert(Lang.get("topic_cannot_reply"), Lang.get(`topic_${commentInformation}`), [{ text: Lang.get("ok") }], { cancelable: false });
+	}
+
+	/**
 	 * Event handler, called when the FlatList scrolls and the visible posts change.
 	 * We need to then figure out the real post position of the visible item and set state to track it.
 	 * We can't go by simple index because we may have unread bar/guest login prompt/etc. showing.
@@ -1776,7 +1814,17 @@ class TopicViewScreen extends Component {
 						{topicData.poll !== null && <PollModal isVisible={this.state.pollModalVisible} data={topicData.poll} />}
 						{Boolean(topicData.itemPermissions.canComment) && !Boolean(topicData.isArchived) && (
 							<ActionBar light>
-								<DummyTextInput onPress={this.addReply} placeholder={Lang.get("write_reply")} />
+								<DummyTextInput onPress={this.addReply} placeholder={this.getReplyPlaceholder()} />
+							</ActionBar>
+						)}
+						{((!Boolean(topicData.itemPermissions.canComment) &&
+							Boolean(topicData.forum.nodePermissions.canCreate) &&
+							topicData.itemPermissions.commentInformation !== null) ||
+							Boolean(topicData.isArchived)) && (
+							<ActionBar light>
+								<TouchableOpacity onPress={this.showNoReplyMessage}>
+									<Text style={[styles.text, styles.standardText, styles.lightText]}>{Lang.get("cannot_reply_with_info")}</Text>
+								</TouchableOpacity>
 							</ActionBar>
 						)}
 					</View>

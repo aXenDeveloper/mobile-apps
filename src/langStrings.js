@@ -110,6 +110,7 @@ export default [
 	"quoting_x",
 	"your_reply",
 	"started_by_x",
+	"cannot_reply_with_info",
 
 	//------------------------------------
 	// Time stuff
@@ -245,6 +246,13 @@ export default [
 	"error_posting_post",
 	"topic_title",
 	"post_title",
+	"topic_cannot_reply",
+	"topic_locked_can_comment",
+	"topic_poll_can_comment",
+	"topic_locked_cannot_comment",
+	"topic_restricted_cannot_comment",
+	"topic_unacknowledged_warning_cannot_post",
+	"topic_member_exceeded_posts_per_day",
 
 	//------------------------------------
 	// Polls
