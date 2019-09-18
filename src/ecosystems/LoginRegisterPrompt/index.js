@@ -143,19 +143,19 @@ class LoginRegisterPrompt extends PureComponent {
 			<ViewMeasure onLayout={this.props.onLayout} id="loginPrompt">
 				<ShadowedArea style={[styles.row, this.props.style]} onLayout={this.onWrapperLayout}>
 					<Animated.View style={[componentStyles.outerWrapper, this.state.hiding ? { height, opacity } : null]}>
-						<View style={[componentStyles.innerWrapper, this.state.hiding ? { position: "absolute", left: 0, right: 0, bottom: 0 } : null]}>
-							<View style={[componentStyles.loginBox, this.props.closable ? componentStyles.loginBoxClosable : null]}>
+						<View style={[styles.pWide, componentStyles.innerWrapper, this.state.hiding ? { position: "absolute", left: 0, right: 0, bottom: 0 } : null]}>
+							<View style={[styles.flexRow, styles.flexAlignStart, styles.flexJustifyCenter, this.props.closable ? componentStyles.loginBoxClosable : null]}>
 								<Image source={require("../../../resources/register_prompt.png")} style={componentStyles.loginIcon} resizeMode="contain" />
 								<View style={componentStyles.loginInner}>
-									<Text style={componentStyles.loginText}>{this.props.message}</Text>
+									<Text style={[styles.text, styles.standardText]}>{this.props.message}</Text>
 								</View>
 								{Boolean(this.props.closable) && (
 									<TouchableOpacity onPress={this.closeLoginBox} hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}>
-										<Image source={require("../../../resources/close.png")} style={componentStyles.closeButton} />
+										<Image source={require("../../../resources/close.png")} style={[styles.lightImage, componentStyles.closeButton]} />
 									</TouchableOpacity>
 								)}
 							</View>
-							<View style={componentStyles.buttonBar}>
+							<View style={[styles.flexRow, styles.mtStandard]}>
 								<Button
 									type="primary"
 									filled
@@ -163,7 +163,7 @@ class LoginRegisterPrompt extends PureComponent {
 									size="medium"
 									title={Lang.get("register")}
 									onPress={this.onRegisterPress}
-									style={[componentStyles.button, styles.mrTight]}
+									style={[styles.flexBasisZero, styles.flexGrow, styles.mrTight]}
 								/>
 								<Button
 									type="primary"
@@ -172,7 +172,7 @@ class LoginRegisterPrompt extends PureComponent {
 									size="medium"
 									title={Lang.get("sign_in")}
 									onPress={this.onLoginPress}
-									style={[componentStyles.button, this.props.register ? styles.mlTight : null]}
+									style={[styles.flexBasisZero, styles.flexGrow, this.props.register ? styles.mlTight : null]}
 								/>
 							</View>
 						</View>
@@ -188,16 +188,6 @@ const _componentStyles = styleVars => ({
 	outerWrapper: {
 		overflow: "hidden"
 	},
-	innerWrapper: {
-		paddingHorizontal: styleVars.spacing.wide,
-		paddingVertical: styleVars.spacing.wide
-	},
-	loginBox: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "flex-start",
-		justifyContent: "center"
-	},
 	loginBoxClosable: {
 		paddingRight: 20
 	},
@@ -205,9 +195,6 @@ const _componentStyles = styleVars => ({
 		paddingLeft: styleVars.spacing.wide,
 		flexBasis: 0,
 		flexGrow: 1
-	},
-	loginText: {
-		fontSize: styleVars.fontSizes.standard
 	},
 	loginIcon: {
 		width: 40,
@@ -219,15 +206,6 @@ const _componentStyles = styleVars => ({
 		position: "absolute",
 		right: -20,
 		top: 0
-	},
-	buttonBar: {
-		display: "flex",
-		flexDirection: "row",
-		marginTop: styleVars.spacing.standard
-	},
-	button: {
-		flexBasis: 0,
-		flexGrow: 1
 	}
 });
 
