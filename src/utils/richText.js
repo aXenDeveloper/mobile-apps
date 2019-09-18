@@ -25,3 +25,7 @@ export function processToSend(content) {
 
 	return content;
 }
+
+export function stripWhitespace(text) {
+	return text.replace(/\r?\n|\r|\t|\s{2,}/g, " ");
+}

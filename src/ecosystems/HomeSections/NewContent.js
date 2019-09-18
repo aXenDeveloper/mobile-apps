@@ -10,6 +10,7 @@ import UserPhoto from "../../atoms/UserPhoto";
 import ContentCard from "../../ecosystems/ContentCard";
 import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
+import { stripWhitespace } from "../../utils/richText";
 import Lang from "../../utils/Lang";
 import { withTheme } from "../../themes";
 
@@ -49,6 +50,7 @@ class NewContent extends Component {
 		}
 
 		const imageToUse = getImageUrl(getSuitableImage(data.contentImages || null));
+
 		const cardPieces = {
 			header: (
 				<React.Fragment>
@@ -78,7 +80,7 @@ class NewContent extends Component {
 					</View>
 					<View style={[styles.flex, styles.mtTight]}>
 						<Text style={[styles.text, styles.standardText, styles.standardLineHeight]} numberOfLines={imageToUse ? 4 : 2}>
-							{data.content}
+							{stripWhitespace(data.content)}
 						</Text>
 					</View>
 				</React.Fragment>

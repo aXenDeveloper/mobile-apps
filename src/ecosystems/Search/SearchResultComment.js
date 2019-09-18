@@ -6,6 +6,7 @@ import highlightTerms from "../../utils/highlightTerms";
 import Time from "../../atoms/Time";
 import UserPhoto from "../../atoms/UserPhoto";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
+import { stripWhitespace } from "../../utils/richText";
 import { withTheme } from "../../themes";
 import formatNumber from "../../utils/formatNumber";
 
@@ -36,7 +37,7 @@ const SearchResultComment = props => {
 					</Text>
 				</View>
 				<Text style={[styles.standardText, styles.text, styles.mtTight, hidden && styles.moderatedText]} numberOfLines={2}>
-					{highlightTerms(props.data.content.trim(), props.term, styles.highlightedText)}
+					{highlightTerms(stripWhitespace(props.data.content.trim()), props.term, styles.highlightedText)}
 				</Text>
 			</View>
 		</React.Fragment>

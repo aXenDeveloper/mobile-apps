@@ -5,6 +5,7 @@ import UserPhoto from "../../atoms/UserPhoto";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import { ReactionOverview } from "../../ecosystems/Reaction";
 import _componentStyles from "./styles";
+import { stripWhitespace } from "../../utils/richText";
 import { withTheme } from "../../themes";
 import Time from "../../atoms/Time";
 import Lang from "../../utils/Lang";
@@ -46,7 +47,7 @@ const StreamComment = props => {
 				)}
 				<View style={componentStyles.snippetWrapper}>
 					<Text style={[styles.text, componentStyles.snippetText, hidden && styles.moderatedText]} numberOfLines={2}>
-						{props.data.content}
+						{stripWhitespace(props.data.content)}
 					</Text>
 				</View>
 				{Boolean(props.data.reactions.length) && (

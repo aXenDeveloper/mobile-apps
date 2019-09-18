@@ -6,6 +6,7 @@ import formatNumber from "../../utils/formatNumber";
 import UserPhoto from "../../atoms/UserPhoto";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import { ReactionOverview } from "../../ecosystems/Reaction";
+import { stripWhitespace } from "../../utils/richText";
 import _componentStyles from "./styles";
 import { withTheme } from "../../themes";
 import Time from "../../atoms/Time";
@@ -48,7 +49,7 @@ const StreamItem = props => {
 			<View style={componentStyles.streamContent}>
 				{Boolean(props.data.content) && (
 					<Text style={[styles.text, componentStyles.snippetText, hidden && styles.moderatedText]} numberOfLines={3}>
-						{props.data.content}
+						{stripWhitespace(props.data.content)}
 					</Text>
 				)}
 				{(Boolean(props.data.reactions.length) || props.data.replies !== null) && (

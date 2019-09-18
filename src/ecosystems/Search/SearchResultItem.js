@@ -9,6 +9,7 @@ import getSuitableImage from "../../utils/getSuitableImage";
 import formatNumber from "../../utils/formatNumber";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import UserPhoto from "../../atoms/UserPhoto";
+import { stripWhitespace } from "../../utils/richText";
 import { withTheme } from "../../themes";
 import Time from "../../atoms/Time";
 
@@ -37,7 +38,7 @@ const SearchResultItem = props => {
 					{highlightTerms(props.data.title, props.term, styles.highlightedText)}
 				</Text>
 				<Text style={[styles.contentText, styles.text, hidden && styles.moderatedText]} numberOfLines={2}>
-					{highlightTerms(props.data.content.trim(), props.term, styles.highlightedText)}
+					{highlightTerms(stripWhitespace(props.data.content.trim()), props.term, styles.highlightedText)}
 				</Text>
 			</View>
 			<View style={componentStyles.itemMeta}>
