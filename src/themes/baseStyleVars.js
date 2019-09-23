@@ -143,7 +143,7 @@ const baseStyleVars = {
 		// Forms
 		formField: {
 			background: greyScale(100),
-			placeholderText: greyScale(300),
+			placeholderText: "rgba(0,0,0,0.4)",
 			border: greyScale(300),
 			text: greyScale(800)
 		},
