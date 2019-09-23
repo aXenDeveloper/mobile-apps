@@ -5,10 +5,10 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Button from "../../atoms/Button";
 import { withTheme } from "../../themes";
 
-const Tooltip = ({ componentStyles, styles, isFirstStep, isLastStep, handleNext, handlePrev, handleStop, currentStep }) => (
+const Tooltip = ({ componentStyles, styleVars, styles, isFirstStep, isLastStep, handleNext, handlePrev, handleStop, currentStep }) => (
 	<View>
 		<View style={componentStyles.tooltipContainer}>
-			<Text testID="stepDescription" style={[styles.text, styles.standardText]}>
+			<Text testID="stepDescription" style={[{ color: styleVars.greyScale["900"] }, styles.standardText]}>
 				{currentStep.text}
 			</Text>
 		</View>
