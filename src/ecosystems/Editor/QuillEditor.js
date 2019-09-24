@@ -458,6 +458,9 @@ class QuillEditor extends Component {
 				background: ${styleVars.formField.background} !important;
 				color: ${styleVars.formField.text} !important;
 			}`,
+			`a {
+				color: ${styleVars.accentColor};
+			}`,
 			`.ql-editor.ql-blank:before {
 				color: ${styleVars.formField.placeholderText} !important;
 			}`,
