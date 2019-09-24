@@ -32,7 +32,7 @@ class FollowModal extends Component {
 	getFollowers() {
 		const { styles, componentStyles, followData } = this.props;
 
-		if (!followData.followers.length && followData.anonFollowCount === 0) {
+		if (followData.followers !== null && !followData.followers.length && followData.anonFollowCount === 0) {
 			return null;
 		}
 
