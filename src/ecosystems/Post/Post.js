@@ -40,11 +40,11 @@ const PostReactionMutation = gql`
 `;
 
 const WhoReactedQuery = gql`
-	query WhoReactedQuery($id: ID!, $reactionID: Int) {
+	query WhoReactedQuery($id: ID!, $reactionId: Int) {
 		app: forums {
 			type: post(id: $id) {
 				reputation {
-					whoReacted(id: $reactionID) {
+					whoReacted(id: $reactionId) {
 						...WhoReactedFragment
 					}
 				}
