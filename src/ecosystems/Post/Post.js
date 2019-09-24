@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Image, Alert, Text, View, StyleSheet, TouchableHighlight, TouchableOpacity, Share } from "react-native";
+import { Button, Image, Alert, Text, View, StyleSheet, TouchableHighlight, TouchableOpacity, Share, Clipboard } from "react-native";
 import Modal from "react-native-modal";
 import ActionSheet from "react-native-actionsheet";
 import gql from "graphql-tag";
@@ -144,12 +144,14 @@ class Post extends Component {
 	 */
 	actionSheetPress(i) {
 		if (i === 1) {
+			Clipboard.setString(this.props.data.url.full);
+		} else if (i === 2) {
 			if (this.props.data.commentPermissions.canShare) {
 				this.onShare();
 			} else {
 				this.onReport();
 			}
-		} else if (i > 1) {
+		} else if (i > 2) {
 			this.onReport();
 		}
 	}
@@ -161,6 +163,8 @@ class Post extends Component {
 	 */
 	actionSheetOptions() {
 		const options = [Lang.get("cancel")];
+
+		options.push(Lang.get("copy_permalink"));
 
 		if (this.props.data.commentPermissions.canShare) {
 			options.push(Lang.get("share"));
@@ -626,15 +630,13 @@ class Post extends Component {
 								{repButton}
 							</PostControls>
 						)}
-						{Boolean(postData.commentPermissions.canShare || postData.commentPermissions.canReportOrRevoke) && (
-							<ActionSheet
-								ref={o => (this._actionSheet = o)}
-								title={Lang.get("post_options")}
-								options={this.actionSheetOptions()}
-								cancelButtonIndex={this.actionSheetCancelIndex()}
-								onPress={this.actionSheetPress}
-							/>
-						)}
+						<ActionSheet
+							ref={o => (this._actionSheet = o)}
+							title={Lang.get("post_options")}
+							options={this.actionSheetOptions()}
+							cancelButtonIndex={this.actionSheetCancelIndex()}
+							onPress={this.actionSheetPress}
+						/>
 						<ReactionModal
 							visible={this.state.reactionModalVisible}
 							closeModal={this.hideReactionModal}
