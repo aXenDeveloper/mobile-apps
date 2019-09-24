@@ -474,19 +474,21 @@ class ProfileScreen extends Component {
 		const routes = this.getTabRoutes();
 		const thisIndex = routes.findIndex(r => r.key === route.key);
 		const routeShouldBeActive = this.state.index === thisIndex;
+		const minHeight = Dimensions.get("window").height - (Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82);
+		const style = { minHeight };
 
 		switch (route.key) {
 			case "overview":
-				return <ProfileOverview profileData={this.getProfileFields()} isActive={routeShouldBeActive} />;
+				return <ProfileOverview style={style} profileData={this.getProfileFields()} isActive={routeShouldBeActive} />;
 			case "content":
-				return <ProfileContent showResults member={this.props.data.core.member.id} isActive={routeShouldBeActive} />;
+				return <ProfileContent style={style} showResults member={this.props.data.core.member.id} isActive={routeShouldBeActive} />;
 			case "followers":
-				return <ProfileFollowers id={this.props.data.core.member.id} isActive={routeShouldBeActive} />;
+				return <ProfileFollowers style={style} id={this.props.data.core.member.id} isActive={routeShouldBeActive} />;
 		}
 
 		if (route.key.startsWith("field_")) {
 			const additionalTabs = this.getAdditionalTabs();
-			return <ProfileEditorField content={additionalTabs[route.key].value} isActive={routeShouldBeActive} />;
+			return <ProfileEditorField style={style} content={additionalTabs[route.key].value} isActive={routeShouldBeActive} />;
 		}
 	}
 
@@ -510,9 +512,9 @@ class ProfileScreen extends Component {
 				showFollowButton = true;
 			}
 
-			const minHeight = Dimensions.get("window").height - (Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82);
 			const photo = this.props.data.core.member.photo;
 			const photoLightboxHandler = _.isString(photo) && photo.startsWith("data:image") ? null : this.showPhotoLightbox;
+			const minHeight = Dimensions.get("window").height - (Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82);
 
 			return (
 				<View style={styles.flex}>

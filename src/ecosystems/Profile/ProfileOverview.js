@@ -26,7 +26,11 @@ class ProfileOverview extends Component {
 			return <View />;
 		}
 
-		return <SectionList scrollEnabled={false} renderItem={this.renderItem} renderSectionHeader={this.renderSectionHeader} sections={this.props.profileData} />;
+		return (
+			<View style={this.props.style}>
+				<SectionList scrollEnabled={false} renderItem={this.renderItem} renderSectionHeader={this.renderSectionHeader} sections={this.props.profileData} />
+			</View>
+		);
 	}
 }
 

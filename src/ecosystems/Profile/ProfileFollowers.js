@@ -59,7 +59,7 @@ class ProfileFollowers extends Component {
 
 			return (
 				<FlatList
-					style={{ flex: 1 }}
+					style={[this.props.style, { flex: 1 }]}
 					data={this.props.data.core.member.follow.followers}
 					keyExtractor={member => member.id}
 					renderItem={({ item }) => <MemberRow id={parseInt(item.id)} photo={item.photo} name={item.name} groupName={item.group.name} />}

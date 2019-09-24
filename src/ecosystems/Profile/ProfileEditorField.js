@@ -9,7 +9,7 @@ const ProfileEditorField = props => {
 		return <View />;
 	}
 
-	const { styles } = props;
+	const { styles, style } = props;
 	let value;
 
 	try {
@@ -20,7 +20,7 @@ const ProfileEditorField = props => {
 	}
 
 	return (
-		<View style={[styles.flex, styles.pWide]}>
+		<View style={[style, styles.flex, styles.pWide]}>
 			<RichTextContent>{value}</RichTextContent>
 		</View>
 	);

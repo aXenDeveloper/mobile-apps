@@ -154,14 +154,16 @@ class ProfileContent extends Component {
 		}
 
 		return (
-			<FlatList
-				scrollEnabled={false}
-				data={this.state.results}
-				keyExtractor={item => item.indexID}
-				renderItem={({ item }) => <StreamCard data={item} />}
-				ListFooterComponent={this.getFooterComponent}
-				ListEmptyComponent={this.getListEmptyComponent}
-			/>
+			<View style={this.props.style}>
+				<FlatList
+					scrollEnabled={false}
+					data={this.state.results}
+					keyExtractor={item => item.indexID}
+					renderItem={({ item }) => <StreamCard data={item} />}
+					ListFooterComponent={this.getFooterComponent}
+					ListEmptyComponent={this.getListEmptyComponent}
+				/>
+			</View>
 		);
 	}
 }
