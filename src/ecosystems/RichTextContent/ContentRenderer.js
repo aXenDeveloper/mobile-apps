@@ -338,7 +338,8 @@ class ContentRenderer extends PureComponent {
 					marginBottom: 15
 				},
 				a: {
-					textDecorationLine: "none"
+					textDecorationLine: "none",
+					color: styleVars.accentColor
 				},
 				pre: {
 					fontSize: 13,
