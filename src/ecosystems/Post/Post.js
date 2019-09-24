@@ -11,6 +11,7 @@ import _ from "underscore";
 
 import Lang from "../../utils/Lang";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
+import { pushToast } from "../../redux/actions/app";
 import { WhoReactedModal, WhoReactedFragment } from "../../ecosystems/Reaction";
 import ShadowedArea from "../../atoms/ShadowedArea";
 import ViewMeasure from "../../atoms/ViewMeasure";
@@ -145,6 +146,12 @@ class Post extends Component {
 	actionSheetPress(i) {
 		if (i === 1) {
 			Clipboard.setString(this.props.data.url.full);
+
+			this.props.dispatch(
+				pushToast({
+					message: Lang.get("copied_permalink")
+				})
+			);
 		} else if (i === 2) {
 			if (this.props.data.commentPermissions.canShare) {
 				this.onShare();

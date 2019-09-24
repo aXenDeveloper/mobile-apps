@@ -112,6 +112,7 @@ export default [
 	"started_by_x",
 	"cannot_reply_with_info",
 	"copy_permalink",
+	"copied_permalink",
 
 	//------------------------------------
 	// Time stuff
