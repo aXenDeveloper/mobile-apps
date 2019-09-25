@@ -211,7 +211,7 @@ class ActiveUsers extends Component {
 		} else {
 			return (
 				<View style={[styles.row, styles.phWide, styles.ptStandard, styles.pbVeryTight, styles.mbWide, componentStyles.wrapper]}>
-					{Boolean(this.state.tickerReady) && (
+					{Boolean(this.state.tickerReady) && this.state.tickerNames.length >= ActiveUsers.minimumTickerNames && (
 						<View style={[styles.pbTight, styles.mbStandard, styles.bBorder, styles.lightBorder, componentStyles.tickerWrapper]}>{this.getTicker()}</View>
 					)}
 					<View style={[styles.flexRow, styles.flexWrap, styles.flexJustifyBetween]}>
