@@ -102,10 +102,12 @@ class UserScreen extends Component {
 		const { settings } = this.props.site;
 		const options = [{ type: "cancel", title: Lang.get("cancel") }];
 
-		options.push({
-			type: "app_privacy",
-			title: Lang.get("legal_app_privacy")
-		});
+		if (!_.isUndefined(Expo.Constants.manifest.extra.privacyPolicyUrl) && Expo.Constants.manifest.extra.privacyPolicyUrl !== false) {
+			options.push({
+				type: "app_privacy",
+				title: Lang.get("legal_app_privacy")
+			});
+		}
 
 		if (settings.privacy_type !== "NONE") {
 			if (settings.privacy_type === "INTERNAL" || (settings.privacy_type === "EXTERNAL" && isURL(settings.privacy_link))) {
