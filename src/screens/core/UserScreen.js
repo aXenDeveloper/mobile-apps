@@ -18,6 +18,7 @@ import UserPhoto from "../../atoms/UserPhoto";
 import getImageUrl from "../../utils/getImageUrl";
 import NavigationService from "../../utils/NavigationService";
 import { withTheme } from "../../themes";
+import getUserAgent from "../../utils/getUserAgent";
 import icons from "../../icons";
 
 const UserQuery = gql`
@@ -101,6 +102,11 @@ class UserScreen extends Component {
 		const { settings } = this.props.site;
 		const options = [{ type: "cancel", title: Lang.get("cancel") }];
 
+		options.push({
+			type: "app_privacy",
+			title: Lang.get("legal_app_privacy")
+		});
+
 		if (settings.privacy_type !== "NONE") {
 			if (settings.privacy_type === "INTERNAL" || (settings.privacy_type === "EXTERNAL" && isURL(settings.privacy_link))) {
 				options.push({
@@ -141,7 +147,7 @@ class UserScreen extends Component {
 	 * @param 	number 	i 	THe index of the item that was tapped
 	 * @return 	void
 	 */
-	actionSheetPress(i) {
+	async actionSheetPress(i) {
 		const { settings } = this.props.site;
 		const itemPressed = this._actionSheetOptions[i];
 		const { type } = itemPressed;
@@ -155,6 +161,28 @@ class UserScreen extends Component {
 				type,
 				content: settings.reg_rules.original
 			});
+		} else if (type === "app_privacy") {
+			console.log(Expo.Constants.manifest.extra.privacyPolicyUrl);
+
+			const response = await fetch(Expo.Constants.manifest.extra.privacyPolicyUrl, {
+				method: "get",
+				headers: {
+					"Content-Type": "text/html",
+					"User-Agent": getUserAgent()
+				}
+			});
+
+			if (!response.ok) {
+				Alert.alert("Error", "Sorry, there was an error fetching the privacy policy. Please try again later.", [{ text: Lang.get("ok") }], {
+					cancelable: false
+				});
+			} else {
+				const text = await response.text();
+				NavigationService.navigateToScreen("LegalDocument", {
+					type,
+					content: text
+				});
+			}
 		} else {
 			if (settings[`${type}_type`] === "INTERNAL") {
 				NavigationService.navigateToScreen("LegalDocument", {
