@@ -26,11 +26,12 @@
 			"message_prefix": "__IPS__",
 			"per_page": 10,
 			"remoteServicesUrl": "https://remoteservices.invisionpower.com/mobile/",
+			"privacyPolicyUrl": "https://invisioncommunity.com/legal/in-app-privacy-policy/",
 			"max_image_dim": 1000
 		},
 		"name": "Invision Community",
 		"slug": "invision-community",
-		"version": "0.1.9",
+		"version": "0.1.10",
 		"description": "",
 		"scheme": "invision-community",
 		"ios": {
@@ -42,6 +43,7 @@
 		},
 		"android": {
 			"googleServicesFile": "./google-services.json",
+			"versionCode": 111,
 			"package": "com.invisioncommunity.app",
 			"permissions": [
 				"ACCESS_COARSE_LOCATION",
