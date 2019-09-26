@@ -382,7 +382,7 @@ class UserScreen extends Component {
 					<View style={[styles.flexRow, styles.flexAlignCenter, styles.phVeryWide, styles.pvWide]}>
 						<Image source={icons.INFO_SOLID} resizeMode="contain" style={componentStyles.infoIcon} />
 						<TouchableOpacity onPress={this.onPressLegal}>
-							<Text style={[styles.veryLightText, styles.mlVeryTight]}>{Lang.get("legal_notices")}</Text>
+							<Text style={[styles.lightText, styles.mlVeryTight]}>{Lang.get("legal_notices")}</Text>
 						</TouchableOpacity>
 					</View>
 					<ActionSheet ref={o => (this._actionSheet = o)} cancelButtonIndex={0} options={this.getActionSheetOptions()} onPress={this.actionSheetPress} />
@@ -442,7 +442,7 @@ const _componentStyles = styleVars => ({
 		width: 17,
 		height: 17,
 		opacity: 0.7,
-		tintColor: styleVars.veryLightText
+		tintColor: styleVars.lightText
 	}
 });
 
