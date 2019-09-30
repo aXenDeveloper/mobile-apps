@@ -470,6 +470,7 @@ class TopicListScreen extends Component {
 							onRefresh={this.onRefresh}
 							onEndReached={this.onEndReached}
 							ListEmptyComponent={ListEmptyComponent}
+							ListFooterComponent={this.getFooterComponent()}
 						/>
 						{forumData.nodePermissions.canCreate && (
 							<ActionBar>
