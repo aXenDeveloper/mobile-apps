@@ -403,5 +403,6 @@ export default [
 	"legal_terms",
 	"legal_guidelines",
 	"legal_privacy",
-	"third_party_licenses"
+	"third_party_licenses",
+	"legal_app_privacy"
 ];
