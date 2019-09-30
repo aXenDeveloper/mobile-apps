@@ -311,15 +311,18 @@ class ContentRenderer extends PureComponent {
 	 * @return 	string
 	 */
 	fixContentSpacing(content) {
-		content = content.replace(/<[/](strong|em|i|s|u|span)> /g, " </$1>");
-		content = content.replace(/ <(strong|em|i|s|u|span)>/g, "<$1> ");
-
 		// Code blocks have codemirror <span> tags littered throughout
 		// Clean those up by removing them
 		content = content.replace(/<pre (.+?)>([\s\S]+?)<\/pre>/gi, (str, p1, p2) => {
-			const innerContent = p2.replace(/(<([^>]+)>)/gi, "").trim();
+			const innerContent = p2
+				.replace(/(<([^>]+)>)/gi, "")
+				.trim()
+				.replace(/(?:\r\n|\r|\n)/g, "<br>");
 			return `<__custom__pre>${innerContent}</__custom__pre>`;
 		});
+
+		content = content.replace(/<[/](strong|em|i|s|u|span)> /g, " </$1>");
+		content = content.replace(/ <(strong|em|i|s|u|span)>/g, "<$1> ");
 
 		return content;
 	}
