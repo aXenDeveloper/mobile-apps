@@ -751,7 +751,7 @@ class QuillEditor extends Component {
 								<View style={[styles.flexRow, styles.flexJustifyCenter, styles.flexAlignCenter]}>
 									<Text style={[styles.modalTitle]}>Insert Link</Text>
 								</View>
-								<TouchableOpacity onPress={this.closeLinkModal}>
+								<TouchableOpacity onPress={this.closeLinkModal} style={styles.modalCloseTouchable}>
 									<Image source={require("../../../resources/close_circle.png")} resizeMode="contain" style={styles.modalClose} />
 								</TouchableOpacity>
 							</View>

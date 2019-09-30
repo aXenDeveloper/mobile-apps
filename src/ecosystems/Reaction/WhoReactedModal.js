@@ -150,7 +150,7 @@ class WhoReactedModal extends Component {
 							<Text style={[styles.modalTitle, componentStyles.title]}>{Lang.get("who_reacted")}</Text>
 							<Image source={{ uri: getImageUrl(this.props.reactionImage) }} resizeMode="contain" style={componentStyles.reactionImage} />
 						</View>
-						<TouchableOpacity onPress={this.props.close}>
+						<TouchableOpacity onPress={this.props.close} style={styles.modalCloseTouchable}>
 							<Image source={require("../../../resources/close_circle.png")} resizeMode="contain" style={styles.modalClose} />
 						</TouchableOpacity>
 					</View>

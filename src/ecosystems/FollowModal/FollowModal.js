@@ -236,7 +236,7 @@ class FollowModal extends Component {
 					<View style={styles.modalHandle} />
 					<View style={styles.modalHeader}>
 						<Text style={[styles.modalTitle]}>{Lang.get("follow")}</Text>
-						<TouchableOpacity onPress={this.props.close}>
+						<TouchableOpacity style={styles.modalCloseTouchable} onPress={this.props.close}>
 							<Image source={require("../../../resources/close_circle.png")} resizeMode="contain" style={styles.modalClose} />
 						</TouchableOpacity>
 					</View>

@@ -238,10 +238,12 @@ const baseStylesheet = (styleVars, darkMode) => {
 		modalClose: {
 			width: 20,
 			height: 20,
-			position: "absolute",
-			top: -20,
-			right: styleVars.spacing.standard,
 			tintColor: styleVars.modal.closeColor
+		},
+		modalCloseTouchable: {
+			position: "absolute",
+			top: 18,
+			right: styleVars.spacing.standard
 		},
 
 		/* Toast */

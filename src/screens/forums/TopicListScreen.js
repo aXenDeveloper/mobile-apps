@@ -125,6 +125,8 @@ class TopicListScreen extends Component {
 	 * @return 	void
 	 */
 	toggleFollowModal() {
+		console.log("CLOSE MODAL");
+
 		this.setState({
 			followModalVisible: !this.state.followModalVisible
 		});

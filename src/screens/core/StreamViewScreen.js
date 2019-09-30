@@ -305,7 +305,7 @@ class StreamViewScreen extends Component {
 				<View style={styles.modalHandle} />
 				<View style={styles.modalHeader}>
 					<Text style={styles.modalTitle}>{Lang.get("switch_stream")}</Text>
-					<TouchableOpacity onPress={this.closeStreamModal}>
+					<TouchableOpacity onPress={this.closeStreamModal} style={styles.modalCloseTouchable}>
 						<Image source={require("../../../resources/close_circle.png")} resizeMode="contain" style={styles.modalClose} />
 					</TouchableOpacity>
 				</View>
