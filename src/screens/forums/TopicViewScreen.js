@@ -355,6 +355,7 @@ class TopicViewScreen extends Component {
 			const value = await AsyncStorage.getItem("@walkthrough:topicPager");
 
 			if (value !== null) {
+				this._shownWalkthrough = true;
 				doShowWalkthrough = false;
 			}
 		} catch (err) {
@@ -370,6 +371,9 @@ class TopicViewScreen extends Component {
 	 * @return 	void
 	 */
 	async setWalkthroughFlag() {
+		this._showWalkthrough = false;
+		clearTimeout(this._walkthroughTimeout); // Just in case there's a timeout about to fire
+
 		try {
 			await AsyncStorage.setItem("@walkthrough:topicPager", "true");
 		} catch (err) {}
