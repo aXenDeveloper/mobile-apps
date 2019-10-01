@@ -136,7 +136,7 @@ class CommunityRoot extends Component {
 	 * @return 	void
 	 */
 	handleRedirectProp() {
-		const { app, module, controller } = this.props.redirect;
+		const { app, module, controller, url } = this.props.redirect;
 		const params = {};
 
 		["id", "findComment", "findReview"].forEach(param => {
@@ -151,7 +151,8 @@ class CommunityRoot extends Component {
 				{
 					app,
 					module,
-					controller
+					controller,
+					url
 				},
 				params
 			);
