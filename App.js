@@ -3,7 +3,7 @@ import { UIManager } from "react-native";
 import { Provider } from "react-redux";
 import configureStore from "./src/redux/configureStore";
 import { connect } from "react-redux";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import { Asset } from "expo-asset";
 import { AppLoading } from "expo";
 
@@ -24,8 +24,12 @@ whyDidYouUpdate(React, { include: [/^Post/], exclude: /^YellowBox/ });
 }*/
 
 // Remove this once Sentry is correctly setup.
-Sentry.enableInExpoDevelopment = true;
-Sentry.config("https://7ebe0255a311425c8edb883ad65e5002@sentry.io/1429754").install();
+//Sentry.enableInExpoDevelopment = true;
+Sentry.init({
+	dsn: "https://7ebe0255a311425c8edb883ad65e5002@sentry.io/1429754",
+	enableInExpoDevelopment: true,
+	debug: true
+});
 
 export default class App extends Component {
 	constructor(props) {
