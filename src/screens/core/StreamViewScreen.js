@@ -369,7 +369,7 @@ class StreamViewScreen extends Component {
 	 * @return 	Component|null
 	 */
 	getFooterComponent() {
-		if (this.state.loading && !this.state.reachedEnd) {
+		if (!this.state.reachedEnd) {
 			return this.getPlaceholder();
 		}
 
