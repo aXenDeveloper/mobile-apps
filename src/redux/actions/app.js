@@ -162,7 +162,8 @@ export const bootSite = apiInfo => {
 			// Set our lang strings
 			if (_.size(data.core.language)) {
 				// We don't want __typename, so discard that
-				const { __typename, ...rest } = data.core.language;
+				const { __typename, locale, ...rest } = data.core.language;
+				Lang.setLocale(locale);
 				Lang.setWords(rest);
 			}
 
@@ -285,6 +286,7 @@ const BootQuery = gql`
 				url
 			}
 			language {
+				locale
 				...LangFragment
 			}
 			streams {

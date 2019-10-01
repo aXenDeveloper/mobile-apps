@@ -14,7 +14,6 @@ import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Place
 import ForumIcon from "../../atoms/ForumIcon";
 import LastPostInfo from "../../ecosystems/LastPostInfo";
 import { withTheme } from "../../themes";
-import formatNumber from "../../utils/formatNumber";
 import icons from "../../icons";
 
 const MarkForumRead = gql`
@@ -53,7 +52,7 @@ class ForumItem extends Component {
 			params: {
 				id: this.props.data.id,
 				title: this.props.data.name,
-				subtitle: Lang.pluralize(Lang.get("topics"), formatNumber(this.props.data.topicCount))
+				subtitle: Lang.pluralize(Lang.get("topics"), Lang.formatNumber(this.props.data.topicCount))
 			},
 			key: `forum_${this.props.data.id}`
 		});
@@ -135,7 +134,7 @@ class ForumItem extends Component {
 							</Text>
 							{!this.props.data.isRedirectForum && (
 								<Text testId="postCount" style={[styles.lightText, styles.standardText]}>
-									{Lang.pluralize(Lang.get("posts"), formatNumber(this.props.data.topicCount))}
+									{Lang.pluralize(Lang.get("posts"), Lang.formatNumber(this.props.data.topicCount))}
 								</Text>
 							)}
 						</View>

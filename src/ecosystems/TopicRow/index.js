@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import { withNavigation } from "react-navigation";
 
 import Lang from "../../utils/Lang";
-import formatNumber from "../../utils/formatNumber";
 import { PlaceholderElement, PlaceholderContainer } from "../../ecosystems/Placeholder";
 import Time from "../../atoms/Time";
 import TopicInfo from "./TopicInfo";
@@ -102,7 +101,7 @@ class TopicRow extends Component {
 							timestamp={this.props.data.lastPostDate}
 						/>
 						<Text style={[componentStyles.topicStatusesText, componentStyles.topicMetaText, hidden ? componentStyles.topicMetaTextHidden : null]}>
-							{Lang.pluralize(Lang.get("replies"), formatNumber(this.props.data.replies))}
+							{Lang.pluralize(Lang.get("replies"), Lang.formatNumber(this.props.data.replies))}
 						</Text>
 					</View>
 					<View style={[styles.flexRow, componentStyles.userPhotos]}>

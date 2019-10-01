@@ -6,8 +6,6 @@ import { connect } from "react-redux";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
-
-import formatNumber from "../../utils/formatNumber";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import TwoLineHeader from "../../atoms/TwoLineHeader";
 import ShadowedArea from "../../atoms/ShadowedArea";
@@ -48,7 +46,7 @@ class PollScreen extends Component {
 		headerTitle: (
 			<TwoLineHeader
 				title={navigation.state.params.data.title}
-				subtitle={Lang.pluralize(Lang.get("votes"), formatNumber(navigation.state.params.data.votes))}
+				subtitle={Lang.pluralize(Lang.get("votes"), Lang.formatNumber(navigation.state.params.data.votes))}
 			/>
 		)
 	});

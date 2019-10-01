@@ -7,7 +7,6 @@ import { compose, withApollo } from "react-apollo";
 import { ScrollableTab, Tab, TabHeading, Tabs } from "native-base";
 
 import Lang from "../../utils/Lang";
-import formatNumber from "../../utils/formatNumber";
 import CustomHeader from "../../ecosystems/CustomHeader";
 import { PlaceholderElement, PlaceholderContainer, PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SectionHeader from "../../atoms/SectionHeader";
@@ -471,7 +470,7 @@ class SearchScreen extends Component {
 						}}
 					>
 						<Text numberOfLines={1} style={[styles.centerText, styles.mediumText, styles.contentText, styles.text]}>
-							{Lang.get("see_all")} ({formatNumber(section.count)})
+							{Lang.get("see_all")} ({Lang.formatNumber(section.count)})
 						</Text>
 					</ContentRow>
 				);

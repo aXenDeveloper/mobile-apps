@@ -1,14 +1,25 @@
 import moment from "moment";
 import _ from "underscore";
+import { Platform } from "react-native";
+import supportedLocales from "../locales";
 
 class Lang {
 	constructor() {
 		this.words = {};
+		this.locale = "en-US";
 
 		// Set up mustache-style templates for language interpolation in underscore
 		_.templateSettings = {
 			interpolate: /\{\{(.+?)\}\}/g
 		};
+	}
+
+	setLocale(locale) {
+		if (/^[a-z]{2}\-[A-Z]{2}$/.test(locale)) {
+			locale = "en-US";
+		}
+
+		this.locale = locale;
 	}
 
 	/**
@@ -209,6 +220,22 @@ class Lang {
 				return pluralizedString;
 			}
 		}
+	}
+
+	formatNumber(num) {
+		if (Platform.OS === "android") {
+			let localeToUse = this.locale; // default
+
+			if (!_.isUndefined(supportedLocales[this.locale])) {
+				localeToUse = this.locale;
+			} else if (!_.isUndefined(supportedLocales[this.locale.substring(0, 2)])) {
+				localeToUse = this.locale.substring(0, 2);
+			}
+
+			return new Intl.NumberFormat(localeToUse).format(num);
+		}
+
+		return parseFloat(num).toLocaleString(this.locale);
 	}
 }
 

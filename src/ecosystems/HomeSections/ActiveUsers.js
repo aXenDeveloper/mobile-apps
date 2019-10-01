@@ -9,7 +9,6 @@ import Time from "../../atoms/Time";
 import UserPhoto from "../../atoms/UserPhoto";
 import NavigationService from "../../utils/NavigationService";
 import { withTheme } from "../../themes";
-import formatNumber from "../../utils/formatNumber";
 
 class ActiveUsers extends Component {
 	constructor(props) {
@@ -98,7 +97,7 @@ class ActiveUsers extends Component {
 			return (
 				<View style={[styles.flex, styles.flexJustifyCenter, styles.flexAlignCenter, componentStyles.andMore]}>
 					<Text style={[styles.lightText, styles.smallText]}>
-						+{Lang.pluralize(Lang.get("x_more"), formatNumber(activeUsersData.count - activeUsersData.users.length))}
+						+{Lang.pluralize(Lang.get("x_more"), Lang.formatNumber(activeUsersData.count - activeUsersData.users.length))}
 					</Text>
 				</View>
 			);

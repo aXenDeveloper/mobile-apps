@@ -2,7 +2,6 @@ import React, { memo } from "react";
 import { Text, View } from "react-native";
 
 import Lang from "../../utils/Lang";
-import formatNumber from "../../utils/formatNumber";
 import UserPhoto from "../../atoms/UserPhoto";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import { ReactionOverview } from "../../ecosystems/Reaction";
@@ -57,7 +56,7 @@ const StreamItem = props => {
 						{Boolean(props.data.reactions.length) && <ReactionOverview small style={componentStyles.reactionOverview} reactions={props.data.reactions} />}
 						{props.data.replies !== null && (
 							<Text style={[styles.lightText, hidden && styles.moderatedLightText]} numberOfLines={1}>
-								{`${Lang.pluralize(Lang.get("replies"), formatNumber(props.data.replies))}`}
+								{`${Lang.pluralize(Lang.get("replies"), Lang.formatNumber(props.data.replies))}`}
 							</Text>
 						)}
 					</View>

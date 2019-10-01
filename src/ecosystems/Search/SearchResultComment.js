@@ -8,7 +8,6 @@ import UserPhoto from "../../atoms/UserPhoto";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import { stripWhitespace } from "../../utils/richText";
 import { withTheme } from "../../themes";
-import formatNumber from "../../utils/formatNumber";
 
 const SearchResultComment = props => {
 	const { styles, componentStyles } = props;
@@ -25,7 +24,7 @@ const SearchResultComment = props => {
 					<Time style={[styles.lightText, hidden && styles.moderatedLightText]} timestamp={props.data.updated} />
 				</View>
 				<Text style={[styles.lightText, componentStyles.commentItemMeta, hidden && styles.moderatedLightText]}>
-					{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), formatNumber(props.data.replies))} - `}
+					{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), Lang.formatNumber(props.data.replies))} - `}
 					{Lang.get("item_in_container", { item: props.data.articleLang.definiteUC, container: props.data.containerTitle })}
 				</Text>
 			</View>

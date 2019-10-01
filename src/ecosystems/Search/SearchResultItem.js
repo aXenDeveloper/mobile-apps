@@ -6,7 +6,6 @@ import Lang from "../../utils/Lang";
 import highlightTerms from "../../utils/highlightTerms";
 import getImageUrl from "../../utils/getImageUrl";
 import getSuitableImage from "../../utils/getSuitableImage";
-import formatNumber from "../../utils/formatNumber";
 import UnreadIndicator from "../../atoms/UnreadIndicator";
 import UserPhoto from "../../atoms/UserPhoto";
 import { stripWhitespace } from "../../utils/richText";
@@ -43,7 +42,7 @@ const SearchResultItem = props => {
 			</View>
 			<View style={componentStyles.itemMeta}>
 				<Text style={[styles.lightText, hidden && styles.moderatedLightText]} numberOfLines={1}>
-					{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), formatNumber(props.data.replies))} - `}
+					{props.data.replies !== null && `${Lang.pluralize(Lang.get("replies"), Lang.formatNumber(props.data.replies))} - `}
 					{props.data.articleLang.definiteUC} in {props.data.containerTitle}
 				</Text>
 			</View>

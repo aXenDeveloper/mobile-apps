@@ -3,7 +3,6 @@ import { Text, View, Image, TouchableHighlight } from "react-native";
 
 import getImageUrl from "../utils/getImageUrl";
 import { withTheme } from "../themes";
-import formatNumber from "../utils/formatNumber";
 
 class Reaction extends Component {
 	constructor(props) {
