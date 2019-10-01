@@ -1,6 +1,6 @@
 {
 	"expo": {
-		"sdkVersion": "34.0.0",
+		"sdkVersion": "35.0.0",
 		"orientation": "portrait",
 		"privacy": "unlisted",
 		"hooks": {
@@ -31,9 +31,12 @@
 		},
 		"name": "Invision Community",
 		"slug": "invision-community",
-		"version": "0.1.10",
+		"version": "0.1.12",
 		"description": "",
 		"scheme": "invision-community",
+		"notification": {
+			"iosDisplayInForeground": true
+		},
 		"ios": {
 			"bundleIdentifier": "com.invisioncommunity.app",
 			"infoPlist": {
@@ -43,7 +46,7 @@
 		},
 		"android": {
 			"googleServicesFile": "./google-services.json",
-			"versionCode": 111,
+			"versionCode": 112,
 			"package": "com.invisioncommunity.app",
 			"permissions": [
 				"ACCESS_COARSE_LOCATION",
