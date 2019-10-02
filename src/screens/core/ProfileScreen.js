@@ -244,7 +244,7 @@ class ProfileScreen extends Component {
 			outputRange: [1, 0.3, 0]
 		});
 		this.tabY = this._nScroll.interpolate({
-			inputRange: [0, SCROLL_HEIGHT, SCROLL_HEIGHT + 1],
+			inputRange: [0, SCROLL_HEIGHT + 1, SCROLL_HEIGHT + 2],
 			outputRange: [0, 0, 1]
 		});
 		this.avatarScale = this._nScroll.interpolate({
