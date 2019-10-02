@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import * as Sentry from "sentry-expo";
 import { Asset } from "expo-asset";
 import { AppLoading } from "expo";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 if (!__DEV__) {
 	console.log = () => {};
@@ -62,7 +63,9 @@ export default class App extends Component {
 
 		return (
 			<Provider store={store}>
-				<AppRoot />
+				<SafeAreaProvider>
+					<AppRoot />
+				</SafeAreaProvider>
 			</Provider>
 		);
 	}

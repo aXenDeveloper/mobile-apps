@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, TextInput, TouchableOpacity, Image } from "react-native";
+import { Text, View, TextInput, TouchableOpacity, Image, Platform } from "react-native";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
@@ -151,7 +151,6 @@ class SearchBox extends Component {
 
 const _componentStyles = styleVars => ({
 	searchWrap: {
-		paddingHorizontal: styleVars.spacing.tight,
 		paddingBottom: styleVars.spacing.tight,
 		position: "absolute",
 		left: 0,
@@ -164,7 +163,7 @@ const _componentStyles = styleVars => ({
 	},
 	searchBox: {
 		backgroundColor: "rgba(255,255,255,0.1)",
-		paddingVertical: styleVars.spacing.tight,
+		paddingVertical: Platform.OS === "ios" ? styleVars.spacing.tight : styleVars.spacing.veryTight,
 		paddingHorizontal: styleVars.spacing.tight,
 		borderRadius: 10,
 		flex: 1,
