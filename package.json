@@ -74,7 +74,7 @@
 		"react-native-keyboard-aware-scroll-view": "^0.9.1",
 		"react-native-modal": "^11.3.1",
 		"react-native-reanimated": "^1.2.0",
-		"react-native-render-html": "https://github.com/archriss/react-native-render-html/archive/baac650c895f69f8ee44acc1294d8438c69dc5a7.tar.gz",
+		"react-native-render-html": "git+https://github.com/rikkitissier/react-native-render-html.git",
 		"react-native-root-toast": "^3.1.1",
 		"react-native-safe-area-context": "^0.3.6",
 		"react-native-svg": "^9.9.2",
