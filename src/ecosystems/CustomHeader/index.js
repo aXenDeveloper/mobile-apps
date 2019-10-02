@@ -9,7 +9,7 @@ import { withTheme } from "../../themes";
 const CustomHeader = props => {
 	const { styleVars, componentStyles } = props;
 	const insets = useSafeArea();
-	const height = 52 + insets.top;
+	const height = 52 + (insets.top ? insets.top : 6);
 	let content;
 
 	if (props.content) {

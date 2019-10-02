@@ -7,7 +7,7 @@ const baseStylesheet = (styleVars, darkMode) => {
 	const baseStyles = {
 		header: {
 			backgroundColor: "transparent",
-			paddingTop: 0,
+			paddingTop: 26,
 			paddingBottom: 4,
 			shadowColor: "transparent",
 			borderBottomWidth: 0,
