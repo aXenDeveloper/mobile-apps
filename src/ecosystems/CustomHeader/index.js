@@ -5,15 +5,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSafeArea } from "react-native-safe-area-context";
 
 import { withTheme } from "../../themes";
-import { isIphoneX } from "../../utils/isIphoneX";
 
 const CustomHeader = props => {
 	const { styleVars, componentStyles } = props;
 	const insets = useSafeArea();
 	const height = 52 + insets.top;
 	let content;
-
-	console.log(insets.top);
 
 	if (props.content) {
 		content = props.content;
