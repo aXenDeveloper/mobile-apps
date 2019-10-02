@@ -88,7 +88,7 @@ class NavigationService {
 
 		// If we're still here, we don't have a screen to show for this URL, so we'll either
 		// open it in an external browser or in a webview screen
-		if (this.isInternalUrl(url) || options.forceInternal) {
+		if ((this.isInternalUrl(url) && !options.forceBrowser) || options.forceInternal) {
 			const urlToCheck = url.replace(this._baseUrl, "");
 
 			// Loop through each url pattern we have and see if any match

@@ -9,6 +9,7 @@ import Lang from "../../utils/Lang";
 import { setForumPassword } from "../../redux/actions/forums";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SectionHeader from "../../atoms/SectionHeader";
+import NavigationService from "../../utils/NavigationService";
 import { ForumItem, ForumItemFragment } from "../../ecosystems/ForumItem";
 import TextPrompt from "../../ecosystems/TextPrompt";
 
@@ -48,9 +49,7 @@ class ForumListScreen extends Component {
 			if (forum.isRedirectForum) {
 				// Redirect forum - so open webview
 				this._onPressHandlers[forum.id] = () => {
-					this.props.navigation.navigate("WebView", {
-						url: forum.url.full
-					});
+					NavigationService.navigate(forum.url.full, {}, { forceBrowser: true });
 				};
 			} else if (forum.passwordRequired && !_.isUndefined(this.props.forums[forum.id])) {
 				// Password-protected forum that we don't have a stored password for - show prompt
