@@ -20,8 +20,8 @@ import Lightbox from "../../ecosystems/Lightbox";
 import { ProfileContent, ProfileOverview, ProfileEditorField, ProfileFollowers, ProfilePlaceholder, ProfileField } from "../../ecosystems/Profile";
 import { FollowModal, FollowModalFragment, FollowMutation, UnfollowMutation } from "../../ecosystems/FollowModal";
 import getImageUrl from "../../utils/getImageUrl";
-import { isIphoneX } from "../../utils/isIphoneX";
 import { withTheme } from "../../themes";
+import withInsets from "../../hocs/withInsets";
 
 const ProfileQuery = gql`
 	query ProfileQuery($member: ID!) {
@@ -98,6 +98,8 @@ class ProfileScreen extends Component {
 		this.onScrollEndWrapper = this.onScrollEndWrapper.bind(this);
 		this.closeLightbox = this.closeLightbox.bind(this);
 		this.showPhotoLightbox = this.showPhotoLightbox.bind(this);
+
+		console.log(this.props.insets);
 
 		this.buildAnimations();
 	}
@@ -233,7 +235,7 @@ class ProfileScreen extends Component {
 	}
 
 	buildAnimations() {
-		const HEADER_HEIGHT = Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82;
+		const HEADER_HEIGHT = 52 + this.props.insets.top;
 		const SCROLL_HEIGHT = this.state.fullHeaderHeight - HEADER_HEIGHT;
 
 		// Interpolate methods for animations
@@ -277,7 +279,7 @@ class ProfileScreen extends Component {
 				this._wrapView.getNode().scrollTo({ y: 0 });
 			} else {
 				if (y > halfway && y < this.state.fullHeaderHeight) {
-					const headerHeight = Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82;
+					const headerHeight = 52 + this.props.insets.top;
 					const snapTo = this.state.fullHeaderHeight - headerHeight;
 
 					this.setIsSnapping();
@@ -473,7 +475,7 @@ class ProfileScreen extends Component {
 		const routes = this.getTabRoutes();
 		const thisIndex = routes.findIndex(r => r.key === route.key);
 		const routeShouldBeActive = this.state.index === thisIndex;
-		const minHeight = Dimensions.get("window").height - (Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82);
+		const minHeight = Dimensions.get("window").height - (52 + this.props.insets.top);
 		const style = { minHeight };
 
 		switch (route.key) {
@@ -513,7 +515,7 @@ class ProfileScreen extends Component {
 
 			const photo = this.props.data.core.member.photo;
 			const photoLightboxHandler = _.isString(photo) && photo.startsWith("data:image") ? null : this.showPhotoLightbox;
-			const minHeight = Dimensions.get("window").height - (Platform.OS === "ios" ? (isIphoneX() ? 96 : 76) : 82);
+			const minHeight = Dimensions.get("window").height - (52 + this.props.insets.top);
 
 			return (
 				<View style={styles.flex}>
@@ -549,7 +551,7 @@ class ProfileScreen extends Component {
 									</FadeIn>
 								</Animated.View>
 							)}
-							<Animated.View style={[componentStyles.profileHeaderInner, { opacity: this.userOpacity }]}>
+							<Animated.View style={[componentStyles.profileHeaderInner, { paddingTop: this.props.insets.top + 10, opacity: this.userOpacity }]}>
 								<Animated.View style={[componentStyles.userInfoWrap, { transform: [{ scale: this.avatarScale }] }]}>
 									<TouchableOpacity onPress={photoLightboxHandler} style={{ width: 80, height: 80 }}>
 										<UserPhoto url={this.props.data.core.member.photo} size={80} />
@@ -607,13 +609,13 @@ class ProfileScreen extends Component {
 					<Animated.View style={[componentStyles.fixedProfileHeader, { opacity: this.fixedHeaderOpacity }]}>
 						<CustomHeader
 							content={
-								<View style={[styles.flex, styles.flexJustifyCenter, componentStyles.customHeader]}>
+								<View style={[styles.flex, styles.flexJustifyCenter, componentStyles.customHeader, { paddingTop: this.props.insets.top }]}>
 									<TwoLineHeader title={this.props.data.core.member.name} subtitle={this.props.data.core.member.group.name} />
 								</View>
 							}
 						/>
 					</Animated.View>
-					<View style={[styles.flex, styles.flexJustifyCenter, componentStyles.backButton]}>
+					<View style={[styles.flex, styles.flexJustifyCenter, componentStyles.backButton, { top: this.props.insets.top }]}>
 						<HeaderBackButton onPress={this.onPressBack} tintColor="#fff" />
 					</View>
 					{Boolean(this.props.data.core.member.photo) && (
@@ -627,28 +629,12 @@ class ProfileScreen extends Component {
 
 const _componentStyles = styleVars => ({
 	customHeader: {
-		...Platform.select({
-			android: {
-				paddingTop: StatusBar.currentHeight
-			},
-			ios: {
-				paddingTop: isIphoneX() ? 32 : 20
-			}
-		}),
 		paddingHorizontal: 56
 	},
 	backButton: {
 		position: "absolute",
 		left: 0,
-		zIndex: 1000,
-		...Platform.select({
-			android: {
-				top: StatusBar.currentHeight
-			},
-			ios: {
-				top: isIphoneX() ? 40 : 20
-			}
-		})
+		zIndex: 1000
 	},
 	fixedProfileHeader: {
 		position: "absolute",
@@ -661,7 +647,6 @@ const _componentStyles = styleVars => ({
 		backgroundColor: styleVars.placeholderColors.background
 	},
 	profileHeaderInner: {
-		paddingTop: isIphoneX() ? 50 : 40,
 		backgroundColor: styleVars.profileOverlay,
 		display: "flex",
 		flexDirection: "column",
@@ -737,5 +722,6 @@ export default compose(
 		site: state.site
 	})),
 	withApollo,
+	withInsets,
 	withTheme(_componentStyles)
 )(ProfileScreen);

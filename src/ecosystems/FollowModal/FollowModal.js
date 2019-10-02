@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { TouchableOpacity, ScrollView, Image, SectionList, Text, View, StyleSheet, Alert } from "react-native";
 import Modal from "react-native-modal";
+import { compose } from "react-apollo";
 import _ from "underscore";
 
 import Lang from "../../utils/Lang";
@@ -10,7 +11,7 @@ import Button from "../../atoms/Button";
 import SectionHeader from "../../atoms/SectionHeader";
 import ToggleRow from "../../atoms/ToggleRow";
 import UserPhotoList from "../../atoms/UserPhotoList";
-import { isIphoneX } from "../../utils/isIphoneX";
+import withInsets from "../../hocs/withInsets";
 import { withTheme } from "../../themes";
 
 class FollowModal extends Component {
@@ -223,7 +224,7 @@ class FollowModal extends Component {
 	}
 
 	render() {
-		const { componentStyles, styles } = this.props;
+		const { componentStyles, styles, styleVars } = this.props;
 		return (
 			<Modal
 				style={styles.modalAlignBottom}
@@ -247,7 +248,15 @@ class FollowModal extends Component {
 						renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
 						keyExtractor={item => item}
 					/>
-					<View style={[styles.lightBackground, componentStyles.modalBody]}>{this.getFollowButtons()}</View>
+					<View
+						style={[
+							styles.lightBackground,
+							componentStyles.modalBody,
+							this.props.insets.bottom > 0 ? { paddingBottom: this.props.insets.bottom + styleVars.spacing.standard } : null
+						]}
+					>
+						{this.getFollowButtons()}
+					</View>
 				</View>
 			</Modal>
 		);
@@ -277,12 +286,14 @@ const _componentStyles = styleVars => ({
 		fontSize: 13
 	},
 	modalBody: {
-		padding: styleVars.spacing.wide,
-		...(isIphoneX() ? { paddingBottom: styleVars.spacing.extraWide + styleVars.spacing.standard } : {})
+		padding: styleVars.spacing.wide
 	},
 	buttonWrap: {
 		marginTop: -1
 	}
 });
 
-export default withTheme(_componentStyles)(FollowModal);
+export default compose(
+	withInsets,
+	withTheme(_componentStyles)
+)(FollowModal);
