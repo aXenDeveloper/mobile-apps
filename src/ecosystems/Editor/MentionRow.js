@@ -12,7 +12,7 @@ const MentionRow = props => {
 
 	if (props.loading) {
 		return (
-			<ContentRow>
+			<ContentRow rowStyle={componentStyles.rowStyle}>
 				<PlaceholderContainer height={30}>
 					<PlaceholderElement circle radius={18} top={8} left={styleVars.spacing.standard} />
 					<PlaceholderElement width={200} height={15} top={8} left={40} />
@@ -22,7 +22,7 @@ const MentionRow = props => {
 	}
 
 	return (
-		<ContentRow style={componentStyles.row} onPress={props.onPress}>
+		<ContentRow style={componentStyles.row} rowStyle={componentStyles.rowStyle} onPress={props.onPress}>
 			<UserPhoto url={props.photo} size={18} />
 			<View style={componentStyles.container}>
 				<Text style={[styles.standardText]}>{props.name}</Text>
@@ -37,6 +37,9 @@ const _componentStyles = styleVars => ({
 		flexDirection: "row",
 		paddingVertical: styleVars.spacing.tight,
 		paddingHorizontal: styleVars.spacing.standard
+	},
+	rowStyle: {
+		backgroundColor: "transparent"
 	},
 	container: {
 		marginLeft: styleVars.spacing.standard

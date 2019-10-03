@@ -16,7 +16,7 @@ const ContentRow = props => {
 
 	return (
 		<TouchableHighlight style={props.withSpace ? componentStyles.outerContentRowWithSpace : componentStyles.outerContentRow} onPress={props.onPress || null}>
-			<View style={[styles.flexRow, rowClass]}>
+			<View style={[styles.flexRow, rowClass, props.rowStyle]}>
 				<View style={[styles.flexGrow, props.style]}>{props.children}</View>
 				{props.showArrow && (
 					<View style={[styles.flexAlignSelfCenter, styles.mrStandard]}>
