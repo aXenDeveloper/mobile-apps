@@ -54,7 +54,7 @@ class Lightbox extends PureComponent {
 		const { componentStyles } = this.props;
 
 		return (
-			<Modal style={componentStyles.modal} avoidKeyboard={true} animationIn="fadeIn" isVisible={this.props.isVisible}>
+			<Modal style={componentStyles.modal} avoidKeyboard={true} animationIn="fadeIn" isVisible={this.props.isVisible} onBackButtonPress={this.close}>
 				<StatusBar hidden showHideTransition="fade" />
 				<ImageViewer imageUrls={this.getImages()} index={this.getInitialIndex()} enableSwipeDown onSwipeDown={this.close} />
 				<TouchableOpacity style={componentStyles.closeButton} onPress={this.close}>
