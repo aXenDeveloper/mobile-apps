@@ -3,7 +3,6 @@ import { View, StyleSheet } from "react-native";
 import { compose } from "react-apollo";
 
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
-import { isIphoneX } from "../../utils/isIphoneX";
 import { withTheme } from "../../themes";
 import withInsets from "../../hocs/withInsets";
 
