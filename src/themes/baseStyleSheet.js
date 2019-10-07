@@ -259,12 +259,8 @@ const baseStylesheet = (styleVars, darkMode) => {
 			bottom: 0,
 			left: 0,
 			right: 0,
-			backgroundColor: "#fff",
-			borderTopWidth: 1,
-			borderTopColor: styleVars.borderColors.medium,
 			paddingVertical: styleVars.spacing.wide,
-			paddingHorizontal: styleVars.spacing.wide,
-			...(isIphoneX() ? { paddingBottom: styleVars.spacing.extraWide + styleVars.spacing.wide } : {})
+			paddingHorizontal: styleVars.spacing.wide
 		},
 
 		/* Tab bars */

@@ -15,6 +15,7 @@ import ContentRow from "../../ecosystems/ContentRow";
 import LargeTitle from "../../atoms/LargeTitle";
 import Lang from "../../utils/Lang";
 import { withTheme } from "../../themes";
+import withInsets from "../../hocs/withInsets";
 import icons from "../../icons";
 
 class ReportContentScreen extends Component {
@@ -287,7 +288,7 @@ class ReportContentScreen extends Component {
 		return (
 			<React.Fragment>
 				<View style={[styles.pWide, styles.mtStandard, styles.flexRow, styles.flexAlignStart]}>
-					<Image source={icons.INFO_SOLID} resizeMode="contain" style={[{ width: 20, height: 20 }, styles.mrStandard]} />
+					<Image source={icons.INFO_SOLID} resizeMode="contain" style={[{ width: 20, height: 20 }, styles.mrStandard, styles.normalImage]} />
 					<Text style={[styles.largeText, styles.text, styles.flexBasisZero, styles.flexGrow]}>{this.getReportSummary()}</Text>
 				</View>
 				{reasonChooser}
@@ -364,7 +365,14 @@ class ReportContentScreen extends Component {
 						{hasReported && this.props.site.settings.automoderationEnabled ? this.getRevokeForm() : this.getReportForm()}
 					</ScrollView>
 				</KeyboardAwareScrollView>
-				<Animatable.View ref={ref => (this._submitBarRef = ref)} style={styles.bottomSubmitBar}>
+				<Animatable.View
+					ref={ref => (this._submitBarRef = ref)}
+					style={[
+						styles.lightBackground,
+						styles.bottomSubmitBar,
+						this.props.insets.bottom > 0 ? { paddingBottom: this.props.insets.bottom + styleVars.spacing.standard } : null
+					]}
+				>
 					<Button
 						filled
 						title={buttonTitle}
@@ -391,5 +399,6 @@ export default compose(
 		site: state.site
 	})),
 	withApollo,
+	withInsets,
 	withTheme(_componentStyles)
 )(ReportContentScreen);
