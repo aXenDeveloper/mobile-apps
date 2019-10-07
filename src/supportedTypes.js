@@ -4,7 +4,6 @@ import _ from "underscore";
 // If content types other than these are loaded, they'll be displayed in a WebView instead
 // There's a few ways we identify content: classnames, controller paths, and basic URLs.
 const supported = {
-	classes: ["IPS\\forums\\Topic", "IPS\\forums\\Topic\\Post"],
 	appComponents: {
 		forums: {
 			forums: {
@@ -23,7 +22,12 @@ const supported = {
 		// Profile view
 		{
 			test: new RegExp("profile/([0-9]+?)-([^/]+)?", "i"),
-			matchCallback: found => {
+			matchCallback: (found, url, parsed) => {
+				// Status updates not supported yet
+				if (!_.isUndefined(parsed.queryKey.status)) {
+					return false;
+				}
+
 				return {
 					routeName: "Profile",
 					params: {
