@@ -18,7 +18,9 @@ const TwoLineHeader = ({ styles, ...props }) => {
 				<Text style={styles.headerTitle} numberOfLines={1}>
 					{props.title}
 				</Text>
-				<Text style={styles.headerSubtitle}>{props.subtitle}</Text>
+				<Text style={styles.headerSubtitle} numberOfLines={1}>
+					{props.subtitle}
+				</Text>
 			</View>
 		);
 	}
