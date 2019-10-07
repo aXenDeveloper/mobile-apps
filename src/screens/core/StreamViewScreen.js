@@ -46,8 +46,6 @@ class StreamViewScreen extends Component {
 		});
 		const currentStyleSheet = getCurrentStyleSheet();
 
-		console.log(currentStyleSheet);
-
 		return {
 			headerLeft: Expo.Constants.manifest.extra.multi ? { headerLeft: <GoToMulti /> } : null,
 			headerTitle: (
