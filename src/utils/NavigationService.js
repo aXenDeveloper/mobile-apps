@@ -63,7 +63,7 @@ class NavigationService {
 	 * @return 	void
 	 */
 	navigate(url, params = {}, options = { forceBrowser: false, forceInternal: false }) {
-		if (_.isObject(url) && !options.forceBrowser) {
+		/*if (_.isObject(url) && !options.forceBrowser) {
 			// If we have app/controller/module
 			if (!_.isUndefined(url.app) && !_.isUndefined(url.module) && !_.isUndefined(url.controller)) {
 				const routeName = this.getScreenFromUrlComponents(url.app, url.module, url.controller);
@@ -72,7 +72,7 @@ class NavigationService {
 					return this.navigateToScreen(routeName, params, options.key || null);
 				}
 			}
-		}
+		}*/
 
 		// If we're still here, make sure we have a correct URL
 		if (_.isObject(url)) {
@@ -90,6 +90,7 @@ class NavigationService {
 		// open it in an external browser or in a webview screen
 		if ((this.isInternalUrl(url) && !options.forceBrowser) || options.forceInternal) {
 			const urlToCheck = url.replace(this._baseUrl, "");
+			const parsedUrl = parseUri(urlToCheck);
 
 			// Loop through each url pattern we have and see if any match
 			for (let i = 0; i < supported.urls.length; i++) {
@@ -97,7 +98,7 @@ class NavigationService {
 
 				if (urlType.test.test(urlToCheck)) {
 					// URL matches, so feed it into .match to get the screen and params, if any
-					const result = urlType.matchCallback(urlToCheck.match(urlType.test));
+					const result = urlType.matchCallback(urlToCheck.match(urlType.test), urlToCheck, parsedUrl);
 
 					if (result) {
 						return this.navigateToScreen(result.routeName, Object.assign({}, params, result.params));
