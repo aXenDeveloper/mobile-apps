@@ -194,7 +194,7 @@ class TopicListScreen extends Component {
 					offset: this.props.data.forums.forum.topics.length
 				},
 				updateQuery: (previousResult, { fetchMoreResult }) => {
-					// Don't do anything if there wasn't any new items
+					// Don't do anything if there weren't any new items
 					if (!fetchMoreResult || fetchMoreResult.forums.forum.topics.length === 0) {
 						this.setState({
 							reachedEnd: true
@@ -250,7 +250,7 @@ class TopicListScreen extends Component {
 			return <TopicRow loading={true} />;
 		}
 
-		return <EndOfComments label={Lang.get("end_of_forum")} />;
+		return <EndOfComments reachedEnd={this.state.reachedEnd} label={Lang.get("end_of_forum")} />;
 	}
 
 	/**

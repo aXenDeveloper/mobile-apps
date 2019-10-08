@@ -8,7 +8,7 @@ const EndOfComments = props => {
 	const { componentStyles, styles } = props;
 	return (
 		<View style={[styles.flex, styles.flexAlignCenter, styles.flexJustifyCenter, componentStyles.wrapper]}>
-			<Text style={[styles.smallText, componentStyles.text]}>{props.label}</Text>
+			{props.reachedEnd && <Text style={[styles.smallText, componentStyles.text]}>{props.label}</Text>}
 		</View>
 	);
 };
@@ -25,9 +25,11 @@ const _componentStyles = styleVars => ({
 export default withTheme(_componentStyles)(memo(EndOfComments));
 
 EndOfComments.defaultProps = {
-	label: "You're up to date!"
+	label: "You're up to date!",
+	reachedEnd: true
 };
 
 EndOfComments.propTypes = {
-	label: PropTypes.string
+	label: PropTypes.string,
+	reachedEnd: PropTypes.bool
 };

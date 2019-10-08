@@ -764,6 +764,9 @@ class TopicViewScreen extends Component {
 
 			// Don't try loading more if we're already showing everything in the topic
 			if (offsetAdjust >= this.props.data.forums.topic.postCount) {
+				this.setState({
+					reachedEnd: true
+				});
 				return;
 			}
 
@@ -969,7 +972,7 @@ class TopicViewScreen extends Component {
 			return <Post loading={true} />;
 		}
 
-		return <EndOfComments />;
+		return <EndOfComments reachedEnd={this.state.reachedEnd} />;
 	}
 
 	/**
