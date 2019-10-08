@@ -148,28 +148,30 @@ class ContentRenderer extends PureComponent {
 			return node;
 		}
 
-		/*
-		// This was an attempt to fix an issue where regular text with a larger font-size would be clipped because
-		// the base line height is being applied. However, this approach doesn't seem to work - react-native-render-html
-		// may still be overwriting the manual line-height with the base value.
+		// Since we can't vary line-heights when converting to native elements, lines with very large text
+		// will get clipped. To fix that, we'll strip any font sizes above 22 which will be clipped.
 		if (TEXT_TAGS.indexOf(name) !== -1) {
 			if (!_.isUndefined(node.attribs) && !_.isUndefined(node.attribs.style)) {
-				const fontSize = node.attribs.style.match(/(font-size:(.+?)px)/);
+				const fontSize = node.attribs.style.match(/(font-size:(.+?)(px|em|rem|pt|%);?)/);
 
-				if (fontSize && fontSize.length) {
+				if (fontSize && fontSize.length && ((parseInt(fontSize[2]) > 22 && fontSize[3] === "px") || fontSize[3] !== "px")) {
 					try {
-						console.log(`${node.attribs.style ? node.attribs.style : ""}line-height:${parseInt(fontSize[2]) * 1.4}px;`);
+						let fixedStyle = "";
+
+						if (parseInt(fontSize[2]) > 22 && fontSize[3] === "px") {
+							fixedStyle = "font-size:22px;";
+						}
 
 						node.attribs = {
 							...(node.attribs || {}),
-							style: `${node.attribs.style ? node.attribs.style : ""}line-height:${parseInt(fontSize[2]) * 1.4}px;`
+							style: node.attribs.style.replace(/(font-size:(.+?)(px|em|rem|pt|%);?)/, fixedStyle)
 						};
 					} catch (err) {
 						console.log(err);
 					}
 				}
 			}
-		}*/
+		}
 	}
 
 	/**
