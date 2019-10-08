@@ -142,6 +142,7 @@ class WhoReactedModal extends Component {
 				onSwipeComplete={this.props.close}
 				onBackdropPress={this.props.close}
 				isVisible={this.props.visible}
+				propagateSwipe={true}
 			>
 				<View style={styles.modalInner}>
 					<View style={styles.modalHandle} />
