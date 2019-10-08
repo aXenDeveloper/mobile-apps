@@ -22,7 +22,11 @@ const HeaderButton = props => {
 	}
 
 	return (
-		<TouchableOpacity style={[componentStyles.wrapper, props.position == "left" ? styles.mlWide : styles.mrWide, props.style]} onPress={props.onPress || null}>
+		<TouchableOpacity
+			style={[componentStyles.wrapper, props.position == "left" ? styles.mlWide : styles.mrWide, props.style]}
+			onPress={props.onPress || null}
+			hitSlop={{ top: 20, right: 20, bottom: 20, left: 20 }}
+		>
 			{showIcon && (
 				<Image source={props.icon} style={[styles.headerIcon, props.size ? { width: props.size, height: props.size } : componentStyles.defaultSize]} />
 			)}
