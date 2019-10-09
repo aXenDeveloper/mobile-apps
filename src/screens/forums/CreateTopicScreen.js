@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Text, Alert, Button, TextInput, View, KeyboardAvoidingView, ActivityIndicator, Platform } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
 import { NavigationActions, Header } from "react-navigation";
@@ -79,9 +80,12 @@ class CreateTopicScreen extends Component {
 		};
 		this.editorID = uniqueID();
 		this._onBlurCallback = null;
+		this._editorTop = 0;
 
 		this.updateTags = this.updateTags.bind(this);
 		this.updateContentState = this.updateContentState.bind(this);
+		this.focusPositionCallback = this.focusPositionCallback.bind(this);
+		this.onEditorLayout = this.onEditorLayout.bind(this);
 	}
 
 	/**
@@ -243,6 +247,14 @@ class CreateTopicScreen extends Component {
 		});
 	}
 
+	focusPositionCallback(bounds) {
+		this.scroll.props.scrollToPosition(0, bounds.top + this._editorTop);
+	}
+
+	onEditorLayout(data) {
+		this._editorTop = Math.round(data.measure.y);
+	}
+
 	/**
 	 * Render
 	 */
@@ -252,35 +264,47 @@ class CreateTopicScreen extends Component {
 
 		return (
 			<React.Fragment>
-				<KeyboardAvoidingView style={styles.flex} enabled behavior="padding">
-					<TextInput
-						style={[styles.field, styles.fieldText]}
-						placeholder={Lang.get("topic_title")}
-						placeholderTextColor={styleVars.formField.placeholderText}
-						editable={!this.state.submitting}
-						onChangeText={text => this.setState({ title: text })}
-					/>
-					{Boolean(this.props.site.settings.tags_enabled) && Boolean(this.props.user.group.canTag) && (
-						<TagEdit
-							definedTags={this.props.navigation.state.params.definedTags || null}
-							maxTags={settings.tags_max}
-							minTags={settings.tags_min}
-							maxTagLen={settings.tags_len_max}
-							minTagLen={settings.tags_len_min}
-							minRequiredIfAny={settings.tags_min_req}
-							onSubmit={this.updateTags}
-							freeChoice={settings.tags_open_system}
+				<KeyboardAwareScrollView
+					style={[styles.stackCardStyle, { flex: 1 }]}
+					resetScrollToCoords={{ x: 0, y: 0 }}
+					scrollEnabled={true}
+					extraScrollHeight={40}
+					innerRef={ref => {
+						this.scroll = ref;
+					}}
+				>
+					<View style={styles.flex}>
+						<TextInput
+							style={[styles.field, styles.fieldText]}
+							placeholder={Lang.get("topic_title")}
+							placeholderTextColor={styleVars.formField.placeholderText}
+							editable={!this.state.submitting}
+							onChangeText={text => this.setState({ title: text })}
 						/>
-					)}
-					<QuillEditor
-						placeholder={Lang.get("post_title")}
-						update={this.updateContentState}
-						style={styles.flex}
-						editorID={this.editorID}
-						enabled={!this.state.submitting}
-						receiveOnBlurCallback={callback => (this._onBlurCallback = callback)}
-					/>
-				</KeyboardAvoidingView>
+						{Boolean(this.props.site.settings.tags_enabled) && Boolean(this.props.user.group.canTag) && (
+							<TagEdit
+								definedTags={this.props.navigation.state.params.definedTags || null}
+								maxTags={settings.tags_max}
+								minTags={settings.tags_min}
+								maxTagLen={settings.tags_len_max}
+								minTagLen={settings.tags_len_min}
+								minRequiredIfAny={settings.tags_min_req}
+								onSubmit={this.updateTags}
+								freeChoice={settings.tags_open_system}
+							/>
+						)}
+						<QuillEditor
+							placeholder={Lang.get("post_title")}
+							update={this.updateContentState}
+							style={styles.flex}
+							editorID={this.editorID}
+							enabled={!this.state.submitting}
+							receiveOnBlurCallback={callback => (this._onBlurCallback = callback)}
+							focusPositionCallback={this.focusPositionCallback}
+							onEditorLayout={this.onEditorLayout}
+						/>
+					</View>
+				</KeyboardAwareScrollView>
 				<QuillToolbar editorID={this.editorID} />
 			</React.Fragment>
 		);

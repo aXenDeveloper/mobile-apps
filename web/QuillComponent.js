@@ -12,6 +12,7 @@ const MESSAGE_PREFIX = "__IPS__";
 
 const util = require("util");
 const FORMATS = ["bold", "italic", "underline", "list"];
+const HEIGHT_TIMEOUT = 500;
 
 class QuillComponent extends Component {
 	constructor(props) {
@@ -26,6 +27,11 @@ class QuillComponent extends Component {
 			},
 			mentionRange: 0
 		};
+
+		this._timer = null;
+		this._heightTimer = null;
+
+		this.sendHeight = this.sendHeight.bind(this);
 	}
 
 	/**
@@ -73,7 +79,8 @@ class QuillComponent extends Component {
 		this.setState(
 			{
 				quill: new Quill("#quill", {
-					bounds: "#container",
+					//bounds: "#container",
+					scrollingContainer: "#container",
 					placeholder
 				})
 			},
@@ -91,6 +98,7 @@ class QuillComponent extends Component {
 	 */
 	componentWillUnmount() {
 		clearTimeout(this._timer);
+		clearTimeout(this._heightTimer);
 		document.removeEventListener("message", this.onMessage);
 		window.removeEventListener("message", this.onMessage);
 	}
@@ -111,6 +119,34 @@ class QuillComponent extends Component {
 
 		this.state.quill.on("selection-change", this.selectionChange.bind(this));
 		this.state.quill.on("text-change", this.textChange.bind(this));
+
+		// Start timer that sends document height
+		this._heightTimer = setTimeout(this.sendHeight, HEIGHT_TIMEOUT);
+	}
+
+	getHeight() {
+		// When this method is called, clear the timer we have running that sends the height
+		// automatically. That means the timer acts as a fallback but won't fire if another
+		// action has recently sent the height too.
+		clearTimeout(this._heightTimer);
+		this._heightTimer = setTimeout(this.sendHeight, HEIGHT_TIMEOUT);
+
+		return document.getElementById("quill").offsetHeight - 40;
+	}
+
+	/**
+	 * Sends the height of the document to the webview
+	 *
+	 * @return 	void
+	 */
+	sendHeight() {
+		if (!this.state.quill) {
+			return;
+		}
+
+		this.sendMessage("DOCUMENT_HEIGHT", {
+			height: this.getHeight()
+		});
 	}
 
 	/**
@@ -134,10 +170,14 @@ class QuillComponent extends Component {
 				}
 			});
 
+			const selection = this.state.quill.getSelection();
+
 			this.sendMessage("EDITOR_STATUS", {
 				content: this.state.quill.container.querySelector(".ql-editor").innerHTML,
 				mention: this.mentionState(),
-				formatting: this.formattingState()
+				formatting: this.formattingState(selection),
+				height: this.getHeight(),
+				bounds: this.state.quill.getBounds(selection.index)
 			});
 		}
 	}
@@ -149,10 +189,14 @@ class QuillComponent extends Component {
 	 */
 	textChange(delta, oldDelta, source) {
 		if (source === Quill.sources.USER) {
+			const selection = this.state.quill.getSelection();
+
 			this.sendMessage("EDITOR_STATUS", {
 				content: this.state.quill.container.querySelector(".ql-editor").innerHTML,
 				mention: this.mentionState(),
-				formatting: this.formattingState()
+				formatting: this.formattingState(selection),
+				height: this.getHeight(),
+				bounds: this.state.quill.getBounds(selection.index)
 			});
 		}
 	}
@@ -162,9 +206,9 @@ class QuillComponent extends Component {
 	 *
 	 * @return 	object
 	 */
-	formattingState() {
+	formattingState(selection) {
 		//this.addDebug(`formatting is ${JSON.stringify(this.state.quill.getFormat(this.state.quill.getSelection()))}`);
-		return this.state.quill.getFormat(this.state.quill.getSelection());
+		return this.state.quill.getFormat(selection);
 	}
 
 	/**
@@ -489,10 +533,16 @@ class QuillComponent extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<div id="container" style={{ height: DEBUG ? "50%" : "100%", display: "flex", flexDirection: "column" }}>
-					<div id="quill" style={{ fontSize: "16px", height: "100%" }} />
+				<div id="container">
+					<div id="quill" style={{ fontSize: "16px" }} />
 				</div>
-				{DEBUG && (
+			</React.Fragment>
+		);
+	}
+}
+
+/*
+{DEBUG && (
 					<div style={{ overflow: "auto", height: "50%" }}>
 						<strong>Debug:</strong>
 						<ul>
@@ -501,11 +551,7 @@ class QuillComponent extends Component {
 							))}
 						</ul>
 					</div>
-				)}
-			</React.Fragment>
-		);
-	}
-}
+				)}*/
 
 export default QuillComponent;
 

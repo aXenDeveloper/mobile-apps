@@ -1,5 +1,5 @@
 import React, { Fragment, Component } from "react";
-import { View, TextInput, Alert, Text, TouchableOpacity, Image, StyleSheet, LayoutAnimation } from "react-native";
+import { View, ScrollView, TextInput, Alert, Text, TouchableOpacity, Image, StyleSheet, LayoutAnimation } from "react-native";
 import { WebView } from "react-native-webview";
 import gql from "graphql-tag";
 import { graphql, compose, withApollo } from "react-apollo";
@@ -33,6 +33,7 @@ import {
 import ContentRow from "../../ecosystems/ContentRow";
 import Button from "../../atoms/Button";
 import Lang from "../../utils/Lang";
+import ViewMeasure from "../../atoms/ViewMeasure";
 import { withTheme } from "../../themes";
 
 const EDITOR_VIEW = require("../../../web/dist/index.html");
@@ -70,6 +71,7 @@ class QuillEditor extends Component {
 		this.urlInput = null;
 		this._mentionHandlers = {};
 		this._editorHtml = null;
+		this._editorMinHeight = 150;
 
 		// Set up initial state for our formatting options. Format types with options are
 		// created as camelCase keys in the state, e.g. listUnordered or listOrdered
@@ -96,7 +98,8 @@ class QuillEditor extends Component {
 				text: ""
 			},
 			formatting: formattingState,
-			content: ""
+			content: "",
+			currentHeight: 200
 		};
 
 		this.blur = this.blur.bind(this);
@@ -318,7 +321,7 @@ class QuillEditor extends Component {
 	onMessage(e) {
 		try {
 			const messageData = JSON.parse(e.nativeEvent.data);
-			const supported = ["DEBUG", "READY", "EDITOR_BLUR", "EDITOR_STATUS"];
+			const supported = ["DEBUG", "READY", "EDITOR_BLUR", "EDITOR_STATUS", "DOCUMENT_HEIGHT"];
 
 			if (messageData.hasOwnProperty("message") && messageData.message.startsWith(MESSAGE_PREFIX)) {
 				const messageType = messageData.message.replace(MESSAGE_PREFIX, "");
@@ -369,6 +372,10 @@ class QuillEditor extends Component {
 
 	DEBUG(messageData) {
 		console.log(`WEBVIEW DEBUG: ${messageData.debugMessage}`);
+	}
+
+	DOCUMENT_HEIGHT(messageData) {
+		this.handleHeight(messageData.height);
 	}
 
 	/**
@@ -443,6 +450,30 @@ class QuillEditor extends Component {
 		});
 
 		this.props.update.call(null, data);
+	}
+
+	/**
+	 * Update the height of the webview
+	 *
+	 * @param 	int 	height 	The editor height
+	 * @return 	void
+	 */
+	handleHeight(height) {
+		const currentHeight = Math.max(this._editorMinHeight, parseInt(height));
+
+		if (currentHeight !== this.state.currentHeight) {
+			//console.log(`setting height to ${currentHeight}`);
+
+			this.setState({
+				currentHeight
+			});
+		}
+	}
+
+	handleBounds(bounds) {
+		if (_.isFunction(this.props.focusPositionCallback)) {
+			this.props.focusPositionCallback.call(null, bounds);
+		}
 	}
 
 	/**
@@ -743,7 +774,12 @@ class QuillEditor extends Component {
 		`;
 
 		return (
-			<View style={{ flex: 1, backgroundColor: styleVars.formField.background }}>
+			<ViewMeasure
+				onLayout={this.props.onEditorLayout || null}
+				id="editor"
+				pointerEvents="box-none"
+				style={{ flex: 1, backgroundColor: styleVars.formField.background }}
+			>
 				<Modal style={styles.flex} avoidKeyboard={true} animationIn="fadeInUp" isVisible={this.state.linkModal.visible} onBackdropPress={this.closeLinkModal}>
 					<View style={[styles.modal, componentStyles.modal]}>
 						<View style={[styles.modalInner, componentStyles.modalInner]}>
@@ -789,25 +825,25 @@ class QuillEditor extends Component {
 				</Modal>
 				<View ref={measurer => (this.measurer = measurer)} style={{ height: 1, backgroundColor: styleVars.formField.background }} />
 				{!this.state.loading && (
-					<React.Fragment>
-						<WebView
-							source={{ html: this._editorHtml }}
-							originWhitelist={["*"]}
-							onMessage={this.onMessage}
-							ref={webview => (this.webview = webview)}
-							javaScriptEnabled={true}
-							injectedJavaScript={injectedJavaScript}
-							mixedContentMode="always"
-							style={[editorStyles.editor, this.inlineStyles, { backgroundColor: "transparent" }]}
-							hideAccessory={true}
-							hideKeyboardAccessoryView={true}
-							keyboardDisplayRequiresUserAction={false}
-							useWebKit={true}
-							allowFileAccess={true}
-						/>
-					</React.Fragment>
+					<WebView
+						source={{ html: this._editorHtml }}
+						originWhitelist={["*"]}
+						onMessage={this.onMessage}
+						ref={webview => (this.webview = webview)}
+						javaScriptEnabled={true}
+						injectedJavaScript={injectedJavaScript}
+						mixedContentMode="always"
+						style={[editorStyles.editor, this.inlineStyles, { backgroundColor: "transparent" }]}
+						containerStyle={{ flex: 0, minHeight: this.state.currentHeight + 40 }}
+						hideAccessory={true}
+						hideKeyboardAccessoryView={true}
+						keyboardDisplayRequiresUserAction={false}
+						useWebKit={true}
+						allowFileAccess={true}
+						scrollEnabled={false}
+					/>
 				)}
-			</View>
+			</ViewMeasure>
 		);
 	}
 }
