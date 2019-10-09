@@ -459,18 +459,28 @@ class QuillEditor extends Component {
 	 * @return 	void
 	 */
 	handleHeight(height) {
-		const currentHeight = Math.max(this._editorMinHeight, parseInt(height));
+		this._currentHeight = parseInt(height);
 
-		if (currentHeight !== this.state.currentHeight) {
+		//const currentHeight = Math.max(this._editorMinHeight, parseInt(height));
+		/*if (currentHeight !== this.state.currentHeight) {
 			//console.log(`setting height to ${currentHeight}`);
 
 			this.setState({
 				currentHeight
 			});
-		}
+		}*/
 	}
 
 	handleBounds(bounds) {
+		const top = bounds.top;
+		const minHeight = Math.max(this._editorMinHeight, top + 100);
+
+		if (minHeight !== this.state.currentHeight) {
+			this.setState({
+				currentHeight: minHeight
+			});
+		}
+
 		if (_.isFunction(this.props.focusPositionCallback)) {
 			this.props.focusPositionCallback.call(null, bounds);
 		}
@@ -834,7 +844,7 @@ class QuillEditor extends Component {
 						injectedJavaScript={injectedJavaScript}
 						mixedContentMode="always"
 						style={[editorStyles.editor, this.inlineStyles, { backgroundColor: "transparent" }]}
-						containerStyle={{ flex: 0, minHeight: this.state.currentHeight + 40 }}
+						containerStyle={{ flex: 0, minHeight: this.state.currentHeight + 80 }}
 						hideAccessory={true}
 						hideKeyboardAccessoryView={true}
 						keyboardDisplayRequiresUserAction={false}

@@ -15,6 +15,7 @@ import TwoLineHeader from "../../atoms/TwoLineHeader";
 import uniqueID from "../../utils/UniqueID";
 import Lang from "../../utils/Lang";
 //import styles from "../../styles";
+import withInsets from "../../hocs/withInsets";
 import { withTheme, currentStyleSheet } from "../../themes";
 import { processToSend } from "../../utils/richText";
 import icons from "../../icons";
@@ -248,7 +249,12 @@ class CreateTopicScreen extends Component {
 	}
 
 	focusPositionCallback(bounds) {
-		this.scroll.props.scrollToPosition(0, bounds.top + this._editorTop);
+		//console.log(`bounds top: ${bounds.top}, editorTop: ${this._editorTop}`);
+		//console.log(`scrolling to ${bounds.top + this._editorTop}`);
+		//const headerHeight = this.props.insets.top + 60;
+		if (bounds.top > 50) {
+			this.scroll.props.scrollToPosition(0, bounds.top + this._editorTop, false);
+		}
 	}
 
 	onEditorLayout(data) {
@@ -265,10 +271,9 @@ class CreateTopicScreen extends Component {
 		return (
 			<React.Fragment>
 				<KeyboardAwareScrollView
-					style={[styles.stackCardStyle, { flex: 1 }]}
+					style={[styles.stackCardStyle, { flex: 1, backgroundColor: styleVars.formField.background }]}
 					resetScrollToCoords={{ x: 0, y: 0 }}
 					scrollEnabled={true}
-					extraScrollHeight={40}
 					innerRef={ref => {
 						this.scroll = ref;
 					}}
@@ -318,5 +323,6 @@ export default compose(
 		user: state.user,
 		attachedImages: state.editor.attachedImages
 	})),
+	withInsets,
 	withTheme()
 )(CreateTopicScreen);
