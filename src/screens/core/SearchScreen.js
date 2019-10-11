@@ -14,7 +14,6 @@ import MemberRow from "../../ecosystems/MemberRow";
 import ErrorBox from "../../atoms/ErrorBox";
 import ContentRow from "../../ecosystems/ContentRow";
 import SearchBox from "../../ecosystems/SearchBox";
-import CustomTab from "../../atoms/CustomTab";
 import { SearchContentPanel, SearchMemberPanel, SearchResultFragment, SearchResult } from "../../ecosystems/Search";
 import { withTheme } from "../../themes";
 import icons from "../../icons";
