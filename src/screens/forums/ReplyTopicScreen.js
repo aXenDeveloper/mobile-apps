@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Text, Alert, Button, TextInput, View, ScrollView, StyleSheet, KeyboardAvoidingView, ActivityIndicator } from "react-native";
 import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { NavigationActions, Header } from "react-navigation";
 import { connect } from "react-redux";
 import _ from "underscore";
@@ -67,6 +68,9 @@ class ReplyTopicScreen extends Component {
 		this._onBlurCallback = null;
 
 		this.updateContentState = this.updateContentState.bind(this);
+		this.focusPositionCallback = this.focusPositionCallback.bind(this);
+		this.onEditorLayout = this.onEditorLayout.bind(this);
+		this.onEditorFocus = this.onEditorFocus.bind(this);
 	}
 
 	/**
@@ -179,8 +183,22 @@ class ReplyTopicScreen extends Component {
 		}
 	}
 
+	focusPositionCallback(bounds) {
+		if (bounds.top > 50) {
+			this.scrollview.props.scrollToPosition(0, bounds.top + this._editorTop, false);
+		}
+	}
+
+	onEditorLayout(data) {
+		this._editorTop = Math.round(data.measure.y);
+	}
+
+	onEditorFocus(measurer) {
+		this.scrollview.props.scrollToPosition(0, this._editorTop, true);
+	}
+
 	render() {
-		const { styles, componentStyles } = this.props;
+		const { styles, styleVars, componentStyles } = this.props;
 
 		// If we're quoting an existing post, build that now
 		let quotedPostComponent = null;
@@ -200,42 +218,30 @@ class ReplyTopicScreen extends Component {
 
 		return (
 			<React.Fragment>
-				<ScrollView ref={scrollview => (this.scrollview = scrollview)} style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
+				<KeyboardAwareScrollView
+					style={[styles.stackCardStyle, { flex: 1, backgroundColor: styleVars.formField.background }]}
+					resetScrollToCoords={{ x: 0, y: 0 }}
+					scrollEnabled={true}
+					enableOnAndroid={true}
+					innerRef={ref => {
+						this.scrollview = ref;
+					}}
+					keyboardShouldPersistTaps="handled"
+				>
 					{quotedPostComponent}
-					<KeyboardAvoidingView style={{ flex: 1 }} enabled>
-						<QuillEditor
-							placeholder={Lang.get("your_reply")}
-							update={this.updateContentState}
-							height={400}
-							autoFocus={!_.isObject(this.props.navigation.state.params.quotedPost)}
-							editorID={this.editorID}
-							receiveOnBlurCallback={callback => (this._onBlurCallback = callback)}
-							enabled={!this.state.submitting}
-							onFocus={measurer => {
-								// If we're quoting a post, we'll scroll the view up
-								// so that the editor is near the top when focused
-								if (this.props.navigation.state.params.quotedPost) {
-									if (this.offset) {
-										this.scrollview.scrollTo({
-											x: 0,
-											y: this.offset,
-											animated: true
-										});
-									} else {
-										measurer.measure((fx, fy, width, height, px, py) => {
-											this.offset = py - 120;
-											this.scrollview.scrollTo({
-												x: 0,
-												y: py - 120,
-												animated: true
-											});
-										});
-									}
-								}
-							}}
-						/>
-					</KeyboardAvoidingView>
-				</ScrollView>
+					<QuillEditor
+						placeholder={Lang.get("your_reply")}
+						update={this.updateContentState}
+						height={400}
+						autoFocus={!_.isObject(this.props.navigation.state.params.quotedPost)}
+						editorID={this.editorID}
+						receiveOnBlurCallback={callback => (this._onBlurCallback = callback)}
+						enabled={!this.state.submitting}
+						focusPositionCallback={this.focusPositionCallback}
+						onEditorLayout={this.onEditorLayout}
+						onFocus={this.onEditorFocus}
+					/>
+				</KeyboardAwareScrollView>
 				<QuillToolbar editorID={this.editorID} />
 			</React.Fragment>
 		);

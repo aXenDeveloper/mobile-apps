@@ -249,9 +249,6 @@ class CreateTopicScreen extends Component {
 	}
 
 	focusPositionCallback(bounds) {
-		//console.log(`bounds top: ${bounds.top}, editorTop: ${this._editorTop}`);
-		//console.log(`scrolling to ${bounds.top + this._editorTop}`);
-		//const headerHeight = this.props.insets.top + 60;
 		if (bounds.top > 50) {
 			this.scroll.props.scrollToPosition(0, bounds.top + this._editorTop, false);
 		}
