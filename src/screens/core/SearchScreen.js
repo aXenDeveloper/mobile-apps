@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { Text, View, TextInput, Image, SectionList, AsyncStorage, TouchableOpacity } from "react-native";
+import { Text, View, TextInput, Image, SectionList, AsyncStorage, TouchableOpacity, Dimensions } from "react-native";
 import { connect } from "react-redux";
 import _ from "underscore";
 import gql from "graphql-tag";
 import { compose, withApollo } from "react-apollo";
-import { ScrollableTab, Tab, TabHeading, Tabs } from "native-base";
+import { TabView, TabBar } from "react-native-tab-view";
 
 import Lang from "../../utils/Lang";
 import CustomHeader from "../../ecosystems/CustomHeader";
@@ -65,6 +65,7 @@ class SearchScreen extends Component {
 		this._textInput = null;
 		this.state = {
 			// main search stuff
+			index: 0,
 			searchTerm: "",
 			loadingSearchResults: false,
 			currentTab: "",
@@ -83,6 +84,8 @@ class SearchScreen extends Component {
 		this.searchEmptyTextBox = this.searchEmptyTextBox.bind(this);
 		this.searchOnCancel = this.searchOnCancel.bind(this);
 		this.onRef = this.onRef.bind(this);
+		this.renderTabBar = this.renderTabBar.bind(this);
+		this.renderScene = this.renderScene.bind(this);
 	}
 
 	/**
@@ -212,21 +215,15 @@ class SearchScreen extends Component {
 			const searchSections = [
 				{
 					key: "overview",
-					index: 0,
-					lang: Lang.get("overview"),
-					data: []
+					title: Lang.get("overview")
 				},
 				{
 					key: "all",
-					index: 1,
-					lang: Lang.get("content"),
-					data: []
+					title: Lang.get("content")
 				},
 				...data.core.search.types.map((type, index) => ({
 					key: type.key,
-					index: index + 2, // we hardcoded the first two items, hence 2 here
-					lang: type.lang,
-					data: []
+					title: type.lang
 				}))
 			];
 
@@ -466,7 +463,13 @@ class SearchScreen extends Component {
 					<ContentRow
 						style={[styles.pvStandard, styles.phWide]}
 						onPress={() => {
-							this.onChangeTab({ i: _.find(this.state.searchSections, s => s.key == section.key)["index"] });
+							console.log(`here ${section.key}`);
+							console.log(this.state.searchSections);
+							console.log(_.findIndex(this.state.searchSections, s => s.key == section.key));
+
+							this.setState({
+								index: _.findIndex(this.state.searchSections, s => s.key == section.key)
+							});
 						}}
 					>
 						<Text numberOfLines={1} style={[styles.centerText, styles.mediumText, styles.contentText, styles.text]}>
@@ -481,23 +484,50 @@ class SearchScreen extends Component {
 	}
 
 	/**
-	 * Event handler for changing a tab
+	 * Render a custom tab bar. Uses the normal tab bar, but wraps it in an animated view so that
+	 * the translateY pos can be animated to create a sticky header
 	 *
-	 * @return 	void
+	 * @return 	Component
 	 */
-	onChangeTab = ({ i }) => {
-		// index 0 is the overview tab so we don't need to do anything
-		if (i == 0 || i == null) {
-			this.setState({
-				currentTab: "overview"
-			});
-			return;
+	renderTabBar(props) {
+		const { styles, styleVars } = this.props;
+
+		return (
+			<View>
+				<TabBar
+					{...props}
+					scrollEnabled
+					bounces
+					tabStyle={{ minWidth: 50 }}
+					style={styles.tabBar}
+					indicatorStyle={styles.tabBarIndicator}
+					activeColor={styleVars.tabBar.active}
+					inactiveColor={styleVars.tabBar.inactive}
+					getLabelText={({ route }) => route.title}
+					labelStyle={styles.tabBarLabelStyle}
+				/>
+			</View>
+		);
+	}
+
+	/**
+	 * Given a particular route, return the component that will render the tab panel
+	 *
+	 * @param 	object
+	 * @return 	Component
+	 */
+	renderScene({ route }) {
+		const routes = this.state.searchSections;
+		const thisIndex = routes.findIndex(r => r.key === route.key);
+
+		if (route.key === "overview") {
+			return this.renderOverviewTab();
 		}
 
-		this.setState({
-			currentTab: this.state.searchSections[i].key
-		});
-	};
+		const PanelComponent = route.key === "core_members" ? SearchMemberPanel : SearchContentPanel;
+
+		return <PanelComponent type={route.key} typeName={route.title} term={this.state.searchTerm} showResults={true} />;
+	}
 
 	/**
 	 * Build the tab panels for our results screen
@@ -506,47 +536,27 @@ class SearchScreen extends Component {
 	 */
 	getResultsViews() {
 		const { styles, componentStyles, styleVars } = this.props;
-		let currentTab = null;
-
-		if (this.state.currentTab) {
-			currentTab = _.find(this.state.searchSections, s => s.key == this.state.currentTab)["index"];
-		}
 
 		return (
 			<React.Fragment>
-				<Tabs
-					renderTabBar={props => (
-						<ScrollableTab
-							{...props}
-							style={styles.tabBar}
-							renderTab={(name, page, active, onPress, onLayout) => (
-								<CustomTab key={`${name}_${page}`} name={name} page={page} active={active} onPress={onPress} onLayout={onLayout} />
-							)}
-						/>
-					)}
-					page={currentTab}
-					tabBarUnderlineStyle={styleVars.tabBar.underline}
-					onChangeTab={this.onChangeTab}
-				>
-					{this.state.searchSections.map(section => {
-						if (section.key == "overview") {
-							return (
-								<Tab style={componentStyles.tab} key="overview" heading={Lang.get("overview")}>
-									{this.renderOverviewTab()}
-								</Tab>
-							);
-						} else if (!this.state.noResults) {
-							const PanelComponent = section.key === "core_members" ? SearchMemberPanel : SearchContentPanel;
-							const showResults = this.state.currentTab == section.key;
-
-							return (
-								<Tab style={componentStyles.tab} key={section.key} heading={section.lang}>
-									<PanelComponent type={section.key} typeName={section.lang} term={this.state.searchTerm} showResults={showResults} />
-								</Tab>
-							);
-						}
-					})}
-				</Tabs>
+				<TabView
+					navigationState={{
+						index: this.state.index,
+						routes: this.state.searchSections
+					}}
+					onIndexChange={index => {
+						this.setState({
+							index,
+							currentTab: this.state.searchSections[index].key
+						});
+					}}
+					renderScene={this.renderScene}
+					renderTabBar={this.renderTabBar}
+					initialLayout={{
+						width: Dimensions.get("window").width
+					}}
+					lazy
+				/>
 			</React.Fragment>
 		);
 	}
