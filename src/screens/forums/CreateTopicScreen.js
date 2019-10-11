@@ -274,6 +274,7 @@ class CreateTopicScreen extends Component {
 					style={[styles.stackCardStyle, { flex: 1, backgroundColor: styleVars.formField.background }]}
 					resetScrollToCoords={{ x: 0, y: 0 }}
 					scrollEnabled={true}
+					enableOnAndroid={true}
 					innerRef={ref => {
 						this.scroll = ref;
 					}}
