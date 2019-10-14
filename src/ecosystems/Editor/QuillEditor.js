@@ -602,7 +602,17 @@ class QuillEditor extends Component {
 	 * @return 	void
 	 */
 	insertLink() {
-		if (!isURL(this.state.linkModal.url)) {
+		let url = this.state.linkModal.url;
+
+		if (!url.startsWith("http")) {
+			url = `http://${url}`;
+		}
+
+		if (
+			!isURL(url, {
+				require_protocol: true
+			})
+		) {
 			Alert.alert(Lang.get("invalid_link"), Lang.get("invalid_link_desc"), [{ text: Lang.get("ok") }], { cancelable: false });
 			return;
 		}
@@ -613,11 +623,11 @@ class QuillEditor extends Component {
 
 		this.sendMessage("FOCUS");
 		this.sendMessage("INSERT_LINK", {
-			url: this.state.linkModal.url,
-			text: linkText !== "" ? linkText : this.state.linkModal.url
+			url,
+			text: linkText !== "" ? linkText : url
 		});
 
-		console.log("Insert:", this.state.linkModal.url, this.state.linkModal.text);
+		console.log("Insert:", url, this.state.linkModal.text);
 	}
 
 	/**
