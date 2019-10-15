@@ -622,10 +622,13 @@ class QuillEditor extends Component {
 		const linkText = this.state.linkModal.text.trim();
 
 		this.sendMessage("FOCUS");
-		this.sendMessage("INSERT_LINK", {
-			url,
-			text: linkText !== "" ? linkText : url
-		});
+
+		setTimeout(() => {
+			this.sendMessage("INSERT_LINK", {
+				url,
+				text: linkText !== "" ? linkText : url
+			});
+		}, 750);
 
 		console.log("Insert:", url, this.state.linkModal.text);
 	}
