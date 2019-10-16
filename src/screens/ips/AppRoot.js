@@ -101,6 +101,13 @@ class AppRoot extends Component {
 		console.log(`APP_ROOT: Received notification data`);
 		console.log(notification);
 
+		// This seemed to cause push notifications to not properly redirect to webview,
+		// because this method was called twice - the second time with a null notification
+		// object.
+		if (!notification) {
+			return;
+		}
+
 		//if (notification.origin == "received" && Platform.OS == "ios") {
 		//Alert.alert("In-app notification!", "App was foregrounded", [{ text: "OK", onPress: () => console.log("OK Pressed") }], { cancelable: false });
 		//this.refs.notificationToast.show(<LocalNotification title="Just a test" />, 3000);
