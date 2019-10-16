@@ -59,7 +59,7 @@ class Lang {
 			}
 		}
 
-		const word = _.isUndefined(this.words[key]) || this.words[key] === key ? langStrings[key] : this.words[key];
+		const word = _.isUndefined(this.words[key]) || this.words[key] === `app_${key}` ? langStrings[key] : this.words[key];
 
 		// Check for templates; parse if necessary
 		if (word.indexOf("{{") === -1) {
