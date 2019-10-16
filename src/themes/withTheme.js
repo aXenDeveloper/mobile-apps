@@ -7,7 +7,7 @@ import hoistNonReactStatics from "hoist-non-react-statics";
 import { generateStyleSheet, buildStyleVars } from "./index";
 import * as themes from "./themes";
 
-const withTheme = (passedComponentStyles = null) => WrappedComponent => {
+const withTheme = (passedComponentStyles = null, createComponentStylesAsStylesheet = true) => WrappedComponent => {
 	class wrappedClass extends Component {
 		constructor(props) {
 			super(props);
@@ -23,9 +23,12 @@ const withTheme = (passedComponentStyles = null) => WrappedComponent => {
 		getComponentStyles(styleVars) {
 			let componentStyles = {};
 			if (passedComponentStyles !== null) {
-				componentStyles = StyleSheet.create(
-					_.isFunction(passedComponentStyles) ? passedComponentStyles(styleVars, this.props.darkMode) : passedComponentStyles
-				);
+				componentStyles = _.isFunction(passedComponentStyles) ? passedComponentStyles(styleVars, this.props.darkMode) : passedComponentStyles;
+
+				// Normally we'll want to turn the componentStyles into a real stylesheet, but this is an option passed into the HOC
+				if (createComponentStylesAsStylesheet) {
+					componentStyles = StyleSheet.create(componentStyles);
+				}
 			}
 
 			return componentStyles;
