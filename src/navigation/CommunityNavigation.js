@@ -320,8 +320,8 @@ class AppNavigation extends Component {
 
 		let tabConfig = {
 			Home,
-			Search,
-			Streams,
+			...(this.props.site.moduleAccess.core.search ? { Search } : {}),
+			...(this.props.site.moduleAccess.core.discover ? { Streams } : {}),
 			Login
 		};
 
@@ -329,8 +329,8 @@ class AppNavigation extends Component {
 			console.log("NAVIGATION: Tab config including User");
 			tabConfig = {
 				Home,
-				Search,
-				Streams,
+				...(this.props.site.moduleAccess.core.search ? { Search } : {}),
+				...(this.props.site.moduleAccess.core.discover ? { Streams } : {}),
 				Notifications,
 				User
 			};

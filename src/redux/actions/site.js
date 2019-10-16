@@ -29,3 +29,9 @@ export const setSiteMenu = data => ({
 	type: SET_SITE_MENU,
 	payload: data
 });
+
+export const SET_SITE_MODULE_PERMISSIONS = "SET_SITE_MODULE_PERMISSIONS";
+export const setSiteModulePermissions = data => ({
+	type: SET_SITE_MODULE_PERMISSIONS,
+	payload: data
+});

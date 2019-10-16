@@ -129,7 +129,7 @@ export const bootSiteSuccess = data => ({
 import _ from "underscore";
 import Lang from "../../utils/Lang";
 import { guestLoaded, userLoaded, setUserStreams } from "./user";
-import { setSiteSettings, setLoginHandlers, setSiteMenu } from "./site";
+import { setSiteSettings, setLoginHandlers, setSiteModulePermissions, setSiteMenu } from "./site";
 import { setEditorSettings } from "./editor";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
@@ -181,6 +181,11 @@ export const bootSite = apiInfo => {
 			dispatch(setSiteSettings(data.core.settings));
 			dispatch(setLoginHandlers(data.core.loginHandlers));
 			dispatch(setSiteMenu(data.core.mobileMenu));
+			dispatch(
+				setSiteModulePermissions({
+					core: data.core.moduleAccess
+				})
+			);
 
 			// Store our streams
 			dispatch(
@@ -218,6 +223,13 @@ const LangFragment = gql`
 const BootQuery = gql`
 	query BootQuery {
 		core {
+			moduleAccess {
+				search: view(module: "search")
+				messaging: view(module: "messaging")
+				members: view(module: "members")
+				online: view(module: "online")
+				discover: view(module: "discover")
+			}
 			me {
 				id
 				name

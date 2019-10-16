@@ -1,4 +1,4 @@
-import { SET_SITE_SETTINGS, SET_LOGIN_HANDLERS, SET_SITE_MENU } from "../actions/site";
+import { SET_SITE_SETTINGS, SET_LOGIN_HANDLERS, SET_SITE_MENU, SET_SITE_MODULE_PERMISSIONS } from "../actions/site";
 import { SET_ACTIVE_COMMUNITY } from "../actions/app";
 
 const initialState = {
@@ -8,7 +8,8 @@ const initialState = {
 		board_name: "Invision Community"
 	},
 	menu: [],
-	loginHandlers: []
+	loginHandlers: [],
+	moduleAccess: {}
 };
 
 export default function site(state = initialState, { type, payload }) {
@@ -36,6 +37,11 @@ export default function site(state = initialState, { type, payload }) {
 			return {
 				...state,
 				menu: payload
+			};
+		case SET_SITE_MODULE_PERMISSIONS:
+			return {
+				...state,
+				moduleAccess: payload
 			};
 		default:
 			return { ...state };
