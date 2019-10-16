@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, FlatList, StyleSheet, TouchableOpacity, Animated } from "react-native";
+import { connect } from "react-redux";
+import { compose } from "react-apollo";
 import _ from "underscore";
 
 import { PlaceholderContainer, PlaceholderElement } from "../../ecosystems/Placeholder";
@@ -183,6 +185,10 @@ class ActiveUsers extends Component {
 	render() {
 		const { styles, componentStyles } = this.props;
 
+		if (!this.props.canViewOnline) {
+			return null;
+		}
+
 		if (this.props.loading) {
 			return (
 				<View style={[componentStyles.wrapper, styles.row, { height: 100 }]}>
@@ -238,4 +244,9 @@ const _componentStyles = styleVars => ({
 	}
 });
 
-export default withTheme(_componentStyles)(ActiveUsers);
+export default compose(
+	withTheme(_componentStyles),
+	connect(state => ({
+		canViewOnline: state.site.moduleAccess.core.online || true
+	}))
+)(ActiveUsers);
