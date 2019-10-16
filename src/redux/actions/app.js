@@ -216,7 +216,9 @@ import langStrings from "../../langStrings";
 const processLangString = langString => `${langString}: phrase(key: "app_${langString}")`;
 const LangFragment = gql`
 	fragment LangFragment on core_Language {
-		${langStrings.map(processLangString).join("\n")}
+		${Object.keys(langStrings)
+			.map(processLangString)
+			.join("\n")}
 	}
 `;
 

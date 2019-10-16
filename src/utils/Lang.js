@@ -2,6 +2,7 @@ import moment from "moment";
 import _ from "underscore";
 import { Platform } from "react-native";
 import supportedLocales from "../locales";
+import langStrings from "../langStrings";
 
 class Lang {
 	constructor() {
@@ -43,21 +44,28 @@ class Lang {
 	 * @return 	string
 	 */
 	get(key, replacements = {}) {
-		if (!_.isUndefined(this.words[key])) {
-			if (this.words[key].indexOf("{{") === -1) {
-				return this.words[key];
+		// If we don't have any language strings for this key, return the key
+		// If we're in_dev return the params to assist with debugging
+		if (_.isUndefined(this.words[key]) && _.isUndefined(langStrings[key])) {
+			if (__DEV__) {
+				return (
+					key +
+					Object.values(replacements)
+						.map(val => `(${val})`)
+						.join(" ")
+				);
+			} else {
+				return key;
 			}
-			return _.template(this.words[key])(replacements);
-		} else {
-			return (
-				key +
-				Object.values(replacements)
-					.map(val => `(${val})`)
-					.join(" ")
-			);
 		}
 
-		return key;
+		const word = _.isUndefined(this.words[key]) || this.words[key] === key ? langStrings[key] : this.words[key];
+
+		// Check for templates; parse if necessary
+		if (word.indexOf("{{") === -1) {
+			return word;
+		}
+		return _.template(word)(replacements);
 	}
 
 	/**
