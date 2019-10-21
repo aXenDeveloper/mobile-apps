@@ -3,30 +3,19 @@ import { Text, Alert, View, Image, TouchableHighlight, StyleSheet, ActivityIndic
 import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import { ApolloProvider } from "react-apollo";
-import apolloLogger from "apollo-link-logger";
-import { ApolloClient } from "apollo-client";
-import { HttpLink } from "apollo-link-http";
-import { ApolloLink } from "apollo-link";
-import { onError } from "apollo-link-error";
-import { InMemoryCache } from "apollo-cache-inmemory";
 import { connect } from "react-redux";
 import gql from "graphql-tag";
-import { graphql } from "react-apollo";
-import { IntrospectionFragmentMatcher } from "apollo-cache-inmemory";
 import _ from "underscore";
 
-import introspectionQueryResultData from "../../fragmentTypes.json";
 import AppLoading from "../../atoms/AppLoading";
 import NavigationService from "../../utils/NavigationService";
-import LoginScreen from "../core/LoginRegister/LoginScreen";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import Lang from "../../utils/Lang";
-import { userLoaded, guestLoaded, setUserStreams, updateNotificationCount } from "../../redux/actions/user";
-import { setSiteSettings, setLoginHandlers } from "../../redux/actions/site";
+import { updateNotificationCount } from "../../redux/actions/user";
+import { NotificationFragment } from "../../ecosystems/Notification";
 import { bootSite } from "../../redux/actions/app";
 import { refreshToken } from "../../redux/actions/auth";
 import CommunityNavigation from "../../navigation/CommunityNavigation";
-import ToFormData from "../../utils/ToFormData";
 import icons from "../../icons";
 
 const NOTIFICATION_TIMEOUT = Expo.Constants.manifest.extra.notification_timeout || 30000;
@@ -40,6 +29,18 @@ const NotificationQuery = gql`
 			}
 		}
 	}
+`;
+
+/* Mutation to mark a notification as read */
+const MarkReadMutation = gql`
+	mutation MarkNotificationRead($id: Int) {
+		mutateCore {
+			markNotificationRead(id: $id) {
+				...NotificationFragment
+			}
+		}
+	}
+	${NotificationFragment}
 `;
 
 const SessionStartMutation = gql`
@@ -135,8 +136,27 @@ class CommunityRoot extends Component {
 	 *
 	 * @return 	void
 	 */
-	handleRedirectProp() {
-		const { app, module, controller, url } = this.props.redirect;
+	async handleRedirectProp() {
+		const { app, module, controller, url, notificationId } = this.props.redirect;
+
+		// Do we have a notification ID to mark as read?
+		if (notificationId !== null) {
+			const { data } = await this.props.auth.client.mutation({
+				query: MarkReadMutation,
+				variables: {
+					id: notificationId
+				}
+			});
+
+			console.log(`Marked notification ${notificationId} read`);
+		}
+
+		// Update the notification count and reset the interval
+		this.stopNotificationInterval();
+		this.runNotificationQuery();
+		this.initializeNotificationInterval();
+
+		// Prepare to redirect
 		const params = {};
 
 		["id", "findComment", "findReview"].forEach(param => {
