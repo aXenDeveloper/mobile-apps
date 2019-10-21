@@ -141,14 +141,18 @@ class CommunityRoot extends Component {
 
 		// Do we have a notification ID to mark as read?
 		if (notificationId !== null) {
-			const { data } = await this.props.auth.client.mutation({
-				query: MarkReadMutation,
-				variables: {
-					id: notificationId
-				}
-			});
+			try {
+				const { data } = await this.props.auth.client.mutate({
+					query: MarkReadMutation,
+					variables: {
+						id: notificationId
+					}
+				});
 
-			console.log(`Marked notification ${notificationId} read`);
+				console.log(`COMMUNITY_ROOT: Marked notification ${notificationId} read`);
+			} catch (err) {
+				console.log(`COMMUNITY_ROOT: Couldn't mark notification ${notificationId} read`);
+			}
 		}
 
 		// Update the notification count and reset the interval
