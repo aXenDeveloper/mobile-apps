@@ -19,11 +19,11 @@ import icons from "../../icons";
 
 /* Main query, passed as a HOC */
 const NotificationQuery = gql`
-	query NotificationQuery($offset: Int) {
+	query NotificationQuery($offset: Int, $limit: Int) {
 		core {
 			me {
 				id
-				notifications(sortBy: unread, sortDir: desc, offset: $offset) {
+				notifications(sortBy: unread, sortDir: desc, offset: $offset, limit: $limit) {
 					...NotificationFragment
 				}
 			}
@@ -147,11 +147,10 @@ class NotificationsScreen extends Component {
 		}
 
 		if (!this.props.data.loading && !this.state.reachedEnd) {
-			console.log("Fetching more notifications");
-
 			this.props.data.fetchMore({
 				variables: {
-					offset: this.props.data.core.me.notifications.length
+					offset: this.props.data.core.me.notifications.length,
+					limit: Expo.Constants.manifest.extra.per_page
 				},
 				updateQuery: (previousResult, { fetchMoreResult }) => {
 					// Don't do anything if there wasn't any new items
@@ -168,10 +167,20 @@ class NotificationsScreen extends Component {
 							...previousResult.core,
 							me: {
 								...previousResult.core.me,
-								notifications: [...previousResult.core.me.notifications, ...fetchMoreResult.core.me.notifications]
+								notifications: _.uniq(
+									[...previousResult.core.me.notifications, ...fetchMoreResult.core.me.notifications],
+									false,
+									notification => notification.id
+								)
 							}
 						}
 					});
+
+					if (fetchMoreResult.core.me.notifications.length < Expo.Constants.manifest.extra.per_page) {
+						this.setState({
+							reachedEnd: true
+						});
+					}
 
 					return result;
 				}
@@ -330,8 +339,13 @@ export default compose(
 	})),
 	withApollo,
 	graphql(NotificationQuery, {
-		options: {
-			fetchPolicy: "cache-and-network" // Needed here so that we fetch fresh notification data after e.g. reading a topic
-		}
+		options: props => ({
+			fetchPolicy: "cache-and-network", // Needed here so that we fetch fresh notification data after e.g. reading a topic
+			notifyOnNetworkStatusChange: true,
+			variables: {
+				offset: 0,
+				limit: Expo.Constants.manifest.extra.per_page
+			}
+		})
 	})
 )(NotificationsScreen);
