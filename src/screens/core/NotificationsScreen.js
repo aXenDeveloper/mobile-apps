@@ -228,7 +228,11 @@ class NotificationsScreen extends Component {
 	 */
 	getSectionData() {
 		const sectionData = [];
-		const notifications = this.props.data.core.me.notifications;
+		const notifications = _.filter(
+			this.props.data.core.me.notifications,
+			// A notification may not have some data available if, e.g. content has been deleted. Exclude those here.
+			item => item.author !== null && item.content !== null && item.title !== null && item.url !== null
+		);
 		const readStart = notifications.findIndex(notification => notification.readDate !== null);
 		let unread = [];
 		let read = [];
