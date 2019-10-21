@@ -21,7 +21,9 @@ const UserPhoto = props => {
 
 	let photo;
 
-	if (props.url.startsWith("{") && props.url.endsWith("}")) {
+	if (props.url === null) {
+		photo = <View style={[photoSize, componentStyles.photo]} />;
+	} else if (props.url.startsWith("{") && props.url.endsWith("}")) {
 		// JSON letter photo
 		let backgroundColor;
 		let letter;

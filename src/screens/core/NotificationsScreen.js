@@ -301,7 +301,9 @@ class NotificationsScreen extends Component {
 			}
 		}
 
-		NavigationService.navigate(item.url.full);
+		if (item.url !== null) {
+			NavigationService.navigate(item.url.full);
+		}
 	}
 
 	render() {

@@ -29,13 +29,15 @@ const NotificationRow = props => {
 		<ContentRow unread={props.data.unread} onPress={props.onPress}>
 			<View style={componentStyles.rowInner}>
 				<View style={componentStyles.author}>
-					<UserPhoto url={props.data.author.photo} size={42} />
+					<UserPhoto url={props.data.author.photo || null} size={42} />
 				</View>
 				<View style={componentStyles.content}>
 					<View style={componentStyles.metaInfo}>
-						<Text style={[styles.smallItemTitle, componentStyles.title, props.data.readDate == null ? styles.title : styles.titleRead]}>
-							{props.data.title}
-						</Text>
+						{Boolean(props.data.title) && (
+							<Text style={[styles.smallItemTitle, componentStyles.title, props.data.readDate == null ? styles.title : styles.titleRead]}>
+								{props.data.title}
+							</Text>
+						)}
 						<Time style={[styles.smallText, styles.lightText]} timestamp={props.data.updatedDate} />
 					</View>
 					{Boolean(props.data.content) && (
