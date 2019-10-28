@@ -298,6 +298,7 @@ class TopicViewScreen extends Component {
 
 		this.props.copilotEvents.on("stop", this.setWalkthroughFlag);
 
+		this.renderItem = this.renderItem.bind(this);
 		this.loadEarlierComments = this.loadEarlierComments.bind(this);
 		this.toggleFollowModal = this.toggleFollowModal.bind(this);
 		this.goToPollScreen = this.goToPollScreen.bind(this);
@@ -1789,7 +1790,7 @@ class TopicViewScreen extends Component {
 							keyExtractor={item => item.id}
 							ListHeaderComponent={this.getHeaderComponent()}
 							ListFooterComponent={this.getFooterComponent()}
-							renderItem={({ item, index }) => this.renderItem(item, index)}
+							renderItem={this.renderItem}
 							initialNumToRender={Expo.Constants.manifest.extra.per_page}
 							data={listData}
 							refreshing={this.props.data.networkStatus == 4}

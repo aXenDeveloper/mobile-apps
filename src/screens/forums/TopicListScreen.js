@@ -103,6 +103,8 @@ class TopicListScreen extends Component {
 			followModalVisible: false
 		};
 
+		this.renderItem = this.renderItem.bind(this);
+		this.renderHeader = this.renderHeader.bind(this);
 		this.onRefresh = this.onRefresh.bind(this);
 		this.toggleFollowModal = this.toggleFollowModal.bind(this);
 		this.onEndReached = this.onEndReached.bind(this);
@@ -312,7 +314,7 @@ class TopicListScreen extends Component {
 	 * @param 	object 	forumData 	The forum data
 	 * @return 	Component
 	 */
-	renderItem(item, forumData) {
+	renderItem(item) {
 		if (item.type == "topic") {
 			const shouldHighlight =
 				!_.isUndefined(this.props.navigation.getParam("highlightTopic")) && parseInt(this.props.navigation.getParam("highlightTopic")) === parseInt(item.id);
@@ -464,8 +466,8 @@ class TopicListScreen extends Component {
 						<SectionList
 							style={{ flex: 1 }}
 							keyExtractor={item => item.type + item.id}
-							renderSectionHeader={({ section }) => this.renderHeader(section)}
-							renderItem={({ item }) => this.renderItem(item, forumData)}
+							renderSectionHeader={this.renderHeader}
+							renderItem={this.renderItem}
 							sections={forumSections}
 							refreshing={this.props.data.networkStatus == 4}
 							onRefresh={this.onRefresh}
