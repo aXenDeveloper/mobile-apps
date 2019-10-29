@@ -63,17 +63,6 @@ class NavigationService {
 	 * @return 	void
 	 */
 	navigate(url, params = {}, options = { forceBrowser: false, forceInternal: false }) {
-		/*if (_.isObject(url) && !options.forceBrowser) {
-			// If we have app/controller/module
-			if (!_.isUndefined(url.app) && !_.isUndefined(url.module) && !_.isUndefined(url.controller)) {
-				const routeName = this.getScreenFromUrlComponents(url.app, url.module, url.controller);
-
-				if (routeName) {
-					return this.navigateToScreen(routeName, params, options.key || null);
-				}
-			}
-		}*/
-
 		// If we're still here, make sure we have a correct URL
 		if (_.isObject(url)) {
 			// We might have 'url' or 'full' keys we can use
