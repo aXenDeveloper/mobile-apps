@@ -88,6 +88,8 @@ class HomeScreen extends Component {
 				const homeDataJson = JSON.parse(homeData);
 
 				if (!_.isUndefined(homeDataJson[apiUrl])) {
+					LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
 					this.setState({
 						data: homeDataJson[apiUrl].data,
 						loadedFromCache: true
