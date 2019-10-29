@@ -179,7 +179,7 @@ export const bootSite = apiInfo => {
 
 			// Set our system settings
 			dispatch(setSiteSettings(data.core.settings));
-			dispatch(setLoginHandlers(data.core.loginHandlers));
+			//dispatch(setLoginHandlers(data.core.loginHandlers));
 			dispatch(setSiteMenu(data.core.mobileMenu));
 			dispatch(
 				setSiteModulePermissions({
@@ -290,14 +290,6 @@ const BootQuery = gql`
 					original
 				}
 				guidelines_link
-			}
-			loginHandlers {
-				id
-				title
-				icon
-				text
-				color
-				url
 			}
 			language {
 				locale

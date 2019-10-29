@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, Image, ScrollView, View, StyleSheet, FlatList, TouchableOpacity, RefreshControl, LayoutAnimation, Dimensions } from "react-native";
+import { Text, Image, ScrollView, AsyncStorage, View, RefreshControl, LayoutAnimation, Dimensions } from "react-native";
 import { Notifications } from "expo";
 import * as Permissions from "expo-permissions";
 import gql from "graphql-tag";
@@ -43,6 +43,7 @@ class HomeScreen extends Component {
 
 		this.state = {
 			loading: true,
+			loadedFromCache: false,
 			error: false,
 			data: null,
 			refreshing: false,
@@ -50,6 +51,8 @@ class HomeScreen extends Component {
 		};
 
 		this._menuHandlers = {};
+
+		this.getLocalData();
 
 		this.onRefresh = this.onRefresh.bind(this);
 	}
@@ -68,6 +71,31 @@ class HomeScreen extends Component {
 					token
 				});
 			} catch (err) {}
+		}
+	}
+
+	/**
+	 * Fetches cached homescreen data from AsyncStorage and uses that to render an initial view
+	 *
+	 * @return 	number
+	 */
+	async getLocalData() {
+		try {
+			const { apiUrl } = this.props.app.currentCommunity.apiUrl;
+			const homeData = await AsyncStorage.getItem("@homeData");
+
+			if (homeData !== null) {
+				const homeDataJson = JSON.parse(homeData);
+
+				if (!_.isUndefined(homeDataJson[apiUrl])) {
+					this.setState({
+						data: homeDataJson[apiUrl].data,
+						loadedFromCache: true
+					});
+				}
+			}
+		} catch (err) {
+			return false;
 		}
 	}
 
@@ -147,8 +175,8 @@ class HomeScreen extends Component {
 		try {
 			const { data } = await this.props.client.query({
 				query,
-				variables: {},
-				fetchPolicy: "network-only"
+				variables: {}
+				//fetchPolicy: "network-only"
 			});
 
 			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -156,8 +184,29 @@ class HomeScreen extends Component {
 			this.setState({
 				loading: false,
 				refreshing: false,
-				data
+				data: data.core
 			});
+
+			try {
+				const { apiUrl } = this.props.app.currentCommunity.apiUrl;
+				let homeData = await AsyncStorage.getItem("@homeData");
+
+				if (homeData === null) {
+					homeData = {};
+				} else {
+					homeData = JSON.parse(homeData);
+				}
+
+				homeData[apiUrl] = {
+					created: Math.floor(Date.now() / 1000),
+					data: data.core,
+					apiUrl
+				};
+
+				await AsyncStorage.setItem("@homeData", JSON.stringify(homeData));
+			} catch (err) {
+				console.log(`Couldn't cache homeData to AsyncStorage: ${err}`);
+			}
 		} catch (err) {
 			console.log(err);
 
@@ -237,7 +286,7 @@ class HomeScreen extends Component {
 								<React.Fragment key={section}>
 									<LargeTitle icon={HomeSections[section].icon || null}>{Lang.get(section)}</LargeTitle>
 									<SectionComponent
-										loading={this.state.loading}
+										loading={this.state.loading && !this.state.loadedFromCache}
 										refreshing={this.state.refreshing}
 										data={this.state.data}
 										cardWidth={this.calculateCardWidth()}
@@ -255,6 +304,7 @@ class HomeScreen extends Component {
 
 export default compose(
 	connect(state => ({
+		app: state.app,
 		user: state.user,
 		site: state.site,
 		auth: state.auth
