@@ -1791,7 +1791,7 @@ class TopicViewScreen extends Component {
 							ListHeaderComponent={this.getHeaderComponent()}
 							ListFooterComponent={this.getFooterComponent()}
 							renderItem={this.renderItem}
-							initialNumToRender={Expo.Constants.manifest.extra.per_page}
+							initialNumToRender={8}
 							data={listData}
 							refreshing={this.props.data.networkStatus == 4}
 							onEndReached={this.onEndReached}
