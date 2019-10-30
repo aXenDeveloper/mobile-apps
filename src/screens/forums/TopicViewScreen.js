@@ -600,8 +600,8 @@ class TopicViewScreen extends Component {
 		);
 	}
 
-	getSnapshotBeforeUpdate(prevProps) {
-		if (prevProps.data.loading && !this.props.data.loading) {
+	getSnapshotBeforeUpdate(prevProps, prevState) {
+		if (prevProps.data.loading && !this.props.data.loading && prevState.listData.length == 0 && this.state.listData.length > 0) {
 			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 		}
 
