@@ -121,6 +121,7 @@ class ActiveUsers extends Component {
 
 		const tickerNames = [];
 		const animations = this.props.data.activeUsers.users
+			.slice(0, 15)
 			.filter(user => _.isString(user.lang))
 			.map((user, idx) => {
 				// First, save our user data and an animted value (this will go in state)
@@ -133,7 +134,8 @@ class ActiveUsers extends Component {
 				// Now set up the timing function, along with an incremental delay
 				return Animated.timing(animatedValue, {
 					toValue: 1,
-					duration: ActiveUsers.animationDelay
+					duration: ActiveUsers.animationDelay,
+					useNativeDriver: true
 				});
 			});
 
