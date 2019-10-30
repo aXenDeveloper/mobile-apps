@@ -275,6 +275,7 @@ class TopicViewScreen extends Component {
 		this._showWalkthrough = false;
 		this._walkthroughTimeout = null;
 		this.state = {
+			listData: [],
 			reachedEnd: false,
 			earlierPostsAvailable: null,
 			loadingEarlierPosts: false,
@@ -533,7 +534,7 @@ class TopicViewScreen extends Component {
 
 				// If we have a post, and a cell height for the post, then add up the heights and scroll to it
 				if (post && postID && !_.isUndefined(this._cellHeights[postID])) {
-					const listData = this.getListData();
+					const listData = this.state.listData;
 					let totalHeight = 0;
 
 					for (let i = 0; i < listData.length; i++) {
@@ -666,6 +667,12 @@ class TopicViewScreen extends Component {
 
 		if (prevState.currentPosition !== this.state.currentPosition) {
 			this.maybeMarkAsRead();
+		}
+
+		if ((_.isUndefined(prevProps.data.forums) && !_.isUndefined(this.props.data.forums)) || prevProps.data.forums !== this.props.data.forums) {
+			this.setState({
+				listData: this.getListData()
+			});
 		}
 
 		// If we're no longer loading, set the header params
@@ -1778,7 +1785,6 @@ class TopicViewScreen extends Component {
 			return <ErrorBox message={message} />;
 		} else {
 			const topicData = this.props.data.forums.topic;
-			const listData = this.getListData();
 
 			return (
 				<View style={styles.flex}>
@@ -1792,7 +1798,7 @@ class TopicViewScreen extends Component {
 							ListFooterComponent={this.getFooterComponent()}
 							renderItem={this.renderItem}
 							initialNumToRender={8}
-							data={listData}
+							data={this.state.listData}
 							refreshing={this.props.data.networkStatus == 4}
 							onEndReached={this.onEndReached}
 							onViewableItemsChanged={this.onViewableItemsChanged}
