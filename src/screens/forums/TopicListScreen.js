@@ -314,7 +314,7 @@ class TopicListScreen extends Component {
 	 * @param 	object 	forumData 	The forum data
 	 * @return 	Component
 	 */
-	renderItem(item) {
+	renderItem({ item }) {
 		if (item.type == "topic") {
 			const shouldHighlight =
 				!_.isUndefined(this.props.navigation.getParam("highlightTopic")) && parseInt(this.props.navigation.getParam("highlightTopic")) === parseInt(item.id);

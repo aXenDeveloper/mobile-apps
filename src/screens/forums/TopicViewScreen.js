@@ -1226,7 +1226,7 @@ class TopicViewScreen extends Component {
 	 * @param 	object 	item 		A post object (already transformed by this.buildPostData)
 	 * @return 	Component
 	 */
-	renderItem(item, index) {
+	renderItem({ item, index }) {
 		const topicData = this.props.data.forums.topic;
 		const settings = this.props.site.settings;
 
