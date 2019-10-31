@@ -222,6 +222,18 @@ const LangFragment = gql`
 	}
 `;
 
+// Important: this imports the fragments only. We can't import HomeSection's index
+// because that includes components which in turn rely on user data we haven't fetched yet.
+import { HomeSections } from "../../ecosystems/HomeSections/fragments";
+
+const HomeFragments = [];
+const HomeIncludes = [];
+
+Object.keys(HomeSections).forEach(section => {
+	HomeFragments.push("..." + HomeSections[section].fragmentName);
+	HomeIncludes.push(HomeSections[section].fragment);
+});
+
 const BootQuery = gql`
 	query BootQuery {
 		core {
