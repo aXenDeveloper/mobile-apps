@@ -193,7 +193,8 @@ class TopicListScreen extends Component {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
 			this.props.data.fetchMore({
 				variables: {
-					offset: this.props.data.forums.forum.topics.length
+					offset: this.props.data.forums.forum.topics.length,
+					limit: Expo.Constants.manifest.extra.per_page
 				},
 				updateQuery: (previousResult, { fetchMoreResult }) => {
 					// Don't do anything if there weren't any new items
