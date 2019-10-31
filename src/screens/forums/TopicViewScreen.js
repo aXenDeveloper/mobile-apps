@@ -976,7 +976,7 @@ class TopicViewScreen extends Component {
 	 */
 	getFooterComponent() {
 		// If we're loading more items in
-		if (this.props.data.networkStatus == 3 && !this.state.reachedEnd && !this.state.loadingEarlierPosts) {
+		if (!this.state.reachedEnd && !this.state.loadingEarlierPosts) {
 			return <Post loading={true} />;
 		}
 

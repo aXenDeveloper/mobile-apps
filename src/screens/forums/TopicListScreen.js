@@ -248,7 +248,7 @@ class TopicListScreen extends Component {
 	 */
 	getFooterComponent() {
 		// If we're loading more items in
-		if (this.props.data.networkStatus == 3 && !this.state.reachedEnd) {
+		if (!this.state.reachedEnd) {
 			return <TopicRow loading={true} />;
 		}
 
