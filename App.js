@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { UIManager } from "react-native";
+import { UIManager, AsyncStorage } from "react-native";
 import { Provider } from "react-redux";
 import configureStore from "./src/redux/configureStore";
 import { connect } from "react-redux";
@@ -8,11 +8,17 @@ import { Asset } from "expo-asset";
 import { AppLoading } from "expo";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useScreens } from "react-native-screens";
-useScreens();
+import Reactotron from "reactotron-react-native";
 
-if (!__DEV__) {
+if (__DEV__) {
+	import("./ReactotronConfig").then(() => {
+		console.log("Reactotron Configured");
+		Reactotron.clear();
+	});
 	console.log = () => {};
 }
+
+useScreens();
 
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
