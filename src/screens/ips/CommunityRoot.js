@@ -287,7 +287,7 @@ class CommunityRoot extends Component {
 			loading: true
 		});
 
-		await dispatch(refreshToken({ apiKey, apiUrl }));
+		await dispatch(refreshToken({ apiKey, apiUrl, forceRefresh: true }));
 		await dispatch(bootSite({ apiKey, apiUrl }));
 	}
 

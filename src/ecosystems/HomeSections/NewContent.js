@@ -129,7 +129,7 @@ class NewContent extends Component {
 	getListData() {
 		const doneIDs = [];
 		const listData = [];
-		const items = this.props.data.core.newContent.items;
+		const items = this.props.data.newContent.items;
 
 		for (let i = 0; i < items.length; i++) {
 			// If we've already used this item, skip it

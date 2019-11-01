@@ -193,7 +193,8 @@ class TopicListScreen extends Component {
 		if (!this.props.data.loading && !this.state.reachedEnd) {
 			this.props.data.fetchMore({
 				variables: {
-					offset: this.props.data.forums.forum.topics.length
+					offset: this.props.data.forums.forum.topics.length,
+					limit: Expo.Constants.manifest.extra.per_page
 				},
 				updateQuery: (previousResult, { fetchMoreResult }) => {
 					// Don't do anything if there weren't any new items
@@ -248,7 +249,7 @@ class TopicListScreen extends Component {
 	 */
 	getFooterComponent() {
 		// If we're loading more items in
-		if (this.props.data.networkStatus == 3 && !this.state.reachedEnd) {
+		if (!this.state.reachedEnd) {
 			return <TopicRow loading={true} />;
 		}
 
@@ -314,7 +315,7 @@ class TopicListScreen extends Component {
 	 * @param 	object 	forumData 	The forum data
 	 * @return 	Component
 	 */
-	renderItem(item) {
+	renderItem({ item }) {
 		if (item.type == "topic") {
 			const shouldHighlight =
 				!_.isUndefined(this.props.navigation.getParam("highlightTopic")) && parseInt(this.props.navigation.getParam("highlightTopic")) === parseInt(item.id);

@@ -139,7 +139,7 @@ export const refreshToken = apiInfo => {
 		}
 
 		// Do we have a refresh token stored for this site?
-		if (_.isUndefined(authData.refreshToken)) {
+		if (_.isUndefined(authData.refreshToken) || _.isUndefined(authData.tokenFetched)) {
 			dispatch(
 				refreshTokenError({
 					error: "empty_storage",
@@ -150,6 +150,21 @@ export const refreshToken = apiInfo => {
 			);
 			return;
 		}
+
+		// Do we actually need to run the request?
+		const tokenMinAge = Math.floor(Date.now() / 1000) - Expo.Constants.manifest.extra.refresh_token_advance;
+
+		if (authData.tokenFetched > tokenMinAge && !apiInfo.forceRefresh) {
+			console.log(`REFRESH_TOKEN: Dispatching success immediately...`);
+			dispatch(
+				refreshTokenSuccess({
+					...authData
+				})
+			);
+			return;
+		}
+
+		console.log(`REFRESH_TOKEN: Token expiring soon, refreshing with server...`);
 
 		// Do the request
 		try {
@@ -247,7 +262,8 @@ export const refreshToken = apiInfo => {
 			const newAuthData = {
 				refreshToken: authData.refreshToken,
 				accessToken: data.access_token,
-				expiresIn: data.expires_in
+				expiresIn: data.expires_in,
+				tokenFetched: Math.floor(Date.now() / 1000)
 			};
 
 			// Ensure state is kept if it exists

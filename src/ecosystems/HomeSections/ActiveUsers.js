@@ -57,7 +57,7 @@ class ActiveUsers extends Component {
 		const { styles, componentStyles } = this.props;
 
 		// Take a slice of up to 14 users to show
-		const usersToShow = this.props.data.core.activeUsers.users.slice(0, 14);
+		const usersToShow = this.props.data.activeUsers.users.slice(0, 14);
 
 		return usersToShow.map(user => (
 			<View
@@ -93,7 +93,7 @@ class ActiveUsers extends Component {
 	 */
 	getMoreBubble() {
 		const { styles, componentStyles } = this.props;
-		const activeUsersData = this.props.data.core.activeUsers;
+		const activeUsersData = this.props.data.activeUsers;
 
 		if (activeUsersData.count - activeUsersData.users.length > 0) {
 			return (
@@ -120,7 +120,8 @@ class ActiveUsers extends Component {
 		});
 
 		const tickerNames = [];
-		const animations = this.props.data.core.activeUsers.users
+		const animations = this.props.data.activeUsers.users
+			.slice(0, 15)
 			.filter(user => _.isString(user.lang))
 			.map((user, idx) => {
 				// First, save our user data and an animted value (this will go in state)
@@ -133,7 +134,8 @@ class ActiveUsers extends Component {
 				// Now set up the timing function, along with an incremental delay
 				return Animated.timing(animatedValue, {
 					toValue: 1,
-					duration: ActiveUsers.animationDelay
+					duration: ActiveUsers.animationDelay,
+					useNativeDriver: true
 				});
 			});
 
@@ -201,16 +203,16 @@ class ActiveUsers extends Component {
 			);
 		}
 
-		if (!this.props.data.core.activeUsers.count) {
+		if (!this.props.data.activeUsers.count) {
 			return (
 				<View style={[styles.row, styles.phWide, styles.ptStandard, styles.pbVeryTight, styles.mbWide, componentStyles.wrapper]}>
 					<Text style={[styles.lightText, styles.mbTight]}>{Lang.get("no_users_online")}</Text>
 				</View>
 			);
-		} else if (this.props.data.core.activeUsers.count && !this.props.data.core.activeUsers.users.length) {
+		} else if (this.props.data.activeUsers.count && !this.props.data.activeUsers.users.length) {
 			return (
 				<View style={[styles.row, styles.phWide, styles.ptStandard, styles.pbVeryTight, styles.mbWide, componentStyles.wrapper]}>
-					<Text style={[styles.lightText, styles.mbTight]}>{Lang.pluralize(Lang.get("x_guests_online"), this.props.data.core.activeUsers.count)}</Text>
+					<Text style={[styles.lightText, styles.mbTight]}>{Lang.pluralize(Lang.get("x_guests_online"), this.props.data.activeUsers.count)}</Text>
 				</View>
 			);
 		} else {

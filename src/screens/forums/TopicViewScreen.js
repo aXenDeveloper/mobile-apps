@@ -275,6 +275,7 @@ class TopicViewScreen extends Component {
 		this._showWalkthrough = false;
 		this._walkthroughTimeout = null;
 		this.state = {
+			listData: [],
 			reachedEnd: false,
 			earlierPostsAvailable: null,
 			loadingEarlierPosts: false,
@@ -533,7 +534,7 @@ class TopicViewScreen extends Component {
 
 				// If we have a post, and a cell height for the post, then add up the heights and scroll to it
 				if (post && postID && !_.isUndefined(this._cellHeights[postID])) {
-					const listData = this.getListData();
+					const listData = this.state.listData;
 					let totalHeight = 0;
 
 					for (let i = 0; i < listData.length; i++) {
@@ -599,8 +600,8 @@ class TopicViewScreen extends Component {
 		);
 	}
 
-	getSnapshotBeforeUpdate(prevProps) {
-		if (prevProps.data.loading && !this.props.data.loading) {
+	getSnapshotBeforeUpdate(prevProps, prevState) {
+		if (prevProps.data.loading && !this.props.data.loading && prevState.listData.length == 0 && this.state.listData.length > 0) {
 			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 		}
 
@@ -666,6 +667,12 @@ class TopicViewScreen extends Component {
 
 		if (prevState.currentPosition !== this.state.currentPosition) {
 			this.maybeMarkAsRead();
+		}
+
+		if ((_.isUndefined(prevProps.data.forums) && !_.isUndefined(this.props.data.forums)) || prevProps.data.forums !== this.props.data.forums) {
+			this.setState({
+				listData: this.getListData()
+			});
 		}
 
 		// If we're no longer loading, set the header params
@@ -969,7 +976,7 @@ class TopicViewScreen extends Component {
 	 */
 	getFooterComponent() {
 		// If we're loading more items in
-		if (this.props.data.networkStatus == 3 && !this.state.reachedEnd && !this.state.loadingEarlierPosts) {
+		if (!this.state.reachedEnd && !this.state.loadingEarlierPosts) {
 			return <Post loading={true} />;
 		}
 
@@ -1226,7 +1233,7 @@ class TopicViewScreen extends Component {
 	 * @param 	object 	item 		A post object (already transformed by this.buildPostData)
 	 * @return 	Component
 	 */
-	renderItem(item, index) {
+	renderItem({ item, index }) {
 		const topicData = this.props.data.forums.topic;
 		const settings = this.props.site.settings;
 
@@ -1778,7 +1785,6 @@ class TopicViewScreen extends Component {
 			return <ErrorBox message={message} />;
 		} else {
 			const topicData = this.props.data.forums.topic;
-			const listData = this.getListData();
 
 			return (
 				<View style={styles.flex}>
@@ -1791,8 +1797,8 @@ class TopicViewScreen extends Component {
 							ListHeaderComponent={this.getHeaderComponent()}
 							ListFooterComponent={this.getFooterComponent()}
 							renderItem={this.renderItem}
-							initialNumToRender={Expo.Constants.manifest.extra.per_page}
-							data={listData}
+							initialNumToRender={8}
+							data={this.state.listData}
 							refreshing={this.props.data.networkStatus == 4}
 							onEndReached={this.onEndReached}
 							onViewableItemsChanged={this.onViewableItemsChanged}

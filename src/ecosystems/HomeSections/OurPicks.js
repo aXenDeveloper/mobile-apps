@@ -151,7 +151,7 @@ class OurPicks extends Component {
 				decelerationRate="fast"
 				showsHorizontalScrollIndicator={false}
 				style={componentStyles.feed}
-				data={this.props.loading ? this.getDummyData() : this.props.data.core.ourPicks}
+				data={this.props.loading ? this.getDummyData() : this.props.data.ourPicks}
 				keyExtractor={item => (this.props.loading ? item.key : item.id)}
 				renderItem={({ item }) => this.getItemCard(item)}
 			/>
