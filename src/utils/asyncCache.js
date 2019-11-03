@@ -26,6 +26,35 @@ class AsyncCache {
 	}
 
 	/**
+	 * Returns all the data associated with the scope
+	 *
+	 * @param 		string 		scope	The scope of the data (e.g. community url)
+	 * @return 		mixed | null
+	 */
+	async getDataForScope(scope) {
+		const data = await this._fetchDataFromStorage();
+
+		if (_.isUndefined(data[scope])) {
+			return null;
+		}
+
+		const entries = Object.entries(data[scope]);
+		const toReturn = {};
+
+		for (const cachedObject of entries) {
+			if (!this.isExpired(cachedObject[1])) {
+				toReturn[cachedObject[0]] = cachedObject[1].data;
+			}
+		}
+
+		if (_.size(toReturn)) {
+			return toReturn;
+		}
+
+		return null;
+	}
+
+	/**
 	 * Set new data for the given type/scope
 	 *
 	 * @param 		mixed 		content 	The content to store
