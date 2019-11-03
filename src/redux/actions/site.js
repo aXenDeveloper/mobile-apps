@@ -16,11 +16,11 @@ export const setLoginHandlers = data => ({
 	}
 });
 
-export const SET_HOME_SCREEN_DATA = "SET_HOME_SCREEN_DATA";
-export const setHomeScreenData = data => ({
-	type: SET_HOME_SCREEN_DATA,
+export const SET_SITE_CACHE = "SET_SITE_CACHE";
+export const setSiteCache = data => ({
+	type: SET_SITE_CACHE,
 	payload: {
-		data
+		...data
 	}
 });
 

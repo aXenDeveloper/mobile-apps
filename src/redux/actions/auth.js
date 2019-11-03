@@ -423,7 +423,8 @@ export const swapToken = tokenInfo => {
 			const authData = {
 				accessToken: data.access_token,
 				expiresIn: data.expires_in,
-				refreshToken: data.refresh_token
+				refreshToken: data.refresh_token,
+				tokenFetched: Math.floor(Date.now() / 1000)
 			};
 
 			allAuthData[apiUrl] = authData;

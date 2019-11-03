@@ -17,7 +17,6 @@ import { NavBar } from "../../ecosystems/NavBar";
 import StreamCard from "../../ecosystems/Stream";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import getErrorMessage from "../../utils/getErrorMessage";
-import { setHomeScreenData } from "../../redux/actions/site";
 import { withTheme } from "../../themes";
 import asyncCache from "../../utils/asyncCache";
 import icons from "../../icons";
@@ -233,8 +232,8 @@ class HomeScreen extends Component {
 
 			if (this.state.data) {
 				data = this.state.data;
-			} else if (this.props.site.homeScreen) {
-				data = this.props.site.homeScreen.data;
+			} else if (this.props.site.siteCache.homeData) {
+				data = this.props.site.siteCache.homeData;
 			}
 
 			return (

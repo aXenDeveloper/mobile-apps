@@ -137,6 +137,11 @@ class AsyncCache {
 	 */
 	async removeAllExpired() {
 		const data = await this._fetchDataFromStorage();
+
+		if (data === null || !_.size(data)) {
+			return;
+		}
+
 		const entries = Object.entries(data);
 		const hasModified = false;
 
@@ -145,7 +150,7 @@ class AsyncCache {
 
 			for (const cachedObject of siteData) {
 				if (this.isExpired(cachedObject[1])) {
-					delete data[scopea[0]][cachedObject[0]];
+					delete data[scope[0]][cachedObject[0]];
 					hasModified = true;
 				}
 			}

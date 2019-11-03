@@ -11,6 +11,7 @@ import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
 import SectionHeader from "../../atoms/SectionHeader";
 import NavigationService from "../../utils/NavigationService";
 import { ForumItem, ForumItemFragment } from "../../ecosystems/ForumItem";
+import asyncCache from "../../utils/asyncCache";
 import TextPrompt from "../../ecosystems/TextPrompt";
 
 const ForumQuery = gql`
@@ -36,6 +37,18 @@ class ForumListScreen extends Component {
 		this.state = {
 			textPromptVisible: false
 		};
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if (
+			(prevProps.data.loading && !this.props.data.loading && !this.props.data.error) ||
+			(!_.isUndefined(prevProps.data.forums) && prevProps.data.forums.forums !== this.props.data.forums.forums)
+		) {
+			try {
+				const { apiUrl } = this.props.app.currentCommunity;
+				asyncCache.setData(this.props.data.forums, "forumListData", apiUrl);
+			} catch (err) {}
+		}
 	}
 
 	/**
@@ -121,7 +134,7 @@ class ForumListScreen extends Component {
 	}
 
 	render() {
-		if (this.props.data.loading) {
+		if (this.props.data.loading && _.isUndefined(this.props.site.siteCache.forumListData)) {
 			return (
 				<PlaceholderRepeater repeat={7}>
 					<ForumItem loading />
@@ -130,7 +143,8 @@ class ForumListScreen extends Component {
 		} else if (this.props.data.error) {
 			return <Text>Error</Text>; // @todo
 		} else {
-			const sectionData = this.props.data.forums.forums.map(category => {
+			const data = !this.props.data.loading ? this.props.data.forums : this.props.site.siteCache.forumListData;
+			const sectionData = data.forums.map(category => {
 				return {
 					title: category.name,
 					data: category.subforums.map(forum => ({
@@ -146,7 +160,7 @@ class ForumListScreen extends Component {
 						renderItem={({ item }) => this.renderItem(item)}
 						renderSectionHeader={({ section }) => <SectionHeader title={section.title} />}
 						sections={sectionData}
-						extraData={this.props.data.forums.forums}
+						extraData={data.forums}
 						initialNumToRender={15}
 					/>
 					<TextPrompt
@@ -173,7 +187,9 @@ class ForumListScreen extends Component {
 export default compose(
 	graphql(ForumQuery),
 	connect(state => ({
+		app: state.app,
 		auth: state.auth,
+		site: state.site,
 		forums: state.forums
 	}))
 )(ForumListScreen);
