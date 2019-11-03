@@ -1,4 +1,4 @@
-import { SET_SITE_SETTINGS, SET_LOGIN_HANDLERS, SET_SITE_MENU, SET_SITE_MODULE_PERMISSIONS } from "../actions/site";
+import { SET_SITE_SETTINGS, SET_LOGIN_HANDLERS, SET_SITE_MENU, SET_SITE_MODULE_PERMISSIONS, SET_HOME_SCREEN_DATA } from "../actions/site";
 import { SET_ACTIVE_COMMUNITY } from "../actions/app";
 
 const initialState = {
@@ -9,7 +9,8 @@ const initialState = {
 	},
 	menu: [],
 	loginHandlers: [],
-	moduleAccess: {}
+	moduleAccess: {},
+	homeScreen: null
 };
 
 export default function site(state = initialState, { type, payload }) {
@@ -42,6 +43,11 @@ export default function site(state = initialState, { type, payload }) {
 			return {
 				...state,
 				moduleAccess: payload
+			};
+		case SET_HOME_SCREEN_DATA:
+			return {
+				...state,
+				homeScreen: payload
 			};
 		default:
 			return { ...state };

@@ -128,8 +128,9 @@ export const bootSiteSuccess = data => ({
 
 import _ from "underscore";
 import Lang from "../../utils/Lang";
+import asyncCache from "../../utils/asyncCache";
 import { guestLoaded, userLoaded, setUserStreams } from "./user";
-import { setSiteSettings, setLoginHandlers, setSiteModulePermissions, setSiteMenu } from "./site";
+import { setSiteSettings, setHomeScreenData, setSiteModulePermissions, setSiteMenu } from "./site";
 import { setEditorSettings } from "./editor";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
@@ -198,6 +199,13 @@ export const bootSite = apiInfo => {
 					...data.core.streams
 				])
 			);
+
+			// Now try and get the homescreen data to improve perceieved loading time
+			const homeData = await asyncCache.getData("homeData", apiInfo.apiUrl);
+
+			if (homeData) {
+				dispatch(setHomeScreenData(homeData));
+			}
 
 			dispatch(bootSiteSuccess());
 		} catch (err) {

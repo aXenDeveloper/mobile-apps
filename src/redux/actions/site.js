@@ -16,6 +16,14 @@ export const setLoginHandlers = data => ({
 	}
 });
 
+export const SET_HOME_SCREEN_DATA = "SET_HOME_SCREEN_DATA";
+export const setHomeScreenData = data => ({
+	type: SET_HOME_SCREEN_DATA,
+	payload: {
+		data
+	}
+});
+
 export const SET_FORUM_PASSWORD = "SET_FORUM_PASSWORD";
 export const setForumPassword = data => ({
 	type: SET_FORUM_PASSWORD,

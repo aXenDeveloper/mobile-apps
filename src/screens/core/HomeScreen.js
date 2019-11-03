@@ -17,7 +17,9 @@ import { NavBar } from "../../ecosystems/NavBar";
 import StreamCard from "../../ecosystems/Stream";
 import LoginRegisterPrompt from "../../ecosystems/LoginRegisterPrompt";
 import getErrorMessage from "../../utils/getErrorMessage";
+import { setHomeScreenData } from "../../redux/actions/site";
 import { withTheme } from "../../themes";
+import asyncCache from "../../utils/asyncCache";
 import icons from "../../icons";
 
 import { HomeSections } from "../../ecosystems/HomeSections";
@@ -52,8 +54,6 @@ class HomeScreen extends Component {
 
 		this._menuHandlers = {};
 
-		this.getLocalData();
-
 		this.onRefresh = this.onRefresh.bind(this);
 	}
 
@@ -71,33 +71,6 @@ class HomeScreen extends Component {
 					token
 				});
 			} catch (err) {}
-		}
-	}
-
-	/**
-	 * Fetches cached homescreen data from AsyncStorage and uses that to render an initial view
-	 *
-	 * @return 	number
-	 */
-	async getLocalData() {
-		try {
-			const { apiUrl } = this.props.app.currentCommunity.apiUrl;
-			const homeData = await AsyncStorage.getItem("@homeData");
-
-			if (homeData !== null) {
-				const homeDataJson = JSON.parse(homeData);
-
-				if (!_.isUndefined(homeDataJson[apiUrl])) {
-					LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
-					this.setState({
-						data: homeDataJson[apiUrl].data,
-						loadedFromCache: true
-					});
-				}
-			}
-		} catch (err) {
-			return false;
 		}
 	}
 
@@ -189,26 +162,9 @@ class HomeScreen extends Component {
 				data: data.core
 			});
 
-			try {
-				const { apiUrl } = this.props.app.currentCommunity.apiUrl;
-				let homeData = await AsyncStorage.getItem("@homeData");
-
-				if (homeData === null) {
-					homeData = {};
-				} else {
-					homeData = JSON.parse(homeData);
-				}
-
-				homeData[apiUrl] = {
-					created: Math.floor(Date.now() / 1000),
-					data: data.core,
-					apiUrl
-				};
-
-				await AsyncStorage.setItem("@homeData", JSON.stringify(homeData));
-			} catch (err) {
-				console.log(`Couldn't cache homeData to AsyncStorage: ${err}`);
-			}
+			// Write home screen data back to the cache
+			const { apiUrl } = this.props.app.currentCommunity;
+			await asyncCache.setData(data.core, "homeData", apiUrl);
 		} catch (err) {
 			console.log(err);
 
@@ -273,6 +229,14 @@ class HomeScreen extends Component {
 		if (this.state.error) {
 			return <ErrorBox message={Lang.get("home_view_error")} refresh={() => this.refreshAfterError()} />;
 		} else {
+			let data = null;
+
+			if (this.state.data) {
+				data = this.state.data;
+			} else if (this.props.site.homeScreen) {
+				data = this.props.site.homeScreen.data;
+			}
+
 			return (
 				<React.Fragment>
 					<NavBar items={this.getNavConfig()} />
@@ -288,9 +252,9 @@ class HomeScreen extends Component {
 								<React.Fragment key={section}>
 									<LargeTitle icon={HomeSections[section].icon || null}>{Lang.get(section)}</LargeTitle>
 									<SectionComponent
-										loading={this.state.loading && !this.state.loadedFromCache}
+										loading={this.state.loading && data === null}
 										refreshing={this.state.refreshing}
-										data={this.state.data}
+										data={data}
 										cardWidth={this.calculateCardWidth()}
 										navigation={this.props.navigation}
 									/>

@@ -557,6 +557,8 @@ export const launchAuth = () => {
 	};
 };
 
+import asyncCache from "../../utils/asyncCache";
+
 /**
  * Attempt to authenticate the user using given username, password
  *
@@ -601,6 +603,10 @@ export const logOut = (requireReauth = true) => {
 				loggedOut: true
 			};
 		}
+
+		// Clear cache for this site
+		console.log("LOGOUT: Removing cache...");
+		asyncCache.removeScope(apiUrl);
 
 		console.log("LOGOUT: Resetting store...");
 		client.clearStore();
