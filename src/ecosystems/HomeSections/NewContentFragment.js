@@ -22,7 +22,7 @@ const NewContentFragment = `
 				containerID
 				containerTitle
 				class
-				content
+				content(truncateLength: 200)
 				contentImages
 				title
 				hiddenStatus
