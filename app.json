@@ -31,7 +31,7 @@
 		},
 		"name": "Invision Community",
 		"slug": "invision-community",
-		"version": "0.1.13",
+		"version": "0.1.14",
 		"description": "",
 		"scheme": "invision-community",
 		"notification": {
@@ -46,7 +46,7 @@
 		},
 		"android": {
 			"googleServicesFile": "./google-services.json",
-			"versionCode": 113,
+			"versionCode": 114,
 			"package": "com.invisioncommunity.app",
 			"permissions": [
 				"ACCESS_COARSE_LOCATION",
