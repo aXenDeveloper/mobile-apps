@@ -153,7 +153,14 @@ class HomeScreen extends Component {
 				//fetchPolicy: "network-only"
 			});
 
-			LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+			LayoutAnimation.configureNext({
+				duration: 300,
+				create: {
+					type: LayoutAnimation.Types.easeInEaseOut,
+					property: LayoutAnimation.Properties.opacity
+				},
+				update: { type: LayoutAnimation.Types.easeInEaseOut }
+			});
 
 			this.setState({
 				loading: false,
