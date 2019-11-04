@@ -18,7 +18,8 @@ if (__DEV__) {
 	console.log = () => {};
 }
 
-useScreens();
+// Note: this caused a crash after auth on android; check for compatibility in future
+//seScreens();
 
 global.Buffer = global.Buffer || require("buffer").Buffer;
 
