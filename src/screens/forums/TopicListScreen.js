@@ -336,7 +336,7 @@ class TopicListScreen extends Component {
 			return null;
 		}
 
-		return <SectionHeader title={section.title} />;
+		return <SectionHeader title={section.section.title} />;
 	}
 
 	/**
@@ -466,7 +466,7 @@ class TopicListScreen extends Component {
 					<View style={{ flex: 1 }}>
 						<SectionList
 							style={{ flex: 1 }}
-							keyExtractor={item => item.type + item.id}
+							keyExtractor={item => item.type + (item.type == "forum" ? item.key : item.id)}
 							renderSectionHeader={this.renderHeader}
 							renderItem={this.renderItem}
 							sections={forumSections}
