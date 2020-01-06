@@ -151,7 +151,7 @@ class FluidForumScreen extends Component {
 			type: "topic",
 			unread: topic.isUnread,
 			title: topic.title,
-			replies: parseInt(topic.postCount),
+			replies: Math.max(0, parseInt(topic.postCount) - 1),
 			author: topic.author,
 			started: topic.started,
 			snippet: topic.content.plain,
