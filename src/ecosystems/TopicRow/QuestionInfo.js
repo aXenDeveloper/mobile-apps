@@ -16,7 +16,7 @@ const QuestionInfo = ({ styles, componentStyles, rowStyles, ...props }) => (
 					{props.data.title}
 				</Text>
 			</View>
-			<Text style={[rowStyles.topicSnippet, props.showAsUnread ? styles.text : styles.textRead]} numberOfLines={1}>
+			<Text style={[rowStyles.topicSnippet, styles.text]} numberOfLines={1}>
 				{props.data.snippet}
 			</Text>
 		</View>
