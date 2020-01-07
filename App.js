@@ -15,6 +15,7 @@ if (__DEV__) {
 		console.log("Reactotron Configured");
 		Reactotron.clear();
 	});
+} else {
 	console.log = () => {};
 }
 
