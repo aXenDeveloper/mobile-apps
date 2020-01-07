@@ -22,7 +22,7 @@ const QuestionVote = props => {
 					]}
 				/>
 			</TouchableOpacity>
-			<Text style={[props.smaller ? styles.standardText : styles.largeText, styles.mediumText, styles.centerText]}>{props.score}</Text>
+			<Text style={[props.smaller ? styles.standardText : styles.largeText, styles.mediumText, styles.centerText, styles.text]}>{props.score}</Text>
 			{Boolean(props.downvoteEnabled) && (
 				<TouchableOpacity onPress={props.canVoteDown ? props.onVoteDown : null} style={props.smaller ? styles.mtVeryTight : null}>
 					<Image

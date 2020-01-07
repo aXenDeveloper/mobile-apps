@@ -1362,7 +1362,9 @@ class TopicViewScreen extends Component {
 		if (post.isQuestion) {
 			return (
 				<View style={[styles.mhWide, styles.pbStandard, styles.mbStandard, styles.bBorder, styles.mediumBorder]}>
-					<Text style={[styles.standardText, styles.mediumText]}>{Lang.get("question_asked_by", { name: this.props.data.forums.topic.author.name })}</Text>
+					<Text style={[styles.standardText, styles.mediumText, styles.text]}>
+						{Lang.get("question_asked_by", { name: this.props.data.forums.topic.author.name })}
+					</Text>
 				</View>
 			);
 		}
@@ -1370,7 +1372,7 @@ class TopicViewScreen extends Component {
 		if (post.isBestAnswer) {
 			return (
 				<View style={[styles.mhWide, styles.pbStandard, styles.mbStandard, styles.bBorder, styles.mediumBorder]}>
-					<Text style={[styles.standardText, styles.mediumText]}>{Lang.get("this_is_best_answer")}</Text>
+					<Text style={[styles.standardText, styles.mediumText, styles.text]}>{Lang.get("this_is_best_answer")}</Text>
 				</View>
 			);
 		}

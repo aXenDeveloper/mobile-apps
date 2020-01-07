@@ -21,7 +21,7 @@ const QuestionInfo = ({ styles, componentStyles, rowStyles, ...props }) => (
 			</Text>
 		</View>
 		<View style={[styles.flexColumn, styles.flexJustifyCenter, styles.mlWide, styles.phWide, componentStyles.questionInfo]}>
-			<Text style={[styles.centerText, styles.largeText, styles.boldText, componentStyles.voteCount]}>{props.data.questionVotes}</Text>
+			<Text style={[styles.centerText, styles.largeText, styles.boldText, styles.text, componentStyles.voteCount]}>{props.data.questionVotes}</Text>
 			<Text style={[styles.centerText, styles.tinyText, styles.lightText]}>{Lang.pluralize(Lang.get("votes_nonum"), props.data.questionVotes)}</Text>
 		</View>
 	</View>
