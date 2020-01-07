@@ -363,6 +363,7 @@ class ContentRenderer extends PureComponent {
 
 		content = content.replace(/<[/](strong|em|i|s|u|span)> /g, " </$1>");
 		content = content.replace(/ <(strong|em|i|s|u|span)>/g, "<$1> ");
+		content = content.replace(/<a (.+?)>(.+?)<\/a>/g, "<a $1>&nbsp;$2&nbsp;</a>");
 
 		return content;
 	}
