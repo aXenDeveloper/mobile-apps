@@ -143,7 +143,7 @@ class AsyncCache {
 		}
 
 		const entries = Object.entries(data);
-		const hasModified = false;
+		let hasModified = false;
 
 		for (const scope of entries) {
 			const siteData = Object.entries(scope[1]);
