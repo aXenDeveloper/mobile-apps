@@ -219,7 +219,7 @@ export const refreshToken = apiInfo => {
 			// Handle response error
 			if (!response.ok) {
 				console.log("REFRESH_TOKEN: Request failed:");
-				console.log(response);
+				console.tron.log(response);
 
 				dispatch(
 					refreshTokenError({
@@ -658,7 +658,7 @@ const getNewClient = connectData => {
 				const error = graphQLErrors[i];
 
 				if (errorsToUnauth.indexOf(error.message) !== -1) {
-					console.log(`CLIENT ERROR (${thisInstance}): Got error: ${error.message} (${!_.isUndefined(error.path) ? error.path.join(" -> ") : "no path"})`);
+					console.tron.log(`CLIENT ERROR (${thisInstance}): Got error: ${error.message} (${!_.isUndefined(error.path) ? error.path.join(" -> ") : "no path"})`);
 
 					const store = configureStore();
 					store.dispatch(removeAuth());
