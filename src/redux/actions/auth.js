@@ -395,6 +395,7 @@ export const swapToken = tokenInfo => {
 					client_id: apiKey,
 					grant_type: "authorization_code",
 					code: tokenInfo.token,
+					code_verifier: tokenInfo.codeChallenge,
 					redirect_uri: tokenInfo.redirect_uri
 				})
 			});
@@ -455,6 +456,8 @@ export const swapToken = tokenInfo => {
 // Launch authentication action
 
 import getRandomString from "../../utils/getRandomString";
+import * as Random from "expo-random";
+import * as Crypto from "expo-crypto";
 
 export const launchAuth = () => {
 	return async (dispatch, getState) => {
@@ -469,12 +472,16 @@ export const launchAuth = () => {
 		const urlParams = {};
 		const schemeUrl = Linking.makeUrl(`/auth`);
 		const stateString = getRandomString();
+		const codeChallenge = await Random.getRandomBytesAsync(128);
+		const codeDigestBase64 = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, codeChallenge, { encoding: Crypto.CryptoEncoding.BASE64 });
 
 		// Build basic request params
 		urlParams["client_id"] = apiKey;
 		urlParams["response_type"] = "code";
 		urlParams["state"] = stateString;
 		urlParams["redirect_uri"] = schemeUrl;
+		urlParams["code_challenge_method"] = "S256";
+		urlParams["code_challenge"] = codeDigestBase64;
 
 		console.log(`LAUNCH_AUTH: State string set to ${stateString}`);
 
@@ -548,9 +555,11 @@ export const launchAuth = () => {
 				return;
 			}
 
+			// Swap token, sending the codeChallenge to prevent MIM attacks
 			dispatch(
 				swapToken({
 					token: parsed.queryParams.code,
+					codeChallenge,
 					redirect_uri: schemeUrl
 				})
 			);
