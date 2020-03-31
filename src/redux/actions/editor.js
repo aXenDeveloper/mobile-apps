@@ -148,13 +148,19 @@ const uploadMutation = gql`
 	mutation UploadAttachmentMutation($name: String!, $contents: String!, $chunk: Int, $totalChunks: Int, $postKey: String!) {
 		mutateCore {
 			uploadAttachment(name: $name, contents: $contents, postKey: $postKey, chunk: $chunk, totalChunks: $totalChunks) {
-				id
-				name
-				size
-				thumbnail {
-					url
-					width
-					height
+				... on core_Attachment {
+					id
+					name
+					size
+					thumbnail {
+						url
+						width
+						height
+					}
+				}
+				... on core_UploadProgress {
+					name
+					ref
 				}
 			}
 		}
@@ -359,7 +365,7 @@ const uploadFile = async (client, fileId, pieces, variables, onProgress, isAbort
 		let i = 1;
 		for (let piece of pieces) {
 			if (!isAborted()) {
-				data = await sendMutation(piece, { totalChunks: pieces.length, chunk: i++ });
+				data = await sendMutation(piece, { totalChunks: pieces.length, chunk: i++, ref: data.ref || "" });
 			} else {
 				break;
 			}
