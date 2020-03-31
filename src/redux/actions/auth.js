@@ -473,7 +473,9 @@ export const launchAuth = () => {
 		const schemeUrl = Linking.makeUrl(`/auth`);
 		const stateString = getRandomString();
 		const codeChallenge = await Random.getRandomBytesAsync(128);
-		const codeDigestBase64 = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, codeChallenge, { encoding: Crypto.CryptoEncoding.BASE64 });
+		const codeDigestBase64 = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, codeChallenge.toString(), {
+			encoding: Crypto.CryptoEncoding.BASE64
+		});
 
 		// Build basic request params
 		urlParams["client_id"] = apiKey;
