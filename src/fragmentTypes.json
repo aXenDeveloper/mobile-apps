@@ -12,6 +12,18 @@
 						"name": "core_Item"
 					}
 				]
+			},
+			{
+				"kind": "UNION",
+				"name": "core_UploadAttachment",
+				"possibleTypes": [
+					{
+						"name": "core_UploadProgress"
+					},
+					{
+						"name": "core_Attachment"
+					}
+				]
 			}
 		]
 	}

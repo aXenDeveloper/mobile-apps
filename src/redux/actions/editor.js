@@ -145,16 +145,22 @@ import _ from "underscore";
 //import console = require("console");
 
 const uploadMutation = gql`
-	mutation UploadAttachmentMutation($name: String!, $contents: String!, $chunk: Int, $totalChunks: Int, $postKey: String!) {
+	mutation UploadAttachmentMutation($name: String!, $contents: String!, $chunk: Int, $totalChunks: Int, $postKey: String!, $ref: String!) {
 		mutateCore {
-			uploadAttachment(name: $name, contents: $contents, postKey: $postKey, chunk: $chunk, totalChunks: $totalChunks) {
-				id
-				name
-				size
-				thumbnail {
-					url
-					width
-					height
+			uploadAttachment(name: $name, contents: $contents, postKey: $postKey, chunk: $chunk, totalChunks: $totalChunks, ref: $ref) {
+				... on core_Attachment {
+					id
+					name
+					size
+					thumbnail {
+						url
+						width
+						height
+					}
+				}
+				... on core_UploadProgress {
+					name
+					ref
 				}
 			}
 		}
@@ -179,7 +185,7 @@ const deleteMutation = gql`
 export const uploadImage = (file, uploadData) => {
 	return async (dispatch, getState) => {
 		const { base64file, fileBuffer } = file;
-		const { fileData, maxChunkSize, chunkingSupported, maxActualChunkSize, postKey } = uploadData;
+		const { fileData, maxChunkSize, maxActualChunkSize, chunkingSupported, postKey } = uploadData;
 		const fileName = fileData.uri.split("/").pop();
 		const state = getState();
 		const client = state.auth.client;
@@ -353,20 +359,20 @@ const uploadFile = async (client, fileId, pieces, variables, onProgress, isAbort
 		return data;
 	};
 
-	let data;
+	let data = {};
 
 	if (pieces.length > 1) {
 		let i = 1;
 		for (let piece of pieces) {
 			if (!isAborted()) {
-				data = await sendMutation(piece, { totalChunks: pieces.length, chunk: i++ });
+				data = await sendMutation(piece, { totalChunks: pieces.length, chunk: i++, ref: data.ref || "" });
 			} else {
 				break;
 			}
 		}
 	} else {
 		if (!isAborted()) {
-			data = await sendMutation(pieces[0]);
+			data = await sendMutation(pieces[0], { ref: "" });
 		}
 	}
 

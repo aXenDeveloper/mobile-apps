@@ -395,6 +395,7 @@ export const swapToken = tokenInfo => {
 					client_id: apiKey,
 					grant_type: "authorization_code",
 					code: tokenInfo.token,
+					code_verifier: tokenInfo.codeChallenge,
 					redirect_uri: tokenInfo.redirect_uri
 				})
 			});
@@ -455,6 +456,9 @@ export const swapToken = tokenInfo => {
 // Launch authentication action
 
 import getRandomString from "../../utils/getRandomString";
+import * as Crypto from "expo-crypto";
+import getRandomBytes from "../../utils/getRandomBytes";
+import Base64 from "Base64";
 
 export const launchAuth = () => {
 	return async (dispatch, getState) => {
@@ -468,15 +472,26 @@ export const launchAuth = () => {
 		const urlQuery = [];
 		const urlParams = {};
 		const schemeUrl = Linking.makeUrl(`/auth`);
-		const stateString = getRandomString();
+		const stateString = getRandomString(); // Fetch a string we'll use to check state when auth requests come back to the app
+		const codeChallenge = await getRandomBytes(128); // Fetch a random string we'll use to prevent MIM oAuth attacks
+		const _rawCodeDigestBase64 = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, codeChallenge, {
+			encoding: Crypto.CryptoEncoding.BASE64
+		}); // Sha256 used to hash code
+		const codeDigestBase64 = _rawCodeDigestBase64
+			.replace("+", "-")
+			.replace("/", "_")
+			.replace("=", "");
 
 		// Build basic request params
 		urlParams["client_id"] = apiKey;
 		urlParams["response_type"] = "code";
 		urlParams["state"] = stateString;
 		urlParams["redirect_uri"] = schemeUrl;
+		urlParams["code_challenge_method"] = "S256";
+		urlParams["code_challenge"] = codeDigestBase64;
 
 		console.log(`LAUNCH_AUTH: State string set to ${stateString}`);
+		console.log(`LAUNCH AUTH: Code challenge is ${urlParams["code_challenge"]}`);
 
 		const authStore = await SecureStore.getItemAsync(`authStore`);
 		let allAuthData = {};
@@ -548,9 +563,11 @@ export const launchAuth = () => {
 				return;
 			}
 
+			// Swap token, sending the codeChallenge to prevent MIM attacks
 			dispatch(
 				swapToken({
 					token: parsed.queryParams.code,
+					codeChallenge,
 					redirect_uri: schemeUrl
 				})
 			);
