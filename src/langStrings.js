@@ -113,6 +113,10 @@ export default {
 	cannot_reply_with_info: "You cannot reply (tap for details)",
 	copy_permalink: "Copy Permalink",
 	copied_permalink: "Permalink copied!",
+	ignore: "Ignore {{name}}",
+	unignore: "Stop ignoring {{name}}",
+	ignore_options: "Ignore {{name}}",
+	error_ignoring_member: "Sorry, there was an problem ignoring this member",
 
 	//------------------------------------
 	// Time stuff

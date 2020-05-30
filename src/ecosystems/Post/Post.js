@@ -21,6 +21,7 @@ import PostControl from "../../atoms/PostControl";
 import RichTextContent from "../../ecosystems/RichTextContent";
 import Reaction from "../../atoms/Reaction";
 import ReactionModal from "../../atoms/ReactionModal";
+import { IgnoreUserModal } from "../../ecosystems/Ignore";
 import CommentFlag from "../../atoms/CommentFlag";
 import Time from "../../atoms/Time";
 import getErrorMessage from "../../utils/getErrorMessage";
@@ -85,7 +86,8 @@ class Post extends Component {
 			whoReactedCount: 0,
 			whoReactedReaction: 0,
 			whoReactedImage: "",
-			ignoreOverride: false
+			ignoreOverride: false,
+			ignoreModalVisible: false
 		};
 		this.onPressReaction = this.onPressReaction.bind(this);
 		this.onPressProfile = this.onPressProfile.bind(this);
@@ -99,6 +101,7 @@ class Post extends Component {
 		this.onPressIgnoredPost = this.onPressIgnoredPost.bind(this);
 		this.onShare = this.onShare.bind(this);
 		this.actionSheetPress = this.actionSheetPress.bind(this);
+		this.hideIgnoreModal = this.hideIgnoreModal.bind(this);
 	}
 
 	/**
@@ -153,6 +156,14 @@ class Post extends Component {
 				})
 			);
 		} else if (i === 2) {
+			if (this.props.data.author.canBeIgnored && this.props.data.author.id && this.props.data.author.id !== this.props.user.id) {
+				this.showIgnoreModal();
+			} else if (this.props.data.commentPermissions.canShare) {
+				this.onShare();
+			} else {
+				this.onReport();
+			}
+		} else if (i === 3) {
 			if (this.props.data.commentPermissions.canShare) {
 				this.onShare();
 			} else {
@@ -173,6 +184,13 @@ class Post extends Component {
 
 		options.push(Lang.get("copy_permalink"));
 
+		if (this.props.data.author.canBeIgnored && this.props.data.author.id && this.props.data.author.id !== this.props.user.id) {
+			if (this.props.data.isIgnored) {
+				options.push(Lang.get("unignore", { name: this.props.data.author.name }));
+			} else {
+				options.push(Lang.get("ignore", { name: this.props.data.author.name }));
+			}
+		}
 		if (this.props.data.commentPermissions.canShare) {
 			options.push(Lang.get("share"));
 		}
@@ -193,6 +211,28 @@ class Post extends Component {
 	}
 
 	//====================================================================
+
+	/**
+	 * Show the ignore user modal screen
+	 *
+	 * @return 	void
+	 */
+	showIgnoreModal() {
+		this.setState({
+			ignoreModalVisible: true
+		});
+	}
+
+	/**
+	 * Hide the ignore user modal screen
+	 *
+	 * @return 	void
+	 */
+	hideIgnoreModal() {
+		this.setState({
+			ignoreModalVisible: false
+		});
+	}
 
 	/**
 	 * Handle tapping a reaction count
@@ -490,16 +530,6 @@ class Post extends Component {
 	}
 
 	/**
-	 * Render the ignored post wrapper (used when the user has ignored this user but hasn't chosen to show it manually)
-	 *
-	 * @return 	Component
-	 */
-	renderIgnoredPost() {
-		const { styles } = this.props;
-		return <View style={styles.mbVeryTight}>{this.renderIgnoreBar()}</View>;
-	}
-
-	/**
 	 * Render the bar that indicates this post is ignored
 	 *
 	 * @return 	Component
@@ -564,107 +594,141 @@ class Post extends Component {
 		);
 	}
 
+	isIgnored() {
+		const postData = this.props.data;
+
+		if (!postData.author.id || postData.author.id === this.props.user.id || !postData.author.canBeIgnored || !postData.author.ignoreStatus.length) {
+			return false;
+		}
+
+		// Otherwise figure out if posts are ignored
+		const topicsIgnored = postData.author.ignoreStatus.find(type => type.type === "topics");
+
+		if (!_.isUndefined(topicsIgnored)) {
+			return topicsIgnored.isBeingIgnored;
+		}
+
+		return false;
+	}
+
 	render() {
 		const { styles, componentStyles } = this.props;
+		let content;
 
 		if (this.props.loading) {
 			return this.loadingComponent();
 		}
 
-		if (this.props.data.isIgnored && !this.state.ignoreOverride) {
-			return this.renderIgnoredPost();
-		}
-
-		const repButton = this.getReputationButton();
 		const postData = this.props.data;
-		// <Text>{this.props.position}</Text>
 
-		return (
-			<ViewMeasure onLayout={this.props.onLayout} id={parseInt(this.props.data.id)}>
-				<View style={styles.mbVeryTight}>
-					{Boolean(postData.isIgnored) && Boolean(this.state.ignoreOverride) && this.renderIgnoreBar()}
-					<ShadowedArea style={[styles.pvWide, componentStyles.post, this.props.style]}>
-						{this.props.topComponent}
-						<View style={styles.flexRow}>
-							{this.props.leftComponent}
-							<View style={[this.props.leftComponent ? styles.mrWide : styles.mhWide, styles.flexBasisZero, styles.flexGrow]}>
-								<View style={[styles.flexRow, styles.flexAlignStart]} testId="postAuthor">
-									<TouchableOpacity style={styles.flex} onPress={postData.author.id ? this.onPressProfile : null}>
-										<View style={[styles.flex, styles.flexRow, styles.flexAlignStart]}>
-											<UserPhoto url={postData.author.photo} online={postData.author.isOnline || null} size={36} />
-											<View style={[styles.flexColumn, styles.flexJustifyCenter, styles.mlStandard]}>
-												<Text style={styles.itemTitle}>{postData.author.name}</Text>
-												<Time style={[styles.standardText, styles.lightText]} timestamp={postData.timestamp} format="long" />
+		if (this.isIgnored() && !this.state.ignoreOverride) {
+			content = <View style={styles.mbVeryTight}>{this.renderIgnoreBar()}</View>;
+		} else {
+			const repButton = this.getReputationButton();
+			// <Text>{this.props.position}</Text>
+
+			content = (
+				<ViewMeasure onLayout={this.props.onLayout} id={parseInt(this.props.data.id)}>
+					<View style={styles.mbVeryTight}>
+						{this.isIgnored() && this.state.ignoreOverride && this.renderIgnoreBar()}
+						<ShadowedArea style={[styles.pvWide, componentStyles.post, this.props.style]}>
+							{this.props.topComponent}
+							<View style={styles.flexRow}>
+								{this.props.leftComponent}
+								<View style={[this.props.leftComponent ? styles.mrWide : styles.mhWide, styles.flexBasisZero, styles.flexGrow]}>
+									<View style={[styles.flexRow, styles.flexAlignStart]} testId="postAuthor">
+										<TouchableOpacity style={styles.flex} onPress={postData.author.id ? this.onPressProfile : null}>
+											<View style={[styles.flex, styles.flexRow, styles.flexAlignStart]}>
+												<UserPhoto url={postData.author.photo} online={postData.author.isOnline || null} size={36} />
+												<View style={[styles.flexColumn, styles.flexJustifyCenter, styles.mlStandard]}>
+													<Text style={styles.itemTitle}>{postData.author.name}</Text>
+													<Time style={[styles.standardText, styles.lightText]} timestamp={postData.timestamp} format="long" />
+												</View>
 											</View>
-										</View>
-									</TouchableOpacity>
-									{Boolean(postData.commentPermissions.canShare || postData.commentPermissions.canReportOrRevoke) && (
-										<TouchableOpacity style={styles.flexAlignSelfStart} onPress={this.onPressPostDots}>
-											<Image style={[styles.lightImage, componentStyles.postMenu]} resizeMode="contain" source={icons.DOTS} />
 										</TouchableOpacity>
-									)}
-								</View>
-								{Boolean(postData.hiddenStatus !== null) && this.renderHiddenMessage()}
-								<View style={styles.mvWide}>
-									<RichTextContent>{postData.content.original}</RichTextContent>
-									<Animatable.View ref={r => (this._reactionWrap = r)}>
-										{Boolean(postData.reputation.reactions.length) && (
-											<View style={[styles.mtWide, styles.flexRow, styles.flexJustifyEnd, styles.flexWrap]} testId="reactionList">
-												{postData.reputation.reactions.map(reaction => {
-													return (
-														<Reaction
-															style={styles.mlStandard}
-															key={reaction.id}
-															id={reaction.id}
-															reactionId={reaction.reactionId}
-															image={reaction.image}
-															count={reaction.count}
-															onPress={postData.reputation.canViewReps ? this.onPressReaction : null}
-														/>
-													);
-												})}
-											</View>
+										{Boolean(postData.commentPermissions.canShare || postData.commentPermissions.canReportOrRevoke) && (
+											<TouchableOpacity style={styles.flexAlignSelfStart} onPress={this.onPressPostDots}>
+												<Image style={[styles.lightImage, componentStyles.postMenu]} resizeMode="contain" source={icons.DOTS} />
+											</TouchableOpacity>
 										)}
-									</Animatable.View>
+									</View>
+									{Boolean(postData.hiddenStatus !== null) && this.renderHiddenMessage()}
+									<View style={styles.mvWide}>
+										<RichTextContent>{postData.content.original}</RichTextContent>
+										<Animatable.View ref={r => (this._reactionWrap = r)}>
+											{Boolean(postData.reputation.reactions.length) && (
+												<View style={[styles.mtWide, styles.flexRow, styles.flexJustifyEnd, styles.flexWrap]} testId="reactionList">
+													{postData.reputation.reactions.map(reaction => {
+														return (
+															<Reaction
+																style={styles.mlStandard}
+																key={reaction.id}
+																id={reaction.id}
+																reactionId={reaction.reactionId}
+																image={reaction.image}
+																count={reaction.count}
+																onPress={postData.reputation.canViewReps ? this.onPressReaction : null}
+															/>
+														);
+													})}
+												</View>
+											)}
+										</Animatable.View>
+									</View>
 								</View>
 							</View>
-						</View>
-						{Boolean(repButton || this.props.canReply) && (
-							<PostControls style={styles.mhWide}>
-								{Boolean(this.props.canReply) && postData.hiddenStatus === null && (
-									<PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />
-								)}
-								{repButton}
-							</PostControls>
-						)}
-						<ActionSheet
-							ref={o => (this._actionSheet = o)}
-							title={Lang.get("post_options")}
-							options={this.actionSheetOptions()}
-							cancelButtonIndex={this.actionSheetCancelIndex()}
-							onPress={this.actionSheetPress}
-						/>
-						<ReactionModal
-							visible={this.state.reactionModalVisible}
-							closeModal={this.hideReactionModal}
-							reactions={postData.reputation.availableReactions}
-							onReactionPress={this.onReactionPress}
-						/>
-						<WhoReactedModal
-							visible={this.state.whoReactedModalVisible}
-							close={this.hideWhoReactedModal}
-							expectedCount={this.state.whoReactedCount}
-							reactionImage={this.state.whoReactedImage}
-							query={WhoReactedQuery}
-							variables={{
-								id: postData.id,
-								reactionId: parseInt(this.state.whoReactedReaction)
-							}}
-						/>
-						{this.renderCommentFlag()}
-					</ShadowedArea>
-				</View>
-			</ViewMeasure>
+							{Boolean(repButton || this.props.canReply) && (
+								<PostControls style={styles.mhWide}>
+									{Boolean(this.props.canReply) && postData.hiddenStatus === null && (
+										<PostControl testId="replyButton" image={icons.QUOTE} label={Lang.get("quote")} onPress={this.onPressReply} />
+									)}
+									{repButton}
+								</PostControls>
+							)}
+							<ReactionModal
+								visible={this.state.reactionModalVisible}
+								closeModal={this.hideReactionModal}
+								reactions={postData.reputation.availableReactions}
+								onReactionPress={this.onReactionPress}
+							/>
+							<WhoReactedModal
+								visible={this.state.whoReactedModalVisible}
+								close={this.hideWhoReactedModal}
+								expectedCount={this.state.whoReactedCount}
+								reactionImage={this.state.whoReactedImage}
+								query={WhoReactedQuery}
+								variables={{
+									id: postData.id,
+									reactionId: parseInt(this.state.whoReactedReaction)
+								}}
+							/>
+							{this.renderCommentFlag()}
+						</ShadowedArea>
+					</View>
+				</ViewMeasure>
+			);
+		}
+
+		return (
+			<React.Fragment>
+				{content}
+				<ActionSheet
+					ref={o => (this._actionSheet = o)}
+					title={Lang.get("post_options")}
+					options={this.actionSheetOptions()}
+					cancelButtonIndex={this.actionSheetCancelIndex()}
+					onPress={this.actionSheetPress}
+				/>
+				{postData.author.canBeIgnored && postData.author.id && postData.author.id !== this.props.user.id && (
+					<IgnoreUserModal
+						member={postData.author.id}
+						memberName={postData.author.name}
+						ignoreTypes={postData.author.ignoreStatus}
+						visible={this.state.ignoreModalVisible}
+						close={this.hideIgnoreModal}
+					/>
+				)}
+			</React.Fragment>
 		);
 	}
 }
@@ -694,7 +758,8 @@ export default compose(
 	graphql(PostReactionMutation),
 	withNavigation,
 	connect(state => ({
-		site: state.site
+		site: state.site,
+		user: state.user
 	})),
 	withTheme(_componentStyles)
 )(Post);

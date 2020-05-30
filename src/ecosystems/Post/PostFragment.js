@@ -18,6 +18,13 @@ const PostFragment = gql`
 			photo
 			name
 			isOnline
+			canBeIgnored
+			ignoreStatus {
+				id
+				type
+				isBeingIgnored
+				lang
+			}
 		}
 		content {
 			original
