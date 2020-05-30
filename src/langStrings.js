@@ -117,6 +117,9 @@ export default {
 	unignore: "Stop ignoring {{name}}",
 	ignore_options: "Ignore {{name}}",
 	error_ignoring_member: "Sorry, there was an problem ignoring this member",
+	error_ignore_type: "Invalid ignore type",
+	error_ignore_member: "This member cannot be ignored.",
+	error_ignore_no_self: "You can't ignore yourself.",
 
 	//------------------------------------
 	// Time stuff

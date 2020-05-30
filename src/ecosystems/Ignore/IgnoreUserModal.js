@@ -36,10 +36,10 @@ class IgnoreUserModal extends Component {
 		this.toggleIgnore = this.toggleIgnore.bind(this);
 
 		this.errors = {
-			INVALID_TYPE: "Invalid type",
-			INVALID_MEMBER: "Invalid member",
-			NO_IGNORE_SELF: "Can't ignore self",
-			NO_IGNORE_MEMBER: "Can't ignore member"
+			INVALID_TYPE: Lang.get("error_ignore_type"),
+			INVALID_MEMBER: Lang.get("error_ignore_member"),
+			NO_IGNORE_SELF: Lang.get("error_ignore_no_self"),
+			NO_IGNORE_MEMBER: Lang.get("error_ignore_member")
 		};
 	}
 
