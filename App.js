@@ -37,7 +37,7 @@ whyDidYouUpdate(React, { include: [/^Post/], exclude: /^YellowBox/ });
 // Remove this once Sentry is correctly setup.
 //Sentry.enableInExpoDevelopment = true;
 Sentry.init({
-	dsn: "https://7ebe0255a311425c8edb883ad65e5002@sentry.io/1429754",
+	dsn: Expo.Constants.manifest.extra.sentryDsn,
 	enableInExpoDevelopment: true,
 	debug: true
 });

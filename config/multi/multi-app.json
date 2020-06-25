@@ -9,8 +9,8 @@
 					"file": "sentry-expo/upload-sourcemaps",
 					"config": {
 						"organization": "ips-inc-s7",
-						"project": "invision-community-app",
-						"authToken": "bd04333c3cee47919b0b963b90c18706b7f7bdd5f7df4f93b422ef0a91f68943"
+						"project": "invision-communities",
+						"authToken": "b3c5d84bc38c40b08ac7ae01831fba8e43410b543c194c0e8bb8edf4909f5c14"
 					}
 				}
 			]
@@ -18,7 +18,7 @@
 		"assetBundlePatterns": ["web/dist/index.html", "resources/splash.png"],
 		"platforms": ["android", "ios"],
 		"extra": {
-			"multi": false,
+			"multi": true,
 			"oauth_client_id": "e79f36dc890d5c6b01fa0dc25e52ad0e",
 			"api_url": "https://invisioncommunity.com/",
 			"refresh_token_advance": 300000,
@@ -27,27 +27,29 @@
 			"per_page": 20,
 			"remoteServicesUrl": "https://remoteservices.invisionpower.com/mobile/",
 			"privacyPolicyUrl": "https://invisioncommunity.com/legal/in-app-privacy-policy/",
-			"max_image_dim": 1000
+			"max_image_dim": 1000,
+			"sentryDsn": "https://df2e90cd358c4402b9e1def82a335387@o248014.ingest.sentry.io/5285650"
 		},
-		"name": "Invision Community",
-		"slug": "invision-community",
-		"version": "0.1.16",
+		"name": "Invision Communities",
+		"slug": "invision-communities",
+		"version": "0.1.2",
 		"description": "",
-		"scheme": "invision-community",
+		"scheme": "invision-communities",
 		"notification": {
 			"iosDisplayInForeground": true
 		},
 		"ios": {
-			"bundleIdentifier": "com.invisioncommunity.app",
+			"bundleIdentifier": "com.invisioncommunity.communities",
+			"supportsTablet": true,
 			"infoPlist": {
 				"NSCameraUsageDescription": "This app uses the camera to allow attaching photos to comments.",
 				"NSPhotoLibraryUsageDescription": "This app accesses your Photo Library to allow attaching photos to comments."
 			}
 		},
 		"android": {
-			"googleServicesFile": "./google-services.json",
-			"versionCode": 116,
-			"package": "com.invisioncommunity.app",
+			"googleServicesFile": "./config/multi/google-services.json",
+			"versionCode": 12,
+			"package": "com.invisioncommunity.communities",
 			"permissions": [
 				"ACCESS_COARSE_LOCATION",
 				"ACCESS_FINE_LOCATION",

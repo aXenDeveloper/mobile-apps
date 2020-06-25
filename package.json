@@ -22,7 +22,9 @@
 		"android": "expo android",
 		"ios": "expo ios",
 		"test": "jest",
-		"editor": "cd web && npm run editor && cd .."
+		"editor": "cd web && npm run editor && cd ..",
+		"ips-app": "expo start -c --config config/ips/ips-app.json",
+		"multi-app": "expo start -c --config config/multi/multi-app.json"
 	},
 	"jest": {
 		"preset": "jest-expo",
