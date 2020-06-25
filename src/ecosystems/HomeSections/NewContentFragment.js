@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 const NewContentFragment = `
 	fragment NewContentFragment on core {
 		__typename
-		newContent: stream(id: 1) {
+		newContent: stream(id: $streamId) {
 			id
 			__typename
 			title

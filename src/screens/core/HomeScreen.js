@@ -138,7 +138,7 @@ class HomeScreen extends Component {
 		});
 
 		const query = gql`
-			query HomeQuery {
+			query HomeQuery ($streamId: ID) {
 				core {
 					${queryFragments.join("\n")}
 				}
@@ -149,7 +149,9 @@ class HomeScreen extends Component {
 		try {
 			const { data } = await this.props.client.query({
 				query,
-				variables: {}
+				variables: {
+					streamId: this.props.auth.isAuthenticated ? 1 : 0
+				}
 				//fetchPolicy: "network-only"
 			});
 
