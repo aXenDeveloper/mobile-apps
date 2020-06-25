@@ -16,6 +16,7 @@ class MultiSettingsScreen extends Component {
 
 	constructor(props) {
 		super(props);
+		this.renderSectionHeader = this.renderSectionHeader.bind(this);
 	}
 
 	/**
@@ -40,12 +41,12 @@ class MultiSettingsScreen extends Component {
 						key: "content_order"
 					}
 				]
-			},
-			{
+			}
+			/*{
 				title: "Enabled Notifications",
 				first: false,
 				data: []
-			}
+			}*/
 		];
 	}
 
