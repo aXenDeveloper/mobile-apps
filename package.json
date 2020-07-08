@@ -24,7 +24,8 @@
 		"test": "jest",
 		"editor": "cd web && npm run editor && cd ..",
 		"ips-app": "expo start -c --config config/ips/ips-app.json",
-		"multi-app": "expo start -c --config config/multi/multi-app.json"
+		"multi-app": "expo start -c --config config/multi/multi-app.json",
+		"local-app": "expo start -c --config config/ips/local-app.json"
 	},
 	"jest": {
 		"preset": "jest-expo",
