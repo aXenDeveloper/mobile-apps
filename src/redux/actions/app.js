@@ -129,6 +129,7 @@ export const bootSiteSuccess = data => ({
 import _ from "underscore";
 import Lang from "../../utils/Lang";
 import asyncCache from "../../utils/asyncCache";
+import minVersion from "../../../minVersion.json";
 import { guestLoaded, userLoaded, setUserStreams } from "./user";
 import { setSiteSettings, setSiteCache, setSiteModulePermissions, setSiteMenu } from "./site";
 import { setEditorSettings } from "./editor";
@@ -153,6 +154,17 @@ export const bootSite = apiInfo => {
 				query: BootQuery,
 				variables: {}
 			});
+
+			if (minVersion.minVersion > data.core.settings.version) {
+				dispatch(
+					bootSiteError({
+						error: "This community is not compatible with this version of Invision Communities.",
+						isNetworkError: false
+					})
+				);
+
+				return;
+			}
 
 			if (auth.isAuthenticated && data.core.me.group.groupType !== "GUEST") {
 				dispatch(userLoaded({ ...data.core.me }));
@@ -206,9 +218,9 @@ export const bootSite = apiInfo => {
 
 			dispatch(bootSiteSuccess());
 		} catch (err) {
+			console.log(err);
 			dispatch(
 				bootSiteError({
-					error: err,
 					isNetworkError: true
 				})
 			);

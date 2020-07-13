@@ -389,7 +389,7 @@ class AppRoot extends Component {
 		if (this.props.app.bootStatus.error) {
 			this.multiCommunityShowAlert(
 				"error",
-				{ title: "Error", body: `Sorry, there was a problem loading ${this.props.site.settings.board_name}.` },
+				{ title: "Error", body: this.props.app.bootStatus.error }, //`Sorry, there was a problem loading ${this.props.site.settings.board_name}.`
 				"Try Again",
 				() => {
 					this.props.dispatch(resetBootStatus());

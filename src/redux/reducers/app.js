@@ -75,7 +75,7 @@ export default function app(state = initialState, { type, payload }) {
 				bootStatus: {
 					loading: false,
 					loaded: false,
-					error: payload.error || true,
+					error: payload.error || "Sorry, there was a problem loading this community.",
 					isNetworkError: payload.isNetworkError
 				}
 			};
