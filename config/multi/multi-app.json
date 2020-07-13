@@ -30,8 +30,8 @@
 			"max_image_dim": 1000,
 			"sentryDsn": "https://df2e90cd358c4402b9e1def82a335387@o248014.ingest.sentry.io/5285650"
 		},
-		"name": "Invision Communities",
-		"slug": "invision-communities",
+		"name": "Communities",
+		"slug": "communities",
 		"version": "0.1.2",
 		"description": "",
 		"scheme": "invision-communities",
