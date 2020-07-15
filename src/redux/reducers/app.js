@@ -18,6 +18,16 @@ const initialState = {
 		url: ""
 	},
 	notification: null,
+	languages: {
+		loading: false,
+		error: false,
+		data: {}
+	},
+	filters: {
+		loading: false,
+		error: false,
+		data: null
+	},
 	communities: {
 		loading: false,
 		error: false,
@@ -130,6 +140,77 @@ export default function app(state = initialState, { type, payload }) {
 			};
 
 		// --------------------------------------------------------------
+		// Community languages
+		case actions.COMMUNITY_LANGUAGES_LOADING:
+			return {
+				...state,
+				languages: {
+					...state.languages,
+					loading: true,
+					error: false
+				}
+			};
+		case actions.COMMUNITY_LANGUAGES_ERROR:
+			return {
+				...state,
+				languages: {
+					...state.languages,
+					loading: false,
+					error: true
+				}
+			};
+		case actions.COMMUNITY_LANGUAGES_SUCCESS:
+			return {
+				...state,
+				languages: {
+					...state.languages,
+					loading: false,
+					error: false,
+					data: payload
+				}
+			};
+		// --------------------------------------------------------------
+		// User language filter
+		case actions.USER_LANG_FILTER_LOADING:
+			return {
+				...state,
+				filters: {
+					...state.filters,
+					loading: true,
+					error: false
+				}
+			};
+		case actions.USER_LANG_FILTER_ERROR:
+			return {
+				...state,
+				filters: {
+					loading: false,
+					error: true,
+					data: null
+				}
+			};
+		case actions.USER_LANG_FILTER_SUCCESS:
+			return {
+				...state,
+				filters: {
+					...state.filters,
+					loading: false,
+					error: false,
+					data: payload
+				}
+			};
+		case actions.USER_LANG_FILTER_UPDATE:
+			return {
+				...state,
+				filters: {
+					...state.filters,
+					loading: false,
+					error: false,
+					data: payload
+				}
+			};
+
+		// --------------------------------------------------------------
 		// "My Communities" list for Multi-community
 		case actions.COMMUNITY_LIST_LOADING:
 			return {
@@ -220,49 +301,42 @@ export default function app(state = initialState, { type, payload }) {
 		// --------------------------------------------------------------
 		// Individual category for Multi-community
 		case actions.COMMUNITY_CATEGORY_LOADING:
+			const _loadingCommunities = Object.assign({}, state.categories);
+
+			_loadingCommunities[payload.id].loading = true;
+			_loadingCommunities[payload.id].finished = false;
+			_loadingCommunities[payload.id].error = false;
+
 			return {
 				...state,
-				categories: {
-					...state.categories,
-					[payload.id]: {
-						...state.categories[payload.id],
-						loading: true,
-						finished: false,
-						error: false
-					}
-				}
+				categories: _loadingCommunities
 			};
 		case actions.COMMUNITY_CATEGORY_ERROR:
+			const _errorCommunities = Object.assign({}, state.categories);
+
+			_errorCommunities[payload.id].loading = false;
+			_errorCommunities[payload.id].finished = false;
+			_errorCommunities[payload.id].error = true;
+
 			return {
 				...state,
-				categories: {
-					...state.categories,
-					[payload.id]: {
-						...state.categories[payload.id],
-						loading: false,
-						finished: false,
-						error: true
-					}
-				}
+				categories: _errorCommunities
 			};
 		case actions.COMMUNITY_CATEGORY_SUCCESS:
 			// We receive an offset, so to be sure we dont duplicate items in case of a race condition,
 			// take a slice of existing data up to the offset we're about to append to
-			const existingItems = state.categories[payload.id].items || [];
+			const _successCategories = Object.assign({}, state.categories);
+			const existingItems = _successCategories[payload.id].items || [];
 			const existingSlice = existingItems.slice(0, payload.offset);
+
+			_successCategories[payload.id].loading = false;
+			_successCategories[payload.id].finished = payload.finished;
+			_successCategories[payload.id].error = false;
+			_successCategories[payload.id].items = [...existingSlice, ...payload.items];
 
 			return {
 				...state,
-				categories: {
-					...state.categories,
-					[payload.id]: {
-						...state.categories[payload.id],
-						loading: false,
-						error: false,
-						finished: payload.finished,
-						items: [...existingSlice, ...payload.items]
-					}
-				}
+				categories: _successCategories
 			};
 
 		// --------------------------------------------------------------

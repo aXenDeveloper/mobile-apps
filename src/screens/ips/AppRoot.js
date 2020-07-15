@@ -18,7 +18,8 @@ import {
 	loadCommunities,
 	setContentView,
 	shiftToast,
-	setDarkModeState
+	setDarkModeState,
+	getUserLanguageFilter
 } from "../../redux/actions/app";
 import { refreshToken } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
@@ -72,6 +73,11 @@ class AppRoot extends Component {
 					apiKey: Expo.Constants.manifest.extra.oauth_client_id
 				})
 			);
+		}
+
+		// Get user language filter (multi-app)
+		if (!this._isSingleApp) {
+			this.props.dispatch(getUserLanguageFilter());
 		}
 
 		const initialUrl = await Linking.getInitialURL();

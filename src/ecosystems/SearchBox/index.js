@@ -139,6 +139,11 @@ class SearchBox extends Component {
 						</TouchableOpacity>
 					)}
 				</View>
+				{Boolean(!this.state.textInputActive) && Boolean(this.props.rightLinkText) && (
+					<TouchableOpacity style={componentStyles.cancelLink} onPress={this.props.rightLinkOnPress || null}>
+						<Text style={componentStyles.cancelLinkText}>{this.props.rightLinkText}</Text>
+					</TouchableOpacity>
+				)}
 				{Boolean(this.state.textInputActive) && (
 					<TouchableOpacity style={componentStyles.cancelLink} onPress={this.cancelSearch}>
 						<Text style={componentStyles.cancelLinkText}>{Lang.get("cancel")}</Text>
@@ -184,7 +189,8 @@ const _componentStyles = styleVars => ({
 		marginRight: styleVars.spacing.veryTight
 	},
 	cancelLink: {
-		marginLeft: styleVars.spacing.standard
+		marginLeft: styleVars.spacing.standard,
+		marginRight: styleVars.spacing.veryTight
 	},
 	cancelLinkText: {
 		color: styleVars.headerText,

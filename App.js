@@ -17,6 +17,7 @@ if (__DEV__) {
 	});
 } else {
 	console.log = () => {};
+	console.tron = { log: console.log };
 }
 
 // Note: this caused a crash after auth on android; check for compatibility in future
