@@ -1,13 +1,15 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView, FlatList, StyleSheet, Image, TextInput, TouchableOpacity } from "react-native";
+import { Text, View, ScrollView, FlatList, TouchableOpacity, Image, AsyncStorage } from "react-native";
+import Modal from "react-native-modal";
 import { compose } from "react-apollo";
 import { connect } from "react-redux";
 import _ from "underscore";
 
 import configureStore from "../../redux/configureStore";
-import { loadCommunityCategories, setActiveCommunity, toggleSavedCommunity } from "../../redux/actions/app";
+import { loadCommunityCategories, setActiveCommunity, toggleSavedCommunity, loadCommunityLanguages, setUserLanguageFilter } from "../../redux/actions/app";
 import { CategoryBox } from "../../ecosystems/MultiCommunity";
 import CustomHeader from "../../ecosystems/CustomHeader";
+import CheckList from "../../ecosystems/CheckList";
 import SearchBox from "../../ecosystems/SearchBox";
 import Button from "../../atoms/Button";
 import ShadowedArea from "../../atoms/ShadowedArea";
@@ -15,6 +17,8 @@ import ErrorBox from "../../atoms/ErrorBox";
 import LargeTitle from "../../atoms/LargeTitle";
 import { CommunityBox } from "../../ecosystems/MultiCommunity";
 import { PlaceholderRepeater } from "../../ecosystems/Placeholder";
+import SectionHeader from "../../atoms/SectionHeader";
+import SettingRow from "../../atoms/SettingRow";
 import getUserAgent from "../../utils/getUserAgent";
 import { withTheme } from "../../themes";
 import icons, { illustrations } from "../../icons";
@@ -37,7 +41,9 @@ class MultiCategoryListScreen extends Component {
 			searchActive: false,
 			searchTerm: "",
 			searchResults: [],
-			searchError: false
+			searchError: false,
+			filterModalVisible: false,
+			languageFilters: null
 		};
 		this._searchCache = {};
 
@@ -48,6 +54,10 @@ class MultiCategoryListScreen extends Component {
 		this.searchOnBlur = this.searchOnBlur.bind(this);
 		this.searchEmptyTextBox = this.searchEmptyTextBox.bind(this);
 		this.searchOnCancel = this.searchOnCancel.bind(this);
+		this.toggleFilterModal = this.toggleFilterModal.bind(this);
+		this.changeLanguageFilter = this.changeLanguageFilter.bind(this);
+		this.clearLanguageFilters = this.clearLanguageFilters.bind(this);
+		this.saveLanguageFilters = this.saveLanguageFilters.bind(this);
 	}
 
 	/**
@@ -59,11 +69,16 @@ class MultiCategoryListScreen extends Component {
 		if (!this.props.app.categoryList.loaded && !this.props.app.categoryList.error) {
 			this.props.dispatch(loadCommunityCategories());
 		}
+		this.props.dispatch(loadCommunityLanguages());
 	}
 
 	componentDidUpdate(prevProps, prevState) {
 		if (this.state.searchTerm !== prevState.searchTerm && this.state.searchTerm.length >= SEARCH_MIN_LEN) {
 			this.debouncedDoSearch();
+		}
+
+		if (!this.props.app.languages.loading && prevProps.app.languages.loading) {
+			this.setLanguageOptions();
 		}
 	}
 
@@ -163,6 +178,8 @@ class MultiCategoryListScreen extends Component {
 	 * @return 	array
 	 */
 	getDataInPairs() {
+		console.tron.log(this.props.app.categories);
+
 		return Object.keys(this.props.app.categories).reduce((result, value, index, array) => {
 			if (index % 2 === 0) {
 				result.push(array.slice(index, index + 2));
@@ -260,6 +277,12 @@ class MultiCategoryListScreen extends Component {
 		}
 
 		return this._togglePressHandlers[id];
+	}
+
+	toggleFilterModal() {
+		this.setState({
+			filterModalVisible: !this.state.filterModalVisible
+		});
 	}
 
 	/**
@@ -390,8 +413,81 @@ class MultiCategoryListScreen extends Component {
 		});
 	}
 
+	/**
+	 * Update state with the objects containing our supported languages and the checked state
+	 *
+	 * @return void
+	 */
+	setLanguageOptions() {
+		const languages = this.props.app.languages.data;
+		const languageFilters = Object.keys(languages).map(langKey => {
+			return {
+				key: langKey,
+				title: languages[langKey],
+				checked: this.props.app.filters.data !== null && !_.isUndefined(this.props.app.filters.data[langKey])
+			};
+		});
+
+		this.setState({
+			languageFilters
+		});
+	}
+
+	/**
+	 * Event handler for toggling a language row. Reverses the selected state.
+	 *
+	 * @param {object} item The selected item, passed through from CheckList
+	 */
+	changeLanguageFilter(item) {
+		const languageFilters = this.state.languageFilters;
+		const theItem = languageFilters.find(eachItem => eachItem.key === item.key);
+
+		theItem.checked = !theItem.checked;
+
+		this.setState({
+			languageFilters
+		});
+
+		//this.props.dispatch(setUserLanguageFilter(languageFilters.filter(eachItem => eachItem.checked)));
+	}
+
+	/**
+	 * Event handler for clearing the selected language filter preference. Unchecks all languages
+	 * and dispatches action to update the app. Closes modal.
+	 *
+	 * @return void
+	 */
+	clearLanguageFilters() {
+		const languageFilters = this.state.languageFilters;
+		languageFilters.forEach(theItem => (theItem.checked = false));
+
+		this.props.dispatch(setUserLanguageFilter([]));
+
+		this.setState({
+			languageFilters,
+			filterModalVisible: false
+		});
+	}
+
+	/**
+	 * Save the language filter preference by dispatching an action and hiding the modal.
+	 *
+	 * @return void
+	 */
+	saveLanguageFilters() {
+		const languageFilters = this.state.languageFilters;
+		const checkedItems = languageFilters.filter(eachItem => eachItem.checked);
+
+		this.props.dispatch(setUserLanguageFilter(checkedItems));
+
+		this.setState({
+			filterModalVisible: false
+		});
+	}
+
 	render() {
 		const { styles, componentStyles } = this.props;
+		const { filters, languages } = this.props.app;
 
 		const searchBox = (
 			<SearchBox
@@ -403,25 +499,63 @@ class MultiCategoryListScreen extends Component {
 				onCancel={this.searchOnCancel}
 				emptyTextBox={this.searchEmptyTextBox}
 				onSubmitTextInput={this.doSearch}
+				rightLinkText={"Filter"}
+				rightLinkOnPress={this.toggleFilterModal}
 			/>
 		);
 
 		// Generating the category list is done in getCategoryList because the expectation is we'll
 		// eventually have other blocks on this screen that load independently
 		return (
-			<View style={styles.flex}>
-				<CustomHeader content={searchBox} />
+			<React.Fragment>
 				<View style={styles.flex}>
-					{!this.state.searchActive ? (
-						<ScrollView style={styles.flex}>
-							<LargeTitle>Categories</LargeTitle>
-							<View style={styles.phWide}>{this.getCategoryList()}</View>
-						</ScrollView>
-					) : (
-						<View style={[styles.flex, componentStyles.searchContainer]}>{this.getSearchDisplay()}</View>
-					)}
+					<CustomHeader content={searchBox} />
+					<View style={styles.flex}>
+						{!this.state.searchActive ? (
+							<ScrollView style={styles.flex}>
+								<LargeTitle>Categories</LargeTitle>
+								<View style={styles.phWide}>{this.getCategoryList()}</View>
+							</ScrollView>
+						) : (
+							<View style={[styles.flex, componentStyles.searchContainer]}>{this.getSearchDisplay()}</View>
+						)}
+					</View>
 				</View>
-			</View>
+				<Modal
+					style={styles.modalAlignBottom}
+					swipeDirection="down"
+					onSwipeComplete={this.toggleFilterModal}
+					onBackdropPress={this.toggleFilterModal}
+					isVisible={this.state.filterModalVisible}
+				>
+					<View style={[styles.modalInner, { paddingBottom: 0 }]}>
+						<View style={styles.modalHandle} />
+						<View style={styles.modalHeader}>
+							<View style={styles.modalHeaderBar}>
+								<TouchableOpacity style={styles.modalHeaderLink} onPress={this.clearLanguageFilters}>
+									<Text style={styles.modalHeaderLinkText}>Clear</Text>
+								</TouchableOpacity>
+								<Text style={[styles.modalTitle, styles.modalTitleWithLinks]}>Filter By Language</Text>
+								<TouchableOpacity style={styles.modalHeaderLink} onPress={this.saveLanguageFilters} disabled={false}>
+									<Text style={[styles.modalHeaderLinkText]}>Save</Text>
+								</TouchableOpacity>
+							</View>
+						</View>
+						<ScrollView style={[componentStyles.modalBody]} keyboardShouldPersistTaps="always">
+							{!languages.loading && !languages.loading && (
+								<React.Fragment>
+									<View style={[styles.phWide, styles.pvWide]}>
+										<Text style={[styles.smallText, styles.lightText]}>Filter the communities shown in the Discover tab by the languages relevant to you.</Text>
+									</View>
+									<CheckList type="radio" data={this.state.languageFilters} onPress={this.changeLanguageFilter} />
+								</React.Fragment>
+							)}
+							{languages.loading && <Text>Loading...</Text>}
+							{languages.error && <Text>Error...</Text>}
+						</ScrollView>
+					</View>
+				</Modal>
+			</React.Fragment>
 		);
 	}
 }
@@ -431,6 +565,10 @@ const _componentStyles = styleVars => ({
 		width: "100%",
 		height: 150,
 		marginTop: styleVars.spacing.extraWide * 2
+	},
+	modalBody: {
+		minHeight: 300,
+		paddingBottom: styleVars.spacing.extraWide
 	}
 });
 

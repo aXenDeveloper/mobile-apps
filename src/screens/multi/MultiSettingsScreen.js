@@ -7,6 +7,7 @@ import _ from "underscore";
 import SectionHeader from "../../atoms/SectionHeader";
 import SettingRow from "../../atoms/SettingRow";
 import { ContentView } from "../../ecosystems/AppSettings";
+import { loadCommunityLanguages } from "../../redux/actions/app";
 import { withTheme } from "../../themes";
 
 class MultiSettingsScreen extends Component {
@@ -24,7 +25,9 @@ class MultiSettingsScreen extends Component {
 	 *
 	 * @return 	void
 	 */
-	componentDidMount() {}
+	componentDidMount() {
+		this.props.dispatch(loadCommunityLanguages());
+	}
 
 	/**
 	 * Return the settings list items

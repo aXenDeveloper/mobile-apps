@@ -18,6 +18,16 @@ const initialState = {
 		url: ""
 	},
 	notification: null,
+	languages: {
+		loading: false,
+		error: false,
+		data: {}
+	},
+	filters: {
+		loading: false,
+		error: false,
+		data: null
+	},
 	communities: {
 		loading: false,
 		error: false,
@@ -126,6 +136,77 @@ export default function app(state = initialState, { type, payload }) {
 				...state,
 				currentCommunity: {
 					...initialState.currentCommunity
+				}
+			};
+
+		// --------------------------------------------------------------
+		// Community languages
+		case actions.COMMUNITY_LANGUAGES_LOADING:
+			return {
+				...state,
+				languages: {
+					...state.languages,
+					loading: true,
+					error: false
+				}
+			};
+		case actions.COMMUNITY_LANGUAGES_ERROR:
+			return {
+				...state,
+				languages: {
+					...state.languages,
+					loading: false,
+					error: true
+				}
+			};
+		case actions.COMMUNITY_LANGUAGES_SUCCESS:
+			return {
+				...state,
+				languages: {
+					...state.languages,
+					loading: false,
+					error: false,
+					data: payload
+				}
+			};
+		// --------------------------------------------------------------
+		// User language filter
+		case actions.USER_LANG_FILTER_LOADING:
+			return {
+				...state,
+				filters: {
+					...state.filters,
+					loading: true,
+					error: false
+				}
+			};
+		case actions.USER_LANG_FILTER_ERROR:
+			return {
+				...state,
+				filters: {
+					loading: false,
+					error: true,
+					data: null
+				}
+			};
+		case actions.USER_LANG_FILTER_SUCCESS:
+			return {
+				...state,
+				filters: {
+					...state.filters,
+					loading: false,
+					error: false,
+					data: payload
+				}
+			};
+		case actions.USER_LANG_FILTER_UPDATE:
+			return {
+				...state,
+				filters: {
+					...state.filters,
+					loading: false,
+					error: false,
+					data: payload
 				}
 			};
 

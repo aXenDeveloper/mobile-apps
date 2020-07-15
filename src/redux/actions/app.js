@@ -436,8 +436,6 @@ export const loadCommunities = () => {
 				}
 			}
 
-			console.log(communities);
-
 			dispatch(
 				communityListSuccess({
 					communities
@@ -458,6 +456,133 @@ export const _devStoreCommunities = async () => {
 	await AsyncStorage.setItem("@favoriteCommunities", JSON.stringify(favorites));
 
 	console.log("Saved communities");
+};
+
+// =================================================================
+
+export const COMMUNITY_LANGUAGES_LOADING = "COMMUNITY_LANGUAGES_LOADING";
+export const communityLanguagesLoading = data => ({
+	type: COMMUNITY_LANGUAGES_LOADING
+});
+
+export const COMMUNITY_LANGUAGES_ERROR = "COMMUNITY_LANGUAGES_ERROR";
+export const communityLanguagesError = data => ({
+	type: COMMUNITY_LANGUAGES_ERROR,
+	payload: {
+		...data
+	}
+});
+
+export const COMMUNITY_LANGUAGES_SUCCESS = "COMMUNITY_LANGUAGES_SUCCESS";
+export const communityLanguagesSuccess = data => ({
+	type: COMMUNITY_LANGUAGES_SUCCESS,
+	payload: {
+		...data
+	}
+});
+
+export const loadCommunityLanguages = () => {
+	return async (dispatch, getState) => {
+		dispatch(communityLanguagesLoading());
+
+		try {
+			const languages = await asyncCache.getData("languages", "app");
+
+			// If we have cached data...
+			if (languages !== null) {
+				console.log("loaded languages from cache");
+				dispatch(communityLanguagesSuccess(languages));
+				return;
+			}
+
+			// If not, fetch the language data from remoteservices
+			const response = await fetch(`${Expo.Constants.manifest.extra.remoteServicesUrl}languages?active=1`, {
+				method: "get",
+				headers: {
+					"Content-Type": "application/json",
+					"User-Agent": getUserAgent()
+				}
+			});
+
+			if (!response.ok) {
+				dispatch(communityLanguagesError());
+				return;
+			}
+
+			const data = await response.json();
+
+			await asyncCache.setData(data, "languages", "app", 259200); // 3 days
+			dispatch(communityLanguagesSuccess(data));
+		} catch (err) {
+			dispatch(communityLanguagesError());
+		}
+	};
+};
+
+// =================================================================
+
+export const USER_LANG_FILTER_LOADING = "USER_LANG_FILTER_LOADING";
+export const userLanguageFilterLoading = data => ({
+	type: USER_LANG_FILTER_LOADING
+});
+
+export const USER_LANG_FILTER_ERROR = "USER_LANG_FILTER_ERROR";
+export const userLanguageFilterError = data => ({
+	type: USER_LANG_FILTER_ERROR
+});
+
+export const USER_LANG_FILTER_SUCCESS = "USER_LANG_FILTER_SUCCESS";
+export const userLanguageFilterSuccess = data => ({
+	type: USER_LANG_FILTER_SUCCESS,
+	payload: data
+});
+
+export const USER_LANG_FILTER_UPDATE = "USER_LANG_FILTER_UPDATE";
+export const userLanguageFilterUpdate = data => ({
+	type: USER_LANG_FILTER_UPDATE,
+	payload: data
+});
+
+export const getUserLanguageFilter = () => {
+	return async (dispatch, getState) => {
+		dispatch(userLanguageFilterLoading());
+
+		try {
+			const filter = await AsyncStorage.getItem("@languageFilter");
+			const filterData = filter !== null ? JSON.parse(filter) : null;
+
+			dispatch(userLanguageFilterSuccess(filterData));
+		} catch (err) {
+			dispatch(userLanguageFilterError());
+		}
+	};
+};
+
+export const setUserLanguageFilter = checkedItems => {
+	return async dispatch => {
+		if (!checkedItems.length) {
+			try {
+				await AsyncStorage.removeItem("@languageFilter");
+				return;
+			} catch (err) {
+				console.log("Couldn't remove language filter preferences");
+			}
+		}
+
+		const filters = {};
+
+		checkedItems.forEach(checkedItem => {
+			filters[checkedItem.key] = checkedItem.title;
+		});
+
+		try {
+			await AsyncStorage.setItem("@languageFilter", JSON.stringify(filters));
+		} catch (err) {
+			console.log("Error storing filter preferences");
+		}
+
+		dispatch(userLanguageFilterUpdate(filters));
+	};
 };
 
 // =================================================================
@@ -539,11 +664,21 @@ export const communityCategorySuccess = data => ({
 
 export const loadCommunityCategory = (id, offset = 0) => {
 	return async (dispatch, getState) => {
+		const {
+			app: { filters }
+		} = getState();
+
 		dispatch(communityCategoryLoading(id));
+
+		let lang = "";
+
+		if (filters.data !== null) {
+			lang = Object.keys(filters.data).join(",");
+		}
 
 		try {
 			// Fetch the community data from remoteservices
-			const response = await fetch(`${Expo.Constants.manifest.extra.remoteServicesUrl}directory/?category=${id}&st=${offset}`, {
+			const response = await fetch(`${Expo.Constants.manifest.extra.remoteServicesUrl}directory/?category=${id}&st=${offset}&lang=${lang}`, {
 				method: "get",
 				headers: {
 					"Content-Type": "application/json",
