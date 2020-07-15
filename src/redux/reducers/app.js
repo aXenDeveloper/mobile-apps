@@ -301,49 +301,42 @@ export default function app(state = initialState, { type, payload }) {
 		// --------------------------------------------------------------
 		// Individual category for Multi-community
 		case actions.COMMUNITY_CATEGORY_LOADING:
+			const _loadingCommunities = Object.assign({}, state.categories);
+
+			_loadingCommunities[payload.id].loading = true;
+			_loadingCommunities[payload.id].finished = false;
+			_loadingCommunities[payload.id].error = false;
+
 			return {
 				...state,
-				categories: {
-					...state.categories,
-					[payload.id]: {
-						...state.categories[payload.id],
-						loading: true,
-						finished: false,
-						error: false
-					}
-				}
+				categories: _loadingCommunities
 			};
 		case actions.COMMUNITY_CATEGORY_ERROR:
+			const _errorCommunities = Object.assign({}, state.categories);
+
+			_errorCommunities[payload.id].loading = false;
+			_errorCommunities[payload.id].finished = false;
+			_errorCommunities[payload.id].error = true;
+
 			return {
 				...state,
-				categories: {
-					...state.categories,
-					[payload.id]: {
-						...state.categories[payload.id],
-						loading: false,
-						finished: false,
-						error: true
-					}
-				}
+				categories: _errorCommunities
 			};
 		case actions.COMMUNITY_CATEGORY_SUCCESS:
 			// We receive an offset, so to be sure we dont duplicate items in case of a race condition,
 			// take a slice of existing data up to the offset we're about to append to
-			const existingItems = state.categories[payload.id].items || [];
+			const _successCategories = Object.assign({}, state.categories);
+			const existingItems = _successCategories[payload.id].items || [];
 			const existingSlice = existingItems.slice(0, payload.offset);
+
+			_successCategories[payload.id].loading = false;
+			_successCategories[payload.id].finished = payload.finished;
+			_successCategories[payload.id].error = false;
+			_successCategories[payload.id].items = [...existingSlice, ...payload.items];
 
 			return {
 				...state,
-				categories: {
-					...state.categories,
-					[payload.id]: {
-						...state.categories[payload.id],
-						loading: false,
-						error: false,
-						finished: payload.finished,
-						items: [...existingSlice, ...payload.items]
-					}
-				}
+				categories: _successCategories
 			};
 
 		// --------------------------------------------------------------
