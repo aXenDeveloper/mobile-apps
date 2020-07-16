@@ -82,7 +82,7 @@ class AppRoot extends Component {
 
 		const initialUrl = await Linking.getInitialURL();
 		this.checkUrlForAuth(initialUrl);
-		console.log(`Add this URL for auth: ${Linking.makeUrl("auth")}`);
+		//console.log(`Add this URL for auth: ${Linking.makeUrl("auth")}`);
 
 		// Set the content view setting to the default setting
 		this.props.dispatch(setContentView());

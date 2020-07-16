@@ -490,6 +490,7 @@ export const launchAuth = () => {
 		urlParams["code_challenge_method"] = "S256";
 		urlParams["code_challenge"] = codeDigestBase64;
 
+		console.log(`Add this URL for auth: ${schemeUrl}`);
 		console.log(`LAUNCH_AUTH: State string set to ${stateString}`);
 		console.log(`LAUNCH AUTH: Code challenge is ${urlParams["code_challenge"]}`);
 
