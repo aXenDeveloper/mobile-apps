@@ -195,7 +195,7 @@ export const refreshToken = apiInfo => {
 				return;
 			}
 
-			const response = await fetch(`${apiUrl}/oauth/token/index.php`, {
+			const response = await fetch(`${apiUrl}oauth/token/index.php`, {
 				method: "post",
 				headers: {
 					"Content-Type": "multipart/form-data",
@@ -385,7 +385,7 @@ export const swapToken = tokenInfo => {
 		}
 
 		try {
-			const response = await fetch(`${apiUrl}/oauth/token/index.php`, {
+			const response = await fetch(`${apiUrl}oauth/token/index.php`, {
 				method: "post",
 				headers: {
 					"Content-Type": "multipart/form-data",
@@ -697,7 +697,7 @@ const getNewClient = connectData => {
 	});
 
 	const httpLink = createHttpLink({
-		uri: `${connectData.apiUrl}/api/graphql/`,
+		uri: `${connectData.apiUrl}api/graphql/`,
 		fetch: customFetch
 	});
 
