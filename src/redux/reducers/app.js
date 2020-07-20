@@ -278,7 +278,8 @@ export default function app(state = initialState, { type, payload }) {
 			categoryKeys.forEach(category => {
 				categoryObj[category] = {
 					id: category,
-					name: payload[category],
+					name: payload[category].title,
+					count: payload[category].count,
 					loading: false,
 					error: false,
 					items: []
