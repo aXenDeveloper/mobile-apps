@@ -22,21 +22,31 @@ export const REMOVE_AUTH = "REMOVE_AUTH";
 export const removeAuth = data => {
 	return (dispatch, getState) => {
 		const {
+			auth: { isAuthenticated },
 			app: {
 				currentCommunity: { apiUrl, apiKey }
 			}
 		} = getState();
 
-		dispatch({
-			type: REMOVE_AUTH,
-			payload: {
-				client: getNewClient({
-					apiUrl,
-					apiKey,
-					accessToken: null
-				})
-			}
-		});
+		if (isAuthenticated) {
+			dispatch({
+				type: REMOVE_AUTH,
+				payload: {
+					client: getNewClient({
+						apiUrl,
+						apiKey,
+						accessToken: null
+					})
+				}
+			});
+		}
+	};
+};
+
+export const API_ERROR = "API_ERROR";
+export const apiError = data => {
+	return (dispatch, getState) => {
+		console.tron.log(`API ERROR: ${data.error}`);
 	};
 };
 
