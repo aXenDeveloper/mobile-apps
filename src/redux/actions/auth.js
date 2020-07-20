@@ -654,13 +654,13 @@ const getNewClient = connectData => {
 	// Apollo config & setup
 	const authLink = new ApolloLink((operation, next) => {
 		operation.setContext(context => {
-			console.log(`CLIENT (${thisInstance}): Making ${accessToken ? "AUTHENTICATED" : "unauthenticated"} request`);
+			console.log(`********** CLIENT (${thisInstance}): Making ${accessToken ? "AUTHENTICATED" : "unauthenticated"} request **********`);
 			return {
 				...context,
 				credentials: "same-origin",
 				headers: {
 					...context.headers,
-					Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}:`,
+					Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}`,
 					"User-Agent": getUserAgent()
 				}
 			};
