@@ -237,6 +237,8 @@ class CommunityRoot extends Component {
 			if (parseInt(data.core.me.notificationCount) !== parseInt(this.props.user.notificationCount)) {
 				this.props.dispatch(updateNotificationCount(data.core.me.notificationCount));
 			}
+
+			this.setNotificationTimeout();
 		} catch (err) {
 			// If this failed for some reason, stop checking from now on
 			console.log(`COMMUNITY_ROOT: Error running notification update: ${err}`);
