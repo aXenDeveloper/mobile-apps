@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1005892577733",
+    "firebase_url": "https://invision-community-app.firebaseio.com",
+    "project_id": "invision-community-app",
+    "storage_bucket": "invision-community-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005892577733:android:bbfb6d113a91278a",
+        "android_client_info": {
+          "package_name": "com.invisioncommunity.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1005892577733-88fvep4jml8i5m0riibis89sq20sqhj1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9-tW4FJsAhKCTOFUQU72chJSMzdJpd50"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005892577733-88fvep4jml8i5m0riibis89sq20sqhj1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
