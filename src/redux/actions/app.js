@@ -131,7 +131,7 @@ import Lang from "../../utils/Lang";
 import asyncCache from "../../utils/asyncCache";
 import minVersion from "../../../minVersion.json";
 import { guestLoaded, userLoaded, setUserStreams } from "./user";
-import { setSiteSettings, setSiteCache, setSiteModulePermissions, setSiteMenu } from "./site";
+import { setSiteSettings, setSiteCache, setSiteModulePermissions, setSiteMenu, setSiteData } from "./site";
 import { setEditorSettings } from "./editor";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
@@ -190,13 +190,18 @@ export const bootSite = apiInfo => {
 				})
 			);
 
-			// Set our system settings
-			dispatch(setSiteSettings(data.core.settings));
-			//dispatch(setLoginHandlers(data.core.loginHandlers));
-			dispatch(setSiteMenu(data.core.mobileMenu));
+			// Now try and get the homescreen data to improve perceieved loading time
+			const cachedData = await asyncCache.getDataForScope(apiInfo.apiUrl);
+
+			// Set our site data
 			dispatch(
-				setSiteModulePermissions({
-					core: data.core.moduleAccess
+				setSiteData({
+					settings: data.core.settings,
+					menu: data.core.mobileMenu,
+					moduleAccess: {
+						core: data.core.moduleAccess
+					},
+					siteCache: cachedData
 				})
 			);
 
@@ -211,10 +216,6 @@ export const bootSite = apiInfo => {
 					...data.core.streams
 				])
 			);
-
-			// Now try and get the homescreen data to improve perceieved loading time
-			const cachedData = await asyncCache.getDataForScope(apiInfo.apiUrl);
-			dispatch(setSiteCache(cachedData));
 
 			dispatch(bootSiteSuccess());
 		} catch (err) {
