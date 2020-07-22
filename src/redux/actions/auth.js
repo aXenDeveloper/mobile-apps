@@ -487,10 +487,11 @@ export const launchAuth = () => {
 		const _rawCodeDigestBase64 = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, codeChallenge, {
 			encoding: Crypto.CryptoEncoding.BASE64
 		}); // Sha256 used to hash code
+
 		const codeDigestBase64 = _rawCodeDigestBase64
-			.replace("+", "-")
-			.replace("/", "_")
-			.replace("=", "");
+			.replace(/\+/g, "-")
+			.replace(/\//g, "_")
+			.replace(/\=/g, "");
 
 		// Build basic request params
 		urlParams["client_id"] = apiKey;
