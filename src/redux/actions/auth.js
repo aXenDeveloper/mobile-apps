@@ -671,7 +671,7 @@ const getNewClient = connectData => {
 				credentials: "same-origin",
 				headers: {
 					...context.headers,
-					Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}`,
+					"X-Authorization": accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}`,
 					"User-Agent": getUserAgent()
 				}
 			};
