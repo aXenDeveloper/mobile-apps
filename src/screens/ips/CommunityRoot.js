@@ -204,7 +204,6 @@ class CommunityRoot extends Component {
 		if (this._abortController !== null) {
 			try {
 				this._abortController.abort();
-				console.tron.log("Aborted notification query");
 			} catch (err) {
 				console.tron.log(`Couldn't abort notification query: ${err}`);
 			}
