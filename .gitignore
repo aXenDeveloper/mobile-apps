@@ -20,3 +20,5 @@ yarn-error.log*
 /.tags
 /.tags1
 /.vscode/settings.json
+/resources/splash.png
+/resources/icon.png

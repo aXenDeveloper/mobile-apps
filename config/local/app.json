@@ -47,7 +47,7 @@
 			}
 		},
 		"android": {
-			"googleServicesFile": "./config/ips/google-services.json",
+			"googleServicesFile": "./config/ips/assets/google-services.json",
 			"versionCode": 117,
 			"package": "com.invisioncommunity.app",
 			"permissions": [
