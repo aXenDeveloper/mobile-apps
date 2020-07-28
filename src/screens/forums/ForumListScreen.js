@@ -143,7 +143,7 @@ class ForumListScreen extends Component {
 		} else if (this.props.data.error) {
 			return <Text>Error</Text>; // @todo
 		} else {
-			const data = !this.props.data.loading ? this.props.data.forums : this.props.site.siteCache.forumListData;
+			const data = this.props.data.forums; // : this.props.site.siteCache.forumListData;
 			const sectionData = data.forums.map(category => {
 				return {
 					title: category.name,
