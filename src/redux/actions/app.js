@@ -679,13 +679,16 @@ export const loadCommunityCategory = (id, offset = 0) => {
 
 		try {
 			// Fetch the community data from remoteservices
-			const response = await fetch(`${Expo.Constants.manifest.extra.remoteServicesUrl}directory/?category=${id}&st=${offset}&lang=${lang}`, {
-				method: "get",
-				headers: {
-					"Content-Type": "application/json",
-					"User-Agent": getUserAgent()
+			const response = await fetch(
+				`${Expo.Constants.manifest.extra.remoteServicesUrl}directory/?category=${id}&st=${offset}${lang !== "" ? `&lang=${lang}` : ""}`,
+				{
+					method: "get",
+					headers: {
+						"Content-Type": "application/json",
+						"User-Agent": getUserAgent()
+					}
 				}
-			});
+			);
 
 			if (!response.ok) {
 				dispatch(communityCategoryError(id));
