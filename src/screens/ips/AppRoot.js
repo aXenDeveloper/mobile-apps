@@ -104,8 +104,8 @@ class AppRoot extends Component {
 	}
 
 	async handleNotification(notification) {
-		console.log(`APP_ROOT: Received notification data`);
-		console.log(notification);
+		//console.log(`APP_ROOT: Received notification data`);
+		//console.log(notification);
 
 		// This seemed to cause push notifications to not properly redirect to webview,
 		// because this method was called twice - the second time with a null notification
@@ -202,7 +202,7 @@ class AppRoot extends Component {
 
 		// Have we already been granted permission?
 		const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-		console.log(`APP_ROOT: Notification status: ${status}`);
+		//console.log(`APP_ROOT: Notification status: ${status}`);
 
 		if (status == "granted") {
 			return;
@@ -215,8 +215,8 @@ class AppRoot extends Component {
 			const promptData = await AsyncStorage.getItem("@notificationPrompt");
 			const promptJson = promptData !== null ? JSON.parse(promptData) : null;
 
-			console.log(`APP_ROOT: Notification prompt JSON:`);
-			console.log(promptJson);
+			//console.log(`APP_ROOT: Notification prompt JSON:`);
+			//console.log(promptJson);
 
 			if (promptData === null || (promptJson.status == "later" && promptJson.timestamp < Math.floor(Date.now() / 1000) - 604800)) {
 				this._notificationPromptTimeout = setTimeout(() => {

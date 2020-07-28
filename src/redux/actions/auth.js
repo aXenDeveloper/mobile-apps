@@ -22,21 +22,31 @@ export const REMOVE_AUTH = "REMOVE_AUTH";
 export const removeAuth = data => {
 	return (dispatch, getState) => {
 		const {
+			auth: { isAuthenticated },
 			app: {
 				currentCommunity: { apiUrl, apiKey }
 			}
 		} = getState();
 
-		dispatch({
-			type: REMOVE_AUTH,
-			payload: {
-				client: getNewClient({
-					apiUrl,
-					apiKey,
-					accessToken: null
-				})
-			}
-		});
+		if (isAuthenticated) {
+			dispatch({
+				type: REMOVE_AUTH,
+				payload: {
+					client: getNewClient({
+						apiUrl,
+						apiKey,
+						accessToken: null
+					})
+				}
+			});
+		}
+	};
+};
+
+export const API_ERROR = "API_ERROR";
+export const apiError = data => {
+	return (dispatch, getState) => {
+		console.tron.log(`API ERROR: ${data.error}`);
 	};
 };
 
@@ -195,7 +205,7 @@ export const refreshToken = apiInfo => {
 				return;
 			}
 
-			const response = await fetch(`${apiUrl}/oauth/token/index.php`, {
+			const response = await fetch(`${apiUrl}oauth/token/index.php`, {
 				method: "post",
 				headers: {
 					"Content-Type": "multipart/form-data",
@@ -385,7 +395,7 @@ export const swapToken = tokenInfo => {
 		}
 
 		try {
-			const response = await fetch(`${apiUrl}/oauth/token/index.php`, {
+			const response = await fetch(`${apiUrl}oauth/token/index.php`, {
 				method: "post",
 				headers: {
 					"Content-Type": "multipart/form-data",
@@ -477,10 +487,11 @@ export const launchAuth = () => {
 		const _rawCodeDigestBase64 = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, codeChallenge, {
 			encoding: Crypto.CryptoEncoding.BASE64
 		}); // Sha256 used to hash code
+
 		const codeDigestBase64 = _rawCodeDigestBase64
-			.replace("+", "-")
-			.replace("/", "_")
-			.replace("=", "");
+			.replace(/\+/g, "-")
+			.replace(/\//g, "_")
+			.replace(/\=/g, "");
 
 		// Build basic request params
 		urlParams["client_id"] = apiKey;
@@ -654,13 +665,13 @@ const getNewClient = connectData => {
 	// Apollo config & setup
 	const authLink = new ApolloLink((operation, next) => {
 		operation.setContext(context => {
-			console.log(`CLIENT (${thisInstance}): Making ${accessToken ? "AUTHENTICATED" : "unauthenticated"} request`);
+			console.log(`********** CLIENT (${thisInstance}): Making ${accessToken ? "AUTHENTICATED" : "unauthenticated"} request **********`);
 			return {
 				...context,
 				credentials: "same-origin",
 				headers: {
 					...context.headers,
-					Authorization: accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}:`,
+					"X-Authorization": accessToken ? `Bearer ${accessToken}` : `Basic ${Buffer.from(apiKey + ":").toString("base64")}`,
 					"User-Agent": getUserAgent()
 				}
 			};
@@ -697,7 +708,7 @@ const getNewClient = connectData => {
 	});
 
 	const httpLink = createHttpLink({
-		uri: `${connectData.apiUrl}/api/graphql/`,
+		uri: `${connectData.apiUrl}api/graphql/`,
 		fetch: customFetch
 	});
 

@@ -1,4 +1,11 @@
 // ========================================================
+export const SET_SITE_DATA = "SET_SITE_DATA";
+export const setSiteData = data => ({
+	type: SET_SITE_DATA,
+	payload: {
+		...data
+	}
+});
 
 export const SET_SITE_SETTINGS = "SET_SITE_SETTINGS";
 export const setSiteSettings = data => ({

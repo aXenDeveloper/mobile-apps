@@ -15,7 +15,7 @@
 				}
 			]
 		},
-		"assetBundlePatterns": ["web/dist/index.html", "resources/splash.png"],
+		"assetBundlePatterns": ["web/dist/index.html", "./resources/splash.png"],
 		"platforms": ["android", "ios"],
 		"extra": {
 			"multi": true,
@@ -31,8 +31,8 @@
 			"sentryDsn": "https://df2e90cd358c4402b9e1def82a335387@o248014.ingest.sentry.io/5285650"
 		},
 		"name": "Communities",
-		"slug": "communities",
-		"version": "0.1.2",
+		"slug": "invision-communities",
+		"version": "0.1.4",
 		"description": "",
 		"scheme": "invision-communities",
 		"notification": {
@@ -47,8 +47,8 @@
 			}
 		},
 		"android": {
-			"googleServicesFile": "./config/multi/google-services.json",
-			"versionCode": 12,
+			"googleServicesFile": "./config/multi/assets/google-services.json",
+			"versionCode": 14,
 			"package": "com.invisioncommunity.communities",
 			"permissions": [
 				"ACCESS_COARSE_LOCATION",

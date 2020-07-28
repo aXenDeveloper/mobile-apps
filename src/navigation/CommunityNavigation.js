@@ -236,7 +236,7 @@ class AppNavigation extends Component {
 		);
 
 		if (this.props.auth.isAuthenticated) {
-			console.log("NAVIGATION: Rendering app with UserScreen");
+			//console.log("NAVIGATION: Rendering app with UserScreen");
 			return createAppContainer(
 				createDrawerNavigator(
 					{
@@ -251,7 +251,7 @@ class AppNavigation extends Component {
 				)
 			);
 		} else {
-			console.log("NAVIGATION: Rendering app WITHOUT UserScreen");
+			//console.log("NAVIGATION: Rendering app WITHOUT UserScreen");
 			return createAppContainer(masterStack);
 		}
 	}
@@ -326,7 +326,7 @@ class AppNavigation extends Component {
 		};
 
 		if (this.props.auth.isAuthenticated) {
-			console.log("NAVIGATION: Tab config including User");
+			//console.log("NAVIGATION: Tab config including User");
 			tabConfig = {
 				Home,
 				...(this.props.site.moduleAccess.core.search ? { Search } : {}),
@@ -374,7 +374,7 @@ class AppNavigation extends Component {
 	 */
 	componentDidUpdate(prevProps) {
 		if (this.props.auth.isAuthenticated !== prevProps.auth.isAuthenticated || prevProps.app.darkMode !== this.props.app.darkMode) {
-			console.log("NAVIGATION: Building new nav");
+			//console.log("NAVIGATION: Building new nav");
 			this.setState({
 				MasterNavigation: this._getMasterNavigation()
 			});

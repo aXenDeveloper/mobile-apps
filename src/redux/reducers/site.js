@@ -1,4 +1,4 @@
-import { SET_SITE_SETTINGS, SET_LOGIN_HANDLERS, SET_SITE_MENU, SET_SITE_MODULE_PERMISSIONS, SET_SITE_CACHE } from "../actions/site";
+import { SET_SITE_SETTINGS, SET_LOGIN_HANDLERS, SET_SITE_MENU, SET_SITE_MODULE_PERMISSIONS, SET_SITE_CACHE, SET_SITE_DATA } from "../actions/site";
 import { SET_ACTIVE_COMMUNITY } from "../actions/app";
 
 const initialState = {
@@ -48,6 +48,16 @@ export default function site(state = initialState, { type, payload }) {
 			return {
 				...state,
 				siteCache: payload
+			};
+		case SET_SITE_DATA:
+			return {
+				...state,
+				settings: {
+					...payload.settings
+				},
+				menu: payload.menu,
+				moduleAccess: payload.moduleAccess,
+				siteCache: payload.siteCache
 			};
 		default:
 			return { ...state };

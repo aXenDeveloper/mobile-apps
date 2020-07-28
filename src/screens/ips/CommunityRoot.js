@@ -62,6 +62,7 @@ class CommunityRoot extends Component {
 			togglingDarkMode: false
 		};
 		this._notificationTimeout = null;
+		this._abortController = null;
 
 		this.tryAfterNetworkError = this.tryAfterNetworkError.bind(this);
 		this.bypassOfflineMessage = this.bypassOfflineMessage.bind(this);
@@ -75,7 +76,7 @@ class CommunityRoot extends Component {
 	 */
 	componentDidMount() {
 		if (this.props.auth.isAuthenticated) {
-			this.initializeNotificationInterval();
+			this.setNotificationTimeout();
 			this.maybeSendPushToken();
 		}
 
@@ -94,13 +95,14 @@ class CommunityRoot extends Component {
 	componentDidUpdate(prevProps, prevState) {
 		// If we're now authenticated, and weren't before, start checking notifications
 		if (!prevProps.auth.isAuthenticated && this.props.auth.isAuthenticated) {
-			this.initializeNotificationInterval();
+			this.setNotificationTimeout();
 			this.maybeSendPushToken();
 		}
 
 		// However, if we were authenticated but aren't now, then *stop* notifications
 		if (prevProps.auth.isAuthenticated && !this.props.auth.isAuthenticated) {
-			this.stopNotificationInterval();
+			console.tron.log("Clearing notification interval");
+			this.stopNotificationTimeout();
 		}
 
 		if (prevProps.redirect !== this.props.redirect && this.props.redirect !== null) {
@@ -126,7 +128,7 @@ class CommunityRoot extends Component {
 	 * @return 	void
 	 */
 	componentWillUnmount() {
-		this.stopNotificationInterval();
+		this.stopNotificationTimeout();
 		clearTimeout(this._redirectTimeout);
 	}
 
@@ -156,9 +158,9 @@ class CommunityRoot extends Component {
 		}
 
 		// Update the notification count and reset the interval
-		this.stopNotificationInterval();
+		this.stopNotificationTimeout();
 		this.runNotificationQuery();
-		this.initializeNotificationInterval();
+		this.setNotificationTimeout();
 
 		// Prepare to redirect
 		const params = {};
@@ -188,9 +190,9 @@ class CommunityRoot extends Component {
 	 *
 	 * @return 	void
 	 */
-	initializeNotificationInterval() {
-		this.stopNotificationInterval();
-		this._notificationTimeout = setInterval(() => this.runNotificationQuery(), NOTIFICATION_TIMEOUT);
+	setNotificationTimeout() {
+		this.stopNotificationTimeout();
+		this._notificationTimeout = setTimeout(() => this.runNotificationQuery(), NOTIFICATION_TIMEOUT);
 	}
 
 	/**
@@ -198,8 +200,18 @@ class CommunityRoot extends Component {
 	 *
 	 * @return 	void
 	 */
-	stopNotificationInterval() {
-		clearInterval(this._notificationTimeout);
+	stopNotificationTimeout() {
+		if (this._abortController !== null) {
+			try {
+				this._abortController.abort();
+			} catch (err) {
+				console.tron.log(`Couldn't abort notification query: ${err}`);
+			}
+
+			this._abortController = null;
+		}
+
+		clearTimeout(this._notificationTimeout);
 	}
 
 	/**
@@ -208,10 +220,15 @@ class CommunityRoot extends Component {
 	 * @return 	void
 	 */
 	async runNotificationQuery() {
+		this._abortController = new AbortController();
+
 		try {
 			const { data } = await this.props.auth.client.query({
 				query: NotificationQuery,
-				fetchPolicy: "network-only"
+				fetchPolicy: "network-only",
+				options: {
+					signal: this._abortController
+				}
 			});
 
 			//console.log(`COMMUNITY_ROOT: Ran notification update, got count ${data.core.me.notificationCount}`);
@@ -219,10 +236,12 @@ class CommunityRoot extends Component {
 			if (parseInt(data.core.me.notificationCount) !== parseInt(this.props.user.notificationCount)) {
 				this.props.dispatch(updateNotificationCount(data.core.me.notificationCount));
 			}
+
+			this.setNotificationTimeout();
 		} catch (err) {
 			// If this failed for some reason, stop checking from now on
 			console.log(`COMMUNITY_ROOT: Error running notification update: ${err}`);
-			this.stopNotificationInterval();
+			this.stopNotificationTimeout();
 		}
 	}
 

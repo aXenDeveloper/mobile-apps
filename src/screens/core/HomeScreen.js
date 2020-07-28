@@ -241,7 +241,7 @@ class HomeScreen extends Component {
 
 			if (this.state.data) {
 				data = this.state.data;
-			} else if (this.props.site.siteCache.homeData) {
+			} else if (!_.isNull(this.props.site.siteCache) && this.props.site.siteCache.homeData) {
 				data = this.props.site.siteCache.homeData;
 			}
 

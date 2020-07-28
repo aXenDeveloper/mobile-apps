@@ -47,7 +47,7 @@ class StreamViewScreen extends Component {
 		const currentStyleSheet = getCurrentStyleSheet();
 
 		return {
-			headerLeft: Expo.Constants.manifest.extra.multi ? { headerLeft: <GoToMulti /> } : null,
+			headerLeft: Expo.Constants.manifest.extra.multi ? <GoToMulti /> : null,
 			headerTitle: (
 				<TouchableOpacity
 					onPress={
