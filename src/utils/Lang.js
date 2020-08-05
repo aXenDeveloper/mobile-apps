@@ -30,10 +30,7 @@ class Lang {
 	 * @return 	void
 	 */
 	setWords(langPack) {
-		this.words = {
-			...this.words,
-			...langPack
-		};
+		this.words = Object.assign({}, this.words, langPack);
 	}
 
 	/**
