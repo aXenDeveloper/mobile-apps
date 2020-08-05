@@ -155,7 +155,7 @@ export const bootSite = apiInfo => {
 				variables: {}
 			});
 
-			if (minVersion.minVersion > data.core.settings.version) {
+			if (!__DEV__ && minVersion.minVersion > data.core.settings.version) {
 				dispatch(
 					bootSiteError({
 						error: "This community is not compatible with this version of Invision Communities.",
