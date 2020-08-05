@@ -134,7 +134,7 @@ class ForumListScreen extends Component {
 	}
 
 	render() {
-		if (this.props.data.loading && _.isUndefined(this.props.site.siteCache.forumListData)) {
+		if (this.props.data.loading) {
 			return (
 				<PlaceholderRepeater repeat={7}>
 					<ForumItem loading />
