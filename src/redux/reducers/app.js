@@ -125,7 +125,7 @@ export default function app(state = initialState, { type, payload }) {
 		// Actions to control the active community
 		case actions.SET_ACTIVE_COMMUNITY:
 			// Normalize API url by removing any trailing slash
-			if (!payload.apiUrl.endsWith("/")) {
+			if (typeof payload.apiUrl === "string" && !payload.apiUrl.endsWith("/")) {
 				payload.apiUrl = payload.apiUrl + "/";
 			}
 
