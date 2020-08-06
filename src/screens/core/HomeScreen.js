@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Text, Image, ScrollView, AsyncStorage, View, RefreshControl, LayoutAnimation, Dimensions } from "react-native";
-import { Notifications } from "expo";
+import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import gql from "graphql-tag";
 import { graphql, withApollo, compose } from "react-apollo";

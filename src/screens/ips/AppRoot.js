@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { View, Alert, StyleSheet, AsyncStorage, Platform } from "react-native";
 import { compose } from "react-apollo";
-import { Linking, Notifications } from "expo";
+import * as Notifications from "expo-notifications";
+import * as Linking from "expo-linking";
 import * as Permissions from "expo-permissions";
 import { connect } from "react-redux";
 import Toast from "react-native-root-toast";
