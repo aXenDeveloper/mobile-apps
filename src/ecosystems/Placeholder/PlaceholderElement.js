@@ -19,11 +19,13 @@ class PlaceholderElement extends PureComponent {
 				Animated.timing(this.state.backgroundColor, {
 					toValue: 1,
 					duration: 500,
-					delay: 500
+					delay: 500,
+					useNativeDriver: false
 				}),
 				Animated.timing(this.state.backgroundColor, {
 					toValue: 0,
-					duration: 500
+					duration: 500,
+					useNativeDriver: false
 				})
 			])
 		).start();

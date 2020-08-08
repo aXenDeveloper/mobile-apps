@@ -257,7 +257,7 @@ class QuillToolbar extends Component {
 						{Boolean(this.state.showToolbar) && (
 							<Animatable.View
 								style={[styles.flexRow, styles.flexAlignCenter, componentStyles.toolbarIcons]}
-								useNativeDriver
+								useNativeDriver={true}
 								ref={ref => (this._toolbar = ref)}
 							>
 								{allowImageUploads && <QuillToolbarButton icon={icons.IMAGE} onPress={this.showImageToolbar} />}

@@ -57,7 +57,8 @@ class LoginRegisterPrompt extends PureComponent {
 		this._animation = Animated.timing(this._animatedValue, {
 			toValue: 0,
 			duration: 350,
-			easing: Easing.bezier(0.42, 0, 1, 1)
+			easing: Easing.bezier(0.42, 0, 1, 1),
+			useNativeDriver: false
 		});
 
 		this.setState({

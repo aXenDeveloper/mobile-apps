@@ -64,7 +64,7 @@ class AppRoot extends Component {
 		// Push notification stuff
 		this.setUpNotificationChannels();
 		this.maybeDoNotificationPrompt();
-		this._notificationSubscription = Notifications.addListener(this.handleNotification);
+		this._notificationSubscription = Notifications.addNotificationReceivedListener(this.handleNotification);
 
 		// If we're running in single-site mode
 		if (this._isSingleApp) {

@@ -7,7 +7,6 @@ import * as Sentry from "sentry-expo";
 import { Asset } from "expo-asset";
 import { AppLoading } from "expo";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { useScreens } from "react-native-screens";
 import Reactotron from "reactotron-react-native";
 
 if (__DEV__) {

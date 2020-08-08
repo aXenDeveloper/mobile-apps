@@ -48,7 +48,7 @@
 		"apollo-link-logger": "^1.2.3",
 		"buffer": "^5.2.1",
 		"deepmerge": "^4.0.0",
-		"expo": "^38.0.0",
+		"expo": "^38.0.8",
 		"expo-asset-utils": "^1.2.0",
 		"expo-crypto": "~8.2.1",
 		"expo-image-manipulator": "~8.2.1",
@@ -87,9 +87,8 @@
 		"react-native-keyboard-aware-scroll-view": "^0.9.1",
 		"react-native-modal": "^11.3.1",
 		"react-native-reanimated": "~1.9.0",
-		"react-native-render-html": "git+https://github.com/rikkitissier/react-native-render-html.git",
+		"react-native-render-html": "^4.2.2",
 		"react-native-root-toast": "^3.1.1",
-		"react-native-safe-area-context": "~3.0.7",
 		"react-native-slowlog": "^1.0.2",
 		"react-native-svg": "12.1.0",
 		"react-native-swipeable": "^0.6.0",
@@ -100,9 +99,11 @@
 		"redux": "^4.0.1",
 		"redux-logger": "^3.0.6",
 		"redux-thunk": "^2.3.0",
-		"sentry-expo": "~2.0.0",
+		"sentry-expo": "2.1.2",
 		"short-number": "^1.0.7",
 		"underscore": "^1.9.1",
-		"validator": "^11.1.0"
+		"validator": "^11.1.0",
+		"react-native-safe-area-context": "~3.0.7",
+		"react-native-screens": "~2.9.0"
 	}
 }

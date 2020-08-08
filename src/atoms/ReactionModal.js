@@ -29,7 +29,8 @@ class ReactionModal extends Component {
 		const animations = this.props.reactions.map(reaction => {
 			return Animated.timing(this.animatedValue[reaction.id], {
 				toValue: 0,
-				duration: 450
+				duration: 450,
+				useNativeDriver: false
 			});
 		});
 
