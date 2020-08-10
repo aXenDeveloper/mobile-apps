@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Text, Alert, View, Image, TouchableHighlight, StyleSheet, ActivityIndicator, AsyncStorage, StatusBar } from "react-native";
-import { Notifications } from "expo";
+import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import { ApolloProvider } from "react-apollo";
 import { connect } from "react-redux";

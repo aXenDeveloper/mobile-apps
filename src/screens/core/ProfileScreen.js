@@ -276,14 +276,14 @@ class ProfileScreen extends Component {
 		if (!this._isSnapping && y > 0) {
 			if (y < halfway) {
 				this.setIsSnapping();
-				this._wrapView.getNode().scrollTo({ y: 0 });
+				this._wrapView.scrollTo({ y: 0 });
 			} else {
 				if (y > halfway && y < this.state.fullHeaderHeight) {
 					const headerHeight = 52 + this.props.insets.top;
 					const snapTo = this.state.fullHeaderHeight - headerHeight;
 
 					this.setIsSnapping();
-					this._wrapView.getNode().scrollTo({ y: snapTo });
+					this._wrapView.scrollTo({ y: snapTo });
 				}
 			}
 		}
@@ -420,7 +420,7 @@ class ProfileScreen extends Component {
 	renderTabBar(props) {
 		const { styles, styleVars } = this.props;
 		return (
-			<Animated.View style={{ transform: [{ translateY: this.tabY }], zIndex: 1 }}>
+			<Animated.View style={{ transform: [{ translateY: this.tabY }, { perspective: 1000 }], zIndex: 1 }}>
 				<TabBar
 					{...props}
 					scrollEnabled
@@ -545,14 +545,14 @@ class ProfileScreen extends Component {
 							style={componentStyles.profileHeader}
 						>
 							{Boolean(this.props.data.core.member.coverPhoto.image) && (
-								<Animated.View style={[StyleSheet.absoluteFill, { transform: [{ scale: this.imgScale }] }]}>
+								<Animated.View style={[StyleSheet.absoluteFill, { transform: [{ scale: this.imgScale }, { perspective: 1000 }] }]}>
 									<FadeIn style={StyleSheet.absoluteFill} placeholderStyle={{ backgroundColor: "#333" }}>
 										<Image source={{ uri: getImageUrl(this.props.data.core.member.coverPhoto.image) }} style={StyleSheet.absoluteFill} resizeMode="cover" />
 									</FadeIn>
 								</Animated.View>
 							)}
 							<Animated.View style={[componentStyles.profileHeaderInner, { paddingTop: this.props.insets.top + 10, opacity: this.userOpacity }]}>
-								<Animated.View style={[componentStyles.userInfoWrap, { transform: [{ scale: this.avatarScale }] }]}>
+								<Animated.View style={[componentStyles.userInfoWrap, { transform: [{ scale: this.avatarScale }, { perspective: 1000 }] }]}>
 									<TouchableOpacity onPress={photoLightboxHandler} style={{ width: 80, height: 80 }}>
 										<UserPhoto url={this.props.data.core.member.photo} size={80} />
 									</TouchableOpacity>

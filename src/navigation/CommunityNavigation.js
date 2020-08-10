@@ -11,7 +11,7 @@ import { BottomTabBar } from "react-navigation-tabs";
 import { View, Platform } from "react-native";
 import { connect } from "react-redux";
 import { compose } from "react-apollo";
-import * as WebBrowser from "expo";
+import * as WebBrowser from "expo-web-browser";
 import { LinearGradient } from "expo-linear-gradient";
 import "react-native-gesture-handler";
 

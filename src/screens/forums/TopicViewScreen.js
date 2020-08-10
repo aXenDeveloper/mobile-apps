@@ -446,13 +446,13 @@ class TopicViewScreen extends Component {
 		const y = e.nativeEvent.contentOffset.y;
 		const halfway = this.state.innerHeaderHeight / 2;
 
-		if (this._flatList && this._flatList.getNode() && !this._isSnapping && y > 0) {
+		if (this._flatList && !this._isSnapping && y > 0) {
 			if (y < halfway) {
 				this.setIsSnapping();
-				this._flatList.getNode().scrollToOffset({ offset: 0 });
+				this._flatList.scrollToOffset({ offset: 0 });
 			} else if (y >= halfway && y < this.state.innerHeaderHeight) {
 				this.setIsSnapping();
-				this._flatList.getNode().scrollToOffset({ offset: this.state.innerHeaderHeight });
+				this._flatList.scrollToOffset({ offset: this.state.innerHeaderHeight });
 			}
 		}
 	}
@@ -489,7 +489,7 @@ class TopicViewScreen extends Component {
 		// I don't like this, but it appears to be necessary to trigger the
 		// scroll after a short timeout to allow time for the list to render
 		setTimeout(() => {
-			this._flatList.getNode().scrollToEnd();
+			this._flatList.scrollToEnd();
 			this._aboutToScrollToEnd = false;
 		}, 500);
 	}
@@ -550,7 +550,7 @@ class TopicViewScreen extends Component {
 					}
 
 					// Now do the scroll. This is async
-					await this._flatList.getNode().scrollToOffset({
+					await this._flatList.scrollToOffset({
 						offset: totalHeight + this._headerHeight
 					});
 
@@ -734,7 +734,7 @@ class TopicViewScreen extends Component {
 		if (prevState.loadingUnseenPosts && !this.state.loadingUnseenPosts) {
 			if (this.state.startingOffset > 0) {
 				setTimeout(() => {
-					this._flatList.getNode().scrollToOffset({
+					this._flatList.scrollToOffset({
 						offset: this._headerHeight,
 						animated: false
 					});
@@ -752,7 +752,7 @@ class TopicViewScreen extends Component {
 			// Figure out if we need to scroll to hide the Load Earlier Posts button
 			if (!this.props.data.loading && !this.props.data.error) {
 				if (showEarlierPosts && !this._aboutToScrollToEnd) {
-					this._flatList.getNode().scrollToOffset({
+					this._flatList.scrollToOffset({
 						offset: this._headerHeight + LOAD_MORE_HEIGHT,
 						animated: false
 					});

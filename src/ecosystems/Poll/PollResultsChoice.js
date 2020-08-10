@@ -44,7 +44,8 @@ class PollResultsChoice extends Component {
 				Animated.timing(this._animatedWidth, {
 					toValue: 1,
 					duration: percentage * 6, // == 600ms for 100%, 300ms for 50% etc.
-					easing: Easing.elastic()
+					easing: Easing.elastic(),
+					useNativeDriver: false
 				})
 			);
 		}
@@ -53,7 +54,8 @@ class PollResultsChoice extends Component {
 			Animated.timing(this._animatedOpacity, {
 				toValue: 1,
 				duration: 500,
-				easing: Easing.elastic()
+				easing: Easing.elastic(),
+				useNativeDriver: false
 			})
 		);
 

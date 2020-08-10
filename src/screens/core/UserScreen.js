@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Text, View, Button, ScrollView, FlatList, StyleSheet, TouchableOpacity, Alert, StatusBar, Image } from "react-native";
-import { Notifications } from "expo";
+import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import { SafeAreaView } from "react-navigation";
 import gql from "graphql-tag";

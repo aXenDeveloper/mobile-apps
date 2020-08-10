@@ -39,7 +39,8 @@ export default class AnimatedCircularProgress extends PureComponent {
 		const anim = Animated.timing(this.state.fillAnimation, {
 			toValue,
 			easing,
-			duration
+			duration,
+			useNativeDriver: false
 		});
 		anim.start(this.props.onAnimationComplete);
 
