@@ -28,7 +28,8 @@
 			"remoteServicesUrl": "https://remoteservices.invisionpower.com/mobile/",
 			"privacyPolicyUrl": "https://invisioncommunity.com/legal/in-app-privacy-policy/",
 			"max_image_dim": 1000,
-			"sentryDsn": "https://df2e90cd358c4402b9e1def82a335387@o248014.ingest.sentry.io/5285650"
+			"sentryDsn": "https://df2e90cd358c4402b9e1def82a335387@o248014.ingest.sentry.io/5285650",
+			"experienceId": "invision-communities"
 		},
 		"name": "Communities",
 		"slug": "invision-communities",

@@ -65,9 +65,12 @@ class HomeScreen extends Component {
 		// If they haven't granted access then we don't need to do anything here
 		if (status === "granted") {
 			try {
-				token = await Notifications.getExpoPushTokenAsync();
+				token = await Notifications.getExpoPushTokenAsync({
+					experienceId: Expo.Constants.manifest.extra.experienceId
+				});
+
 				this.setState({
-					token
+					token: token.data
 				});
 			} catch (err) {}
 		}

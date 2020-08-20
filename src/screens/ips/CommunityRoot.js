@@ -272,23 +272,25 @@ class CommunityRoot extends Component {
 			// If they haven't granted access then we don't need to do anything here
 			if (status === "granted") {
 				try {
-					token = await Notifications.getExpoPushTokenAsync();
+					token = await Notifications.getExpoPushTokenAsync({
+						experienceId: Expo.Constants.manifest.extra.experienceId
+					});
 				} catch (err) {}
 			}
 		}
 
 		// Get the token that uniquely identifies this device
 		try {
-			console.log(`COMMUNITY_ROOT: Starting session with token ${token}...`);
+			console.tron.log(`COMMUNITY_ROOT: Starting session with token ${token.data}...`);
 			const { data } = await this.props.auth.client.mutate({
 				mutation: SessionStartMutation,
 				variables: {
-					token
+					token: token.data
 				}
 			});
-			console.log(`COMMUNITY_ROOT: Session start sent.`);
+			console.tron.log(`COMMUNITY_ROOT: Session start sent.`);
 		} catch (err) {
-			console.log(`COMMUNITY_ROOT: Couldn't send push token: ${err}`);
+			console.tron.log(`COMMUNITY_ROOT: Couldn't send push token: ${err}`);
 			return;
 		}
 	}

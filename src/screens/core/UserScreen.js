@@ -256,7 +256,9 @@ class UserScreen extends Component {
 		if (status === "granted") {
 			// Get the token that uniquely identifies this device
 			try {
-				token = await Notifications.getExpoPushTokenAsync();
+				token = await Notifications.getExpoPushTokenAsync({
+					experienceId: Expo.Constants.manifest.extra.experienceId
+				});
 			} catch (err) {
 				console.log("USERSCREEN: No token to deregister");
 			}
@@ -268,7 +270,7 @@ class UserScreen extends Component {
 		const { data } = await this.props.auth.client.mutate({
 			mutation: SessionEndMutation,
 			variables: {
-				token
+				token: token.data
 			}
 		});
 
