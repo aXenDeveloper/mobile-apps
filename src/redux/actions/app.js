@@ -174,10 +174,17 @@ export const bootSite = apiInfo => {
 
 			// Set our lang strings
 			if (_.size(data.core.language)) {
-				// We don't want __typename, so discard that
-				const { __typename, locale, ...rest } = data.core.language;
+				const { locale, phrases } = data.core.language;
+				let phraseObj = {};
+
+				try {
+					phraseObj = JSON.parse(phrases);
+				} catch (err) {
+					console.tron.log(err);
+				}
+
 				Lang.setLocale(locale);
-				Lang.setWords(rest);
+				Lang.setWords(phraseObj);
 			}
 
 			// Set editor settings
@@ -231,12 +238,9 @@ export const bootSite = apiInfo => {
 
 import langStrings from "../../langStrings";
 
-const processLangString = langString => `${langString}: phrase(key: "app_${langString}")`;
 const LangFragment = gql`
 	fragment LangFragment on core_Language {
-		${Object.keys(langStrings)
-			.map(processLangString)
-			.join("\n")}
+		phrases(keys: ${JSON.stringify(Object.keys(langStrings))})
 	}
 `;
 
