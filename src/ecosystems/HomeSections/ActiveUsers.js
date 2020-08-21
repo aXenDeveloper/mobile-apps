@@ -18,7 +18,8 @@ class ActiveUsers extends Component {
 		this._animations = [];
 		this.state = {
 			tickerReady: false,
-			tickerNames: []
+			tickerNames: [],
+			hasPermission: this.props.site.moduleAccess.core.online
 		};
 
 		this._pressHandlers = {};
@@ -44,7 +45,9 @@ class ActiveUsers extends Component {
 	componentDidUpdate(prevProps, prevState) {
 		// If we have gone from loading to loaded, then set up the ticker animations
 		if (prevProps.loading !== this.props.loading || (prevProps.refreshing && !this.props.refreshing)) {
-			this.setUpTicker();
+			if (this.state.hasPermission) {
+				this.setUpTicker();
+			}
 		}
 	}
 
@@ -115,6 +118,10 @@ class ActiveUsers extends Component {
 	 * @return 	void
 	 */
 	setUpTicker() {
+		if (!this.state.hasPermission) {
+			return;
+		}
+
 		this.setState({
 			tickerReady: false
 		});
@@ -187,7 +194,7 @@ class ActiveUsers extends Component {
 	render() {
 		const { styles, componentStyles } = this.props;
 
-		if (!this.props.canViewOnline) {
+		if (!this.state.hasPermission) {
 			return null;
 		}
 
@@ -249,6 +256,6 @@ const _componentStyles = styleVars => ({
 export default compose(
 	withTheme(_componentStyles),
 	connect(state => ({
-		canViewOnline: state.site.moduleAccess.core.online || true
+		site: state.site
 	}))
 )(ActiveUsers);
