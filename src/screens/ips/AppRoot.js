@@ -62,9 +62,17 @@ class AppRoot extends Component {
 	 */
 	async componentDidMount() {
 		// Push notification stuff
-		this.setUpNotificationChannels();
+		await this.setUpNotificationChannels();
 		this.maybeDoNotificationPrompt();
 		this._notificationSubscription = Notifications.addNotificationReceivedListener(this.handleNotification);
+
+		Notifications.setNotificationHandler({
+			handleNotification: async () => ({
+				shouldShowAlert: true,
+				shouldPlaySound: false,
+				shouldSetBadge: false
+			})
+		});
 
 		// If we're running in single-site mode
 		if (this._isSingleApp) {
@@ -138,18 +146,18 @@ class AppRoot extends Component {
 	 *
 	 * @return 	void
 	 */
-	setUpNotificationChannels() {
+	async setUpNotificationChannels() {
 		if (Platform.OS !== "android") {
 			return;
 		}
 
-		NotificationChannels.forEach(channel => {
-			Notifications.createChannelAndroidAsync(channel.id, {
+		for (const channel of NotificationChannels) {
+			await Notifications.setNotificationChannelAsync(channel.id, {
 				name: channel.name,
 				...(channel.description ? { description: channel.description } : {}),
 				...(channel.sound ? { sound: channel.sound } : { sound: false })
 			});
-		});
+		}
 
 		console.log(`Set up ${NotificationChannels.length} Android notification channels`);
 	}
