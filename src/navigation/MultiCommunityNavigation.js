@@ -129,7 +129,7 @@ class MultiCommunityNavigation extends Component {
 				}
 			},
 			{
-				lazy: true,
+				lazy: false,
 				tabBarPosition: "bottom",
 				tabBarOptions: {
 					showLabel: true,
