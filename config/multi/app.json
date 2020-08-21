@@ -33,7 +33,7 @@
 		},
 		"name": "Communities",
 		"slug": "invision-communities",
-		"version": "0.1.4",
+		"version": "0.1.6",
 		"description": "",
 		"scheme": "invision-communities",
 		"notification": {
@@ -49,8 +49,9 @@
 		},
 		"android": {
 			"googleServicesFile": "./config/multi/assets/google-services.json",
-			"versionCode": 14,
+			"versionCode": 16,
 			"package": "com.invisioncommunity.communities",
+			"useNextNotificationsApi": true,
 			"permissions": [
 				"ACCESS_COARSE_LOCATION",
 				"ACCESS_FINE_LOCATION",
