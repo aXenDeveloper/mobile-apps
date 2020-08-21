@@ -144,15 +144,17 @@ class ForumListScreen extends Component {
 			return <Text>Error</Text>; // @todo
 		} else {
 			const data = this.props.data.forums; // : this.props.site.siteCache.forumListData;
-			const sectionData = data.forums.map(category => {
-				return {
-					title: category.name,
-					data: category.subforums.map(forum => ({
-						key: forum.id,
-						data: forum
-					}))
-				};
-			});
+			const sectionData = data.forums
+				.filter(category => category.subforums.length)
+				.map(category => {
+					return {
+						title: category.name,
+						data: category.subforums.map(forum => ({
+							key: forum.id,
+							data: forum
+						}))
+					};
+				});
 
 			return (
 				<View style={{ flexGrow: 1 }}>
