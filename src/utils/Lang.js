@@ -179,7 +179,7 @@ class Lang {
 		}
 
 		const timeObj = moment.unix(parseInt(time));
-		const diff = moment().diff(timeObj);
+		let diff = moment().diff(timeObj);
 		let unit;
 		let num;
 		let future = false;
