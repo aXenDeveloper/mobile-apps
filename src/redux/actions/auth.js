@@ -20,13 +20,34 @@ import introspectionQueryResultData from "../../fragmentTypes.json";
 
 export const REMOVE_AUTH = "REMOVE_AUTH";
 export const removeAuth = data => {
-	return (dispatch, getState) => {
+	return async (dispatch, getState) => {
 		const {
 			auth: { isAuthenticated },
 			app: {
 				currentCommunity: { apiUrl, apiKey }
 			}
 		} = getState();
+
+		const authStore = await SecureStore.getItemAsync(`authStore`);
+		let allAuthData = {};
+		let authData = {};
+
+		// Try and remove this site's data from the store
+		if (authStore !== null) {
+			try {
+				allAuthData = JSON.parse(authStore);
+
+				if (!_.isUndefined(allAuthData[apiUrl])) {
+					delete allAuthData[apiUrl];
+				}
+
+				console.log(`Removed SecureStore data for ${apiUrl}`);
+			} catch (err) {
+				console.log(`Auth data for ${apiUrl} wasn't found in SecureStore`);
+			}
+
+			await SecureStore.setItemAsync(`authStore`, JSON.stringify(allAuthData));
+		}
 
 		if (isAuthenticated) {
 			dispatch({
@@ -547,45 +568,63 @@ export const launchAuth = () => {
 		console.log(`LAUNCH_AUTH: schemeUrl: ${schemeUrl}`);
 
 		// Launch Expo's webbrowser authentication flow which will handle receiving the redirect for us
-		WebBrowser.openAuthSessionAsync(`${urlToOpen}${urlQuery.join("&")}`, schemeUrl).then(resolved => {
-			if (resolved.type !== "success") {
-				console.log("LAUNCH_AUTH: Browser closed without authenticating");
-				// The user either closed the browser or denied oauth, so no need to do anything.
-				return;
-			}
+		const result = WebBrowser.openAuthSessionAsync(`${urlToOpen}${urlQuery.join("&")}`, schemeUrl)
+			.then(resolved => {
+				if (resolved.type !== "success") {
+					console.log("LAUNCH_AUTH: Browser closed without authenticating");
+					// The user either closed the browser or denied oauth, so no need to do anything.
+					return;
+				}
 
-			if (resolved.error) {
+				if (resolved.error) {
+					dispatch(
+						logInError({
+							error: resolved.error
+						})
+					);
+					return;
+				}
+
+				const parsed = Linking.parse(resolved.url);
+
+				// Check our state param to make sure it matches what we expect - mismatch could indicate tampering
+				if (_.isUndefined(parsed.queryParams.state) || parsed.queryParams.state !== stateString) {
+					dispatch(
+						logInError({
+							error: "state_mismatch"
+						})
+					);
+					return;
+				}
+
+				// Swap token, sending the codeChallenge to prevent MIM attacks
 				dispatch(
-					logInError({
-						error: resolved.error
+					swapToken({
+						token: parsed.queryParams.code,
+						codeChallenge,
+						redirect_uri: schemeUrl
 					})
 				);
-				return;
-			}
-
-			const parsed = Linking.parse(resolved.url);
-
-			// Check our state param to make sure it matches what we expect - mismatch could indicate tampering
-			if (_.isUndefined(parsed.queryParams.state) || parsed.queryParams.state !== stateString) {
+			})
+			.catch(err => {
 				dispatch(
 					logInError({
-						error: "state_mismatch"
+						error: "authsession_failed"
 					})
 				);
-				return;
-			}
+			});
 
-			// Swap token, sending the codeChallenge to prevent MIM attacks
-			dispatch(
-				swapToken({
-					token: parsed.queryParams.code,
-					codeChallenge,
-					redirect_uri: schemeUrl
-				})
-			);
-		});
+		console.log(`LAUNCH_AUTH: result of openAuthSessionAsync is ${JSON.stringify(result)}`);
 	};
 };
+
+export const LOG_IN_ERROR = "LOG_IN_ERROR";
+export const logInError = data => ({
+	type: LOG_IN_ERROR,
+	payload: {
+		...data
+	}
+});
 
 import asyncCache from "../../utils/asyncCache";
 

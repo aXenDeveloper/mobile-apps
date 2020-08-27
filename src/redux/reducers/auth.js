@@ -30,6 +30,17 @@ export default function auth(state = initialState, { type, payload }) {
 				...initialState
 			};
 
+		case actions.LOG_IN_ERROR:
+			console.log(`LOGIN ERROR: ${payload.error}`);
+
+			return {
+				...state,
+				authData: {
+					...initialState.authData
+				},
+				isAuthenticated: false
+			};
+
 		// ========================================================
 		// Swap token actions. This happens after logging in via
 		// oAuth, when we receive a code that must be exchanged for
