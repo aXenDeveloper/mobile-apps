@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, SectionList } from "react-native";
+import { Text, View, SectionList, TouchableOpacity } from "react-native";
 import { compose } from "react-apollo";
 import { connect } from "react-redux";
 import _ from "underscore";
@@ -17,7 +17,13 @@ class MultiSettingsScreen extends Component {
 
 	constructor(props) {
 		super(props);
+
+		this.state = {
+			showLogs: false
+		};
+
 		this.renderSectionHeader = this.renderSectionHeader.bind(this);
+		this.showLogs = this.showLogs.bind(this);
 	}
 
 	/**
@@ -27,6 +33,12 @@ class MultiSettingsScreen extends Component {
 	 */
 	componentDidMount() {
 		this.props.dispatch(loadCommunityLanguages());
+	}
+
+	showLogs() {
+		this.setState({
+			showLogs: true
+		});
 	}
 
 	/**
@@ -81,14 +93,28 @@ class MultiSettingsScreen extends Component {
 	}
 
 	render() {
+		const { styles } = this.props;
+
 		return (
-			<SectionList
-				sections={this.getAccountSections()}
-				renderItem={this.renderItem}
-				renderSectionHeader={this.renderSectionHeader}
-				SectionSeparatorComponent={this.renderSectionSeparator}
-				stickySectionHeadersEnabled={false}
-			/>
+			<React.Fragment>
+				<SectionList
+					sections={this.getAccountSections()}
+					renderItem={this.renderItem}
+					renderSectionHeader={this.renderSectionHeader}
+					SectionSeparatorComponent={this.renderSectionSeparator}
+					stickySectionHeadersEnabled={false}
+				/>
+
+				<TouchableOpacity onPress={this.showLogs}>
+					<Text style={[styles.lightText]}>-</Text>
+				</TouchableOpacity>
+
+				{this.state.showLogs && (
+					<View>
+						<Text style={[styles.lightText]}>{this.props.app.messages.join("\n")}</Text>
+					</View>
+				)}
+			</React.Fragment>
 		);
 	}
 }

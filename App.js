@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { UIManager, AsyncStorage } from "react-native";
+import { AppState, UIManager, AsyncStorage } from "react-native";
 import { Provider } from "react-redux";
 import configureStore from "./src/redux/configureStore";
 import { connect } from "react-redux";

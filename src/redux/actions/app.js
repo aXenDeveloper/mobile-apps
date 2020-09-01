@@ -1,5 +1,13 @@
 // =================================================================
 
+export const LOG_MESSAGE = "LOG_MESSAGE";
+export const logMessage = data => ({
+	type: LOG_MESSAGE,
+	payload: {
+		...data
+	}
+});
+
 export const OPEN_MODAL_WEBVIEW = "OPEN_MODAL_WEBVIEW";
 export const openModalWebview = data => ({
 	type: OPEN_MODAL_WEBVIEW,

@@ -43,11 +43,20 @@ const initialState = {
 	},
 	toast: [],
 	currentTheme: "default",
-	darkMode: false
+	darkMode: false,
+	messages: []
 };
 
 export default function app(state = initialState, { type, payload }) {
 	switch (type) {
+		case actions.LOG_MESSAGE:
+			const thisDate = new Date();
+
+			return {
+				...state,
+				messages: [...state.messages, `${thisDate.toTimeString()}: ${payload.message}` || "<blank>"]
+			};
+
 		// --------------------------------------------------------------
 		// Boot actions
 		case actions.RESET_BOOT_STATUS:

@@ -1,7 +1,9 @@
+import { AppState, Platform } from "react-native";
 import * as Linking from "expo-linking";
 import * as Permissions from "expo-permissions";
 import * as WebBrowser from "expo-web-browser";
 import * as SecureStore from "expo-secure-store";
+import * as Sentry from "sentry-expo";
 import apolloLogger from "apollo-link-logger";
 import { ApolloClient } from "apollo-client";
 import { HttpLink, createHttpLink } from "apollo-link-http";
@@ -14,6 +16,7 @@ import _ from "underscore";
 import ToFormData from "../../utils/ToFormData";
 import getUserAgent from "../../utils/getUserAgent";
 import introspectionQueryResultData from "../../fragmentTypes.json";
+import { logMessage } from "./app";
 
 // ====================================================================
 // General auth actions
@@ -499,7 +502,7 @@ export const launchAuth = () => {
 			}
 		} = getState();
 
-		let urlToOpen = `${apiUrl}oauth/authorize/?`;
+		let urlToOpen = `${apiUrl}oauth/authorize/index.php?`;
 		const urlQuery = [];
 		const urlParams = {};
 		const schemeUrl = Linking.makeUrl(`/auth`);
@@ -567,14 +570,25 @@ export const launchAuth = () => {
 		console.log(`LAUNCH_AUTH: Url ${urlToOpen}${urlQuery.join("&")}`);
 		console.log(`LAUNCH_AUTH: schemeUrl: ${schemeUrl}`);
 
+		if (Platform.OS === "android") {
+			await WebBrowser.warmUpAsync();
+		}
+
+		dispatch(logMessage({ message: `Browser opening with URL ${urlToOpen}${urlQuery.join("&")}, ${schemeUrl}` }));
+		dispatch(logMessage({ message: `AppState is ${AppState.currentState}` }));
+
 		// Launch Expo's webbrowser authentication flow which will handle receiving the redirect for us
-		const result = WebBrowser.openAuthSessionAsync(`${urlToOpen}${urlQuery.join("&")}`, schemeUrl)
+		const result = await WebBrowser.openAuthSessionAsync(`${urlToOpen}${urlQuery.join("&")}`, schemeUrl)
 			.then(resolved => {
 				if (resolved.type !== "success") {
+					dispatch(logMessage({ message: `Browser closed with type ${resolved.type}` }));
+
 					console.log("LAUNCH_AUTH: Browser closed without authenticating");
 					// The user either closed the browser or denied oauth, so no need to do anything.
 					return;
 				}
+
+				dispatch(logMessage({ message: `Browser response ${resolved.type}` }));
 
 				if (resolved.error) {
 					dispatch(
@@ -613,6 +627,8 @@ export const launchAuth = () => {
 					})
 				);
 			});
+
+		dispatch(logMessage({ message: `Result of openAuthSessionAsync was ${JSON.stringify(result)}` }));
 
 		console.log(`LAUNCH_AUTH: result of openAuthSessionAsync is ${JSON.stringify(result)}`);
 	};

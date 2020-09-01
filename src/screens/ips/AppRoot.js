@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Alert, StyleSheet, AsyncStorage, Platform } from "react-native";
+import { View, Alert, StyleSheet, AsyncStorage, Platform, AppState } from "react-native";
 import { compose } from "react-apollo";
 import * as Notifications from "expo-notifications";
 import * as Linking from "expo-linking";
@@ -20,7 +20,8 @@ import {
 	setContentView,
 	shiftToast,
 	setDarkModeState,
-	getUserLanguageFilter
+	getUserLanguageFilter,
+	logMessage
 } from "../../redux/actions/app";
 import { refreshToken } from "../../redux/actions/auth";
 import MultiCommunityNavigation from "../../navigation/MultiCommunityNavigation";
@@ -61,6 +62,12 @@ class AppRoot extends Component {
 	 * @return 	void
 	 */
 	async componentDidMount() {
+		this.props.dispatch(
+			logMessage({
+				message: `AppState is ${AppState.currentState}`
+			})
+		);
+
 		// Push notification stuff
 		await this.setUpNotificationChannels();
 		this.maybeDoNotificationPrompt();
