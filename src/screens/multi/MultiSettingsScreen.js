@@ -105,10 +105,6 @@ class MultiSettingsScreen extends Component {
 					stickySectionHeadersEnabled={false}
 				/>
 
-				<TouchableOpacity onPress={this.showLogs}>
-					<Text style={[styles.lightText]}>-</Text>
-				</TouchableOpacity>
-
 				{this.state.showLogs && (
 					<View>
 						<Text style={[styles.lightText]}>{this.props.app.messages.join("\n")}</Text>
