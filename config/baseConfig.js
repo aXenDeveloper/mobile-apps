@@ -21,7 +21,6 @@ const _base = {
 		assetBundlePatterns: ["web/dist/index.html", "./resources/splash.png"],
 		platforms: ["android", "ios"],
 		extra: {
-			multi: true,
 			refresh_token_advance: 300000,
 			notification_timeout: 10000,
 			message_prefix: "__IPS__",

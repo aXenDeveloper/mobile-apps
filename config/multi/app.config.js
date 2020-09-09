@@ -13,6 +13,7 @@ module.exports = baseConfig({
 			]
 		},
 		extra: {
+			multi: true,
 			oauth_client_id: "e79f36dc890d5c6b01fa0dc25e52ad0e",
 			api_url: "https://invisioncommunity.com/",
 			sentryDsn: "https://df2e90cd358c4402b9e1def82a335387@o248014.ingest.sentry.io/5285650",
