@@ -3,7 +3,7 @@ import Reactotron, { networking, asyncStorage, trackGlobalErrors } from "reactot
 import { reactotronRedux } from "reactotron-redux";
 
 const reactotron = Reactotron.setAsyncStorageHandler(AsyncStorage) // AsyncStorage would either come from `react-native` or `@react-native-community/async-storage` depending on where you get it from
-	.configure({ host: "192.168.1.33", port: 9999 }) // controls connection & communication settings
+	.configure({ host: "192.168.1.10", port: 9999 }) // controls connection & communication settings
 	.useReactNative() // add all built-in react native plugins
 	.use(
 		networking({
