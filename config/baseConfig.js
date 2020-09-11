@@ -1,7 +1,7 @@
 const merge = require("deepmerge");
 
-const VERSION = "1.0.0";
-const BUILD_NO = "1000"; // String for iOS, int for Android
+const VERSION = "1.0.1";
+const BUILD_NO = "1003"; // String for iOS, int for Android
 
 const _base = {
 	expo: {
