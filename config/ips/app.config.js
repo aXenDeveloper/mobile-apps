@@ -21,7 +21,7 @@ module.exports = baseConfig({
 		},
 		name: "Invision Community",
 		slug: "invision-community",
-		scheme: "invisioncommunity",
+		scheme: "invision-community",
 		ios: {
 			bundleIdentifier: "com.invisioncommunity.app"
 		},
