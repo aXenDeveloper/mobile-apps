@@ -729,7 +729,7 @@ const getNewClient = connectData => {
 		return next(operation);
 	});
 
-	const errorsToUnauth = ["INVALID_ACCESS_TOKEN", "INVALID_API_KEY", "TOO_MANY_REQUESTS_WITH_BAD_KEY"];
+	const errorsToUnauth = ["INVALID_ACCESS_TOKEN", "REVOKED_ACCESS_TOKEN", "INVALID_API_KEY", "TOO_MANY_REQUESTS_WITH_BAD_KEY"];
 	const errorLink = onError(errors => {
 		const { graphQLErrors, networkError } = errors;
 		if (graphQLErrors) {
