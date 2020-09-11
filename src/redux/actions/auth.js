@@ -505,7 +505,9 @@ export const launchAuth = () => {
 		let urlToOpen = `${apiUrl}oauth/authorize/index.php?`;
 		const urlQuery = [];
 		const urlParams = {};
-		const schemeUrl = Linking.makeUrl(`auth`);
+
+		const schemeUrl = Linking.makeUrl(`auth`).replace("///", "//");
+
 		const stateString = getRandomString(); // Fetch a string we'll use to check state when auth requests come back to the app
 		const codeChallenge = await getRandomBytes(128); // Fetch a random string we'll use to prevent MIM oAuth attacks
 		const _rawCodeDigestBase64 = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, codeChallenge, {
@@ -573,6 +575,9 @@ export const launchAuth = () => {
 		if (Platform.OS === "android") {
 			await WebBrowser.warmUpAsync();
 		}
+
+		dispatch(logMessage({ message: `Browser opening with URL ${urlToOpen}${urlQuery.join("&")}, ${schemeUrl}` }));
+		dispatch(logMessage({ message: `AppState is ${AppState.currentState}` }));
 
 		// Launch Expo's webbrowser authentication flow which will handle receiving the redirect for us
 		const result = await WebBrowser.openAuthSessionAsync(`${urlToOpen}${urlQuery.join("&")}`, schemeUrl)
