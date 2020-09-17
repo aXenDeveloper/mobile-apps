@@ -55,7 +55,6 @@ class HomeScreen extends Component {
 		this._menuHandlers = {};
 
 		this.onRefresh = this.onRefresh.bind(this);
-		this.showLogs = this.showLogs.bind(this);
 	}
 
 	async componentDidMount() {
