@@ -246,18 +246,23 @@ class MultiCategoryListScreen extends Component {
 	 * @return 	function
 	 */
 	pressCommunity(apiInfo) {
-		if (_.isUndefined(this._pressCommunityHandlers[apiInfo.apiUrl])) {
-			this._pressCommunityHandlers[apiInfo.apiUrl] = () => {
+		const { apiUrl, apiKey, name, logo, description } = apiInfo;
+
+		if (_.isUndefined(this._pressCommunityHandlers[apiUrl])) {
+			this._pressCommunityHandlers[apiUrl] = () => {
 				this.props.dispatch(
 					setActiveCommunity({
-						apiUrl: apiInfo.apiUrl,
-						apiKey: apiInfo.apiKey
+						apiUrl,
+						apiKey,
+						name,
+						logo,
+						description
 					})
 				);
 			};
 		}
 
-		return this._pressCommunityHandlers[apiInfo.apiUrl];
+		return this._pressCommunityHandlers[apiUrl];
 	}
 
 	/**
@@ -297,7 +302,7 @@ class MultiCategoryListScreen extends Component {
 
 		return (
 			<CommunityBox
-				onPress={this.pressCommunity({ apiUrl: item.url, apiKey: item.client_id })}
+				onPress={this.pressCommunity({ apiUrl: item.url, apiKey: item.client_id, name, logo, description })}
 				name={name}
 				logo={logo}
 				description={description}

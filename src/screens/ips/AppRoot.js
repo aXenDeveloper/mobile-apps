@@ -98,7 +98,6 @@ class AppRoot extends Component {
 
 		const initialUrl = await Linking.getInitialURL();
 		this.checkUrlForAuth(initialUrl);
-		//console.log(`Add this URL for auth: ${Linking.makeUrl("auth")}`);
 
 		// Set the content view setting to the default setting
 		this.props.dispatch(setContentView());
@@ -300,12 +299,7 @@ class AppRoot extends Component {
 
 			// If we've switched back to the multi community, reset stuff
 			if (prevProps.app.view !== "multi" && this.props.app.view === "multi") {
-				this.props.dispatch(
-					setActiveCommunity({
-						apiKey: null,
-						apiUrl: null
-					})
-				);
+				this.props.dispatch(resetActiveCommunity());
 				this.props.dispatch(resetBootStatus());
 			}
 		}
@@ -405,7 +399,7 @@ class AppRoot extends Component {
 	 * @return 	void
 	 */
 	multiCommunityCheckStatusAndRedirect() {
-		const { apiUrl, apiKey } = this.props.app.currentCommunity;
+		const { apiUrl, apiKey, name, logo, description } = this.props.app.currentCommunity;
 
 		// Did we have an error loading this community?
 		if (this.props.app.bootStatus.error) {
@@ -419,7 +413,10 @@ class AppRoot extends Component {
 					this.props.dispatch(
 						setActiveCommunity({
 							apiKey,
-							apiUrl
+							apiUrl,
+							name,
+							logo,
+							description
 						})
 					);
 				},

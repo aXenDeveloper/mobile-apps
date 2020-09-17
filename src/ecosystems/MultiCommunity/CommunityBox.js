@@ -6,7 +6,6 @@ import FadeIn from "react-native-fade-in-image";
 import _ from "underscore";
 
 import configureStore from "../../redux/configureStore";
-import { setActiveCommunity } from "../../redux/actions/app";
 import parseUri from "../../utils/parseUri";
 import Lang from "../../utils/Lang";
 import ShadowedArea from "../../atoms/ShadowedArea";

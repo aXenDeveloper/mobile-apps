@@ -250,18 +250,23 @@ class MyCommunitiesScreen extends Component {
 	 * @return 	function
 	 */
 	pressCommunity(apiInfo) {
-		if (_.isUndefined(this._pressHandlers[apiInfo.apiUrl])) {
-			this._pressHandlers[apiInfo.apiUrl] = () => {
+		const { apiUrl, apiKey, name, logo, description } = apiInfo;
+
+		if (_.isUndefined(this._pressHandlers[apiUrl])) {
+			this._pressHandlers[apiUrl] = () => {
 				this.props.dispatch(
 					setActiveCommunity({
-						apiUrl: apiInfo.apiUrl,
-						apiKey: apiInfo.apiKey
+						apiUrl,
+						apiKey,
+						name,
+						logo,
+						description
 					})
 				);
 			};
 		}
 
-		return this._pressHandlers[apiInfo.apiUrl];
+		return this._pressHandlers[apiUrl];
 	}
 
 	/**

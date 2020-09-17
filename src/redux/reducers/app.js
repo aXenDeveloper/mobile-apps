@@ -11,7 +11,11 @@ const initialState = {
 	view: "multi",
 	currentCommunity: {
 		apiUrl: null,
-		apiKey: null
+		apiKey: null,
+		url: null,
+		logo: null,
+		name: null,
+		description: null
 	},
 	webview: {
 		active: false,
@@ -142,7 +146,10 @@ export default function app(state = initialState, { type, payload }) {
 				...state,
 				currentCommunity: {
 					apiUrl: payload.apiUrl,
-					apiKey: payload.apiKey
+					apiKey: payload.apiKey,
+					logo: payload.logo,
+					name: payload.name,
+					description: payload.description
 				}
 			};
 		case actions.RESET_ACTIVE_COMMUNITY:
