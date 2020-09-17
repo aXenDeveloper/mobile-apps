@@ -48,12 +48,14 @@ class HomeScreen extends Component {
 			error: false,
 			data: null,
 			refreshing: false,
-			token: null
+			token: null,
+			showLogs: false
 		};
 
 		this._menuHandlers = {};
 
 		this.onRefresh = this.onRefresh.bind(this);
+		this.showLogs = this.showLogs.bind(this);
 	}
 
 	async componentDidMount() {
@@ -63,7 +65,7 @@ class HomeScreen extends Component {
 		let token = null;
 
 		// If they haven't granted access then we don't need to do anything here
-		if (status === "granted") {
+		if (status === "granted" && Expo.Constants.isDevice) {
 			try {
 				token = await Notifications.getExpoPushTokenAsync({
 					experienceId: Expo.Constants.manifest.extra.experienceId

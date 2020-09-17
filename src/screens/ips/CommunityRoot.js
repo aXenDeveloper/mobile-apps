@@ -270,22 +270,24 @@ class CommunityRoot extends Component {
 		// Only send token if this is single-community app, or we've saved this community
 		if (!isMulti || (isMulti && isSaved)) {
 			// If they haven't granted access then we don't need to do anything here
-			if (status === "granted") {
+			if (status === "granted" && Expo.Constants.isDevice) {
 				try {
 					token = await Notifications.getExpoPushTokenAsync({
 						experienceId: Expo.Constants.manifest.extra.experienceId
 					});
+
+					token = token.data;
 				} catch (err) {}
 			}
 		}
 
 		// Get the token that uniquely identifies this device
 		try {
-			console.tron.log(`COMMUNITY_ROOT: Starting session with token ${token.data}...`);
+			console.tron.log(`COMMUNITY_ROOT: Starting session with token ${token}...`);
 			const { data } = await this.props.auth.client.mutate({
 				mutation: SessionStartMutation,
 				variables: {
-					token: token.data
+					token
 				}
 			});
 			console.tron.log(`COMMUNITY_ROOT: Session start sent.`);
