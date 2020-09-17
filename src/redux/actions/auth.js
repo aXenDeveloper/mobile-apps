@@ -41,10 +41,14 @@ export const removeAuth = data => {
 				allAuthData = JSON.parse(authStore);
 
 				if (!_.isUndefined(allAuthData[apiUrl])) {
-					delete allAuthData[apiUrl];
+					allAuthData[apiUrl] = {
+						...allAuthData[apiUrl],
+						apiUrl: null,
+						apiKey: null
+					};
 				}
 
-				console.log(`Removed SecureStore data for ${apiUrl}`);
+				console.log(`Nulled out url and key in SecureStore data for ${apiUrl}`);
 			} catch (err) {
 				console.log(`Auth data for ${apiUrl} wasn't found in SecureStore`);
 			}
@@ -550,6 +554,10 @@ export const launchAuth = () => {
 			}
 		}
 
+		console.tron.log(allAuthData);
+		console.tron.log(`authdata.loggedout is ${authData.loggedOut}`);
+		console.tron.log(authData);
+
 		// If we've stored a 'loggedOut' flag for this community, force a login prompt
 		if (!_.isUndefined(authData.loggedOut) && authData.loggedOut === true) {
 			urlParams["prompt"] = "login";
@@ -684,6 +692,8 @@ export const logOut = (requireReauth = true) => {
 
 		// If we require reauth, then set a flag in our site object to force a true login next time
 		if (requireReauth) {
+			console.tron.log(`Setting requireReauth for ${apiUrl}`);
+
 			allAuthData[apiUrl] = {
 				loggedOut: true
 			};
