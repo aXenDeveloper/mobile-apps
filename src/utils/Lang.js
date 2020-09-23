@@ -62,7 +62,13 @@ class Lang {
 		if (word.indexOf("{{") === -1) {
 			return word;
 		}
-		return _.template(word)(replacements);
+
+		try {
+			// This can fail if the {{tags}} added to the strings by admins are incorrect
+			return _.template(word)(replacements);
+		} catch (err) {
+			return word;
+		}
 	}
 
 	/**
